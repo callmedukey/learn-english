@@ -1,0 +1,64 @@
+services:
+  postgres:
+    image: "postgres:16.3-alpine"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: redisPrismaNaver2025@
+      POSTGRES_DB: my-local-db
+      POSTGRES_HOST_AUTH_METHOD: scram-sha-256
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256"
+      # Removing PGDATA environment variable since we're handling directory structure differently
+    ports:
+      - "5432:5432"
+    volumes:
+      # Using the direct path without PGDATA redirection
+      - ./data:/var/lib/postgresql/data
+      - ./postgresql.conf:/etc/postgresql/postgresql.conf:ro
+      - ./pg_hba.conf:/etc/postgresql/pg_hba.conf:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+    stop_grace_period: 60s
+    shm_size: "512mb"
+    command:
+      - "postgres"
+      - "-c"
+      - "config_file=/etc/postgresql/postgresql.conf"
+      - "-c"
+      - "hba_file=/etc/postgresql/pg_hba.conf"
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - backend
+
+  redis:
+    image: "redis:7.2-alpine"
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - ./redis-data:/data
+    command: redis-server --save 60 1 --loglevel warning --requirepass redisPrismaNaver2025@
+    environment:
+      - REDIS_PASSWORD=redisPrismaNaver2025@
+      - REDIS_HOST=localhost
+      - REDIS_PORT=6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "redisPrismaNaver2024@", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 3
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - backend
+
+networks:
+  backend:
+    internal: false
+    driver: bridge
+    driver_opts:
+      encrypt: "true"
