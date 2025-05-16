@@ -25,12 +25,17 @@ export default function PasswordWithLabelAndError({
   const toggleVisibility = () => setIsVisible((prevState) => !prevState);
 
   return (
-    <div className="*:not-first:mt-2">
-      <Label htmlFor={id}>{label}</Label>
+    <div className="space-y-1.5">
+      <Label 
+        htmlFor={id}
+        className="text-base font-normal leading-none tracking-[0%] text-gray-600"
+      >
+        {label}
+      </Label>
       <div className="relative">
         <Input
           id={id}
-          className="pe-9"
+          className="pe-9 placeholder:text-gray-400"
           placeholder={placeholder}
           type={isVisible ? "text" : "password"}
           name={name}
@@ -53,7 +58,7 @@ export default function PasswordWithLabelAndError({
       </div>
       {error && (
         <p
-          className="text-destructive mt-2 text-xs"
+          className="text-destructive text-xs"
           role="alert"
           aria-live="polite"
         >
