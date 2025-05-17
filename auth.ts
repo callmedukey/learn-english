@@ -1,5 +1,11 @@
-import NextAuth from "next-auth";
-import type { NextAuthConfig, Session, User } from "next-auth";
+import NextAuth, { CredentialsSignin } from "next-auth";
+import type { 
+  NextAuthConfig, 
+  Session, 
+  User,
+  Account,
+  Profile,
+} from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 import Naver from "next-auth/providers/naver";
 import Kakao from "next-auth/providers/kakao";
@@ -25,6 +31,7 @@ declare module "next-auth" {
       name: string;
       username: string;
       role: Role;
+      isProfileIncomplete: boolean;
     } & User;
   }
 
@@ -39,6 +46,7 @@ declare module "next-auth" {
   interface JWT {
     id: string;
     role: Role;
+    isProfileIncomplete: boolean;
   }
 }
 
@@ -46,6 +54,26 @@ declare module "next-auth" {
 export const loginSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(1, "Password is required"),
+});
+
+export const socialSignUpSchema = z.object({
+  nickname: z.string({
+    required_error: "Nickname is required",
+  }).min(3, "Nickname must be at least 3 characters"),
+  
+  gender: z.nativeEnum(Gender, {
+    required_error: "Gender is required",
+  }),
+  
+  country: z.string({
+    required_error: "Country is required",
+  }).min(1, "Country is required"),
+  
+  birthday: z.string({
+    required_error: "Birthday is required",
+  }).transform((str) => new Date(str)),
+  
+  referrer: z.string().optional(),
 });
 
 export const signUpSchema = z.object({
@@ -88,6 +116,25 @@ export const signUpSchema = z.object({
 export type SignUpInput = z.infer<typeof signUpSchema>
 export type LoginInput = z.infer<typeof loginSchema>
 
+// Custom error classes for specific auth failures
+class InvalidCredentialsError extends CredentialsSignin {
+  code = "InvalidCredentials";
+  name = "InvalidCredentialsError";
+  message = "Please provide both email and password";
+}
+
+class UserNotFoundError extends CredentialsSignin {
+  code = "UserNotFound";
+  name = "UserNotFoundError";
+  message = "No account found with this email";
+}
+
+class InvalidPasswordError extends CredentialsSignin {
+  code = "InvalidPassword";
+  name = "InvalidPasswordError";
+  message = "Invalid password";
+}
+
 // Auth.js configuration
 const config = {
   adapter: PrismaAdapter(prisma),
@@ -97,9 +144,9 @@ const config = {
         email: { label: "Email", type: "email" },
         password: { label: "Password", type: "password" }
       },
-      async authorize(credentials, request) {
+      async authorize(credentials: Record<string, unknown> | undefined) {
         if (!credentials?.email || !credentials?.password) {
-          throw new Error("Invalid credentials");
+          throw new InvalidCredentialsError();
         }
 
         const user = await prisma.user.findUnique({
@@ -107,7 +154,7 @@ const config = {
         });
 
         if (!user) {
-          throw new Error("User not found");
+          throw new UserNotFoundError();
         }
 
         const isPasswordValid = await compare(
@@ -116,7 +163,7 @@ const config = {
         );
 
         if (!isPasswordValid) {
-          throw new Error("Invalid credentials");
+          throw new InvalidPasswordError();
         }
 
         return {
@@ -144,13 +191,78 @@ const config = {
     strategy: "jwt",
   },
   callbacks: {
-    async jwt({ token, user }) {
+    async signIn(params: {
+      user: User;
+      account: Account | null;
+      profile?: Profile;
+      email?: { verificationRequest?: boolean };
+      credentials?: Record<string, any>;
+      error?: "InvalidCredentials" | "UserNotFound" | "InvalidPassword";
+    }) {
+      const { user, account, error } = params;
+      
+      if (error) {
+        switch (error) {
+          case "InvalidCredentials":
+            return '/login?error=Please+provide+both+email+and+password';
+          case "UserNotFound":
+            return '/login?error=No+account+found+with+this+email';
+          case "InvalidPassword":
+            return '/login?error=Invalid+password';
+          default:
+            return '/login?error=Something+went+wrong';
+        }
+      }
+
+      // Social login profile completion check
+      if (account && account.provider !== 'credentials') {
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: {
+            nickname: true,
+            gender: true,
+            country: true,
+            birthday: true,
+          }
+        });
+
+        const isProfileIncomplete = !dbUser?.nickname || 
+                                  !dbUser?.gender || 
+                                  !dbUser?.country || 
+                                  !dbUser?.birthday;
+
+        if (isProfileIncomplete) {
+          return '/sign-up/social';
+        }
+      }
+
+      return true;
+    },
+    async jwt({ token, user, account }) {
       if (user) {
-        return {
-          ...token,
-          id: user.id,
-          role: user.role,
-        };
+        // Add user data to token
+        token.id = user.id;
+        token.role = user.role;
+
+        // For social logins, check profile completion
+        if (account && account.provider !== 'credentials') {
+          const dbUser = await prisma.user.findUnique({
+            where: { id: user.id },
+            select: {
+              nickname: true,
+              gender: true,
+              country: true,
+              birthday: true,
+            }
+          });
+
+          token.isProfileIncomplete = !dbUser?.nickname || 
+                                    !dbUser?.gender || 
+                                    !dbUser?.country || 
+                                    !dbUser?.birthday;
+        } else {
+          token.isProfileIncomplete = false;
+        }
       }
       return token;
     },
@@ -161,6 +273,7 @@ const config = {
           ...session.user,
           id: token.id as string,
           role: token.role as Role,
+          isProfileIncomplete: token.isProfileIncomplete as boolean,
         },
       };
     }

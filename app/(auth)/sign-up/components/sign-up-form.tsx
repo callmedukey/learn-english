@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useActionState } from "react";
 import { createUser } from "@/app/(auth)/actions/auth";
@@ -15,7 +15,7 @@ import Image from "next/image";
 import { signIn } from "next-auth/react";
 import TermsDialog from "@/components/terms-dialog";
 
-// Create a type for the form state
+// First, let's properly type the form state and action result
 type FormState = {
   error?: string;
   success?: boolean;
@@ -63,13 +63,34 @@ function SocialButton({
 
 export default function SignUpForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof SignUpInput, string>>>({});
-  const [isPending, startTransition] = useTransition();
-  const [formState, action] = useActionState<FormState, FormData>(createUser, null);
+  const [formState, action, isPending] = useActionState<FormState, FormData>(
+    async (state, formData) => {
+      try {
+        const result = await createUser(formData);
+        
+        if (result.error) {
+          // The error message comes from the server action
+          return { error: result.error };
+        }
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    
+        // If successful, sign in the user
+        await signIn("credentials", {
+          email: formData.get("email") as string,
+          password: formData.get("password") as string,
+          redirect: true,
+          callbackUrl: "/"
+        });
+
+        return { success: true };
+      } catch (error) {
+        return { error: "An unexpected error occurred" };
+      }
+    },
+    null
+  );
+
+  // Client-side validation before form submission
+  const validateForm = (formData: FormData) => {
     try {
       signUpSchema.parse({
         nickname: formData.get("nickname"),
@@ -81,10 +102,8 @@ export default function SignUpForm() {
         confirmPassword: formData.get("confirmPassword"),
         referrer: formData.get("referrer"),
       });
-
       setErrors({});
-      startTransition(() => action(formData));
-      
+      return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof SignUpInput, string>> = {};
@@ -94,6 +113,7 @@ export default function SignUpForm() {
         });
         setErrors(fieldErrors);
       }
+      return false;
     }
   };
 
@@ -106,7 +126,14 @@ export default function SignUpForm() {
           </div>
         )}
 
-        <form action={action} onSubmit={handleSubmit} className="space-y-4">
+        <form 
+          action={async (formData: FormData) => {
+            if (validateForm(formData)) {
+              await action(formData);
+            }
+          }} 
+          className="space-y-4"
+        >
           <InputWithLabelAndError
             label="Nickname"
             name="nickname"

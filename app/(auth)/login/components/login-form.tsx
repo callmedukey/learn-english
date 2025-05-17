@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useActionState } from "react";
 import { signIn } from "@/auth";
@@ -63,34 +63,36 @@ function SocialButton({
 
 export default function LoginForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof LoginInput, string>>>({});
-  const [isPending, startTransition] = useTransition();
-  const [formState, action] = useActionState<FormState, FormData>(
-    async (prevState, formData) => {
+  const [formState, action, isPending] = useActionState<FormState, FormData>(
+    async (state, formData) => {
       try {
-        await signIn("credentials", {
+        const result = await signIn("credentials", {
           email: formData.get("email") as string,
           password: formData.get("password") as string,
           redirect: false,
         });
+
+        if (result?.error) {
+          // The error message is already URL decoded from the redirect
+          return { error: result.error };
+        }
+
         return { success: true };
       } catch (error) {
-        return { error: "Invalid credentials" };
+        return { error: "An unexpected error occurred" };
       }
     },
     null
   );
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    
+  const validateForm = (formData: FormData) => {
     try {
       loginSchema.parse({
         email: formData.get("email"),
         password: formData.get("password"),
       });
       setErrors({});
-      startTransition(() => action(formData));
+      return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof LoginInput, string>> = {};
@@ -100,6 +102,7 @@ export default function LoginForm() {
         });
         setErrors(fieldErrors);
       }
+      return false;
     }
   };
 
@@ -118,7 +121,14 @@ export default function LoginForm() {
         </div>
       )}
 
-      <form action={action} onSubmit={handleSubmit} className="space-y-4">
+      <form 
+        action={async (formData: FormData) => {
+          if (validateForm(formData)) {
+            await action(formData);
+          }
+        }} 
+        className="space-y-4"
+      >
         <InputWithLabelAndError
           label="Email"
           name="email"

@@ -1,8 +1,9 @@
 "use client";
 
-import { useState, useTransition } from "react";
+import { useState } from "react";
 import { useFormStatus } from "react-dom";
 import { useActionState } from "react";
+import { updateSocialUser } from "@/app/(auth)/actions/auth";
 import { z } from "zod";
 import InputWithLabelAndError from "@/components/input-with-label-and-error";
 import SelectWithLabel from "@/components/select-with-label";
@@ -54,16 +55,27 @@ function SubmitButton() {
 
 export default function SocialSignUpForm() {
   const [errors, setErrors] = useState<Partial<Record<keyof SocialSignUpInput, string>>>({});
-  const [isPending, startTransition] = useTransition();
-  const [formState, action] = useActionState<FormState, FormData>(
-    async () => ({ success: true }), // TODO: Implement social user update
+  const [formState, action, isPending] = useActionState<FormState, FormData>(
+    async (state, formData) => {
+      try {
+        const result = await updateSocialUser(formData);
+        
+        if (result.error) {
+          // The error message comes from the server action
+          return { error: result.error };
+        }
+
+        // If successful, redirect to dashboard
+        window.location.href = "/";
+        return { success: true };
+      } catch (error) {
+        return { error: "An unexpected error occurred" };
+      }
+    },
     null
   );
 
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    
+  const validateForm = (formData: FormData) => {
     try {
       socialSignUpSchema.parse({
         nickname: formData.get("nickname"),
@@ -72,10 +84,8 @@ export default function SocialSignUpForm() {
         birthday: formData.get("birthday"),
         referrer: formData.get("referrer"),
       });
-
       setErrors({});
-      startTransition(() => action(formData));
-      
+      return true;
     } catch (error) {
       if (error instanceof z.ZodError) {
         const fieldErrors: Partial<Record<keyof SocialSignUpInput, string>> = {};
@@ -85,6 +95,7 @@ export default function SocialSignUpForm() {
         });
         setErrors(fieldErrors);
       }
+      return false;
     }
   };
 
@@ -104,7 +115,14 @@ export default function SocialSignUpForm() {
           </div>
         )}
 
-        <form action={action} onSubmit={handleSubmit} className="space-y-4">
+        <form 
+          action={async (formData: FormData) => {
+            if (validateForm(formData)) {
+              await action(formData);
+            }
+          }} 
+          className="space-y-4"
+        >
           <InputWithLabelAndError
             label="Nickname"
             name="nickname"

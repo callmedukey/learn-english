@@ -5,6 +5,8 @@ import { signUpSchema } from "@/auth"
 import { prisma } from "@/prisma/prisma-client"
 import { hash } from "bcryptjs"
 import { z } from "zod"
+import { auth } from "@/auth"
+import { socialSignUpSchema } from "@/auth"
 
 export async function createUser(formData: FormData) {
   try {
@@ -71,9 +73,7 @@ export async function createUser(formData: FormData) {
 
 export async function socialSignIn(provider: string) {
   try {
-    await signIn(provider, { 
-      redirectTo: provider === "credentials" ? "/" : "/sign-up/social" 
-    });
+    await signIn(provider);
     return { success: true };
   } catch (error) {
     return { error: "Failed to sign in" };
@@ -81,19 +81,62 @@ export async function socialSignIn(provider: string) {
 }
 
 export async function handleGoogleSignIn() {
-  await signIn("google", { 
-    redirectTo: "/sign-up/social" 
-  });
+  await signIn("google");
 }
 
 export async function handleKakaoSignIn() {
-  await signIn("kakao", { 
-    redirectTo: "/sign-up/social" 
-  });
+  await signIn("kakao");
 }
 
 export async function handleNaverSignIn() {
-  await signIn("naver", { 
-    redirectTo: "/sign-up/social" 
-  });
+  await signIn("naver");
+}
+
+export async function updateSocialUser(formData: FormData) {
+  try {
+    // Get the current session
+    const session = await auth();
+    if (!session?.user) {
+      return { error: "Not authenticated" };
+    }
+
+    // Validate form data
+    const validatedFields = socialSignUpSchema.parse({
+      nickname: formData.get("nickname"),
+      gender: formData.get("gender"),
+      country: formData.get("country"),
+      birthday: formData.get("birthday"),
+      referrer: formData.get("referrer"),
+    });
+
+    // Check if nickname is already taken
+    const existingUser = await prisma.user.findFirst({
+      where: { nickname: validatedFields.nickname }
+    });
+
+    if (existingUser && existingUser.id !== session.user.id) {
+      return { error: "NicknameTaken" };
+    }
+
+    // Update the user
+    await prisma.user.update({
+      where: { id: session.user.id },
+      data: {
+        nickname: validatedFields.nickname,
+        gender: validatedFields.gender,
+        country: validatedFields.country,
+        birthday: validatedFields.birthday,
+        referrer: validatedFields.referrer,
+      }
+    });
+
+    return { success: true };
+    
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { error: "InvalidData" };
+    }
+    
+    return { error: "Something went wrong. Please try again." };
+  }
 } 

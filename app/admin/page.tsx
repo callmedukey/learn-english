@@ -40,7 +40,7 @@ export default function Page() {
           
           <div className="bg-white rounded-lg shadow p-6">
             <Suspense fallback={<div>Loading users...</div>}>
-              {/* @ts-expect-error Async Server Component */}
+     
               <UserList getUsers={getUsers} />
             </Suspense>
           </div>
