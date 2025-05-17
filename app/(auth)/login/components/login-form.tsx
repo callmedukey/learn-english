@@ -24,7 +24,7 @@ function SubmitButton() {
   return (
     <SimpleButton 
       type="submit" 
-      className="w-full bg-[#6B1D1D] hover:bg-[#5A1818]"
+      className="form-submit-button"
       disabled={pending}
     >
       {pending ? "Logging in..." : "Log In"}
@@ -46,7 +46,7 @@ function SocialButton({
       <SimpleButton
         type="submit"
         variant="outline"
-        className="w-full flex items-center justify-center gap-2 bg-[#FEF5EA]"
+        className="social-button"
       >
         <Image 
           src={`/icons/${icon}`} 
@@ -107,7 +107,7 @@ export default function LoginForm() {
   };
 
   return (
-    <div className="w-full max-w-md">
+    <div className="form-container">
       <header className="text-center my-8">
         <h2 className="text-2xl font-medium text-gray-900">Welcome Back</h2>
         <p className="mt-2 text-sm text-gray-600">
@@ -116,7 +116,7 @@ export default function LoginForm() {
       </header>
 
       {formState?.error && (
-        <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md mb-4">
+        <div className="form-error">
           {formState.error}
         </div>
       )}
@@ -127,7 +127,7 @@ export default function LoginForm() {
             await action(formData);
           }
         }} 
-        className="space-y-4"
+        className="form-layout"
       >
         <InputWithLabelAndError
           label="Email"
@@ -146,7 +146,7 @@ export default function LoginForm() {
 
         <div className="flex items-center justify-between">
           <SimpleCheckbox name="remember" label="Remember me" />
-          <a href="/forgot-password" className="text-sm text-primary hover:underline">
+          <a href="/forgot-password" className="form-footer-link">
             Forgot password?
           </a>
         </div>
@@ -154,18 +154,18 @@ export default function LoginForm() {
         <SubmitButton />
       </form>
 
-      <div className="relative my-6">
-        <div className="absolute inset-0 flex items-center">
-          <div className="w-full border-t" />
+      <div className="social-divider">
+        <div className="social-divider-line">
+          <div className="social-divider-line-inner" />
         </div>
-        <div className="relative flex justify-center text-sm">
-          <span className="bg-[#FEF5EA] px-2 text-muted-foreground">
+        <div className="social-divider-text">
+          <span className="social-divider-text-inner">
             Or continue with
           </span>
         </div>
       </div>
 
-      <div className="space-y-2">
+      <div className="social-buttons-container">
         <SocialButton action={handleKakaoSignIn} icon="Kakao-icon.png">
           Continue with Kakao
         </SocialButton>
@@ -179,15 +179,15 @@ export default function LoginForm() {
         </SocialButton>
       </div>
 
-      <footer className="mt-4 text-center">
-        <p className="text-sm text-muted-foreground">
+      <footer className="form-footer">
+        <p className="form-footer-text">
           Don't have an account?{" "}
-          <a href="/sign-up" className="text-primary hover:underline">
+          <a href="/sign-up" className="form-footer-link">
             Sign up
           </a>
         </p>
         
-        <p className="text-sm text-gray-500 mt-8">
+        <p className="form-footer-copyright">
           © 2025 Reading Champ. All rights reserved.
         </p>
       </footer>

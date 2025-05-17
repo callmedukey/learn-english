@@ -120,3 +120,90 @@
     @apply bg-background text-foreground;
   }
 }
+
+@layer components {
+  .form-container {
+    @apply w-full max-w-md;
+  }
+
+  .form-error {
+    @apply bg-destructive/15 text-destructive text-sm p-3 rounded-md mb-4;
+  }
+
+  .form-layout {
+    @apply space-y-4;
+  }
+
+  .social-divider {
+    @apply relative my-6;
+  }
+
+  .social-divider-line {
+    @apply absolute inset-0 flex items-center;
+  }
+
+  .social-divider-line-inner {
+    @apply w-full border-t;
+  }
+
+  .social-divider-text {
+    @apply relative flex justify-center text-sm;
+  }
+
+  .social-divider-text-inner {
+    @apply bg-[#FEF5EA] px-2 text-muted-foreground;
+  }
+
+  .social-buttons-container {
+    @apply space-y-2;
+  }
+
+  .social-button {
+    @apply w-full flex items-center justify-center gap-2 bg-[#FEF5EA];
+  }
+
+  .form-submit-button {
+    @apply w-full bg-[#6B1D1D] hover:bg-[#5A1818];
+  }
+
+  .form-footer {
+    @apply text-center mt-6;
+  }
+
+  .form-footer-text {
+    @apply text-sm text-muted-foreground;
+  }
+
+  .form-footer-link {
+    @apply text-primary hover:underline;
+  }
+
+  .form-footer-copyright {
+    @apply text-sm text-gray-500 mt-8;
+  }
+
+  /* Page Layout Classes */
+  .page-container {
+    @apply min-h-screen bg-[#FEF5EA];
+  }
+
+  .page-header {
+    @apply w-full max-w-[1440px] h-20 sm:h-28 mx-auto px-4 py-4 border-b flex items-center;
+  }
+
+  .page-header-logo {
+    @apply h-12 sm:h-[80px] w-auto;
+  }
+
+  .page-content {
+    @apply w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8;
+  }
+
+  .page-title {
+    @apply text-xl sm:text-2xl font-medium text-gray-900;
+  }
+
+  .page-subtitle {
+    @apply mt-2 text-sm text-gray-600;
+  }
+}

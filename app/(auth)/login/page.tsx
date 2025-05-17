@@ -3,8 +3,8 @@ import LoginForm from "@/app/(auth)/login/components/login-form";
 
 export default function Page() {
   return (
-    <div className="min-h-screen bg-[#FEF5EA]">
-      <header className="w-full max-w-[1440px] h-28 mx-auto px-4 py-4 border-b flex items-center">
+    <div className="page-container">
+      <header className="page-header">
         <Image 
           src="/logo/logo-small.png" 
           alt="Logo" 

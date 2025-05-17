@@ -28,7 +28,7 @@ function SubmitButton() {
   return (
     <SimpleButton 
       type="submit" 
-      className="w-full bg-[#6B1D1D] hover:bg-[#5A1818]"
+      className="form-submit-button"
       disabled={pending}
     >
       {pending ? "Creating account..." : "Sign Up"}
@@ -46,7 +46,7 @@ function SocialButton({
   return (
     <SimpleButton
       variant="outline"
-      className="w-full flex items-center justify-center gap-2 bg-[#FEF5EA]"
+      className="social-button"
       onClick={() => signIn(provider, { callbackUrl: '/sign-up/social' })}
     >
       <Image 
@@ -119,9 +119,9 @@ export default function SignUpForm() {
 
   return (
     <div className="min-h-screen bg-[#FEF5EA] flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
+      <div className="form-container">
         {formState?.error && (
-          <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md mb-4">
+          <div className="form-error">
             {formState.error}
           </div>
         )}
@@ -132,7 +132,7 @@ export default function SignUpForm() {
               await action(formData);
             }
           }} 
-          className="space-y-4"
+          className="form-layout"
         >
           <InputWithLabelAndError
             label="Nickname"
@@ -220,32 +220,32 @@ export default function SignUpForm() {
 
           <SubmitButton />
 
-          <div className="relative my-6">
-            <div className="absolute inset-0 flex items-center">
-              <div className="w-full border-t" />
+          <div className="social-divider">
+            <div className="social-divider-line">
+              <div className="social-divider-line-inner" />
             </div>
-            <div className="relative flex justify-center">
-              <span className="bg-[#FEF5EA] px-2 text-sm text-muted-foreground">
+            <div className="social-divider-text">
+              <span className="social-divider-text-inner">
                 Or sign up with
               </span>
             </div>
           </div>
 
-          <div className="space-y-2">
-            <SocialButton provider="kakao" icon="Kakao-icon.png" />
-            <SocialButton provider="naver" icon="Naver-icon.png" />
-            <SocialButton provider="google" icon="Google-icon.png" />
+          <div className="social-buttons-container">
+            <SocialButton provider="Kakao" icon="Kakao-icon.png" />
+            <SocialButton provider="Naver" icon="Naver-icon.png" />
+            <SocialButton provider="Google" icon="Google-icon.png" />
           </div>
 
-          <footer className="text-center mt-6">
-            <p className="text-sm text-muted-foreground">
+          <footer className="form-footer">
+            <p className="form-footer-text">
               Already have an account?{" "}
-              <a href="/login" className="text-primary hover:underline">
+              <a href="/login" className="form-footer-link">
                 Log in
               </a>
             </p>
             
-            <p className="text-sm text-gray-500 mt-8">
+            <p className="form-footer-copyright">
               © 2025 Reading Champ. All rights reserved.
             </p>
           </footer>

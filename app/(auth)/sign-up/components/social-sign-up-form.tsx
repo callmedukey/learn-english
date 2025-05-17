@@ -45,7 +45,7 @@ function SubmitButton() {
   return (
     <SimpleButton 
       type="submit" 
-      className="w-full bg-[#6B1D1D] hover:bg-[#5A1818]"
+      className="form-submit-button"
       disabled={pending}
     >
       {pending ? "Completing sign up..." : "Complete Sign Up"}
@@ -101,7 +101,7 @@ export default function SocialSignUpForm() {
 
   return (
     <div className="min-h-screen bg-[#FEF5EA] flex items-center justify-center px-4 py-8 sm:px-6 lg:px-8">
-      <div className="w-full max-w-md">
+      <div className="form-container">
         <header className="text-center mb-8">
           <h2 className="text-2xl font-medium text-gray-900">Complete Your Profile</h2>
           <p className="mt-2 text-sm text-gray-600">
@@ -110,7 +110,7 @@ export default function SocialSignUpForm() {
         </header>
 
         {formState?.error && (
-          <div className="bg-destructive/15 text-destructive text-sm p-3 rounded-md mb-4">
+          <div className="form-error">
             {formState.error}
           </div>
         )}
@@ -121,7 +121,7 @@ export default function SocialSignUpForm() {
               await action(formData);
             }
           }} 
-          className="space-y-4"
+          className="form-layout"
         >
           <InputWithLabelAndError
             label="Nickname"
@@ -174,8 +174,8 @@ export default function SocialSignUpForm() {
           <SubmitButton />
         </form>
 
-        <footer className="text-center mt-8">
-          <p className="text-sm text-gray-500">
+        <footer className="form-footer">
+          <p className="form-footer-copyright">
             © 2025 Reading Champ. All rights reserved.
           </p>
         </footer>
