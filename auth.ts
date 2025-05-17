@@ -48,6 +48,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       authorize: async (credentials) => {
         const user = null;
 
+        throw new InvalidCredentialsError();
+
         // return user object with their profile data
         return user;
       },
