@@ -61,15 +61,21 @@ export default function SocialSignUpForm() {
         const result = await updateSocialUser(formData);
         
         if (result.error) {
-          // The error message comes from the server action
-          return { error: result.error };
+          return { 
+            error: result.error === "NicknameTaken" 
+              ? "This nickname is already taken" 
+              : result.error === "InvalidData"
+              ? "Please check your input and try again"
+              : "Something went wrong. Please try again." 
+          };
         }
 
         // If successful, redirect to dashboard
-        window.location.href = "/";
+        window.location.href = "/dashboard";
         return { success: true };
       } catch (error) {
-        return { error: "An unexpected error occurred" };
+        console.error('Form submission error:', error);
+        return { error: "An unexpected error occurred. Please try again." };
       }
     },
     null
@@ -94,6 +100,7 @@ export default function SocialSignUpForm() {
           fieldErrors[field] = err.message;
         });
         setErrors(fieldErrors);
+        console.log('Validation errors:', fieldErrors);
       }
       return false;
     }
@@ -110,15 +117,34 @@ export default function SocialSignUpForm() {
         </header>
 
         {formState?.error && (
-          <div className="form-error">
-            {formState.error}
+          <div className="bg-red-50 border-l-4 border-red-400 p-4 mb-6">
+            <div className="flex">
+              <div className="flex-shrink-0">
+                <svg className="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+              </div>
+              <div className="ml-3">
+                <p className="text-sm text-red-700">{formState.error}</p>
+              </div>
+            </div>
           </div>
         )}
 
         <form 
           action={async (formData: FormData) => {
+            console.log('Form submission started');
             if (validateForm(formData)) {
+              console.log('Form validation passed', {
+                nickname: formData.get("nickname"),
+                gender: formData.get("gender"),
+                country: formData.get("country"),
+                birthday: formData.get("birthday"),
+                referrer: formData.get("referrer"),
+              });
               await action(formData);
+            } else {
+              console.log('Form validation failed', errors);
             }
           }} 
           className="form-layout"

@@ -132,6 +132,7 @@ exports.Prisma.UserScalarFieldEnum = {
   emailVerified: 'emailVerified',
   image: 'image',
   role: 'role',
+  isProfileIncomplete: 'isProfileIncomplete',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt'
 };

@@ -1,11 +1,14 @@
 import NextAuth, { CredentialsSignin } from "next-auth";
-import type { 
-  NextAuthConfig, 
-  Session, 
+import type {
+  NextAuthConfig,
   User,
   Account,
   Profile,
+  DefaultSession,
+  Session as NextAuthSession,
+  JWT as NextAuthJWT
 } from "next-auth";
+import type { AdapterUser } from "@auth/core/adapters";
 import Credentials from "next-auth/providers/credentials";
 import Naver from "next-auth/providers/naver";
 import Kakao from "next-auth/providers/kakao";
@@ -24,15 +27,15 @@ export enum Gender {
 
 // Auth type extensions
 declare module "next-auth" {
-  interface Session {
-    user: {
+  interface Session extends DefaultSession {
+    user?: {
       id: string;
       email: string;
       name: string;
       username: string;
       role: Role;
       isProfileIncomplete: boolean;
-    } & User;
+    } & DefaultSession["user"]
   }
 
   interface User {
@@ -43,10 +46,11 @@ declare module "next-auth" {
     username?: string | null;
   }
 
-  interface JWT {
+  interface JWT extends NextAuthJWT {
     id: string;
-    role: Role;
-    isProfileIncomplete: boolean;
+    email?: string;
+    role?: Role;
+    isProfileIncomplete?: boolean;
   }
 }
 
@@ -135,9 +139,53 @@ class InvalidPasswordError extends CredentialsSignin {
   message = "Invalid password";
 }
 
+// Extend the built-in session type
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    user?: {
+      id: string;
+      email: string;
+      role: Role;
+      isProfileIncomplete: boolean;
+    } & DefaultSession["user"]
+  }
+
+  interface JWT {
+    id: string;
+    email?: string;
+    role?: Role;
+    isProfileIncomplete?: boolean;
+  }
+}
+
+type AuthUser = {
+  id: string;
+  email: string;
+  role: Role;
+  isProfileIncomplete: boolean;
+} & DefaultSession["user"];
+
 // Auth.js configuration
-const config = {
-  adapter: PrismaAdapter(prisma),
+export const authConfig = {
+  adapter: {
+    ...PrismaAdapter(prisma),
+    async createUser(data: Omit<AdapterUser, "id">) {
+      const user = await prisma.user.create({
+        data: {
+          email: data.email!,
+          nickname: data.name || data.email!.split('@')[0], // Use name or email prefix as temporary nickname
+          gender: Gender.OTHER, // Default gender
+          country: "PENDING", // Temporary country
+          birthday: new Date("2000-01-01"), // Temporary birthday
+          password: "", // Empty password for OAuth users
+          image: data.image,
+          emailVerified: data.emailVerified,
+          role: "USER" as Role,
+        },
+      });
+      return user;
+    },
+  },
   providers: [
     Credentials({
       credentials: {
@@ -153,7 +201,7 @@ const config = {
           where: { email: credentials.email as string }
         });
 
-        if (!user) {
+        if (!user?.password) {
           throw new UserNotFoundError();
         }
 
@@ -199,25 +247,21 @@ const config = {
       credentials?: Record<string, any>;
       error?: "InvalidCredentials" | "UserNotFound" | "InvalidPassword";
     }) {
-      const { user, account, error } = params;
-      
-      if (error) {
-        switch (error) {
-          case "InvalidCredentials":
-            return '/login?error=Please+provide+both+email+and+password';
-          case "UserNotFound":
-            return '/login?error=No+account+found+with+this+email';
-          case "InvalidPassword":
-            return '/login?error=Invalid+password';
-          default:
-            return '/login?error=Something+went+wrong';
-        }
+      console.log('SignIn callback:', { 
+        userEmail: params.user.email,
+        accountType: params.account?.type 
+      });
+
+      // For credentials provider, we handle errors in the authorize callback
+      if (params.account?.type === "credentials") {
+        return true;
       }
 
-      // Social login profile completion check
-      if (account && account.provider !== 'credentials') {
+      // For OAuth providers
+      if (params.account?.type === "oauth") {
+        // Check if user exists in database
         const dbUser = await prisma.user.findUnique({
-          where: { id: user.id },
+          where: { email: params.user.email! },
           select: {
             nickname: true,
             gender: true,
@@ -226,55 +270,97 @@ const config = {
           }
         });
 
-        const isProfileIncomplete = !dbUser?.nickname || 
-                                  !dbUser?.gender || 
-                                  !dbUser?.country || 
-                                  !dbUser?.birthday;
+        console.log('DB User in signIn:', dbUser);
 
-        if (isProfileIncomplete) {
-          return '/sign-up/social';
+        // If user exists, check if profile needs completion
+        if (dbUser) {
+          const needsCompletion = 
+            dbUser.country === "PENDING" || 
+            dbUser.birthday.getTime() === new Date("2000-01-01").getTime();
+          
+          if (needsCompletion) {
+            return `/sign-up/social`;
+          }
         }
       }
 
       return true;
     },
-    async jwt({ token, user, account }) {
-      if (user) {
-        // Add user data to token
-        token.id = user.id;
-        token.role = user.role;
 
-        // For social logins, check profile completion
-        if (account && account.provider !== 'credentials') {
-          const dbUser = await prisma.user.findUnique({
-            where: { id: user.id },
-            select: {
-              nickname: true,
-              gender: true,
-              country: true,
-              birthday: true,
-            }
-          });
-
-          token.isProfileIncomplete = !dbUser?.nickname || 
-                                    !dbUser?.gender || 
-                                    !dbUser?.country || 
-                                    !dbUser?.birthday;
-        } else {
-          token.isProfileIncomplete = false;
-        }
+    async redirect({ url, baseUrl }: { url: string; baseUrl: string }) {
+      // Handle internal URLs
+      if (url.startsWith(baseUrl)) return url;
+      
+      // Handle OAuth callbacks
+      if (url.includes('/api/auth/callback')) {
+        return baseUrl;
       }
+
+      // Default fallback
+      return baseUrl;
+    },
+
+    async jwt({ token, user, account }) {
+      if (user?.id) {
+        // Get user from database
+        const dbUser = await prisma.user.findUnique({
+          where: { id: user.id },
+          select: {
+            nickname: true,
+            gender: true,
+            country: true,
+            birthday: true,
+            role: true,
+          }
+        });
+
+        console.log('DB User in JWT:', {
+          nickname: dbUser?.nickname,
+          country: dbUser?.country,
+          hasTemporaryBirthday: dbUser?.birthday?.getTime() === new Date("2000-01-01").getTime()
+        });
+
+        // Check if profile needs completion
+        const needsCompletion = dbUser && (
+          dbUser.country === "PENDING" || 
+          (dbUser.birthday?.getTime() ?? 0) === new Date("2000-01-01").getTime()
+        );
+
+        console.log('Profile needs completion:', needsCompletion);
+
+        return {
+          ...token,
+          id: user.id,
+          email: user.email,
+          role: (dbUser?.role || "USER") as Role,
+          isProfileIncomplete: needsCompletion,
+        };
+      }
+
       return token;
     },
-    async session({ session, token }): Promise<Session> {
+    async session({ session, token }) {
+      console.log('Session callback:', { 
+        hasToken: !!token,
+        tokenId: token?.id,
+        sessionUser: session?.user 
+      });
+
+      if (!token?.id || !token?.email) {
+        return session;
+      }
+
+      const user: AuthUser = {
+        ...session.user,
+        id: token.id,
+        email: token.email,
+        role: token.role as Role,
+        isProfileIncomplete: token.isProfileIncomplete as boolean,
+      };
+
       return {
         ...session,
-        user: {
-          ...session.user,
-          id: token.id as string,
-          role: token.role as Role,
-          isProfileIncomplete: token.isProfileIncomplete as boolean,
-        },
+        user
       };
     }
   },
@@ -283,4 +369,4 @@ const config = {
   },
 } satisfies NextAuthConfig;
 
-export const { handlers, signIn, signOut, auth } = NextAuth(config);
+export const { handlers, auth, signIn, signOut } = NextAuth(authConfig);

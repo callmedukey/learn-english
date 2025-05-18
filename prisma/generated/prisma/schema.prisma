@@ -20,21 +20,22 @@ enum Gender {
 }
 
 model User {
-  id            String    @id @default(cuid())
-  nickname      String    @unique
-  email         String    @unique
-  gender        Gender
-  country       String
-  birthday      DateTime
-  password      String
-  referrer      String? // Optional referrer nickname
-  emailVerified DateTime?
-  image         String?
-  role          Role      @default(USER)
-  accounts      Account[]
-  sessions      Session[]
-  createdAt     DateTime  @default(now())
-  updatedAt     DateTime  @updatedAt
+  id                  String    @id @default(cuid())
+  nickname            String    @unique
+  email               String    @unique
+  gender              Gender
+  country             String
+  birthday            DateTime
+  password            String? // Make password optional for social login
+  referrer            String? // Optional referrer nickname
+  emailVerified       DateTime?
+  image               String?
+  role                Role      @default(USER)
+  isProfileIncomplete Boolean   @default(true)
+  accounts            Account[]
+  sessions            Session[]
+  createdAt           DateTime  @default(now())
+  updatedAt           DateTime  @updatedAt
 
   @@index([referrer])
 }
