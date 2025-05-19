@@ -3,10 +3,12 @@ import type { DefaultSession, User } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
 import Naver from "next-auth/providers/naver";
-import Kakao from "next-auth/providers/kakao";
+import Kakao, { Gender } from "next-auth/providers/kakao";
 import { PrismaAdapter } from "@auth/prisma-adapter";
 import { prisma } from "./prisma/prisma-client";
 import { Role } from "./prisma/generated/prisma";
+import { signInSchema } from "./lib/schemas/auth.schema";
+import { compare } from "bcryptjs";
 
 declare module "next-auth" {
   interface Session {
@@ -14,7 +16,11 @@ declare module "next-auth" {
       id: string;
       email: string;
       name: string;
+      nickname: string;
       username: string;
+      gender: Gender | undefined;
+      birthday: Date;
+      country: string;
       role: Role;
     } & DefaultSession["user"];
   }
@@ -22,9 +28,13 @@ declare module "next-auth" {
   interface User {
     id?: string;
     name?: string | null;
+    username?: string | null;
     email?: string | null;
     role?: Role;
-    username?: string | null;
+    nickname?: string | null;
+    gender?: Gender | null;
+    birthday?: Date | null;
+    country?: string | null;
   }
 }
 
@@ -46,12 +56,39 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         password: {},
       },
       authorize: async (credentials) => {
-        const user = null;
+        const parsed = signInSchema.safeParse(credentials);
 
-        throw new InvalidCredentialsError();
+        if (!parsed.success) {
+          throw new InvalidCredentialsError();
+        }
 
-        // return user object with their profile data
-        return user;
+        const user = await prisma.user.findUnique({
+          where: { email: parsed.data.email },
+        });
+
+        if (!user || !user.password) {
+          throw new UserNotFoundError();
+        }
+
+        const passwordsMatch = await compare(
+          parsed.data.password,
+          user.password,
+        );
+
+        if (!passwordsMatch) {
+          throw new InvalidCredentialsError();
+        }
+
+        return {
+          id: user.id,
+          email: user.email,
+          name: user.name,
+          nickname: user.nickname,
+          gender: user.gender as Gender,
+          birthday: user.birthday,
+          country: user.country,
+          role: user.role as Role,
+        };
       },
     }),
     Naver({
@@ -65,17 +102,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   ],
   session: {
     strategy: "jwt",
+    maxAge: 7 * 24 * 60 * 60,
+    updateAge: 24 * 60 * 60,
   },
 
   callbacks: {
     async session({ session, token }) {
       session.user.id = token.sub as string;
       session.user.role = token.role as Role;
-      session.user.username = token.username as string;
+      session.user.nickname = token.nickname as string;
+      session.user.gender = token.gender as Gender;
+      session.user.birthday = token.birthday as Date;
+      session.user.country = token.country as string;
       return session;
     },
-
-    async jwt({ token, user, session, trigger }) {
+    async jwt({ token }) {
       const foundUser = await prisma.user.findUnique({
         where: {
           id: token.sub as string,
@@ -83,8 +124,45 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       });
 
       token.role = foundUser?.role;
+      token.nickname = foundUser?.nickname;
+      token.gender = foundUser?.gender;
+      token.birthday = foundUser?.birthday;
+      token.country = foundUser?.country;
       token.username = foundUser?.username;
       return token;
+    },
+    async signIn({ user }) {
+      if (!user.email) {
+        return "/sign-up";
+      }
+
+      const foundUser = await prisma.user.findUnique({
+        where: { email: user.email },
+      });
+
+      if (!foundUser) {
+        return "/sign-up";
+      }
+
+      if (!foundUser.name || !foundUser.birthday || !foundUser.country) {
+        return "/sign-up/social";
+      }
+
+      return true;
+    },
+  },
+  logger: {
+    error(error: Error) {
+      if ((error as any).type === "CredentialsSignin") {
+        return;
+      }
+      console.error(error);
+    },
+    warn(message: string) {
+      console.warn(message);
+    },
+    debug(message: string) {
+      console.debug(message);
     },
   },
 });

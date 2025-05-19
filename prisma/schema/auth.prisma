@@ -1,32 +1,42 @@
-generator client {
-  provider = "prisma-client-js"
-  output   = "./generated/prisma"
-}
-
-datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
-}
-
 enum Role {
   USER
   ADMIN
 }
 
+enum Gender {
+  Male
+  Female
+  Other
+}
+
 model User {
-  id            String          @id @default(cuid())
-  name          String?
-  username      String?
-  email         String          @unique
+  id       String    @id @default(cuid())
+  name     String?
+  username String?
+  nickname String?
+  email    String    @unique
+  gender   Gender?
+  birthday DateTime?
+  password String?
+  country  String?
+
+  referrer   User?   @relation("UserReferral", fields: [referrerId], references: [id])
+  referrerId String?
+
+  referralsMade User[] @relation("UserReferral")
+
+  isReferred    Boolean @default(false)
+  referrerCount Int     @default(0)
+
   emailVerified DateTime?
   image         String?
-  role          Role            @default(USER)
+  role          Role      @default(USER)
   accounts      Account[]
   sessions      Session[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
 }
- 
+
 model Account {
   userId            String
   type              String
@@ -39,30 +49,29 @@ model Account {
   scope             String?
   id_token          String?
   session_state     String?
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
- 
+
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   @@id([provider, providerAccountId])
 }
- 
+
 model Session {
   sessionToken String   @unique
   userId       String
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
- 
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
- 
+
 model VerificationToken {
   identifier String
   token      String
   expires    DateTime
- 
+
   @@id([identifier, token])
 }
- 

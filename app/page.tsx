@@ -1,12 +1,23 @@
 import { auth } from "@/auth";
-import LoginForm from "@/components/auth/login-form";
+import { redirect } from "next/navigation";
+import React from "react";
 
-export default async function Home() {
+const page = async () => {
   const session = await auth();
-  console.log("from home", session);
-  return (
-    <main className="flex items-center justify-center min-h-screen">
-      <LoginForm />
-    </main>
-  );
-}
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  if (session.user.role === "USER") {
+    redirect("/dashboard");
+  }
+
+  if (session.user.role === "ADMIN") {
+    redirect("/admin");
+  }
+
+  return <div></div>;
+};
+
+export default page;
