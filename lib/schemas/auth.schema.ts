@@ -85,3 +85,9 @@ export const socialSignUpSchema = baseSignUpObjectSchema.pick({
 });
 
 export type SocialSignUpType = z.infer<typeof socialSignUpSchema>;
+
+export const forgotPasswordSchema = signInSchema.pick({
+  email: true,
+});
+
+export type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>;

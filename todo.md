@@ -1,0 +1,2 @@
+-Setup resend with react email for email setup
+-dashboard layout

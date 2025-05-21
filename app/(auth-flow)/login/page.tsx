@@ -1,3 +1,4 @@
+import { Metadata } from "next";
 import { cookies } from "next/headers";
 import Image from "next/image";
 import React from "react";
@@ -5,6 +6,11 @@ import React from "react";
 import logo from "@/public/logo/large-logo.png";
 
 import LoginForm from "./component/login-form";
+
+export const metadata: Metadata = {
+  title: "Login",
+  description: "Login to your account",
+};
 
 const page = async () => {
   const cookieStore = await cookies();

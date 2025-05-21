@@ -5,13 +5,17 @@ import "./globals.css";
 import Header from "@/components/layout/header";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
+
 const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
   subsets: ["latin"],
 });
 
 export const metadata: Metadata = {
-  title: "Reading Champ",
+  title: {
+    template: "%s | Reading Champ",
+    default: "Reading Champ | English Learning Platform",
+  },
   description: "Reading Champ",
 };
 

@@ -1,7 +1,13 @@
 "use server";
 
+import bcrypt from "bcryptjs";
+import { cookies } from "next/headers";
+import { AuthError, User } from "next-auth";
+
 import { signIn } from "@/auth";
 import {
+  forgotPasswordSchema,
+  ForgotPasswordType,
   signInSchema,
   SignInType,
   signUpSchema,
@@ -9,11 +15,8 @@ import {
   socialSignUpSchema,
   SocialSignUpType,
 } from "@/lib/schemas/auth.schema";
-import { ActionResponse } from "@/types/actions";
-import { AuthError, User } from "next-auth";
-import { cookies } from "next/headers";
 import { prisma } from "@/prisma/prisma-client";
-import bcrypt from "bcryptjs";
+import { ActionResponse } from "@/types/actions";
 
 export async function signInAction(
   _: ActionResponse<SignInType>,
@@ -94,16 +97,8 @@ export async function signUpAction(
     };
   }
 
-  const {
-    email,
-    password,
-    nickname,
-    gender,
-    birthday,
-    country,
-    terms,
-    referrer,
-  } = parsed.data;
+  const { email, password, nickname, gender, birthday, country, referrer } =
+    parsed.data;
 
   let foundReferrer: Pick<User, "id"> | null = null;
 
@@ -272,4 +267,43 @@ export async function socialSignInAction(
   await signIn(provider, {
     redirectTo: "/dashboard",
   });
+}
+
+export async function forgotPasswordAction(
+  _: ActionResponse<ForgotPasswordType>,
+  formData: FormData,
+): Promise<ActionResponse<ForgotPasswordType>> {
+  const inputs = Object.fromEntries(
+    formData.entries(),
+  ) as unknown as ForgotPasswordType;
+
+  const parsed = forgotPasswordSchema.safeParse(inputs);
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: "Invalid credentials",
+      inputs,
+      errors: parsed.error.flatten().fieldErrors,
+    };
+  }
+
+  const { email } = parsed.data;
+
+  const user = await prisma.user.findUnique({
+    where: { email },
+  });
+
+  if (!user) {
+    return {
+      success: false,
+      message: "User not found",
+      inputs,
+    };
+  }
+
+  return {
+    success: true,
+    message: "Reset code sent",
+  };
 }

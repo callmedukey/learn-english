@@ -1,6 +1,12 @@
+import { Metadata } from "next";
 import React from "react";
 
 import RegisterForm from "./component/register-form";
+
+export const metadata: Metadata = {
+  title: "Sign Up",
+  description: "Sign up to join Reading Champ",
+};
 
 const page = () => {
   return (
