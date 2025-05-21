@@ -10,9 +10,7 @@ export async function signInAction(
   formData: FormData,
 ): Promise<ActionResponse<SignInType>> {
   const inputs = Object.fromEntries(formData.entries()) as SignInType;
-
   const parsed = signInSchema.safeParse(inputs);
-
   console.log(parsed.error?.flatten().fieldErrors);
   if (!parsed.success) {
     return {

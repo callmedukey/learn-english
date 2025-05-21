@@ -5,7 +5,7 @@ import LoginForm from "./component/login-form";
 
 const page = () => {
   return (
-    <main className="mx-auto grid min-h-[calc(100vh-6rem)] max-w-7xl gap-12 px-4 py-16 lg:grid-cols-5 lg:px-0">
+    <main className="mx-auto grid min-h-[calc(100vh-6rem)] max-w-7xl gap-12 px-4 py-16 lg:grid-cols-5">
       <div className="col-span-3 hidden items-center lg:flex">
         <Image
           src={logo}
@@ -14,7 +14,7 @@ const page = () => {
           priority
           className="w-48 translate-y-2 xl:w-62"
         />
-        <div className="text-primary col-span-2 space-y-2 xl:space-y-4">
+        <div className="col-span-2 space-y-2 text-primary xl:space-y-4">
           <h1 className="text-6xl font-bold tracking-tight">READING CHAMP</h1>
           <p className="flex flex-col gap-0 text-3xl font-bold">
             <span>Come and Join</span>
@@ -22,7 +22,7 @@ const page = () => {
           </p>
         </div>
       </div>
-      <div className="col-span-2 w-full">
+      <div className="col-span-2 w-full place-content-center">
         <LoginForm />
       </div>
     </main>
