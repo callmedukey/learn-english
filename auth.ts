@@ -1,5 +1,5 @@
 import NextAuth, { CredentialsSignin } from "next-auth";
-import type { DefaultSession, User } from "next-auth";
+import type { DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
 
 import Naver from "next-auth/providers/naver";
@@ -131,21 +131,33 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       token.username = foundUser?.username;
       return token;
     },
-    async signIn({ user }) {
+    async signIn({ user, credentials, account }) {
       if (!user.email) {
-        return "/sign-up";
+        return "/signup";
       }
 
       const foundUser = await prisma.user.findUnique({
         where: { email: user.email },
       });
 
-      if (!foundUser) {
-        return "/sign-up";
-      }
+      if (!foundUser && account) {
+        const newUser = await prisma.user.create({
+          data: {
+            email: user.email,
+          },
+        });
 
-      if (!foundUser.name || !foundUser.birthday || !foundUser.country) {
-        return "/sign-up/social";
+        await prisma.account.create({
+          data: {
+            userId: newUser.id,
+            provider: account.provider,
+            providerAccountId: account.providerAccountId,
+            type: account.type,
+          },
+        });
+        return "/signup/social?email=" + encodeURIComponent(user.email);
+      } else if (!foundUser) {
+        return "/signup";
       }
 
       return true;

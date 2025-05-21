@@ -1,9 +1,15 @@
-import React from "react";
+import { cookies } from "next/headers";
 import Image from "next/image";
+import React from "react";
+
 import logo from "@/public/logo/large-logo.png";
+
 import LoginForm from "./component/login-form";
 
-const page = () => {
+const page = async () => {
+  const cookieStore = await cookies();
+  const rememberMe = cookieStore.get("rememberMe");
+
   return (
     <main className="mx-auto grid min-h-[calc(100vh-6rem)] max-w-7xl gap-12 px-4 py-16 lg:grid-cols-5">
       <div className="col-span-3 hidden items-center lg:flex">
@@ -23,7 +29,7 @@ const page = () => {
         </div>
       </div>
       <div className="col-span-2 w-full place-content-center">
-        <LoginForm />
+        <LoginForm previousEmail={rememberMe?.value} />
       </div>
     </main>
   );

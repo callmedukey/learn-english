@@ -1,22 +1,23 @@
 "use client";
 
+import Link from "next/link";
+import React, { useActionState } from "react";
+
 import { signInAction } from "@/actions/auth.action";
-import { signIn, signOut } from "@/auth";
 import ButtonWithLoading from "@/components/custom-ui/button-with-loading";
-import CheckboxWithLabel from "@/components/comp-138";
+import CheckboxWithLabel from "@/components/custom-ui/checkbox-with-label";
 import InputWithLabel from "@/components/custom-ui/input-with-label";
+import SocialLoginButtons from "@/components/social-login-buttons";
 import { Separator } from "@/components/ui/separator";
 import { SignInType } from "@/lib/schemas/auth.schema";
 import { ActionResponse } from "@/types/actions";
-import React, { useActionState } from "react";
-import Link from "next/link";
-import SocialLoginButtons from "@/components/social-login-buttons";
+
 const initialState: ActionResponse<SignInType> = {
   success: false,
   message: "",
 };
 
-const LoginForm = () => {
+const LoginForm = ({ previousEmail }: { previousEmail?: string }) => {
   const [state, action, isPending] = useActionState(signInAction, initialState);
 
   return (
@@ -31,6 +32,7 @@ const LoginForm = () => {
         placeholder="Enter your email"
         type="email"
         name="email"
+        defaultValue={previousEmail ?? state.inputs?.email}
         error={state.errors?.email?.[0]}
       />
       <InputWithLabel
@@ -39,15 +41,24 @@ const LoginForm = () => {
         placeholder="Enter your password"
         type="password"
         name="password"
+        defaultValue={state.inputs?.password}
         error={state.errors?.password?.[0]}
       />
       <div className="flex items-center justify-between">
-        <CheckboxWithLabel label="Remember me" />
+        <CheckboxWithLabel
+          label="Remember me"
+          name="rememberMe"
+          defaultChecked={previousEmail ? true : false}
+        />
         <Link href="/forgot-password" className="text-sm text-gray-500">
           Forgot password?
         </Link>
       </div>
-      <ButtonWithLoading type="submit" isLoading={isPending}>
+      <ButtonWithLoading
+        type="submit"
+        isLoading={isPending}
+        disabled={isPending}
+      >
         Login
       </ButtonWithLoading>
       <div className="relative flex items-center justify-center">
@@ -56,36 +67,19 @@ const LoginForm = () => {
           Or continue with
         </span>
       </div>
-      <SocialLoginButtons />
+      <SocialLoginButtons type="login" />
       <p className="flex items-center justify-center gap-2 text-center text-sm text-gray-500">
         <span>Don&apos;t have an account?</span>
-        <Link href="/signup" className="">
+        <Link
+          href="/signup"
+          className="font-semibold text-gray-600 underline underline-offset-2"
+        >
           Sign up
         </Link>
       </p>
       <p className="text-center text-sm text-gray-500">
         © 2025 Reading Champ. All rights reserved.
       </p>
-      {/* <button
-        type="button"
-        className="cursor-pointer rounded-md px-4 py-2 text-white"
-        onClick={async () => {
-          "use server";
-          await signIn("naver", { redirectTo: "/" });
-        }}
-      >
-        Naver Login
-      </button>
-      <button
-        type="button"
-        className="cursor-pointer rounded-md px-4 py-2 text-white"
-        onClick={async () => {
-          "use server";
-          await signOut({ redirectTo: "/" });
-        }}
-      >
-        Sign Out
-      </button> */}
     </form>
   );
 };

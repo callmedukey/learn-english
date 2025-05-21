@@ -1,7 +1,7 @@
 "use client";
 
-import { useId } from "react";
 import * as CheckboxPrimitive from "@radix-ui/react-checkbox";
+import { useId } from "react";
 
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
@@ -11,11 +11,13 @@ interface CheckboxWithLabelProps
   extends React.ComponentProps<typeof CheckboxPrimitive.Root> {
   label: string | React.ReactNode;
   className?: string;
+  error?: string;
 }
 
 export default function CheckboxWithLabel({
   label,
   className,
+  error,
   ...restProps
 }: CheckboxWithLabelProps) {
   const id = useId();
@@ -29,12 +31,7 @@ export default function CheckboxWithLabel({
       <Label htmlFor={id} className="text-gray-500">
         {label}
       </Label>
+      {error && <p className="mt-2 text-xs text-destructive">{error}</p>}
     </div>
   );
-}
-
-{
-  /* <a className="underline" href={href} target="_blank">
-  {hrefText}
-</a>; */
 }

@@ -1,11 +1,10 @@
 import { LoaderCircleIcon } from "lucide-react";
+import { ComponentProps } from "react";
 
 import { Button } from "@/components/ui/button";
-import { ButtonHTMLAttributes } from "react";
 import { cn } from "@/lib/utils";
 
-interface ButtonWithLoadingProps
-  extends ButtonHTMLAttributes<HTMLButtonElement> {
+interface ButtonWithLoadingProps extends ComponentProps<typeof Button> {
   isLoading?: boolean;
   icon?: React.ReactNode;
   className?: string;
