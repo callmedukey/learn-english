@@ -17,13 +17,7 @@ import AddCountryForm from "./add-country-form";
 const AddCountryDialog = () => {
   const [open, setOpen] = useState(false);
 
-  const handleCountryAdded = () => {
-    // The form will show a success message.
-    // The dialog can be closed after a delay by the form, or immediately here.
-    // For now, let the form handle its state and potential timed close.
-    // Revalidation should refresh the table, so the dialog can close.
-    // setOpen(false); // Or let the form's setShowForm prop (passed as setOpen) handle it
-  };
+  const handleCountryAdded = () => {};
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>

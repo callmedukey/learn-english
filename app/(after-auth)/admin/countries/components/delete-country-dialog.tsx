@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState, useTransition } from "react";
+import React, { useTransition } from "react";
+import { toast } from "sonner";
 
 import {
   AlertDialog,
@@ -14,13 +15,13 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { deleteCountryAction } from "../actions/countries.admin-actions"; // This action will be created/updated
+import { deleteCountryAction } from "../actions/countries.admin-actions";
 
 interface DeleteCountryDialogProps {
   countryId: string;
   countryName: string;
-  onCountryDeleted?: () => void; // Optional callback
-  children: React.ReactNode; // To use a button as a trigger
+  onCountryDeleted?: () => void;
+  children: React.ReactNode;
 }
 
 const DeleteCountryDialog: React.FC<DeleteCountryDialogProps> = ({
@@ -30,21 +31,17 @@ const DeleteCountryDialog: React.FC<DeleteCountryDialogProps> = ({
   children,
 }) => {
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-  // No success message state needed as dialog closes on success
 
   const handleDelete = async () => {
-    setError(null);
     startTransition(async () => {
       const result = await deleteCountryAction(countryId);
       if (result.error) {
-        setError(result.error);
+        toast.error(result.error);
       } else {
-        // On success, the dialog will be closed by AlertDialog's default behavior or manually if needed
         if (onCountryDeleted) {
           onCountryDeleted();
         }
-        // Potentially add a toast notification here for better UX
+        toast.success(`Country '${countryName}' deleted successfully!`);
       }
     });
   };
@@ -61,9 +58,6 @@ const DeleteCountryDialog: React.FC<DeleteCountryDialogProps> = ({
             associated icon. Are you sure you want to proceed?
           </AlertDialogDescription>
         </AlertDialogHeader>
-        {error && (
-          <p className="text-sm font-medium text-red-600">Error: {error}</p>
-        )}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
           <AlertDialogAction

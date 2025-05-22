@@ -1,13 +1,14 @@
-import { NextRequest, NextResponse } from "next/server";
 import fs from "fs";
 import path from "path";
+
 import mime from "mime-types";
+import { NextRequest, NextResponse } from "next/server";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { slug: string[] } },
+  { params }: { params: Promise<{ slug: string[] }> },
 ) {
-  const slug = params.slug;
+  const slug = (await params).slug;
   if (!slug || slug.length === 0) {
     return NextResponse.json(
       { error: "File path is required" },

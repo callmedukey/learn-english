@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React, { useState, useTransition, useEffect } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -32,8 +33,6 @@ const UpdateCountryForm: React.FC<UpdateCountryFormProps> = ({
   setShowForm,
 }) => {
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [iconPreview, setIconPreview] = useState<string | null>(
     country.countryIcon?.iconUrl || null,
   );
@@ -57,17 +56,15 @@ const UpdateCountryForm: React.FC<UpdateCountryFormProps> = ({
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(null);
-    setSuccessMessage(null);
     const formData = new FormData(event.currentTarget);
     formData.append("countryId", country.id);
 
     startTransition(async () => {
       const result = await updateCountry(formData);
       if (result.error) {
-        setError(result.error);
+        toast.error(result.error);
       } else if (result.success) {
-        setSuccessMessage(
+        toast.success(
           `Country '${result.country?.name}' updated successfully!`,
         );
         if (result.country?.countryIcon?.iconUrl) {
@@ -80,7 +77,7 @@ const UpdateCountryForm: React.FC<UpdateCountryFormProps> = ({
           setTimeout(() => setShowForm(false), 2000);
         }
       } else {
-        setError("An unexpected error occurred during update");
+        toast.error("An unexpected error occurred during update");
       }
     });
   };
@@ -129,10 +126,6 @@ const UpdateCountryForm: React.FC<UpdateCountryFormProps> = ({
           </div>
         )}
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {successMessage && (
-        <p className="text-sm text-green-600">{successMessage}</p>
-      )}
       <div className="flex space-x-2">
         <Button type="submit" disabled={isPending}>
           {isPending ? "Updating..." : "Update Country"}

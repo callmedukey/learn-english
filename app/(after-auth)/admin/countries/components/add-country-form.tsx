@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import React, { useState, useTransition } from "react";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input"; // Assuming you have an Input component
@@ -19,8 +20,6 @@ const AddCountryForm: React.FC<AddCountryFormProps> = ({
   setShowForm,
 }) => {
   const [isPending, startTransition] = useTransition();
-  const [error, setError] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState<string | null>(null);
   const [iconPreview, setIconPreview] = useState<string | null>(null);
 
   const handleIconChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,31 +37,25 @@ const AddCountryForm: React.FC<AddCountryFormProps> = ({
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
-    setError(null);
-    setSuccessMessage(null);
     const formData = new FormData(event.currentTarget);
+    const form = event.currentTarget; // Store a reference to the form
 
     startTransition(async () => {
       const result = await createCountry(formData);
       if (result.error) {
-        setError(result.error);
+        toast.error(result.error);
       } else if (result.success) {
-        setSuccessMessage(
-          `Country '${result.country?.name}' added successfully!`,
-        );
-        event.currentTarget.reset(); // Reset the form
-        setIconPreview(null); // Clear preview
+        toast.success(`Country '${result.country?.name}' added successfully!`);
+        setIconPreview(null);
         if (onCountryAdded) {
           onCountryAdded();
         }
-        if (setShowForm) {
-          // Optionally hide form after a delay
-          setTimeout(() => setShowForm(false), 2000);
-        }
+        setShowForm?.(false);
       } else {
-        setError("An unexpected error occurred");
+        toast.error("An unexpected error occurred");
       }
     });
+    form.reset();
   };
 
   return (
@@ -104,10 +97,6 @@ const AddCountryForm: React.FC<AddCountryFormProps> = ({
           </div>
         )}
       </div>
-      {error && <p className="text-sm text-red-600">{error}</p>}
-      {successMessage && (
-        <p className="text-sm text-green-600">{successMessage}</p>
-      )}
       <div className="flex space-x-2">
         <Button type="submit" disabled={isPending}>
           {isPending ? "Submitting..." : "Add Country"}

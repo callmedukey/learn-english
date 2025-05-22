@@ -120,7 +120,6 @@ export const updateCountry = async (formData: FormData) => {
     let imageWidth = existingCountry.countryIcon?.width;
     let imageHeight = existingCountry.countryIcon?.height;
 
-    // Handle icon update only if a new icon file is provided and has content
     if (iconFile && iconFile.size > 0) {
       if (!iconFile.type.startsWith("image/")) {
         return {
@@ -149,9 +148,7 @@ export const updateCountry = async (formData: FormData) => {
       imageWidth = imageMetadata.width || 32;
       imageHeight = imageMetadata.height || 32;
 
-      // Store old icon path for deletion after successful transaction
       if (existingCountry.countryIcon?.iconUrl) {
-        // Transform DB path to filesystem path
         oldIconPathToDelete = path.join(
           process.cwd(),
           "public",
@@ -159,8 +156,6 @@ export const updateCountry = async (formData: FormData) => {
         );
       }
     } else if (iconFile && iconFile.size === 0) {
-      // If a file input was used but no file selected, it's not an error, just means no change to icon.
-      // If you want to allow *removing* an icon, this logic would need to change.
     }
 
     const result = await prisma.$transaction(async (tx) => {
@@ -170,10 +165,9 @@ export const updateCountry = async (formData: FormData) => {
 
       await tx.country.update({
         where: { id: countryId },
-        data: { name: countryName }, // Update name first
+        data: { name: countryName },
       });
 
-      // If a new icon was uploaded, update/create the country icon
       if (iconPathForDb) {
         if (existingCountry.countryIcon) {
           // Update existing icon
@@ -187,7 +181,6 @@ export const updateCountry = async (formData: FormData) => {
           });
           updatedCountryData.countryIconId = updatedIcon.id;
         } else {
-          // Create new icon if country didn't have one
           const newIcon = await tx.countryIcon.create({
             data: {
               iconUrl: iconPathForDb,
@@ -196,14 +189,13 @@ export const updateCountry = async (formData: FormData) => {
               countryId: countryId,
             },
           });
-          updatedCountryData.countryIconId = newIcon.id; // Important: Link new icon to country
+          updatedCountryData.countryIconId = newIcon.id;
           await tx.country.update({
             where: { id: countryId },
             data: { countryIconId: newIcon.id },
           });
         }
       }
-      // Fetch the final state of the country with its icon
       const finalUpdatedCountry = await tx.country.findUnique({
         where: { id: countryId },
         include: { countryIcon: true },
@@ -211,19 +203,17 @@ export const updateCountry = async (formData: FormData) => {
       return finalUpdatedCountry;
     });
 
-    // If transaction was successful and an old icon path is set, delete old icon file
     if (oldIconPathToDelete) {
       try {
         await unlink(oldIconPathToDelete);
         console.log(`Successfully deleted old icon: ${oldIconPathToDelete}`);
       } catch (deleteError) {
         console.error("Failed to delete old icon file:", deleteError);
-        // Non-fatal error, log it but don't fail the whole operation
       }
     }
 
     revalidatePath("/admin/countries");
-    revalidatePath(`/admin/countries/${countryId}`); // If you have a specific country page
+    revalidatePath(`/admin/countries/${countryId}`);
     return { success: true, country: result };
   } catch (error) {
     console.error("Failed to update country:", error);
@@ -244,11 +234,6 @@ export const updateCountry = async (formData: FormData) => {
   }
 };
 
-export const deleteCountry = async () => {
-  // TODO: Implement country deletion logic
-  console.log("deleteCountry called");
-};
-
 export const deleteCountryAction = async (countryId: string) => {
   if (!countryId) {
     return { error: "Country ID is required for deletion" };
@@ -266,7 +251,6 @@ export const deleteCountryAction = async (countryId: string) => {
       return { error: "Country not found. Cannot delete." };
     }
 
-    // If the country has an icon, prepare its path for deletion
     if (countryToDelete.countryIcon?.iconUrl) {
       iconPathToDelete = path.join(
         process.cwd(),
@@ -276,27 +260,22 @@ export const deleteCountryAction = async (countryId: string) => {
     }
 
     await prisma.$transaction(async (tx) => {
-      // If there's an associated icon record, delete it first
       if (countryToDelete.countryIcon) {
         await tx.countryIcon.delete({
           where: { id: countryToDelete.countryIcon.id },
         });
       }
-      // Then delete the country itself
       await tx.country.delete({
         where: { id: countryId },
       });
     });
 
-    // If an icon file path was determined, delete the actual file
     if (iconPathToDelete) {
       try {
         await unlink(iconPathToDelete);
         console.log(`Successfully deleted icon file: ${iconPathToDelete}`);
       } catch (fileDeleteError) {
         console.error("Failed to delete icon file:", fileDeleteError);
-        // Log this error, but don't make the whole operation fail
-        // The database records are already deleted.
       }
     }
 
@@ -304,7 +283,6 @@ export const deleteCountryAction = async (countryId: string) => {
     return { success: true };
   } catch (error) {
     console.error("Failed to delete country:", error);
-    // Note: No cleanup of partially uploaded files needed here as in create/update
     return {
       error: "Failed to delete country. Please try again.",
     };
