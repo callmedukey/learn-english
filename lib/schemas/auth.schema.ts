@@ -91,3 +91,25 @@ export const forgotPasswordSchema = signInSchema.pick({
 });
 
 export type ForgotPasswordType = z.infer<typeof forgotPasswordSchema>;
+
+export const verifyCodeSchema = forgotPasswordSchema.extend({
+  code: z.coerce
+    .number({ required_error: "Code is required" })
+    .min(100000, { message: "Code must be 6 digits" })
+    .max(999999, { message: "Code must be 6 digits" }),
+});
+
+export type VerifyCodeType = z.infer<typeof verifyCodeSchema>;
+
+export const resetPasswordSchema = z
+  .object({
+    email: z.string({ required_error: "Email is required" }).email(),
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type ResetPasswordType = z.infer<typeof resetPasswordSchema>;
