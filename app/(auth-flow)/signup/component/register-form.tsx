@@ -102,10 +102,10 @@ const RegisterForm = () => {
           placeholder="Select your country"
           error={state.errors?.country?.[0]}
           items={[
-            { label: "United States", value: "US" },
-            { label: "Canada", value: "CA" },
-            { label: "United Kingdom", value: "UK" },
-            { label: "Australia", value: "AU" },
+            { label: "United States", value: "United States" },
+            { label: "Canada", value: "Canada" },
+            { label: "United Kingdom", value: "United Kingdom" },
+            { label: "Australia", value: "Australia" },
           ]}
         />
         <InputWithLabel

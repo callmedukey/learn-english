@@ -1,0 +1,25 @@
+model Country {
+  id String @id @default(cuid())
+
+  name String @unique
+
+  countryIcon CountryIcon?
+  countryIconId String? @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model CountryIcon {
+  id String @id @default(cuid())
+
+  countryId String @unique
+  country   Country? @relation(fields: [countryId], references: [id])
+  width     Int
+  height    Int
+  
+  iconUrl String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
