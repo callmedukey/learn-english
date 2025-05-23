@@ -20,6 +20,8 @@ model ARScore {
   AR   AR     @relation(fields: [ARId], references: [id], onDelete: Cascade)
 
   score Int @default(0)
+
+  novelQuestionCompleted NovelQuestionCompleted[]
 }
 
 model RCScore {
@@ -32,4 +34,6 @@ model RCScore {
   RCLevel   RCLevel @relation(fields: [RCLevelId], references: [id], onDelete: Cascade)
 
   score Int @default(0)
+
+  RCQuestionCompleted RCQuestionCompleted[]
 }

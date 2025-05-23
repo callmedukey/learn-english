@@ -87,7 +87,7 @@ model NovelQuestion {
 
   orderNumber Int
 
-  questions   String
+  question    String
   choices     String[]
   answer      String
   explanation String
@@ -107,6 +107,9 @@ model NovelQuestionCompleted {
 
   user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId String
+
+  ARScore   ARScore? @relation(fields: [ARScoreId], references: [id], onDelete: Cascade)
+  ARScoreId String?
 
   score Int
 

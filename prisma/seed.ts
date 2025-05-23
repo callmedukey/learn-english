@@ -5,7 +5,7 @@ import { prisma } from "./prisma-client";
 
 export const seed = async () => {
   try {
-    const [korea, hasUser, hasAR] = await Promise.all([
+    const [korea, hasUser, hasAR, hasRCLevel] = await Promise.all([
       prisma.country.findFirst({
         where: {
           name: "South Korea",
@@ -13,6 +13,7 @@ export const seed = async () => {
       }),
       prisma.user.findFirst(),
       prisma.aR.findFirst(),
+      prisma.rCLevel.findFirst(),
     ]);
 
     if (korea) {
@@ -119,6 +120,45 @@ export const seed = async () => {
       });
 
       console.log("AR created");
+    }
+
+    if (hasRCLevel) {
+      console.log("RC Level already exists");
+    } else {
+      await prisma.rCLevel.createMany({
+        data: [
+          {
+            level: "Beginner",
+            relevantGrade: "Grade 1~2",
+            stars: 1,
+            numberOfQuestions: 5,
+          },
+          {
+            level: "Intermediate",
+            relevantGrade: "Grade 3~4",
+            stars: 2,
+            numberOfQuestions: 7,
+          },
+          {
+            level: "Advanced",
+            relevantGrade: "Grade 5~6",
+            stars: 3,
+            numberOfQuestions: 10,
+          },
+          {
+            level: "Expert",
+            relevantGrade: "Grade 7~9",
+            stars: 4,
+            numberOfQuestions: 10,
+          },
+          {
+            level: "Master",
+            relevantGrade: "Grade 10+",
+            stars: 5,
+            numberOfQuestions: 10,
+          },
+        ],
+      });
     }
   } catch (err) {
     console.error(err);

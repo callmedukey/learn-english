@@ -2,7 +2,6 @@ model RCLevel {
   id String @id @default(uuid())
 
   level             String
-  score             String
   relevantGrade     String
   stars             Int
   numberOfQuestions Int
@@ -24,6 +23,63 @@ model RCKeyword {
 
   RCLevel   RCLevel @relation(fields: [rcLevelId], references: [id], onDelete: Cascade)
   rcLevelId String
+
+  RCQuestionSet   RCQuestionSet?
+  RCQuestionSetId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RCQuestionSet {
+  id String @id @default(uuid())
+
+  instructions String
+
+  RCKeyword   RCKeyword? @relation(fields: [RCKeywordId], references: [id], onDelete: Cascade)
+  RCKeywordId String?    @unique
+
+  RCQuestion RCQuestion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RCQuestion {
+  id String @id @default(uuid())
+
+  RCQuestionSetId String
+  RCQuestionSet   RCQuestionSet @relation(fields: [RCQuestionSetId], references: [id], onDelete: Cascade)
+
+  RCQuestionCompleted RCQuestionCompleted[]
+
+  orderNumber Int
+
+  question    String
+  choices     String[]
+  answer      String
+  explanation String
+
+  score     Int
+  timeLimit Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RCQuestionCompleted {
+  id String @id @default(uuid())
+
+  RCQuestionId String
+  RCQuestion   RCQuestion @relation(fields: [RCQuestionId], references: [id], onDelete: Cascade)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  RCScore   RCScore? @relation(fields: [RCScoreId], references: [id], onDelete: Cascade)
+  RCScoreId String?
+
+  score Int
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

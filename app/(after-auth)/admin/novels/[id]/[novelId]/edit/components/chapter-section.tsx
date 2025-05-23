@@ -57,7 +57,7 @@ interface Chapter {
     novelQuestions: Array<{
       id: string;
       orderNumber: number;
-      questions: string;
+      question: string;
       choices: string[];
       answer: string;
       explanation: string;
@@ -634,7 +634,7 @@ interface QuestionsSectionProps {
   questions: Array<{
     id: string;
     orderNumber: number;
-    questions: string;
+    question: string;
     choices: string[];
     answer: string;
     explanation: string;
@@ -651,7 +651,7 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
 }) => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newQuestion, setNewQuestion] = useState({
-    questions: "",
+    question: "",
     choices: ["", "", "", ""],
     answer: "",
     explanation: "",
@@ -678,7 +678,7 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
 
     const formData = new FormData();
     formData.append("questionSetId", questionSetId);
-    formData.append("questions", newQuestion.questions);
+    formData.append("question", newQuestion.question);
     formData.append("choices", JSON.stringify(validChoices));
     formData.append("answer", newQuestion.answer);
     formData.append("explanation", newQuestion.explanation);
@@ -693,7 +693,7 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
     } else {
       toast.success("Question created successfully");
       setNewQuestion({
-        questions: "",
+        question: "",
         choices: ["", "", "", ""],
         answer: "",
         explanation: "",
@@ -735,9 +735,9 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
             <div className="md:col-span-2">
               <Label>Question</Label>
               <Textarea
-                value={newQuestion.questions}
+                value={newQuestion.question}
                 onChange={(e) =>
-                  setNewQuestion({ ...newQuestion, questions: e.target.value })
+                  setNewQuestion({ ...newQuestion, question: e.target.value })
                 }
                 placeholder="Enter the question"
                 rows={3}
@@ -845,7 +845,7 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
             <Button
               onClick={handleCreateQuestion}
               disabled={
-                !newQuestion.questions ||
+                !newQuestion.question ||
                 !newQuestion.answer ||
                 !isNewQuestionAnswerValid ||
                 validChoices.length === 0
@@ -883,7 +883,7 @@ interface QuestionCardProps {
   question: {
     id: string;
     orderNumber: number;
-    questions: string;
+    question: string;
     choices: string[];
     answer: string;
     explanation: string;
@@ -896,7 +896,7 @@ interface QuestionCardProps {
 const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
-    questions: question.questions,
+    question: question.question,
     choices: [...question.choices],
     answer: question.answer,
     explanation: question.explanation,
@@ -923,7 +923,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
 
     const formData = new FormData();
     formData.append("questionId", question.id);
-    formData.append("questions", editForm.questions);
+    formData.append("question", editForm.question);
     formData.append("choices", JSON.stringify(validChoices));
     formData.append("answer", editForm.answer);
     formData.append("explanation", editForm.explanation);
@@ -965,9 +965,9 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
           <div className="md:col-span-2">
             <Label>Question</Label>
             <Textarea
-              value={editForm.questions}
+              value={editForm.question}
               onChange={(e) =>
-                setEditForm({ ...editForm, questions: e.target.value })
+                setEditForm({ ...editForm, question: e.target.value })
               }
               rows={3}
             />
@@ -1068,7 +1068,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
           <Button
             onClick={handleUpdate}
             disabled={
-              !editForm.questions ||
+              !editForm.question ||
               !editForm.answer ||
               !isEditAnswerValid ||
               validEditChoices.length === 0
@@ -1095,7 +1095,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
               {question.timeLimit}s
             </span>
           </div>
-          <p className="mb-2 text-sm">{question.questions}</p>
+          <p className="mb-2 text-sm">{question.question}</p>
           <div className="text-xs text-gray-600">
             <p>
               <strong>Answer:</strong> {question.answer}

@@ -275,7 +275,7 @@ export const deleteQuestionSetAction = async (questionSetId: string) => {
 // Question Actions
 export const createQuestionAction = async (formData: FormData) => {
   const questionSetId = formData.get("questionSetId") as string;
-  const questions = formData.get("questions") as string;
+  const question = formData.get("question") as string;
   const choicesStr = formData.get("choices") as string;
   const answer = formData.get("answer") as string;
   const explanation = formData.get("explanation") as string;
@@ -285,7 +285,7 @@ export const createQuestionAction = async (formData: FormData) => {
 
   if (
     !questionSetId ||
-    !questions ||
+    !question ||
     !choicesStr ||
     !answer ||
     !explanation ||
@@ -344,7 +344,7 @@ export const createQuestionAction = async (formData: FormData) => {
     const newQuestion = await prisma.novelQuestion.create({
       data: {
         novelQuestionSetId: questionSetId,
-        questions,
+        question,
         choices,
         answer,
         explanation,
@@ -368,7 +368,7 @@ export const createQuestionAction = async (formData: FormData) => {
 
 export const updateQuestionAction = async (formData: FormData) => {
   const questionId = formData.get("questionId") as string;
-  const questions = formData.get("questions") as string;
+  const question = formData.get("question") as string;
   const choicesStr = formData.get("choices") as string;
   const answer = formData.get("answer") as string;
   const explanation = formData.get("explanation") as string;
@@ -378,7 +378,7 @@ export const updateQuestionAction = async (formData: FormData) => {
 
   if (
     !questionId ||
-    !questions ||
+    !question ||
     !choicesStr ||
     !answer ||
     !explanation ||
@@ -441,7 +441,7 @@ export const updateQuestionAction = async (formData: FormData) => {
     const updatedQuestion = await prisma.novelQuestion.update({
       where: { id: questionId },
       data: {
-        questions,
+        question,
         choices,
         answer,
         explanation,

@@ -41,12 +41,12 @@ interface NovelEditFormProps {
   novel: {
     id: string;
     title: string;
-    description: string | null;
+    description?: string | null;
     ARId: string | null;
     AR: {
       id: string;
       level: string;
-      description: string;
+      description?: string | null;
     } | null;
     image: {
       id: string;
@@ -65,7 +65,7 @@ interface NovelEditFormProps {
         novelQuestions: Array<{
           id: string;
           orderNumber: number;
-          questions: string;
+          question: string;
           choices: string[];
           answer: string;
           explanation: string;
@@ -78,7 +78,7 @@ interface NovelEditFormProps {
   arLevels: Array<{
     id: string;
     level: string;
-    description: string;
+    description?: string | null;
   }>;
 }
 
