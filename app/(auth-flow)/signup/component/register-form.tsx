@@ -14,6 +14,7 @@ import InputWithLabel from "@/components/custom-ui/input-with-label";
 import SelectWithLabel from "@/components/custom-ui/select-with-label";
 import SocialLoginButtons from "@/components/social-login-buttons";
 import { SignUpType } from "@/lib/schemas/auth.schema";
+import { Country } from "@/prisma/generated/prisma";
 import { ActionResponse } from "@/types/actions";
 
 const initialState: ActionResponse<SignUpType> = {
@@ -21,7 +22,11 @@ const initialState: ActionResponse<SignUpType> = {
   message: "",
 };
 
-const RegisterForm = () => {
+const RegisterForm = ({
+  countries,
+}: {
+  countries: Pick<Country, "id" | "name">[];
+}) => {
   const [date, setDate] = useState<Date | undefined>();
   const [state, action] = useActionState(signUpAction, initialState);
   const [transitionIsPending, startTransition] = useTransition();
@@ -101,12 +106,10 @@ const RegisterForm = () => {
           defaultValue={state.inputs?.country}
           placeholder="Select your country"
           error={state.errors?.country?.[0]}
-          items={[
-            { label: "United States", value: "United States" },
-            { label: "Canada", value: "Canada" },
-            { label: "United Kingdom", value: "United Kingdom" },
-            { label: "Australia", value: "Australia" },
-          ]}
+          items={countries.map((country) => ({
+            label: country.name,
+            value: country.id,
+          }))}
         />
         <InputWithLabel
           label="Password"

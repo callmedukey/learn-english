@@ -1,9 +1,11 @@
 import React, { Suspense } from "react";
 
-import { getUsers } from "./actions/users.admin-actions";
+import { prisma } from "@/prisma/prisma-client";
+
 import UsersFilter from "./components/users-filter";
 import UsersPagination from "./components/users-pagination";
 import UsersTable from "./components/users-table";
+import { getUsers } from "./query/users.query";
 
 interface AdminUsersPageProps {
   searchParams: Promise<{
@@ -40,6 +42,12 @@ export default async function AdminUsersPage({
     limit: limit,
   });
 
+  const countries = await prisma.country.findMany({
+    orderBy: {
+      name: "asc",
+    },
+  });
+
   return (
     <div className="container mx-auto px-4 py-8 md:px-6">
       <h1 className="mb-6 text-center text-3xl font-bold">User Management</h1>
@@ -52,7 +60,7 @@ export default async function AdminUsersPage({
           </div>
         }
       >
-        <UsersFilter />
+        <UsersFilter countries={countries} />
       </Suspense>
 
       <Suspense
@@ -62,7 +70,7 @@ export default async function AdminUsersPage({
           </div>
         }
       >
-        <UsersTable users={users} />
+        <UsersTable users={users} countries={countries} />
       </Suspense>
 
       {totalPages > 1 && (

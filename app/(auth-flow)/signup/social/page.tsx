@@ -20,15 +20,26 @@ const page = async ({ searchParams }: PageProps) => {
 
   const decodedEmail = decodeURIComponent(email);
 
-  const user = await prisma.user.findUnique({
-    where: {
-      email: decodedEmail,
-    },
-    select: {
-      id: true,
-      nickname: true,
-    },
-  });
+  const [countries, user] = await Promise.all([
+    prisma.country.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    }),
+    prisma.user.findUnique({
+      where: {
+        email: decodedEmail,
+      },
+      select: {
+        id: true,
+        nickname: true,
+      },
+    }),
+  ]);
 
   if (!user || user.nickname) {
     redirect("/login");
@@ -36,7 +47,7 @@ const page = async ({ searchParams }: PageProps) => {
 
   return (
     <main className="mx-auto flex min-h-[calc(100vh-6rem)] max-w-7xl items-center justify-center py-16">
-      <SocialRegisterForm email={decodedEmail} />
+      <SocialRegisterForm email={decodedEmail} countries={countries} />
     </main>
   );
 };

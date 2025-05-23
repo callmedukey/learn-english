@@ -1,4 +1,4 @@
-"use server";
+"server only";
 
 import { User as PrismaUser, Gender, Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
@@ -76,7 +76,7 @@ export const getUsers = async ({
     }
   }
   if (country) {
-    whereClause.country = { contains: country, mode: "insensitive" };
+    whereClause.countryId = country;
   }
   if (nickname) {
     whereClause.nickname = { contains: nickname, mode: "insensitive" };
@@ -109,7 +109,7 @@ export const getUsers = async ({
     birthday: user.birthday ? user.birthday.toISOString().split("T")[0] : null,
     grade: calculateGrade(user.birthday),
     gender: user.gender as string | null,
-    country: user.country,
+    country: user.countryId,
     referrerNickname: user.referrer?.nickname,
     name: user.name,
     username: user.username,

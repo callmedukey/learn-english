@@ -11,10 +11,12 @@ import DayPicker from "@/components/custom-ui/day-picker";
 import InputWithLabel from "@/components/custom-ui/input-with-label";
 import SelectWithLabel from "@/components/custom-ui/select-with-label";
 import { SignUpType } from "@/lib/schemas/auth.schema";
+import { Country } from "@/prisma/generated/prisma";
 import { ActionResponse } from "@/types/actions";
 
 interface SocialRegisterFormProps {
   email: string;
+  countries: Pick<Country, "id" | "name">[];
 }
 
 const initialState: ActionResponse<SignUpType> = {
@@ -22,7 +24,7 @@ const initialState: ActionResponse<SignUpType> = {
   message: "",
 };
 
-const SocialRegisterForm = ({ email }: SocialRegisterFormProps) => {
+const SocialRegisterForm = ({ email, countries }: SocialRegisterFormProps) => {
   const [date, setDate] = useState<Date | undefined>();
   const [state, action] = useActionState(socialSignUpAction, initialState);
   const [transitionIsPending, startTransition] = useTransition();
@@ -104,12 +106,10 @@ const SocialRegisterForm = ({ email }: SocialRegisterFormProps) => {
           defaultValue={state.inputs?.country}
           placeholder="Select your country"
           error={state.errors?.country?.[0]}
-          items={[
-            { label: "United States", value: "US" },
-            { label: "Canada", value: "CA" },
-            { label: "United Kingdom", value: "UK" },
-            { label: "Australia", value: "AU" },
-          ]}
+          items={countries.map((country) => ({
+            label: country.name,
+            value: country.id,
+          }))}
         />
         <InputWithLabel
           label="Referrer"

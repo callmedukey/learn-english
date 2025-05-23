@@ -8,17 +8,27 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; // Assuming you have these shadcn/ui components
+import { Country } from "@/prisma/generated/prisma";
 
-import { UserData } from "../actions/users.admin-actions"; // Adjust path as needed
+import { UserData } from "../query/users.query"; // Adjust path as needed
 
 interface UsersTableProps {
   users: UserData[];
+  countries: Pick<Country, "id" | "name">[];
 }
 
-const UsersTable: React.FC<UsersTableProps> = ({ users }) => {
+const UsersTable: React.FC<UsersTableProps> = ({ users, countries }) => {
   if (!users || users.length === 0) {
     return <p className="text-center text-gray-500">No users found.</p>;
   }
+
+  const countryObj = countries.reduce(
+    (acc, country) => {
+      acc[country.id] = country.name;
+      return acc;
+    },
+    {} as Record<string, string>,
+  );
 
   return (
     <Table>
@@ -41,7 +51,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users }) => {
             <TableCell>{user.birthday || "N/A"}</TableCell>
             <TableCell>{user.grade}</TableCell>
             <TableCell>{user.gender || "N/A"}</TableCell>
-            <TableCell>{user.country || "N/A"}</TableCell>
+            <TableCell>{countryObj[user.country || ""] ?? "N/A"}</TableCell>
             <TableCell>
               {user.isReferred
                 ? user.referrerNickname || "N/A (Referred)"

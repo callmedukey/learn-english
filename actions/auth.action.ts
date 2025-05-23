@@ -179,7 +179,7 @@ export async function signUpAction(
         gender,
         birthday,
         password: hashedPassword,
-        country,
+        countryId: country,
         referrerId: foundReferrer?.id,
       },
     });
@@ -252,7 +252,7 @@ export async function socialSignUpAction(
         nickname,
         gender,
         birthday,
-        country,
+        countryId: country,
         referrerId: foundReferrer?.id,
         emailVerified: new Date(), // Mark email as verified for social sign-ups
       },

@@ -1,3 +1,4 @@
+import { StagewiseToolbar } from "@stagewise/toolbar-next";
 import type { Metadata } from "next";
 import { Noto_Sans } from "next/font/google";
 
@@ -10,6 +11,10 @@ const notoSans = Noto_Sans({
   variable: "--font-noto-sans",
   subsets: ["latin"],
 });
+
+const stagewiseConfig = {
+  plugins: [],
+};
 
 export const metadata: Metadata = {
   title: {
@@ -30,6 +35,9 @@ export default function RootLayout({
         <Header />
         {children}
         <Toaster />
+        {process.env.NODE_ENV === "development" && (
+          <StagewiseToolbar config={stagewiseConfig} />
+        )}
       </body>
     </html>
   );

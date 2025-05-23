@@ -58,7 +58,7 @@ export function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="font-bold text-primary">
+          <SidebarGroupLabel className="text-lg font-bold tracking-tighter text-primary">
             READING CHAMP
           </SidebarGroupLabel>
           <SidebarGroupContent>

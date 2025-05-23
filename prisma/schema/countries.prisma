@@ -3,21 +3,22 @@ model Country {
 
   name String @unique
 
-  countryIcon CountryIcon?
-  countryIconId String? @unique
+  countryIcon   CountryIcon?
+  countryIconId String?      @unique
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  users     User[]
 }
 
 model CountryIcon {
   id String @id @default(cuid())
 
-  countryId String @unique
+  countryId String   @unique
   country   Country? @relation(fields: [countryId], references: [id])
   width     Int
   height    Int
-  
+
   iconUrl String
 
   createdAt DateTime @default(now())

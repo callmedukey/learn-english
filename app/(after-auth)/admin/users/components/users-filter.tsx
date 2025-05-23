@@ -13,7 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Gender } from "@/prisma/generated/prisma";
+import { Country, Gender } from "@/prisma/generated/prisma";
+
+interface UsersFilterProps {
+  countries: Pick<Country, "id" | "name">[];
+}
 
 const gradeOptions = [
   "Below Grade 1",
@@ -23,7 +27,7 @@ const gradeOptions = [
 
 const ALL_ITEMS_SELECT_VALUE = "__ALL_ITEMS__";
 
-function FiltersComponent() {
+function FiltersComponent({ countries }: UsersFilterProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -91,12 +95,28 @@ function FiltersComponent() {
         </div>
         <div>
           <Label htmlFor="country">Country</Label>
-          <Input
-            id="country"
+          <Select
             value={country}
-            onChange={(e) => setCountry(e.target.value)}
-            placeholder="Search country..."
-          />
+            onValueChange={(selectedValue) =>
+              setCountry(
+                selectedValue === ALL_ITEMS_SELECT_VALUE ? "" : selectedValue,
+              )
+            }
+          >
+            <SelectTrigger id="country">
+              <SelectValue placeholder="Select country" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL_ITEMS_SELECT_VALUE}>
+                All Countries
+              </SelectItem>
+              {countries.map((country) => (
+                <SelectItem key={country.id} value={country.id}>
+                  {country.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
         <div>
           <Label htmlFor="gender">Gender</Label>
@@ -157,10 +177,10 @@ function FiltersComponent() {
   );
 }
 
-const UsersFilter = () => {
+const UsersFilter = ({ countries }: UsersFilterProps) => {
   return (
     <Suspense fallback={<div>Loading filters...</div>}>
-      <FiltersComponent />
+      <FiltersComponent countries={countries} />
     </Suspense>
   );
 };
