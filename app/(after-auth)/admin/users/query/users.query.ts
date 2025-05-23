@@ -1,5 +1,6 @@
 "server only";
 
+import calculateGrade from "@/lib/utils/calculate-grade";
 import { User as PrismaUser, Gender, Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -29,23 +30,6 @@ export interface UserData
   createdAt: Date;
   updatedAt: Date;
 }
-
-const calculateGrade = (birthdayDate: Date | null): string => {
-  if (!birthdayDate) return "N/A";
-  const today = new Date();
-  const birthDate = new Date(birthdayDate);
-  let age = today.getFullYear() - birthDate.getFullYear();
-  const m = today.getMonth() - birthDate.getMonth();
-  if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
-    age--;
-  }
-
-  if (age < 7) return "Below Grade 1";
-  if (age >= 7 && age <= 18) {
-    return `Grade ${age - 6}`;
-  }
-  return "Adult";
-};
 
 export const getUsers = async ({
   grade: gradeFilter,

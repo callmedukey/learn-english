@@ -1,0 +1,10 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+SearchParams and params are promises.
+
+Example:
+export default Page ({searchParams}:{searchParams:Promise<{}>})
+

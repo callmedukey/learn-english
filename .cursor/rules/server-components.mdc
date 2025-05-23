@@ -1,0 +1,7 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+If you need to fetch data, fetch directly within the component without using server actions.
+If you need to create a different file, you can declare "server only" and not "use server" on top of file to make sure its not created as a server action.

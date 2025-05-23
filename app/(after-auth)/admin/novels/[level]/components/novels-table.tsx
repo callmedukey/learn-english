@@ -1,0 +1,104 @@
+import { format } from "date-fns";
+import { Edit, Trash2, Eye } from "lucide-react";
+import Image from "next/image";
+import React from "react";
+
+import { Button } from "@/components/ui/button";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+
+import { NovelData } from "../../query/novel.query";
+
+interface NovelsTableProps {
+  novels: NovelData[];
+}
+
+const NovelsTable: React.FC<NovelsTableProps> = ({ novels }) => {
+  if (!novels || novels.length === 0) {
+    return (
+      <p className="text-center text-gray-500">
+        No novels found for this level.
+      </p>
+    );
+  }
+
+  return (
+    <Table>
+      <TableHeader>
+        <TableRow>
+          <TableHead>Image</TableHead>
+          <TableHead>Title</TableHead>
+          <TableHead>Description</TableHead>
+          <TableHead>Questions</TableHead>
+          <TableHead>Created At</TableHead>
+          <TableHead className="text-right">Actions</TableHead>
+        </TableRow>
+      </TableHeader>
+      <TableBody>
+        {novels.map((novel) => (
+          <TableRow key={novel.id}>
+            <TableCell>
+              {novel.image ? (
+                <div className="relative h-16 w-12 overflow-hidden rounded">
+                  <Image
+                    src={novel.image.imageUrl}
+                    alt={novel.title}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ) : (
+                <div className="flex h-16 w-12 items-center justify-center rounded bg-gray-100 text-xs text-gray-500">
+                  No Image
+                </div>
+              )}
+            </TableCell>
+            <TableCell className="font-medium">{novel.title}</TableCell>
+            <TableCell className="max-w-xs truncate" title={novel.description}>
+              {novel.description}
+            </TableCell>
+            <TableCell>
+              {novel.novelQuestionSet ? (
+                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                  {novel.novelQuestionSet._count.novelQuestions} questions
+                </span>
+              ) : (
+                <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                  No questions
+                </span>
+              )}
+            </TableCell>
+            <TableCell className="text-sm text-gray-500">
+              {format(new Date(novel.createdAt), "yyyy/MM/dd")}
+            </TableCell>
+            <TableCell className="text-right">
+              <div className="flex items-center justify-end space-x-2">
+                <Button variant="outline" size="sm">
+                  <Eye className="h-4 w-4" />
+                </Button>
+                <Button variant="outline" size="sm">
+                  <Edit className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </div>
+            </TableCell>
+          </TableRow>
+        ))}
+      </TableBody>
+    </Table>
+  );
+};
+
+export default NovelsTable;

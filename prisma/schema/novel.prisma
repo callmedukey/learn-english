@@ -1,0 +1,113 @@
+model AR {
+  id String @id @default(uuid())
+
+  level         String
+  score         String
+  relevantGrade String
+  stars         Int
+  description   String
+
+  novels Novel[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Novel {
+  id          String @id @default(uuid())
+  title       String
+  description String
+
+  AR   AR?     @relation(fields: [ARId], references: [id], onDelete: Cascade)
+  ARId String?
+
+  novelChapters NovelChapter[]
+
+  image   NovelImage?
+  imageId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NovelChapter {
+  id String @id @default(uuid())
+
+  novelId String
+  novel   Novel  @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  orderNumber Int
+  title       String
+  description String
+
+  novelQuestionSet   NovelQuestionSet?
+  novelQuestionSetId String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NovelImage {
+  id String @id @default(uuid())
+
+  imageUrl String
+  width    Int
+  height   Int
+
+  novel   Novel  @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  novelId String @unique
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NovelQuestionSet {
+  id String @id @default(uuid())
+
+  instructions String
+
+  novelChapterId String?       @unique
+  novelChapter   NovelChapter? @relation(fields: [novelChapterId], references: [id], onDelete: Cascade)
+
+  novelQuestions NovelQuestion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NovelQuestion {
+  id String @id @default(uuid())
+
+  novelQuestionSetId String
+  novelQuestionSet   NovelQuestionSet @relation(fields: [novelQuestionSetId], references: [id], onDelete: Cascade)
+
+  novelQuestionCompleted NovelQuestionCompleted[]
+
+  orderNumber Int
+
+  questions   String
+  choices     String[]
+  answer      String
+  explanation String
+
+  score     Int
+  timeLimit Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model NovelQuestionCompleted {
+  id String @id @default(uuid())
+
+  novelQuestionId String
+  novelQuestion   NovelQuestion @relation(fields: [novelQuestionId], references: [id], onDelete: Cascade)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  score Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

@@ -15,7 +15,7 @@ model CountryIcon {
   id String @id @default(cuid())
 
   countryId String   @unique
-  country   Country? @relation(fields: [countryId], references: [id])
+  country   Country? @relation(fields: [countryId], references: [id], onDelete: Cascade)
   width     Int
   height    Int
 

@@ -37,8 +37,8 @@ const items = [
     icon: Brain,
   },
   {
-    title: "Novel",
-    url: "/admin/novel",
+    title: "Novels",
+    url: "/admin/novels",
     icon: Book,
   },
   {
