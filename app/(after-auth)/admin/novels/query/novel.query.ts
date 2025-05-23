@@ -13,22 +13,19 @@ export interface NovelData extends Novel {
     width: number;
     height: number;
   } | null;
-  novelQuestionSet: {
+  novelChapters: {
     id: string;
-    instructions: string;
-    _count: {
-      novelQuestions: number;
-    };
-  } | null;
+    title: string;
+    description: string;
+    orderNumber: number;
+  }[];
 }
 
-export const getNovelsByARLevel = async (
-  level: string,
-): Promise<NovelData[]> => {
+export const getNovelsByARLevel = async (id: string): Promise<NovelData[]> => {
   const novels = await prisma.novel.findMany({
     where: {
       AR: {
-        level: level,
+        id,
       },
     },
     include: {
@@ -45,15 +42,15 @@ export const getNovelsByARLevel = async (
           height: true,
         },
       },
-      novelQuestionSet: {
+      novelChapters: {
         select: {
           id: true,
-          instructions: true,
-          _count: {
-            select: {
-              novelQuestions: true,
-            },
-          },
+          title: true,
+          description: true,
+          orderNumber: true,
+        },
+        orderBy: {
+          orderNumber: "asc",
         },
       },
     },
@@ -61,14 +58,13 @@ export const getNovelsByARLevel = async (
       createdAt: "desc",
     },
   });
-
   return novels;
 };
 
-export const getARByLevel = async (level: string) => {
+export const getARByLevel = async (id: string) => {
   return await prisma.aR.findFirst({
     where: {
-      level: level,
+      id,
     },
   });
 };

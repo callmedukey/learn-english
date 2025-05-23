@@ -1,6 +1,7 @@
 import { format } from "date-fns";
-import { Edit, Trash2, Eye } from "lucide-react";
+import { Edit } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
@@ -13,6 +14,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import DeleteNovelAlert from "./delete-novel-alert";
 import { NovelData } from "../../query/novel.query";
 
 interface NovelsTableProps {
@@ -60,17 +62,17 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels }) => {
               )}
             </TableCell>
             <TableCell className="font-medium">{novel.title}</TableCell>
-            <TableCell className="max-w-xs truncate" title={novel.description}>
+            <TableCell className="max-w-xs truncate">
               {novel.description}
             </TableCell>
             <TableCell>
-              {novel.novelQuestionSet ? (
+              {novel.novelChapters.length > 0 ? (
                 <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                  {novel.novelQuestionSet._count.novelQuestions} questions
+                  {novel.novelChapters.length} chapters
                 </span>
               ) : (
                 <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                  No questions
+                  No chapters
                 </span>
               )}
             </TableCell>
@@ -80,18 +82,11 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels }) => {
             <TableCell className="text-right">
               <div className="flex items-center justify-end space-x-2">
                 <Button variant="outline" size="sm">
-                  <Eye className="h-4 w-4" />
+                  <Link href={`/admin/novels/${novel.AR?.id}/${novel.id}/edit`}>
+                    <Edit className="h-4 w-4" />
+                  </Link>
                 </Button>
-                <Button variant="outline" size="sm">
-                  <Edit className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
+                <DeleteNovelAlert novelId={novel.id} title={novel.title} />
               </div>
             </TableCell>
           </TableRow>

@@ -9,20 +9,19 @@ import { getARByLevel, getNovelsByARLevel } from "../query/novel.query";
 import NovelsTable from "./components/novels-table";
 
 interface PageProps {
-  params: Promise<{ level: string }>;
+  params: Promise<{ id: string }>;
 }
 
 const NovelsListPage = async ({ params }: PageProps) => {
-  const { level } = await params;
-  const decodedLevel = decodeURIComponent(level);
+  const { id } = await params;
 
-  const arLevel = await getARByLevel(decodedLevel);
+  const arLevel = await getARByLevel(id);
   if (!arLevel) {
     notFound();
   }
 
   // Fetch novels for this level
-  const novels = await getNovelsByARLevel(decodedLevel);
+  const novels = await getNovelsByARLevel(id);
 
   return (
     <div className="space-y-6 px-1">
@@ -37,7 +36,7 @@ const NovelsListPage = async ({ params }: PageProps) => {
           </Link>
           <div>
             <h1 className="text-2xl font-bold">
-              Novels - Level {decodedLevel}
+              Novels - Level {arLevel.level}
             </h1>
             <p className="text-sm text-gray-600">
               {arLevel.description} • {novels.length} novel
@@ -45,7 +44,7 @@ const NovelsListPage = async ({ params }: PageProps) => {
             </p>
           </div>
         </div>
-        <Link href={`/admin/novels/${encodeURIComponent(decodedLevel)}/create`}>
+        <Link href={`/admin/novels/${arLevel.id}/create`}>
           <Button>
             <Plus className="mr-2 h-4 w-4" />
             Create Novel

@@ -14,9 +14,9 @@ model AR {
 }
 
 model Novel {
-  id          String @id @default(uuid())
+  id          String  @id @default(uuid())
   title       String
-  description String
+  description String?
 
   AR   AR?     @relation(fields: [ARId], references: [id], onDelete: Cascade)
   ARId String?
@@ -38,7 +38,7 @@ model NovelChapter {
 
   orderNumber Int
   title       String
-  description String
+  description String?
 
   novelQuestionSet   NovelQuestionSet?
   novelQuestionSetId String?

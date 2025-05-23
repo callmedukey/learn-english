@@ -38,6 +38,7 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   novelQuestionCompleted NovelQuestionCompleted[]
+  score                  Score?
 }
 
 model Account {

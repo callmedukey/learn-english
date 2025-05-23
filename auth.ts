@@ -1,14 +1,14 @@
+import { PrismaAdapter } from "@auth/prisma-adapter";
+import { compare } from "bcryptjs";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import type { DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
-
-import Naver from "next-auth/providers/naver";
 import Kakao, { Gender } from "next-auth/providers/kakao";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { prisma } from "./prisma/prisma-client";
-import { Role } from "./prisma/generated/prisma";
+import Naver from "next-auth/providers/naver";
+
 import { signInSchema } from "./lib/schemas/auth.schema";
-import { compare } from "bcryptjs";
+import { Role } from "./prisma/generated/prisma";
+import { prisma } from "./prisma/prisma-client";
 
 declare module "next-auth" {
   interface Session {

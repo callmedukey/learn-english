@@ -45,7 +45,7 @@ const ARTable: React.FC<ARTableProps> = ({ ars }) => {
           <TableRow key={ar.id}>
             <TableCell className="font-medium">
               <Link
-                href={`/admin/novels/${encodeURIComponent(ar.level)}`}
+                href={`/admin/novels/${encodeURIComponent(ar.id)}`}
                 className="text-blue-600 hover:text-blue-800 hover:underline"
               >
                 {ar.level}
@@ -64,7 +64,7 @@ const ARTable: React.FC<ARTableProps> = ({ ars }) => {
               {ar.description}
             </TableCell>
             <TableCell>
-              <Link href={`/admin/novels/${encodeURIComponent(ar.level)}`}>
+              <Link href={`/admin/novels/${encodeURIComponent(ar.id)}/novels`}>
                 <span className="cursor-pointer rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 hover:bg-blue-200">
                   {ar.novelCount}
                 </span>
