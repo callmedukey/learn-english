@@ -1,4 +1,4 @@
-model Score {
+model TotalScore {
   id String @id @default(uuid())
 
   userId String @unique
@@ -8,4 +8,28 @@ model Score {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model ARScore {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  ARId String
+  AR   AR     @relation(fields: [ARId], references: [id], onDelete: Cascade)
+
+  score Int @default(0)
+}
+
+model RCScore {
+  id String @id @default(uuid())
+
+  userId String
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  RCLevelId String
+  RCLevel   RCLevel @relation(fields: [RCLevelId], references: [id], onDelete: Cascade)
+
+  score Int @default(0)
 }

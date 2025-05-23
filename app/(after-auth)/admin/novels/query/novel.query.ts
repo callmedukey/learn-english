@@ -16,7 +16,7 @@ export interface NovelData extends Novel {
   novelChapters: {
     id: string;
     title: string;
-    description: string;
+    description?: string | null;
     orderNumber: number;
   }[];
 }
@@ -65,6 +65,9 @@ export const getARByLevel = async (id: string) => {
   return await prisma.aR.findFirst({
     where: {
       id,
+    },
+    orderBy: {
+      level: "asc",
     },
   });
 };

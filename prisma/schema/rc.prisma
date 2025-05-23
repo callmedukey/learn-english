@@ -1,0 +1,30 @@
+model RCLevel {
+  id String @id @default(uuid())
+
+  level             String
+  score             String
+  relevantGrade     String
+  stars             Int
+  numberOfQuestions Int
+
+  description String?
+
+  RCKeyword RCKeyword[]
+  RCScore   RCScore[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RCKeyword {
+  id String @id @default(uuid())
+
+  name        String
+  description String?
+
+  RCLevel   RCLevel @relation(fields: [rcLevelId], references: [id], onDelete: Cascade)
+  rcLevelId String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}

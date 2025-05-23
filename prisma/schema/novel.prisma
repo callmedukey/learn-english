@@ -5,9 +5,11 @@ model AR {
   score         String
   relevantGrade String
   stars         Int
-  description   String
+  description   String?
 
   novels Novel[]
+
+  ARScore ARScore[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

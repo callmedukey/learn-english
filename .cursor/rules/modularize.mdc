@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Try to make each file as small as possible by modularizing componenets to separate files, keep reusability in mind where possible.

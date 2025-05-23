@@ -18,7 +18,6 @@ export const createChapterAction = async (formData: FormData) => {
   }
 
   try {
-    // Check if novel exists
     const novel = await prisma.novel.findUnique({
       where: { id: novelId },
       include: { AR: true },
@@ -28,7 +27,6 @@ export const createChapterAction = async (formData: FormData) => {
       return { error: "Novel not found" };
     }
 
-    // Check if order number already exists for this novel
     const existingChapter = await prisma.novelChapter.findFirst({
       where: {
         novelId,

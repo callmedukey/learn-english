@@ -15,7 +15,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { updateARAction } from "../actions/ar.admin-actions";
+import { updateARAction } from "../actions/ar.actions";
 import { ARData } from "../query/ar.query";
 
 interface EditARFormProps {

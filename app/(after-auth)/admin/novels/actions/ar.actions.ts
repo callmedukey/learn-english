@@ -99,3 +99,40 @@ export const deleteARAction = async (arId: string) => {
     };
   }
 };
+
+export const createARAction = async (formData: FormData) => {
+  const level = formData.get("level") as string;
+  const score = formData.get("score") as string;
+  const relevantGrade = formData.get("relevantGrade") as string;
+  const stars = parseInt(formData.get("stars") as string);
+  const description = formData.get("description") as string;
+
+  if (!level || !score || !relevantGrade || isNaN(stars)) {
+    return {
+      error: "All fields are required and stars must be a valid number",
+    };
+  }
+
+  if (stars < 1 || stars > 5) {
+    return { error: "Stars must be between 1 and 5" };
+  }
+
+  try {
+    await prisma.aR.create({
+      data: {
+        level,
+        score,
+        relevantGrade,
+        stars,
+        description,
+      },
+    });
+
+    revalidatePath("/admin/novels");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to create AR record:", error);
+    return { error: "Failed to create AR record. Please try again." };
+  }
+};

@@ -17,7 +17,7 @@ export const getARs = async (): Promise<ARData[]> => {
       },
     },
     orderBy: {
-      createdAt: "desc",
+      level: "asc",
     },
   });
 

@@ -15,7 +15,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 
-import { deleteARAction } from "../actions/ar.admin-actions";
+import { deleteARAction } from "../actions/ar.actions";
 
 interface DeleteARDialogProps {
   arId: string;

@@ -38,7 +38,10 @@ model User {
   updatedAt     DateTime  @updatedAt
 
   novelQuestionCompleted NovelQuestionCompleted[]
-  score                  Score?
+
+  score   TotalScore?
+  ARScore ARScore[]
+  RCScore RCScore[]
 }
 
 model Account {

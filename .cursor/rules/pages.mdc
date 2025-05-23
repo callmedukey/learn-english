@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Do not create "use client" pages. If you need client functionality refactor to move to a client component.
