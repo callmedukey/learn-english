@@ -60,15 +60,16 @@ const ARTable: React.FC<ARTableProps> = ({ ars }) => {
                 <span className="ml-1 text-sm text-gray-500">({ar.stars})</span>
               </div>
             </TableCell>
-            <TableCell className="max-w-xs truncate" title={ar.description}>
+            <TableCell
+              className="max-w-xs truncate"
+              title={ar?.description || ""}
+            >
               {ar.description}
             </TableCell>
             <TableCell>
-              <Link href={`/admin/novels/${encodeURIComponent(ar.id)}/novels`}>
-                <span className="cursor-pointer rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 hover:bg-blue-200">
-                  {ar.novelCount}
-                </span>
-              </Link>
+              <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 hover:bg-blue-200">
+                {ar.novelCount}
+              </span>
             </TableCell>
             <TableCell className="text-sm text-gray-500">
               {format(new Date(ar.createdAt), "yyyy/MM/dd")}
