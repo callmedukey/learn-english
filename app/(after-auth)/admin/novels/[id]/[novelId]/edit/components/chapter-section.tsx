@@ -214,7 +214,6 @@ const ChapterSection: React.FC<ChapterSectionProps> = ({
               />
             </div>
             <div className="md:col-span-1">
-              <Label htmlFor="new-chapter-isFree">Is Free</Label>
               <div className="mt-2 flex items-center space-x-2">
                 <Checkbox
                   id="new-chapter-isFree"
@@ -462,7 +461,6 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
                     />
                   </div>
                   <div className="md:col-span-1">
-                    <Label>Is Free</Label>
                     <div className="mt-2 flex items-center space-x-2">
                       <Checkbox
                         checked={editForm.isFree}

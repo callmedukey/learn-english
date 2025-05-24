@@ -92,7 +92,9 @@ async function ContinueLearningContent({ userId }: { userId: string }) {
               </div>
 
               <Button asChild className="mt-4 w-full">
-                <Link href={`/novels/${data.novelProgress.novel.id}`}>
+                <Link
+                  href={`/novel/${data.novelProgress.novel.ARId}/${data.novelProgress.novel.id}`}
+                >
                   Continue Novel
                 </Link>
               </Button>
@@ -104,7 +106,7 @@ async function ContinueLearningContent({ userId }: { userId: string }) {
                 <p className="mb-4 text-gray-500">No novel progress yet</p>
               </div>
               <Button asChild variant="outline" className="w-full">
-                <Link href="/novels">Start Reading</Link>
+                <Link href="/novel">Start Reading</Link>
               </Button>
             </>
           )}

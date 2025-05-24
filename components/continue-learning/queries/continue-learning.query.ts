@@ -6,6 +6,7 @@ export interface NovelProgress {
   novel: {
     id: string;
     title: string;
+    ARId?: string | null;
     image?: {
       imageUrl: string;
     } | null;
@@ -120,6 +121,7 @@ export async function getContinueLearningData(
       novel: {
         id: novel.id,
         title: novel.title,
+        ARId: novel.ARId,
         image: novel.image,
         AR: novel.AR,
       },
