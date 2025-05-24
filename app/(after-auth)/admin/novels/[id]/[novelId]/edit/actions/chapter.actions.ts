@@ -155,6 +155,7 @@ export const deleteChapterAction = async (chapterId: string) => {
 export const createQuestionSetAction = async (formData: FormData) => {
   const chapterId = formData.get("chapterId") as string;
   const instructions = formData.get("instructions") as string;
+  const active = formData.get("active") === "true";
 
   if (!chapterId || !instructions) {
     return {
@@ -185,6 +186,7 @@ export const createQuestionSetAction = async (formData: FormData) => {
       data: {
         instructions,
         novelChapterId: chapterId,
+        active,
       },
     });
 
@@ -203,6 +205,7 @@ export const createQuestionSetAction = async (formData: FormData) => {
 export const updateQuestionSetAction = async (formData: FormData) => {
   const questionSetId = formData.get("questionSetId") as string;
   const instructions = formData.get("instructions") as string;
+  const active = formData.get("active") === "true";
 
   if (!questionSetId || !instructions) {
     return {
@@ -226,7 +229,10 @@ export const updateQuestionSetAction = async (formData: FormData) => {
 
     const updatedQuestionSet = await prisma.novelQuestionSet.update({
       where: { id: questionSetId },
-      data: { instructions },
+      data: {
+        instructions,
+        active,
+      },
     });
 
     revalidatePath(

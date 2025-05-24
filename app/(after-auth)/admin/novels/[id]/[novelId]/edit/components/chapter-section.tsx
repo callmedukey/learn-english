@@ -56,6 +56,7 @@ interface Chapter {
   novelQuestionSet: {
     id: string;
     instructions: string;
+    active: boolean;
     novelQuestions: Array<{
       id: string;
       orderNumber: number;
@@ -340,6 +341,16 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
                       Paid
                     </span>
                   )}
+                  {chapter.novelQuestionSet &&
+                    (chapter.novelQuestionSet.active ? (
+                      <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                        Quiz Active
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
+                        Quiz Inactive
+                      </span>
+                    ))}
                 </div>
                 <p className="text-sm text-gray-600">
                   {chapter.description || "No description"}
@@ -507,11 +518,13 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
   const [instructions, setInstructions] = useState(
     questionSet?.instructions || "",
   );
+  const [active, setActive] = useState<boolean>(questionSet?.active ?? false);
 
   const handleCreateQuestionSet = async () => {
     const formData = new FormData();
     formData.append("chapterId", chapterId);
     formData.append("instructions", instructions);
+    formData.append("active", active.toString());
 
     const result = await createQuestionSetAction(formData);
 
@@ -530,6 +543,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
     const formData = new FormData();
     formData.append("questionSetId", questionSet.id);
     formData.append("instructions", instructions);
+    formData.append("active", active.toString());
 
     const result = await updateQuestionSetAction(formData);
 
@@ -575,14 +589,26 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
     return (
       <div className="rounded-lg bg-green-50 p-4">
         <h5 className="mb-3 font-medium">Create Question Set</h5>
-        <div>
-          <Label>Instructions</Label>
-          <Textarea
-            value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
-            placeholder="Enter instructions for this question set"
-            rows={3}
-          />
+        <div className="space-y-4">
+          <div>
+            <Label>Instructions</Label>
+            <Textarea
+              value={instructions}
+              onChange={(e) => setInstructions(e.target.value)}
+              placeholder="Enter instructions for this question set"
+              rows={3}
+            />
+          </div>
+          <div className="flex items-center space-x-2">
+            <Checkbox
+              id="create-active"
+              checked={active}
+              onCheckedChange={(checked) => setActive(checked as boolean)}
+            />
+            <Label htmlFor="create-active" className="text-sm">
+              Active (users can access this quiz)
+            </Label>
+          </div>
         </div>
         <div className="mt-4 flex justify-end space-x-2">
           <Button variant="outline" onClick={() => setShowCreateForm(false)}>
@@ -600,7 +626,20 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h5 className="font-medium">Question Set</h5>
+        <div className="flex items-center space-x-3">
+          <h5 className="font-medium">Question Set</h5>
+          <div className="flex items-center space-x-2">
+            {questionSet?.active ? (
+              <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                Active
+              </span>
+            ) : (
+              <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                Inactive
+              </span>
+            )}
+          </div>
+        </div>
         <div className="flex space-x-2">
           <Button
             variant="outline"
@@ -643,12 +682,26 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
 
       {isEditing ? (
         <div className="rounded-lg bg-yellow-50 p-4">
-          <Label>Instructions</Label>
-          <Textarea
-            value={instructions}
-            onChange={(e) => setInstructions(e.target.value)}
-            rows={3}
-          />
+          <div className="space-y-4">
+            <div>
+              <Label>Instructions</Label>
+              <Textarea
+                value={instructions}
+                onChange={(e) => setInstructions(e.target.value)}
+                rows={3}
+              />
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="edit-active"
+                checked={active}
+                onCheckedChange={(checked) => setActive(checked as boolean)}
+              />
+              <Label htmlFor="edit-active" className="text-sm">
+                Active (users can access this quiz)
+              </Label>
+            </div>
+          </div>
           <div className="mt-4 flex justify-end space-x-2">
             <Button variant="outline" onClick={() => setIsEditing(false)}>
               Cancel

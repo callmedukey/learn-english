@@ -63,6 +63,7 @@ interface NovelEditFormProps {
       novelQuestionSet: {
         id: string;
         instructions: string;
+        active: boolean;
         novelQuestions: Array<{
           id: string;
           orderNumber: number;
