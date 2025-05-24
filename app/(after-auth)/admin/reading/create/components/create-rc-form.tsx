@@ -1,0 +1,137 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+import React, { useTransition } from "react";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+
+import { createRCLevelAction } from "../../actions/rc.actions";
+
+const CreateRCForm = () => {
+  const router = useRouter();
+  const [isPending, startTransition] = useTransition();
+
+  const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    const formData = new FormData(event.currentTarget);
+
+    startTransition(async () => {
+      const result = await createRCLevelAction(formData);
+      if (result.error) {
+        toast.error(result.error);
+      } else if (result.success) {
+        toast.success("RC level created successfully!");
+        router.push("/admin/reading");
+      } else {
+        toast.error("An unexpected error occurred");
+      }
+    });
+  };
+
+  return (
+    <div className="rounded-lg border bg-white p-6 shadow-sm">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <Label htmlFor="level">RC Level</Label>
+            <Input
+              id="level"
+              name="level"
+              type="text"
+              placeholder="Beginner"
+              required
+              disabled={isPending}
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              The reading comprehension level (e.g., Beginner, Intermediate,
+              Advanced)
+            </p>
+          </div>
+
+          <div>
+            <Label htmlFor="relevantGrade">Relevant Grades</Label>
+            <Input
+              id="relevantGrade"
+              name="relevantGrade"
+              type="text"
+              placeholder="Grade 3-4"
+              required
+              disabled={isPending}
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              Target grades for this RC level
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <Label htmlFor="stars">Stars (1-5)</Label>
+            <Input
+              id="stars"
+              name="stars"
+              type="number"
+              min="1"
+              max="5"
+              placeholder="3"
+              required
+              disabled={isPending}
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              Difficulty rating (1 = easiest, 5 = hardest)
+            </p>
+          </div>
+
+          <div>
+            <Label htmlFor="numberOfQuestions">Number of Questions</Label>
+            <Input
+              id="numberOfQuestions"
+              name="numberOfQuestions"
+              type="number"
+              min="1"
+              placeholder="10"
+              required
+              disabled={isPending}
+            />
+            <p className="mt-1 text-sm text-gray-500">
+              Total number of questions for this level
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <Label htmlFor="description">Description</Label>
+          <Textarea
+            id="description"
+            name="description"
+            rows={4}
+            disabled={isPending}
+          />
+          <p className="mt-1 text-sm text-gray-500">
+            Optional description of this RC level
+          </p>
+        </div>
+
+        <div className="flex justify-end space-x-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => router.push("/admin/reading")}
+            disabled={isPending}
+          >
+            Cancel
+          </Button>
+          <Button type="submit" disabled={isPending}>
+            {isPending ? "Creating..." : "Create RC Level"}
+          </Button>
+        </div>
+      </form>
+    </div>
+  );
+};
+
+export default CreateRCForm;

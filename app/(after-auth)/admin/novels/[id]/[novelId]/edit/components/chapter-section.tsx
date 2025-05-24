@@ -24,6 +24,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Collapsible,
   CollapsibleContent,
@@ -51,6 +52,7 @@ interface Chapter {
   title: string;
   description: string | null;
   orderNumber: number;
+  isFree: boolean;
   novelQuestionSet: {
     id: string;
     instructions: string;
@@ -89,6 +91,7 @@ const ChapterSection: React.FC<ChapterSectionProps> = ({
     title: "",
     description: "",
     orderNumber: chapters.length + 1,
+    isFree: false,
   });
 
   const toggleChapter = (chapterId: string) => {
@@ -108,6 +111,9 @@ const ChapterSection: React.FC<ChapterSectionProps> = ({
       formData.append("title", newChapter.title);
       formData.append("description", newChapter.description);
       formData.append("orderNumber", newChapter.orderNumber.toString());
+      if (newChapter.isFree) {
+        formData.append("isFree", "on");
+      }
 
       const result = await createChapterAction(formData);
 
@@ -119,6 +125,7 @@ const ChapterSection: React.FC<ChapterSectionProps> = ({
           title: "",
           description: "",
           orderNumber: chapters.length + 2,
+          isFree: false,
         });
         setShowNewChapterForm(false);
         onChapterUpdate();
@@ -205,6 +212,19 @@ const ChapterSection: React.FC<ChapterSectionProps> = ({
                 rows={2}
               />
             </div>
+            <div className="md:col-span-1">
+              <Label htmlFor="new-chapter-isFree">Is Free</Label>
+              <div className="mt-2 flex items-center space-x-2">
+                <Checkbox
+                  id="new-chapter-isFree"
+                  checked={newChapter.isFree}
+                  onCheckedChange={(checked) =>
+                    setNewChapter({ ...newChapter, isFree: checked === true })
+                  }
+                />
+                <Label htmlFor="new-chapter-isFree">Free Access</Label>
+              </div>
+            </div>
           </div>
           <div className="mt-4 flex justify-end space-x-2">
             <Button
@@ -271,6 +291,7 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
     title: chapter.title,
     description: chapter.description || "",
     orderNumber: chapter.orderNumber,
+    isFree: chapter.isFree,
   });
 
   const handleUpdate = async () => {
@@ -279,6 +300,9 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
     formData.append("title", editForm.title);
     formData.append("description", editForm.description);
     formData.append("orderNumber", editForm.orderNumber.toString());
+    if (editForm.isFree) {
+      formData.append("isFree", "on");
+    }
 
     const result = await updateChapterAction(formData);
 
@@ -302,10 +326,21 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
               ) : (
                 <ChevronRight className="h-4 w-4" />
               )}
-              <div>
-                <h4 className="font-medium">
-                  Chapter {chapter.orderNumber}: {chapter.title}
-                </h4>
+              <div className="flex-1">
+                <div className="flex items-center space-x-2">
+                  <h4 className="font-medium">
+                    Chapter {chapter.orderNumber}: {chapter.title}
+                  </h4>
+                  {chapter.isFree ? (
+                    <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                      Free
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800">
+                      Paid
+                    </span>
+                  )}
+                </div>
                 <p className="text-sm text-gray-600">
                   {chapter.description || "No description"}
                   {chapter.novelQuestionSet && (
@@ -414,6 +449,18 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
                       }
                       rows={2}
                     />
+                  </div>
+                  <div className="md:col-span-1">
+                    <Label>Is Free</Label>
+                    <div className="mt-2 flex items-center space-x-2">
+                      <Checkbox
+                        checked={editForm.isFree}
+                        onCheckedChange={(checked) =>
+                          setEditForm({ ...editForm, isFree: checked === true })
+                        }
+                      />
+                      <Label>Free Access</Label>
+                    </div>
                   </div>
                 </div>
                 <div className="mt-4 flex justify-end space-x-2">
@@ -731,8 +778,8 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
         <div className="space-y-4 rounded-lg bg-blue-50 p-4">
           <h6 className="font-medium">New Question</h6>
 
-          <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-            <div className="md:col-span-2">
+          <div className="space-y-4">
+            <div>
               <Label>Question</Label>
               <Textarea
                 value={newQuestion.question}
@@ -744,20 +791,22 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
               />
             </div>
 
-            {newQuestion.choices.map((choice, index) => (
-              <div key={index}>
-                <Label>Choice {index + 1}</Label>
+            <div>
+              <Label>Answer Choices</Label>
+              {newQuestion.choices.map((choice, index) => (
                 <Input
+                  key={index}
                   value={choice}
                   onChange={(e) => {
                     const newChoices = [...newQuestion.choices];
                     newChoices[index] = e.target.value;
                     setNewQuestion({ ...newQuestion, choices: newChoices });
                   }}
-                  placeholder={`Choice ${index + 1}`}
+                  placeholder={`Choice ${String.fromCharCode(65 + index)}`}
+                  className="mt-1"
                 />
-              </div>
-            ))}
+              ))}
+            </div>
 
             <div>
               <Label>Correct Answer</Label>
@@ -766,7 +815,7 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
                 onChange={(e) =>
                   setNewQuestion({ ...newQuestion, answer: e.target.value })
                 }
-                placeholder="Correct answer"
+                placeholder="Enter the correct answer exactly as written above"
                 className={
                   !newQuestion.answer || isNewQuestionAnswerValid
                     ? ""
@@ -781,31 +830,47 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
             </div>
 
             <div>
-              <Label>Score</Label>
-              <Input
-                type="number"
-                value={newQuestion.score}
+              <Label>Explanation</Label>
+              <Textarea
+                value={newQuestion.explanation}
                 onChange={(e) =>
                   setNewQuestion({
                     ...newQuestion,
-                    score: parseInt(e.target.value) || 0,
+                    explanation: e.target.value,
                   })
                 }
+                placeholder="Explanation for the correct answer"
+                rows={2}
               />
             </div>
 
-            <div>
-              <Label>Time Limit (seconds)</Label>
-              <Input
-                type="number"
-                value={newQuestion.timeLimit}
-                onChange={(e) =>
-                  setNewQuestion({
-                    ...newQuestion,
-                    timeLimit: parseInt(e.target.value) || 0,
-                  })
-                }
-              />
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <Label>Score</Label>
+                <Input
+                  type="number"
+                  value={newQuestion.score}
+                  onChange={(e) =>
+                    setNewQuestion({
+                      ...newQuestion,
+                      score: parseInt(e.target.value) || 0,
+                    })
+                  }
+                />
+              </div>
+              <div>
+                <Label>Time Limit (seconds)</Label>
+                <Input
+                  type="number"
+                  value={newQuestion.timeLimit}
+                  onChange={(e) =>
+                    setNewQuestion({
+                      ...newQuestion,
+                      timeLimit: parseInt(e.target.value) || 0,
+                    })
+                  }
+                />
+              </div>
             </div>
 
             <div>
@@ -819,21 +884,6 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
                     orderNumber: parseInt(e.target.value) || 1,
                   })
                 }
-              />
-            </div>
-
-            <div className="md:col-span-2">
-              <Label>Explanation</Label>
-              <Textarea
-                value={newQuestion.explanation}
-                onChange={(e) =>
-                  setNewQuestion({
-                    ...newQuestion,
-                    explanation: e.target.value,
-                  })
-                }
-                placeholder="Explanation for the correct answer"
-                rows={2}
               />
             </div>
           </div>
@@ -961,8 +1011,8 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
       <div className="space-y-4 rounded-lg bg-yellow-50 p-4">
         <h6 className="font-medium">Edit Question {question.orderNumber}</h6>
 
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-          <div className="md:col-span-2">
+        <div className="space-y-4">
+          <div>
             <Label>Question</Label>
             <Textarea
               value={editForm.question}
@@ -973,19 +1023,22 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
             />
           </div>
 
-          {editForm.choices.map((choice, index) => (
-            <div key={index}>
-              <Label>Choice {index + 1}</Label>
+          <div>
+            <Label>Answer Choices</Label>
+            {editForm.choices.map((choice, index) => (
               <Input
+                key={index}
                 value={choice}
                 onChange={(e) => {
                   const newChoices = [...editForm.choices];
                   newChoices[index] = e.target.value;
                   setEditForm({ ...editForm, choices: newChoices });
                 }}
+                placeholder={`Choice ${String.fromCharCode(65 + index)}`}
+                className="mt-1"
               />
-            </div>
-          ))}
+            ))}
+          </div>
 
           <div>
             <Label>Correct Answer</Label>
@@ -994,6 +1047,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
               onChange={(e) =>
                 setEditForm({ ...editForm, answer: e.target.value })
               }
+              placeholder="Enter the correct answer exactly as written above"
               className={
                 !editForm.answer || isEditAnswerValid
                   ? ""
@@ -1008,31 +1062,44 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
           </div>
 
           <div>
-            <Label>Score</Label>
-            <Input
-              type="number"
-              value={editForm.score}
+            <Label>Explanation</Label>
+            <Textarea
+              value={editForm.explanation}
               onChange={(e) =>
-                setEditForm({
-                  ...editForm,
-                  score: parseInt(e.target.value) || 0,
-                })
+                setEditForm({ ...editForm, explanation: e.target.value })
               }
+              placeholder="Explanation for the correct answer"
+              rows={2}
             />
           </div>
 
-          <div>
-            <Label>Time Limit (seconds)</Label>
-            <Input
-              type="number"
-              value={editForm.timeLimit}
-              onChange={(e) =>
-                setEditForm({
-                  ...editForm,
-                  timeLimit: parseInt(e.target.value) || 0,
-                })
-              }
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label>Score</Label>
+              <Input
+                type="number"
+                value={editForm.score}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    score: parseInt(e.target.value) || 0,
+                  })
+                }
+              />
+            </div>
+            <div>
+              <Label>Time Limit (seconds)</Label>
+              <Input
+                type="number"
+                value={editForm.timeLimit}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    timeLimit: parseInt(e.target.value) || 0,
+                  })
+                }
+              />
+            </div>
           </div>
 
           <div>
@@ -1046,17 +1113,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
                   orderNumber: parseInt(e.target.value) || 1,
                 })
               }
-            />
-          </div>
-
-          <div className="md:col-span-2">
-            <Label>Explanation</Label>
-            <Textarea
-              value={editForm.explanation}
-              onChange={(e) =>
-                setEditForm({ ...editForm, explanation: e.target.value })
-              }
-              rows={2}
             />
           </div>
         </div>
@@ -1095,15 +1151,24 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
               {question.timeLimit}s
             </span>
           </div>
-          <p className="mb-2 text-sm">{question.question}</p>
-          <div className="text-xs text-gray-600">
-            <p>
-              <strong>Answer:</strong> {question.answer}
-            </p>
-            <p>
-              <strong>Choices:</strong> {question.choices.join(", ")}
-            </p>
+          <p className="mb-2 font-medium">{question.question}</p>
+          <div className="mb-2 space-y-1">
+            {question.choices.map((choice, choiceIndex) => (
+              <div
+                key={choiceIndex}
+                className={`rounded p-2 text-sm ${
+                  choice === question.answer
+                    ? "bg-green-100 font-medium text-green-800"
+                    : "bg-gray-50"
+                }`}
+              >
+                {String.fromCharCode(65 + choiceIndex)}. {choice}
+              </div>
+            ))}
           </div>
+          <p className="text-sm text-gray-600">
+            <strong>Explanation:</strong> {question.explanation}
+          </p>
         </div>
         <div className="ml-4 flex space-x-1">
           <Button

@@ -37,60 +37,80 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels }) => {
           <TableHead>Image</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Description</TableHead>
-          <TableHead>Questions</TableHead>
+          <TableHead>Chapters</TableHead>
+          <TableHead>Free Chapters</TableHead>
           <TableHead>Created At</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
-        {novels.map((novel) => (
-          <TableRow key={novel.id}>
-            <TableCell>
-              {novel.image ? (
-                <div className="relative h-16 w-12 overflow-hidden rounded">
-                  <Image
-                    src={novel.image.imageUrl}
-                    alt={novel.title}
-                    fill
-                    className="object-cover"
-                  />
+        {novels.map((novel) => {
+          const freeChaptersCount = novel.novelChapters.filter(
+            (chapter) => chapter.isFree,
+          ).length;
+
+          return (
+            <TableRow key={novel.id}>
+              <TableCell>
+                {novel.image ? (
+                  <div className="relative h-16 w-12 overflow-hidden rounded">
+                    <Image
+                      src={novel.image.imageUrl}
+                      alt={novel.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="flex h-16 w-12 items-center justify-center rounded bg-gray-100 text-xs text-gray-500">
+                    No Image
+                  </div>
+                )}
+              </TableCell>
+              <TableCell className="font-medium">{novel.title}</TableCell>
+              <TableCell className="max-w-xs truncate">
+                {novel.description}
+              </TableCell>
+              <TableCell>
+                {novel.novelChapters.length > 0 ? (
+                  <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                    {novel.novelChapters.length} chapters
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                    No chapters
+                  </span>
+                )}
+              </TableCell>
+              <TableCell>
+                {freeChaptersCount > 0 ? (
+                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                    {freeChaptersCount} free
+                  </span>
+                ) : (
+                  <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
+                    No free
+                  </span>
+                )}
+              </TableCell>
+              <TableCell className="text-sm text-gray-500">
+                {format(new Date(novel.createdAt), "yyyy/MM/dd")}
+              </TableCell>
+              <TableCell className="text-right">
+                <div className="flex items-center justify-end space-x-2">
+                  <Button variant="outline" size="sm">
+                    <Link
+                      href={`/admin/novels/${novel.AR?.id}/${novel.id}/edit`}
+                    >
+                      <Edit className="h-4 w-4" />
+                    </Link>
+                  </Button>
+                  <DeleteNovelAlert novelId={novel.id} title={novel.title} />
                 </div>
-              ) : (
-                <div className="flex h-16 w-12 items-center justify-center rounded bg-gray-100 text-xs text-gray-500">
-                  No Image
-                </div>
-              )}
-            </TableCell>
-            <TableCell className="font-medium">{novel.title}</TableCell>
-            <TableCell className="max-w-xs truncate">
-              {novel.description}
-            </TableCell>
-            <TableCell>
-              {novel.novelChapters.length > 0 ? (
-                <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                  {novel.novelChapters.length} chapters
-                </span>
-              ) : (
-                <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                  No chapters
-                </span>
-              )}
-            </TableCell>
-            <TableCell className="text-sm text-gray-500">
-              {format(new Date(novel.createdAt), "yyyy/MM/dd")}
-            </TableCell>
-            <TableCell className="text-right">
-              <div className="flex items-center justify-end space-x-2">
-                <Button variant="outline" size="sm">
-                  <Link href={`/admin/novels/${novel.AR?.id}/${novel.id}/edit`}>
-                    <Edit className="h-4 w-4" />
-                  </Link>
-                </Button>
-                <DeleteNovelAlert novelId={novel.id} title={novel.title} />
-              </div>
-            </TableCell>
-          </TableRow>
-        ))}
+              </TableCell>
+            </TableRow>
+          );
+        })}
       </TableBody>
     </Table>
   );

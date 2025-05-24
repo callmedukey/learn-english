@@ -43,6 +43,10 @@ model User {
   score   TotalScore?
   ARScore ARScore[]
   RCScore RCScore[]
+
+  // Payment and subscription relations
+  payments      Payment[]
+  subscriptions UserSubscription[]
 }
 
 model Account {

@@ -70,7 +70,7 @@ export default async function AdminUsersPage({
           </div>
         }
       >
-        <UsersTable users={users} countries={countries} />
+        <UsersTable users={users} />
       </Suspense>
 
       {totalPages > 1 && (

@@ -9,6 +9,7 @@ export const createChapter = async (formData: FormData) => {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const orderNumber = parseInt(formData.get("orderNumber") as string);
+  const isFree = formData.get("isFree") === "on";
 
   if (!novelId || !title || isNaN(orderNumber)) {
     return {
@@ -49,6 +50,7 @@ export const createChapter = async (formData: FormData) => {
         title,
         description,
         orderNumber,
+        isFree,
       },
     });
 
@@ -75,6 +77,7 @@ export const updateChapter = async (formData: FormData) => {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const orderNumber = parseInt(formData.get("orderNumber") as string);
+  const isFree = formData.get("isFree") === "on";
 
   if (!chapterId || !title || !description || isNaN(orderNumber)) {
     return {
@@ -112,6 +115,7 @@ export const updateChapter = async (formData: FormData) => {
         title,
         description,
         orderNumber,
+        isFree,
       },
     });
 

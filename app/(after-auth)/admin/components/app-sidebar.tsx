@@ -33,7 +33,7 @@ const items = [
   },
   {
     title: "Reading Comprehension",
-    url: "/admin/reading-comprehension",
+    url: "/admin/reading",
     icon: Brain,
   },
   {

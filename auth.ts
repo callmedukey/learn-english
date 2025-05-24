@@ -22,6 +22,7 @@ declare module "next-auth" {
       birthday: Date;
       country: string;
       role: Role;
+      hasPaidSubscription: boolean;
     } & DefaultSession["user"];
   }
 
@@ -35,6 +36,7 @@ declare module "next-auth" {
     gender?: Gender | null;
     birthday?: Date | null;
     country?: string | null;
+    hasPaidSubscription?: boolean;
   }
 }
 
@@ -86,7 +88,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           nickname: user.nickname,
           gender: user.gender as Gender,
           birthday: user.birthday,
-          country: user.country,
+          country: user.countryId,
           role: user.role as Role,
         };
       },
@@ -114,6 +116,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.gender = token.gender as Gender;
       session.user.birthday = token.birthday as Date;
       session.user.country = token.country as string;
+      session.user.hasPaidSubscription = token.hasPaidSubscription as boolean;
       return session;
     },
     async jwt({ token }) {
@@ -121,17 +124,36 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         where: {
           id: token.sub as string,
         },
+        include: {
+          subscriptions: {
+            include: {
+              plan: true,
+            },
+          },
+        },
       });
 
       token.role = foundUser?.role;
       token.nickname = foundUser?.nickname;
       token.gender = foundUser?.gender;
       token.birthday = foundUser?.birthday;
-      token.country = foundUser?.country;
+      token.country = foundUser?.countryId;
       token.username = foundUser?.username;
+
+      // Check for active, non-expired subscriptions
+      const now = new Date();
+      const activeSubscriptions =
+        foundUser?.subscriptions.filter(
+          (subscription) =>
+            subscription.status === "ACTIVE" && subscription.endDate > now,
+        ) || [];
+
+      const hasPaidSubscription = activeSubscriptions.length > 0;
+      token.hasPaidSubscription = hasPaidSubscription;
+
       return token;
     },
-    async signIn({ user, credentials, account }) {
+    async signIn({ user, account }) {
       if (!user.email) {
         return "/signup";
       }

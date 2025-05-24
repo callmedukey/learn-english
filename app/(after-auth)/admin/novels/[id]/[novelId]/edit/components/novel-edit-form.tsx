@@ -59,6 +59,7 @@ interface NovelEditFormProps {
       title: string;
       description: string | null;
       orderNumber: number;
+      isFree: boolean;
       novelQuestionSet: {
         id: string;
         instructions: string;

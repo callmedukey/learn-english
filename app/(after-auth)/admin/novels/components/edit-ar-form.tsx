@@ -103,7 +103,7 @@ const EditARForm: React.FC<EditARFormProps> = ({ ar, onARUpdated }) => {
         <Textarea
           id="description"
           name="description"
-          defaultValue={ar.description}
+          defaultValue={ar.description || ""}
           placeholder="Enter AR description..."
           rows={3}
           required

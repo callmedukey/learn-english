@@ -38,6 +38,8 @@ model NovelChapter {
   novelId String
   novel   Novel  @relation(fields: [novelId], references: [id], onDelete: Cascade)
 
+  isFree Boolean @default(false)
+
   orderNumber Int
   title       String
   description String?
@@ -72,6 +74,8 @@ model NovelQuestionSet {
   novelChapter   NovelChapter? @relation(fields: [novelChapterId], references: [id], onDelete: Cascade)
 
   novelQuestions NovelQuestion[]
+
+  active Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

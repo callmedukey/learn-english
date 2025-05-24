@@ -36,6 +36,7 @@ const ARTable: React.FC<ARTableProps> = ({ ars }) => {
           <TableHead>Stars</TableHead>
           <TableHead>Description</TableHead>
           <TableHead>Novel Count</TableHead>
+          <TableHead>Free Chapters</TableHead>
           <TableHead>Created At</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
@@ -70,6 +71,17 @@ const ARTable: React.FC<ARTableProps> = ({ ars }) => {
               <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 hover:bg-blue-200">
                 {ar.novelCount}
               </span>
+            </TableCell>
+            <TableCell>
+              {ar.freeChapterCount > 0 ? (
+                <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                  {ar.freeChapterCount} free
+                </span>
+              ) : (
+                <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-500">
+                  No free
+                </span>
+              )}
             </TableCell>
             <TableCell className="text-sm text-gray-500">
               {format(new Date(ar.createdAt), "yyyy/MM/dd")}

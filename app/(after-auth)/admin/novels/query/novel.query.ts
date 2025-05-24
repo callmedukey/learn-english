@@ -18,6 +18,7 @@ export interface NovelData extends Novel {
     title: string;
     description?: string | null;
     orderNumber: number;
+    isFree: boolean;
   }[];
 }
 
@@ -48,6 +49,7 @@ export const getNovelsByARLevel = async (id: string): Promise<NovelData[]> => {
           title: true,
           description: true,
           orderNumber: true,
+          isFree: true,
         },
         orderBy: {
           orderNumber: "asc",

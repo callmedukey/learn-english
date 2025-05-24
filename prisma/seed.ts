@@ -1,11 +1,12 @@
 import bcrypt from "bcryptjs";
 
-import { Gender, Role } from "./generated/prisma";
+import { Country, Gender, Role } from "./generated/prisma";
 import { prisma } from "./prisma-client";
 
 export const seed = async () => {
   try {
-    const [korea, hasUser, hasAR, hasRCLevel] = await Promise.all([
+    let korea: Country | null = null;
+    const [hasKorea, hasUser, hasAR, hasRCLevel, hasPlans] = await Promise.all([
       prisma.country.findFirst({
         where: {
           name: "South Korea",
@@ -14,10 +15,11 @@ export const seed = async () => {
       prisma.user.findFirst(),
       prisma.aR.findFirst(),
       prisma.rCLevel.findFirst(),
+      prisma.plan.findFirst(),
     ]);
 
-    if (korea) {
-      console.log("Country already exists");
+    if (hasKorea) {
+      korea = hasKorea;
     } else {
       await prisma.country.createMany({
         data: [
@@ -45,9 +47,7 @@ export const seed = async () => {
           {
             name: "France",
           },
-          {
-            name: "South Korea",
-          },
+
           {
             name: "Spain",
           },
@@ -56,6 +56,14 @@ export const seed = async () => {
           },
         ],
       });
+
+      const createdCountry = await prisma.country.create({
+        data: {
+          name: "South Korea",
+        },
+      });
+
+      korea = createdCountry;
     }
 
     if (hasUser) {
@@ -74,6 +82,7 @@ export const seed = async () => {
       });
 
       console.log("User created:", user);
+      console.log("User country:", user.countryId);
     }
 
     if (hasAR) {
@@ -159,6 +168,44 @@ export const seed = async () => {
           },
         ],
       });
+    }
+
+    if (hasPlans) {
+      console.log("Subscription plans already exist");
+    } else {
+      await prisma.plan.createMany({
+        data: [
+          {
+            name: "1 Month Plan",
+            price: 9900, // 9,900원
+            duration: 30,
+            description: "Access to all features for 1 month",
+            category: "monthly",
+            sortOrder: 1,
+            isActive: true,
+          },
+          {
+            name: "3 Month Plan",
+            price: 24900, // 24,900원 (약 17% 할인)
+            duration: 90,
+            description: "Access to all features for 3 months - Best Value!",
+            category: "quarterly",
+            sortOrder: 2,
+            isActive: true,
+          },
+          {
+            name: "1 Year Plan",
+            price: 89900, // 89,900원 (약 25% 할인)
+            duration: 365,
+            description: "Access to all features for 1 year - Maximum Savings!",
+            category: "yearly",
+            sortOrder: 3,
+            isActive: true,
+          },
+        ],
+      });
+
+      console.log("Subscription plans created");
     }
   } catch (err) {
     console.error(err);
