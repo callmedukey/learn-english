@@ -22,7 +22,7 @@ const MobileMenu = () => {
           size="icon"
           className="size-8 rounded-full hover:bg-primary hover:text-white"
         >
-          <Menu className="size-5" />
+          <Menu className="size-6" />
           <span className="sr-only">Open menu</span>
         </Button>
       </SheetTrigger>
@@ -42,13 +42,13 @@ const MobileMenu = () => {
                 Dashboard
               </Link>
               <Link
-                href="/novels"
+                href="/novel"
                 className="flex h-10 items-center rounded-md px-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-primary"
               >
                 Novel
               </Link>
               <Link
-                href="/reading-comprehension"
+                href="/rc"
                 className="flex h-10 items-center rounded-md px-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-primary"
               >
                 Reading Comprehension

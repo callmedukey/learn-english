@@ -33,13 +33,13 @@ const Header = async () => {
           Dashboard
         </Link>
         <Link
-          href="/novels"
+          href="/novel"
           className="text-base font-medium text-gray-700 underline-offset-4 transition-colors hover:text-primary hover:underline"
         >
           Novel
         </Link>
         <Link
-          href="/reading-comprehension"
+          href="/rc"
           className="text-base font-medium text-gray-700 underline-offset-4 transition-colors hover:text-primary hover:underline"
         >
           Reading Comprehension
