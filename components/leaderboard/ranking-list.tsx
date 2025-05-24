@@ -1,0 +1,107 @@
+"use client";
+
+import Image from "next/image";
+
+interface RankingItem {
+  id: string;
+  rank: number;
+  nickname: string;
+  grade: string;
+  score: number;
+  countryIcon?: string;
+}
+
+interface RankingListProps {
+  rankings: RankingItem[];
+  currentUserId?: string;
+}
+
+export function RankingList({ rankings, currentUserId }: RankingListProps) {
+  return (
+    <div className="space-y-4 p-2">
+      {/* Header */}
+      <div className="flex items-center gap-4 px-2 text-xs font-semibold text-gray-600">
+        <div className="w-6"></div> {/* Rank column */}
+        <div className="flex min-w-0 flex-1">NICKNAME</div>
+        <div className="w-8 text-center">GRADE</div>
+        <div className="w-12 text-right">POINT</div>
+      </div>
+
+      {/* Rankings */}
+      {rankings.length === 0 ? (
+        <div className="py-8 text-center text-gray-500">
+          No rankings available
+        </div>
+      ) : (
+        <>
+          {rankings.map((item) => (
+            <div
+              key={item.id}
+              className={`flex items-center gap-4 rounded-lg p-2 transition-colors ${
+                item.id === currentUserId
+                  ? "border border-amber-300 bg-amber-100"
+                  : "hover:bg-gray-50"
+              }`}
+            >
+              {/* Rank */}
+              <div className="w-6 text-center font-bold text-gray-600">
+                {item.rank}
+              </div>
+
+              {/* User Info */}
+              <div className="flex min-w-0 flex-1 items-center gap-2">
+                {/* Country Flag */}
+                {item.countryIcon ? (
+                  <div className="relative h-4 w-6 flex-shrink-0">
+                    <Image
+                      src={item.countryIcon}
+                      alt="Country flag"
+                      fill
+                      className="rounded-sm object-cover"
+                    />
+                  </div>
+                ) : (
+                  <div className="h-4 w-6 flex-shrink-0 rounded-sm bg-gray-200" />
+                )}
+
+                {/* Nickname */}
+                <div className="truncate font-medium text-gray-900">
+                  {item.nickname}
+                </div>
+              </div>
+
+              {/* Grade */}
+              <div className="w-8 text-center font-semibold text-gray-700">
+                {item.grade}
+              </div>
+
+              {/* Score */}
+              <div className="w-12 text-right font-bold text-amber-700">
+                {item.score.toLocaleString()}
+              </div>
+            </div>
+          ))}
+
+          {/* Fill empty slots if less than 5 rankings */}
+          {rankings.length < 5 &&
+            Array.from({ length: 5 - rankings.length }, (_, i) => (
+              <div
+                key={`empty-${i}`}
+                className="flex items-center gap-4 p-2 opacity-30"
+              >
+                <div className="w-6 text-center font-bold text-gray-400">
+                  {rankings.length + i + 1}
+                </div>
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  <div className="h-4 w-6 rounded-sm bg-gray-100" />
+                  <div className="text-gray-400">-</div>
+                </div>
+                <div className="w-8 text-center text-gray-400">-</div>
+                <div className="w-12 text-right text-gray-400">-</div>
+              </div>
+            ))}
+        </>
+      )}
+    </div>
+  );
+}
