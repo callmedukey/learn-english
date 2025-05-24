@@ -53,11 +53,17 @@ model Payment {
   userId      String
   planId      String
   
+  // Coupon information (optional)
+  couponId    String?       // Reference to the coupon used
+  couponCode  String?       // Store the coupon code used
+  discountAmount Int?       // Amount discounted in KRW
+  originalAmount Int?       // Original amount before discount
+  
   // Toss-Payment specific fields
   paymentKey  String        @unique // From Toss-Payment response
   orderId     String        @unique // Generated order ID
   orderName   String        // Description of the order
-  amount      Int           // Payment amount in KRW
+  amount      Int           // Final payment amount in KRW (after discount)
   currency    String        @default("KRW")
   method      PaymentMethod?
   status      PaymentStatus @default(PENDING)
@@ -81,6 +87,7 @@ model Payment {
   // Relations
   user User @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan Plan @relation(fields: [planId], references: [id])
+  coupon DiscountCoupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
   
   // Subscription created from this payment
   subscription UserSubscription?
@@ -91,6 +98,7 @@ model Payment {
   @@index([userId])
   @@index([status])
   @@index([requestedAt])
+  @@index([couponId])
 }
 
 // User subscription status

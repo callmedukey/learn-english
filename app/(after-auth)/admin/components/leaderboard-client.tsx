@@ -55,7 +55,7 @@ export default function LeaderboardClient({
             value="global"
             className="rounded-none border-b-2 border-transparent py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent"
           >
-            Global Leaderboard
+            Leaderboard
           </TabsTrigger>
           <TabsTrigger
             value="grades"

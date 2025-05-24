@@ -16,9 +16,6 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import {
   Card,
   CardContent,
@@ -26,14 +23,15 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 
 import {
   createQuestionSetAction,
   updateQuestionSetAction,
   deleteQuestionSetAction,
   createQuestionAction,
-  updateQuestionAction,
-  deleteQuestionAction,
 } from "../actions/question-set.actions";
 
 interface QuestionSetSectionProps {
@@ -61,7 +59,6 @@ interface QuestionSetSectionProps {
 const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
   const [isPending, startTransition] = useTransition();
   const [editingQuestionSet, setEditingQuestionSet] = useState(false);
-  const [editingQuestion, setEditingQuestion] = useState<string | null>(null);
   const [showAddQuestion, setShowAddQuestion] = useState(false);
 
   // Question Set form state
@@ -171,8 +168,8 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
         <div className="text-center">
           <h3 className="mb-2 text-lg font-semibold">No Reading Passage</h3>
           <p className="mb-4 text-gray-600">
-            This keyword doesn't have a reading passage yet. Create one to start
-            adding questions.
+            This keyword doesn&apos;t have a reading passage yet. Create one to
+            start adding questions.
           </p>
           {!editingQuestionSet ? (
             <Button onClick={() => setEditingQuestionSet(true)}>
@@ -439,7 +436,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
           </Card>
         )}
 
-        {keyword.RCQuestionSet.RCQuestion.map((question, index) => (
+        {keyword.RCQuestionSet.RCQuestion.map((question) => (
           <Card key={question.id}>
             <CardHeader>
               <CardTitle className="text-base">

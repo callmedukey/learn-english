@@ -22,10 +22,6 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
   const [isPending, startTransition] = useTransition();
   const [passages, setPassages] = useState([{ title: "", passage: "" }]);
 
-  const addPassage = () => {
-    setPassages([...passages, { title: "", passage: "" }]);
-  };
-
   const removePassage = (index: number) => {
     if (passages.length > 1) {
       setPassages(passages.filter((_, i) => i !== index));

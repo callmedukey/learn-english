@@ -1,0 +1,6 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+Always avoid fetching via useEffect. If you must fetch, use use() react 19 function.

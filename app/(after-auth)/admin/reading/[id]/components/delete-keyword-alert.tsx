@@ -4,7 +4,6 @@ import { Trash2 } from "lucide-react";
 import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import { Button } from "@/components/ui/button";
 import {
   AlertDialog,
   AlertDialogTrigger,
@@ -16,6 +15,7 @@ import {
   AlertDialogFooter,
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
+import { Button } from "@/components/ui/button";
 
 import { deleteKeyword } from "../actions/delete-keyword.action";
 

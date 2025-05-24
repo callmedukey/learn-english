@@ -1,7 +1,8 @@
 import React, { Suspense } from "react";
-import { getCountries, getLeaderboardData } from "./queries/leaderboard.query";
+
 import LeaderboardClient from "./components/leaderboard-client";
 import LeaderboardStats from "./components/leaderboard-stats";
+import { getCountries, getLeaderboardData } from "./queries/leaderboard.query";
 
 async function LeaderboardData() {
   const [users, countries] = await Promise.all([
