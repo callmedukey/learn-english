@@ -473,7 +473,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
                 const isCorrectAnswer = choice === currentQuestion.answer;
 
                 let buttonClass =
-                  "w-full text-left p-4 border rounded-lg transition-colors ";
+                  "w-full text-left p-4 border rounded-lg transition-colors cursor-pointer ";
 
                 if (showExplanation) {
                   if (isCorrectAnswer) {
@@ -490,20 +490,34 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
                   buttonClass += "bg-white border-gray-200 hover:bg-gray-50";
                 }
 
+                const isDisabled =
+                  isAnswered || timeLeft === 0 || showExplanation;
+
+                if (isDisabled) {
+                  buttonClass += " cursor-not-allowed opacity-75";
+                }
+
                 return (
-                  <button
+                  <div
                     key={index}
-                    onClick={() => handleAnswerSelect(choice)}
-                    disabled={isAnswered || timeLeft === 0 || showExplanation}
+                    onClick={() => !isDisabled && handleAnswerSelect(choice)}
                     className={buttonClass}
+                    role="button"
+                    tabIndex={isDisabled ? -1 : 0}
+                    onKeyDown={(e) => {
+                      if ((e.key === "Enter" || e.key === " ") && !isDisabled) {
+                        e.preventDefault();
+                        handleAnswerSelect(choice);
+                      }
+                    }}
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="pointer-events-none flex items-center gap-3">
                       <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 text-sm font-medium">
                         {String.fromCharCode(65 + index)}
                       </div>
                       <span>{choice}</span>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
             </div>

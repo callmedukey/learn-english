@@ -1,6 +1,6 @@
-import { ArrowLeft, FileText, Star } from "lucide-react";
+import { Star } from "lucide-react";
 import Link from "next/link";
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { auth } from "@/auth";
@@ -10,21 +10,49 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
 
-import { RCQuestionInterface } from "./components/rc-question-interface";
+import { RCQuizComponent } from "./components/rc-quiz-component";
+
+// Helper function to determine quiz status
+function getRCQuizStatus(
+  questions: Array<{
+    RCQuestionCompleted: Array<{ userId: string }>;
+  }>,
+  userId: string,
+): "start" | "continue" | "retry" {
+  if (questions.length === 0) return "start";
+
+  const completedCount = questions.filter((q) =>
+    q.RCQuestionCompleted.some((completed) => completed.userId === userId),
+  ).length;
+
+  if (completedCount === 0) return "start";
+  if (completedCount === questions.length) return "retry";
+  return "continue";
+}
 
 interface PageProps {
   params: Promise<{ rcLevelId: string; keywordId: string }>;
+  searchParams: Promise<{
+    status?: string;
+  }>;
 }
 
 async function RCKeywordContent({
   rcLevelId,
   keywordId,
+  searchParams,
 }: {
   rcLevelId: string;
   keywordId: string;
+  searchParams: { status?: string };
 }) {
   const session = await auth();
-  const userId = session?.user?.id;
+
+  if (!session) {
+    redirect("/login");
+  }
+
+  const userId = session.user.id;
 
   const keyword = await prisma.rCKeyword.findUnique({
     where: { id: keywordId },
@@ -35,11 +63,9 @@ async function RCKeywordContent({
           RCQuestion: {
             include: {
               RCQuestionCompleted: {
-                where: userId
-                  ? {
-                      userId: userId,
-                    }
-                  : undefined,
+                where: {
+                  userId: userId,
+                },
                 select: {
                   userId: true,
                   score: true,
@@ -60,162 +86,244 @@ async function RCKeywordContent({
   }
 
   // Check if user has access
-  if (!keyword.isFree && !userId) {
-    return (
-      <div className="container mx-auto px-4 py-8">
-        <Link href={`/rc/${rcLevelId}`}>
-          <Button
-            variant="ghost"
-            className="mb-4 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Topics
-          </Button>
-        </Link>
+  const canAccess = keyword.isFree || session.user.hasPaidSubscription;
 
-        <div className="py-12 text-center">
-          <FileText className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
-          <h3 className="mb-2 text-xl font-semibold text-foreground">
-            Premium Content
-          </h3>
-          <p className="mb-4 text-muted-foreground">
-            This topic requires a premium subscription to access.
-          </p>
-          <Button>Upgrade to Premium</Button>
+  if (!canAccess) {
+    return (
+      <div className="container mx-auto max-w-4xl px-4 py-8">
+        <div className="mb-6">
+          <Button variant="outline" asChild>
+            <Link href={`/rc/${rcLevelId}`}>← Back to Topics</Link>
+          </Button>
         </div>
+
+        <Card className="mx-auto max-w-2xl">
+          <CardContent className="py-12 text-center">
+            <div className="text-gray-500">
+              <div className="mb-4 text-4xl">🔒</div>
+              <h3 className="mb-2 text-lg font-medium">Premium Content</h3>
+              <p className="mb-4">
+                This topic requires a premium subscription to access.
+              </p>
+              <div className="mb-6 space-y-2 text-sm text-gray-600">
+                <p>
+                  <strong>Topic:</strong> {keyword.name}
+                </p>
+                <p>
+                  <strong>Level:</strong> {keyword.RCLevel.level}
+                </p>
+                <p>
+                  <strong>Grade:</strong> {keyword.RCLevel.relevantGrade}
+                </p>
+              </div>
+              <Button asChild>
+                <Link href="/pricing">Upgrade to Premium</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   if (!keyword.RCQuestionSet) {
     return (
-      <div className="container mx-auto px-4 py-8">
-        <Link href={`/rc/${rcLevelId}`}>
-          <Button
-            variant="ghost"
-            className="mb-4 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Topics
+      <div className="container mx-auto max-w-4xl px-4 py-8">
+        <div className="mb-6">
+          <Button variant="outline" asChild>
+            <Link href={`/rc/${rcLevelId}`}>← Back to Topics</Link>
           </Button>
-        </Link>
-
-        <div className="py-12 text-center">
-          <FileText className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
-          <h3 className="mb-2 text-xl font-semibold text-foreground">
-            Coming Soon
-          </h3>
-          <p className="text-muted-foreground">
-            Questions for this topic are being prepared.
-          </p>
         </div>
+
+        <Card className="mx-auto max-w-2xl">
+          <CardContent className="py-12 text-center">
+            <div className="text-gray-500">
+              <div className="mb-4 text-4xl">📝</div>
+              <h3 className="mb-2 text-lg font-medium">No Quiz Available</h3>
+              <p className="mb-4">This topic doesn&apos;t have a quiz yet.</p>
+              <div className="mb-6 space-y-2 text-sm text-gray-600">
+                <p>
+                  <strong>Topic:</strong> {keyword.name}
+                </p>
+                <p>
+                  <strong>Level:</strong> {keyword.RCLevel.level}
+                </p>
+                {keyword.description && (
+                  <p>
+                    <strong>Description:</strong> {keyword.description}
+                  </p>
+                )}
+              </div>
+              <Button asChild>
+                <Link href={`/rc/${rcLevelId}`}>Back to Topics</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
-  // Calculate progress
-  const totalQuestions = keyword.RCQuestionSet.RCQuestion.length;
-  const completedQuestions = keyword.RCQuestionSet.RCQuestion.filter(
-    (question) =>
-      question.RCQuestionCompleted.some(
-        (completed) => completed.userId === userId,
-      ),
-  ).length;
-
-  const progressPercentage =
-    totalQuestions > 0 ? (completedQuestions / totalQuestions) * 100 : 0;
-
-  return (
-    <div className="container mx-auto px-4 py-8">
-      {/* Header */}
-      <div className="mb-8">
-        <Link href={`/rc/${rcLevelId}`}>
-          <Button
-            variant="ghost"
-            className="mb-4 text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to Topics
+  // Block access if question set is inactive
+  if (!keyword.RCQuestionSet.active) {
+    return (
+      <div className="container mx-auto max-w-4xl px-4 py-8">
+        <div className="mb-6">
+          <Button variant="outline" asChild>
+            <Link href={`/rc/${rcLevelId}`}>← Back to Topics</Link>
           </Button>
-        </Link>
-
-        <div className="mb-4 flex items-center gap-4">
-          <h1 className="text-3xl font-bold text-foreground">{keyword.name}</h1>
-          <div className="flex items-center gap-1">
-            {Array.from({ length: keyword.RCLevel.stars }).map((_, i) => (
-              <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
-            ))}
-          </div>
         </div>
 
-        <div className="mb-4 flex items-center gap-3">
-          <Badge
-            variant="secondary"
-            className="border-primary/20 bg-primary/10 text-primary"
-          >
-            RC Level {keyword.RCLevel.level}
-          </Badge>
-          <Badge
-            variant="outline"
-            className="border-muted-foreground/30 text-muted-foreground"
-          >
-            Grade {keyword.RCLevel.relevantGrade}
-          </Badge>
-          <Badge
-            variant="outline"
-            className="border-muted-foreground/30 text-muted-foreground"
-          >
-            <FileText className="mr-1 h-3 w-3" />
-            {totalQuestions} question{totalQuestions !== 1 ? "s" : ""}
-          </Badge>
-          {userId && (
-            <Badge
-              variant="secondary"
-              className="border-amber-200 bg-amber-100 text-amber-800"
-            >
-              {Math.round(progressPercentage)}% complete
-            </Badge>
-          )}
-        </div>
-
-        {keyword.description && (
-          <p className="text-lg text-muted-foreground">{keyword.description}</p>
-        )}
-      </div>
-
-      {/* Reading Passage and Questions */}
-      <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-        {/* Reading Passage */}
-        <Card className="h-fit">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              {keyword.RCQuestionSet.title}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="prose prose-sm max-w-none text-foreground">
-              {keyword.RCQuestionSet.passage
-                .split("\n")
-                .map((paragraph, index) => (
-                  <p key={index} className="mb-4 leading-relaxed">
-                    {paragraph}
-                  </p>
-                ))}
+        <Card className="mx-auto max-w-2xl">
+          <CardContent className="py-12 text-center">
+            <div className="text-gray-500">
+              <div className="mb-4 text-4xl">🚧</div>
+              <h3 className="mb-2 text-lg font-medium">Quiz Not Available</h3>
+              <p className="mb-4">
+                This quiz is currently under development and not available yet.
+              </p>
+              <div className="mb-6 space-y-2 text-sm text-gray-600">
+                <p>
+                  <strong>Topic:</strong> {keyword.name}
+                </p>
+                <p>
+                  <strong>Level:</strong> {keyword.RCLevel.level}
+                </p>
+                <p>
+                  <strong>Grade:</strong> {keyword.RCLevel.relevantGrade}
+                </p>
+              </div>
+              <Button asChild>
+                <Link href={`/rc/${rcLevelId}`}>Back to Topics</Link>
+              </Button>
             </div>
           </CardContent>
         </Card>
-
-        {/* Questions Interface */}
-        <div className="space-y-6">
-          <RCQuestionInterface
-            questionSet={keyword.RCQuestionSet}
-            userId={userId}
-            keywordId={keywordId}
-            rcLevelId={rcLevelId}
-          />
-        </div>
       </div>
+    );
+  }
+
+  const questions = keyword.RCQuestionSet.RCQuestion;
+
+  if (questions.length === 0) {
+    return (
+      <div className="container mx-auto max-w-4xl px-4 py-8">
+        <div className="mb-6">
+          <Button variant="outline" asChild>
+            <Link href={`/rc/${rcLevelId}`}>← Back to Topics</Link>
+          </Button>
+        </div>
+
+        <Card className="mx-auto max-w-2xl">
+          <CardContent className="py-12 text-center">
+            <div className="text-gray-500">
+              <div className="mb-4 text-4xl">📝</div>
+              <h3 className="mb-2 text-lg font-medium">
+                No Questions Available
+              </h3>
+              <p className="mb-4">
+                This topic&apos;s quiz doesn&apos;t have any questions yet.
+              </p>
+              <div className="mb-6 space-y-2 text-sm text-gray-600">
+                <p>
+                  <strong>Topic:</strong> {keyword.name}
+                </p>
+                <p>
+                  <strong>Level:</strong> {keyword.RCLevel.level}
+                </p>
+                {keyword.description && (
+                  <p>
+                    <strong>Description:</strong> {keyword.description}
+                  </p>
+                )}
+              </div>
+              <Button asChild>
+                <Link href={`/rc/${rcLevelId}`}>Back to Topics</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Determine quiz status
+  let status = getRCQuizStatus(questions, userId);
+
+  // Override with search params if retry is specified
+  if (searchParams.status === "retry") {
+    status = "retry";
+  }
+
+  return (
+    <div className="container mx-auto px-4 py-8">
+      {/* Back Button */}
+      <div className="mb-6">
+        <Button variant="outline" asChild>
+          <Link href={`/rc/${rcLevelId}`}>← Back to Topics</Link>
+        </Button>
+      </div>
+
+      {/* Topic Info Card - Show before starting quiz */}
+      {status !== "continue" && (
+        <Card className="mx-auto mb-6 max-w-4xl">
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <CardTitle>{keyword.name}</CardTitle>
+              <div className="flex gap-2">
+                {keyword.isFree && (
+                  <Badge
+                    variant="secondary"
+                    className="bg-amber-100 text-amber-800"
+                  >
+                    Free
+                  </Badge>
+                )}
+                <Badge variant="outline" className="bg-primary/10 text-primary">
+                  {status === "start" && "Ready to Start"}
+                  {status === "retry" && "Ready to Retry"}
+                </Badge>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: keyword.RCLevel.stars }).map((_, i) => (
+                    <Star
+                      key={i}
+                      className="h-4 w-4 fill-amber-400 text-amber-400"
+                    />
+                  ))}
+                </div>
+              </div>
+            </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-2">
+              <p>
+                <strong>Level:</strong> RC {keyword.RCLevel.level}
+              </p>
+              <p>
+                <strong>Grade:</strong> {keyword.RCLevel.relevantGrade}
+              </p>
+              <p>
+                <strong>Questions:</strong> {questions.length}
+              </p>
+              {keyword.description && (
+                <p>
+                  <strong>Description:</strong> {keyword.description}
+                </p>
+              )}
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Quiz Component */}
+      <RCQuizComponent
+        questionSet={keyword.RCQuestionSet}
+        userId={session.user.id}
+        keywordId={keywordId}
+        rcLevelId={rcLevelId}
+        userHasPaidSubscription={session.user.hasPaidSubscription}
+        status={status}
+      />
     </div>
   );
 }
@@ -284,12 +392,17 @@ function RCKeywordContentSkeleton() {
   );
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps) {
   const { rcLevelId, keywordId } = await params;
+  const resolvedSearchParams = await searchParams;
 
   return (
     <Suspense fallback={<RCKeywordContentSkeleton />}>
-      <RCKeywordContent rcLevelId={rcLevelId} keywordId={keywordId} />
+      <RCKeywordContent
+        rcLevelId={rcLevelId}
+        keywordId={keywordId}
+        searchParams={resolvedSearchParams}
+      />
     </Suspense>
   );
 }

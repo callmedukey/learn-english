@@ -9,7 +9,8 @@ export default function NotFound() {
         RC Level Not Found
       </h2>
       <p className="mb-8 text-muted-foreground">
-        The reading comprehension level you're looking for doesn't exist.
+        The reading comprehension level you&apos;re looking for doesn&apos;t
+        exist.
       </p>
       <Link href="/rc">
         <Button>Return to RC Levels</Button>

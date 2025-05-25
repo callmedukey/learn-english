@@ -21,6 +21,7 @@ interface RCKeywordCardProps {
     RCQuestionSet: {
       id: string;
       title: string;
+      active: boolean;
       RCQuestion: Array<{
         id: string;
         RCQuestionCompleted: Array<{
@@ -57,6 +58,8 @@ export function RCKeywordCard({
   const isCompleted = progressPercentage === 100;
   const hasProgress = progressPercentage > 0;
   const hasQuestionSet = keyword.RCQuestionSet !== null;
+  const isQuestionSetActive = keyword.RCQuestionSet?.active === true;
+  const hasQuestions = totalQuestions > 0;
 
   // Determine status
   let status:
@@ -66,7 +69,7 @@ export function RCKeywordCard({
     | "in-progress"
     | "no-content" = "no-content";
 
-  if (!hasQuestionSet) {
+  if (!hasQuestionSet || !isQuestionSetActive || !hasQuestions) {
     status = "no-content";
   } else if (!keyword.isFree && !userId) {
     status = "locked";
@@ -113,8 +116,8 @@ export function RCKeywordCard({
       case "no-content":
         return (
           <Badge
-            variant="outline"
-            className="border-muted-foreground/30 text-muted-foreground"
+            variant="secondary"
+            className="border-amber-200 bg-amber-100 text-amber-800"
           >
             Coming Soon
           </Badge>
@@ -131,11 +134,15 @@ export function RCKeywordCard({
     }
   };
 
-  const isClickable = hasQuestionSet && (keyword.isFree || userId);
+  const isClickable =
+    hasQuestionSet &&
+    isQuestionSetActive &&
+    hasQuestions &&
+    (keyword.isFree || userId);
 
   const cardContent = (
     <Card
-      className={`h-full border-border bg-card transition-all duration-200 ${
+      className={`flex h-full flex-col border-border bg-card transition-all duration-200 ${
         isClickable
           ? "cursor-pointer hover:scale-105 hover:shadow-lg"
           : "opacity-75"
@@ -149,8 +156,8 @@ export function RCKeywordCard({
           {getStatusBadge()}
         </div>
 
-        {hasQuestionSet && (
-          <div className="flex items-center gap-2">
+        {hasQuestionSet && isQuestionSetActive && hasQuestions && (
+          <div className="flex flex-wrap items-center gap-2">
             <Badge
               variant="outline"
               className="border-muted-foreground/30 text-muted-foreground"
@@ -170,7 +177,7 @@ export function RCKeywordCard({
         )}
 
         {/* Progress bar */}
-        {userId && hasQuestionSet && totalQuestions > 0 && (
+        {userId && hasQuestionSet && isQuestionSetActive && hasQuestions && (
           <div className="mt-3">
             <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
               <span>Progress</span>
@@ -183,29 +190,42 @@ export function RCKeywordCard({
         )}
       </CardHeader>
 
-      <CardContent className="pt-0">
-        {keyword.description && (
-          <CardDescription className="mb-4 line-clamp-3 text-muted-foreground">
-            {keyword.description}
-          </CardDescription>
-        )}
+      <CardContent className="flex flex-1 flex-col pt-0">
+        <div className="flex-1">
+          {keyword.description && (
+            <CardDescription className="line-clamp-3 text-muted-foreground">
+              {keyword.description}
+            </CardDescription>
+          )}
+        </div>
 
-        {isClickable ? (
-          <Button
-            className="w-full"
-            variant={hasProgress ? "default" : "outline"}
-          >
-            {status === "completed"
-              ? "Review"
-              : hasProgress
-                ? "Continue"
-                : "Start"}
-          </Button>
-        ) : (
-          <Button className="w-full" variant="outline" disabled>
-            {status === "locked" ? "Premium Required" : "Coming Soon"}
-          </Button>
-        )}
+        {/* Button positioned at bottom */}
+        <div className="mt-4">
+          {isClickable ? (
+            <Button
+              className="w-full"
+              variant={hasProgress ? "default" : "outline"}
+            >
+              {status === "completed"
+                ? "Retry"
+                : hasProgress
+                  ? "Continue"
+                  : "Start"}
+            </Button>
+          ) : (
+            <Button className="w-full" variant="outline" disabled>
+              {status === "locked"
+                ? "Premium Required"
+                : !hasQuestionSet
+                  ? "Coming Soon"
+                  : !isQuestionSetActive
+                    ? "Coming Soon"
+                    : !hasQuestions
+                      ? "Questions Coming Soon"
+                      : "Coming Soon"}
+            </Button>
+          )}
+        </div>
       </CardContent>
     </Card>
   );

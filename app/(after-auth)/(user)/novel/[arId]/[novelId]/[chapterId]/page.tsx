@@ -284,7 +284,7 @@ function ChapterPageSkeleton() {
     <div className="container mx-auto px-4 py-8">
       <Skeleton className="mb-6 h-10 w-48" />
 
-      <div className="mx-auto max-w-2xl space-y-6">
+      <div className="mx-auto max-w-4xl space-y-6">
         <Skeleton className="h-64 w-full rounded-lg" />
         <Skeleton className="h-48 w-full rounded-lg" />
         <Skeleton className="h-32 w-full rounded-lg" />

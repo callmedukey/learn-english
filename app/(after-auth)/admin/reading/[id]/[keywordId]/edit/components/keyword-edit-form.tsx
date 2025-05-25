@@ -53,6 +53,7 @@ interface KeywordEditFormProps {
       id: string;
       title: string;
       passage: string;
+      active: boolean;
       RCQuestion: Array<{
         id: string;
         orderNumber: number;
@@ -85,6 +86,9 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
   const [description, setDescription] = useState(keyword.description || "");
   const [selectedRCLevelId, setSelectedRCLevelId] = useState(keyword.rcLevelId);
   const [isFree, setIsFree] = useState(keyword.isFree);
+  const [isActive, setIsActive] = useState(
+    keyword.RCQuestionSet?.active || false,
+  );
 
   const handleSave = () => {
     startTransition(async () => {
@@ -95,6 +99,9 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
       formData.append("rcLevelId", selectedRCLevelId);
       if (isFree) {
         formData.append("isFree", "on");
+      }
+      if (isActive) {
+        formData.append("isActive", "on");
       }
 
       const result = await updateKeywordAction(formData);
@@ -224,6 +231,15 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
                 disabled={isPending}
               />
               <Label htmlFor="isFree">Free Access</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="isActive"
+                checked={isActive}
+                onCheckedChange={(checked) => setIsActive(checked === true)}
+                disabled={isPending}
+              />
+              <Label htmlFor="isActive">Active</Label>
             </div>
           </div>
           <div>

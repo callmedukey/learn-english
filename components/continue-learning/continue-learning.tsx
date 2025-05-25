@@ -140,9 +140,7 @@ async function ContinueLearningContent({ userId }: { userId: string }) {
               </div>
 
               <Button asChild className="mt-4 w-full">
-                <Link
-                  href={`/reading-comprehension/${data.rcProgress.keyword.id}`}
-                >
+                <Link href={`/rc/${data.rcProgress.keyword.RCLevel.id}`}>
                   Continue Reading Comprehension
                 </Link>
               </Button>

@@ -10,6 +10,7 @@ export const updateKeywordAction = async (formData: FormData) => {
   const description = formData.get("description") as string;
   const rcLevelId = formData.get("rcLevelId") as string;
   const isFree = formData.get("isFree") === "on";
+  const isActive = formData.get("isActive") === "on";
 
   if (!keywordId || !name || !rcLevelId) {
     return {
@@ -21,6 +22,9 @@ export const updateKeywordAction = async (formData: FormData) => {
     // Check if keyword exists
     const existingKeyword = await prisma.rCKeyword.findUnique({
       where: { id: keywordId },
+      include: {
+        RCQuestionSet: true,
+      },
     });
 
     if (!existingKeyword) {
@@ -68,6 +72,16 @@ export const updateKeywordAction = async (formData: FormData) => {
         isFree,
       },
     });
+
+    // Update the question set's active status if it exists
+    if (existingKeyword.RCQuestionSet) {
+      await prisma.rCQuestionSet.update({
+        where: { id: existingKeyword.RCQuestionSet.id },
+        data: {
+          active: isActive,
+        },
+      });
+    }
 
     revalidatePath(`/admin/reading/${rcLevelId}`);
     revalidatePath("/admin/reading");

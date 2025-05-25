@@ -25,6 +25,7 @@ export interface RCProgress {
     id: string;
     name: string;
     RCLevel: {
+      id: string;
       level: string;
     };
   };
