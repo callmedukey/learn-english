@@ -1,17 +1,8 @@
 "server only";
 
 import calculateGrade from "@/lib/utils/calculate-grade";
+import { NotificationType } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
-
-export interface RankingNotificationData {
-  userId: string;
-  type: "novel" | "rc";
-  rankType: "overall" | "grade";
-  rank: number;
-  totalUsers: number;
-  score: number;
-  grade?: string;
-}
 
 /**
  * Check if user has achieved a new ranking and create notification if needed
@@ -21,31 +12,71 @@ export async function checkAndCreateRankingNotification(
   type: "novel" | "rc",
 ): Promise<void> {
   try {
-    // Get user's current scores and grade
-    const user = await prisma.user.findUnique({
-      where: { id: userId },
-      include: {
-        ARScore: true,
-        RCScore: true,
+    const notificationType =
+      type === "novel" ? NotificationType.NOVEL : NotificationType.RC;
+
+    // Check for recent notification of the same type
+    const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+    const recentNotification = await prisma.notification.findFirst({
+      where: {
+        userId,
+        type: notificationType,
+        createdAt: {
+          gte: oneHourAgo,
+        },
       },
     });
 
-    if (!user) return;
+    if (recentNotification) {
+      console.log(
+        `Notification of type ${type} already sent to user ${userId} within the last hour.`,
+      );
+      return; // Don't send another notification
+    }
+
+    // Fetch user with potentially ARScore or RCScore based on type
+    // The query in the original file was slightly different here, let's ensure we get the specific scores needed.
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      include: {
+        ARScore: type === "novel" ? { select: { score: true } } : false,
+        RCScore: type === "rc" ? { select: { score: true } } : false,
+        // birthday is needed for calculateGrade, ensure it's always fetched if not already part of User model by default
+        // Assuming birthday is part of the base User model from context
+      },
+    });
+
+    if (!user) {
+      console.error(`User not found: ${userId}`);
+      return;
+    }
 
     const userGrade = calculateGrade(user.birthday);
-
-    // Calculate user's score for the specific type
-    const userScore =
-      type === "novel"
-        ? user.ARScore.reduce((sum, score) => sum + score.score, 0)
-        : user.RCScore.reduce((sum, score) => sum + score.score, 0);
+    let currentUserScore = 0;
+    if (type === "novel" && user.ARScore) {
+      currentUserScore = user.ARScore.reduce(
+        (sum: number, score: { score: number }) => sum + score.score,
+        0,
+      );
+    } else if (type === "rc" && user.RCScore) {
+      currentUserScore = user.RCScore.reduce(
+        (sum: number, score: { score: number }) => sum + score.score,
+        0,
+      );
+    }
 
     // Check overall ranking
-    await checkOverallRanking(userId, type, userScore);
+    await checkOverallRanking(userId, type, currentUserScore, notificationType);
 
     // Check grade ranking if user has a valid grade
     if (userGrade && userGrade !== "N/A") {
-      await checkGradeRanking(userId, type, userScore, userGrade);
+      await checkGradeRanking(
+        userId,
+        type,
+        currentUserScore,
+        userGrade,
+        notificationType,
+      );
     }
   } catch (error) {
     console.error("Error checking ranking notifications:", error);
@@ -58,46 +89,64 @@ export async function checkAndCreateRankingNotification(
 async function checkOverallRanking(
   userId: string,
   type: "novel" | "rc",
-  userScore: number,
+  currentUserScore: number,
+  notificationType: NotificationType,
 ): Promise<void> {
-  // Get all users with scores for this type
-  const users = await prisma.user.findMany({
-    include: {
-      ARScore: type === "novel",
-      RCScore: type === "rc",
+  const rankLimit = 5; // Notify if in top 5, aligning with leaderboard queries
+
+  const allUsersWithScores = await prisma.user.findMany({
+    select: {
+      id: true,
+      ARScore: { select: { score: true } }, // Select both, let logic decide
+      RCScore: { select: { score: true } }, // Select both, let logic decide
     },
-    where:
-      type === "novel" ? { ARScore: { some: {} } } : { RCScore: { some: {} } },
+    // No WHERE clause here to get all users, then filter/calculate scores
   });
 
-  // Calculate scores and sort
-  const userScores = users
-    .map((user) => {
-      const totalScore =
-        type === "novel"
-          ? (user.ARScore || []).reduce((sum, score) => sum + score.score, 0)
-          : (user.RCScore || []).reduce((sum, score) => sum + score.score, 0);
-
+  const userScores = allUsersWithScores
+    .map((u) => {
+      let totalScore = 0;
+      if (type === "novel" && u.ARScore) {
+        totalScore = u.ARScore.reduce(
+          (sum: number, score: { score: number }) => sum + score.score,
+          0,
+        );
+      } else if (type === "rc" && u.RCScore) {
+        totalScore = u.RCScore.reduce(
+          (sum: number, score: { score: number }) => sum + score.score,
+          0,
+        );
+      }
       return {
-        id: user.id,
+        id: u.id,
         score: totalScore,
       };
     })
     .sort((a, b) => b.score - a.score);
 
-  // Find user's rank
   const userRank = userScores.findIndex((u) => u.id === userId) + 1;
 
-  // Only notify if user is in top 5
-  if (userRank > 0 && userRank <= 5) {
-    await createRankingNotification({
-      userId,
-      type,
-      rankType: "overall",
-      rank: userRank,
-      totalUsers: userScores.length,
-      score: userScore,
+  if (userRank > 0 && userRank <= rankLimit) {
+    const title = `Top ${userRank} Overall ${type === "novel" ? "Novel" : "RC"} Ranking`;
+    const message = `Congratulations! You've reached Top ${userRank} in Overall ${
+      type === "novel" ? "Novel" : "RC"
+    } ranking with ${currentUserScore} points.`;
+
+    const existingNotificationForRank = await prisma.notification.findFirst({
+      where: {
+        userId,
+        type: notificationType,
+        title: title,
+      },
     });
+
+    if (!existingNotificationForRank) {
+      await createNotification(userId, title, message, notificationType);
+    } else {
+      console.log(
+        `Notification for ${title} already exists for user ${userId}.`,
+      );
+    }
   }
 }
 
@@ -107,100 +156,86 @@ async function checkOverallRanking(
 async function checkGradeRanking(
   userId: string,
   type: "novel" | "rc",
-  userScore: number,
-  userGrade: string,
+  currentUserScore: number,
+  grade: string,
+  notificationType: NotificationType,
 ): Promise<void> {
-  // Get all users with the same grade and scores for this type
-  const users = await prisma.user.findMany({
-    include: {
-      ARScore: type === "novel",
-      RCScore: type === "rc",
+  const rankLimit = 5; // Notify if in top 5
+
+  const allUsers = await prisma.user.findMany({
+    select: {
+      id: true,
+      birthday: true,
+      ARScore: { select: { score: true } }, // Select both
+      RCScore: { select: { score: true } }, // Select both
     },
-    where:
-      type === "novel" ? { ARScore: { some: {} } } : { RCScore: { some: {} } },
+    // No WHERE clause here to get all users, then filter
   });
 
-  // Filter by grade and calculate scores
-  const gradeUsers = users
-    .filter((user) => calculateGrade(user.birthday) === userGrade)
-    .map((user) => {
-      const totalScore =
-        type === "novel"
-          ? (user.ARScore || []).reduce((sum, score) => sum + score.score, 0)
-          : (user.RCScore || []).reduce((sum, score) => sum + score.score, 0);
-
+  const usersInGradeWithScores = allUsers
+    .filter((u) => calculateGrade(u.birthday) === grade)
+    .map((u) => {
+      let totalScore = 0;
+      if (type === "novel" && u.ARScore) {
+        totalScore = u.ARScore.reduce(
+          (sum: number, score: { score: number }) => sum + score.score,
+          0,
+        );
+      } else if (type === "rc" && u.RCScore) {
+        totalScore = u.RCScore.reduce(
+          (sum: number, score: { score: number }) => sum + score.score,
+          0,
+        );
+      }
       return {
-        id: user.id,
+        id: u.id,
         score: totalScore,
       };
     })
     .sort((a, b) => b.score - a.score);
 
-  // Find user's rank within their grade
-  const userRank = gradeUsers.findIndex((u) => u.id === userId) + 1;
+  const userRankInGrade =
+    usersInGradeWithScores.findIndex((u) => u.id === userId) + 1;
 
-  // Only notify if user is in top 3 of their grade
-  if (userRank > 0 && userRank <= 3) {
-    await createRankingNotification({
-      userId,
-      type,
-      rankType: "grade",
-      rank: userRank,
-      totalUsers: gradeUsers.length,
-      score: userScore,
-      grade: userGrade,
+  if (userRankInGrade > 0 && userRankInGrade <= rankLimit) {
+    const title = `Top ${userRankInGrade} ${grade} ${type === "novel" ? "Novel" : "RC"} Ranking`;
+    const message = `Congratulations! You've reached Top ${userRankInGrade} in ${grade} ${
+      type === "novel" ? "Novel" : "RC"
+    } ranking with ${currentUserScore} points.`;
+
+    const existingNotificationForRank = await prisma.notification.findFirst({
+      where: {
+        userId,
+        type: notificationType,
+        title: title,
+      },
     });
+
+    if (!existingNotificationForRank) {
+      await createNotification(userId, title, message, notificationType);
+    } else {
+      console.log(
+        `Notification for ${title} already exists for user ${userId}.`,
+      );
+    }
   }
 }
 
 /**
  * Create a ranking notification
  */
-async function createRankingNotification(
-  data: RankingNotificationData,
-): Promise<void> {
-  const { userId, type, rankType, rank, score, grade } = data;
-
-  // Check if we already sent this notification recently (within last 24 hours)
-  const recentNotification = await prisma.notification.findFirst({
-    where: {
-      userId,
-      title: {
-        contains: rankType === "overall" ? "Overall Ranking" : "Grade Ranking",
-      },
-      createdAt: {
-        gte: new Date(Date.now() - 24 * 60 * 60 * 1000), // 24 hours ago
-      },
-    },
-  });
-
-  if (recentNotification) {
-    return; // Don't spam notifications
-  }
-
-  // Create notification title and message
-  const typeLabel = type === "novel" ? "Novel" : "Reading Comprehension";
-  const rankEmoji =
-    rank === 1 ? "🥇" : rank === 2 ? "🥈" : rank === 3 ? "🥉" : "🏆";
-
-  let title: string;
-  let message: string;
-
-  if (rankType === "overall") {
-    title = `${rankEmoji} Overall Ranking Achievement!`;
-    message = `Congratulations! You've reached #${rank} in the overall ${typeLabel} leaderboard with ${score.toLocaleString()} points!`;
-  } else {
-    title = `${rankEmoji} Grade Ranking Achievement!`;
-    message = `Amazing! You're #${rank} in ${grade} grade for ${typeLabel} with ${score.toLocaleString()} points!`;
-  }
-
-  // Create the notification
+async function createNotification(
+  userId: string,
+  title: string,
+  message: string,
+  type: NotificationType,
+) {
   await prisma.notification.create({
     data: {
       userId,
       title,
       message,
-      isRead: false,
+      type,
     },
   });
 }

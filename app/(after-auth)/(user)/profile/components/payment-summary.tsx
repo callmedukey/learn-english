@@ -1,10 +1,11 @@
 "use client";
 
-import { Plan, DiscountCoupon } from "@/prisma/generated/prisma";
+import { Calendar, CreditCard } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
-import { Calendar, CreditCard } from "lucide-react";
+import { Plan, DiscountCoupon } from "@/prisma/generated/prisma";
 
 interface PaymentSummaryProps {
   selectedPlan: Plan;

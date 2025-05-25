@@ -105,7 +105,11 @@ async function ContinueLearningContent({ userId }: { userId: string }) {
                 <BookOpen className="mx-auto mb-4 h-12 w-12 text-gray-300" />
                 <p className="mb-4 text-gray-500">No novel progress yet</p>
               </div>
-              <Button asChild variant="outline" className="w-full">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full bg-primary text-white hover:bg-primary/90 hover:text-white"
+              >
                 <Link href="/novel">Start Reading</Link>
               </Button>
             </>
@@ -151,7 +155,11 @@ async function ContinueLearningContent({ userId }: { userId: string }) {
                 <Brain className="mx-auto mb-4 h-12 w-12 text-gray-300" />
                 <p className="mb-4 text-gray-500">No RC progress yet</p>
               </div>
-              <Button asChild variant="outline" className="w-full">
+              <Button
+                asChild
+                variant="outline"
+                className="w-full bg-primary text-white hover:bg-primary/90 hover:text-white"
+              >
                 <Link href="/reading-comprehension">Start Practice</Link>
               </Button>
             </>

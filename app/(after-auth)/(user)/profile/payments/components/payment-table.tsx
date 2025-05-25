@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
@@ -10,28 +11,29 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { PaymentStatus } from "@/prisma/generated/prisma";
+
 import { UserPaymentWithDetails } from "../../queries/payments.query";
 
 interface PaymentTableProps {
   payments: UserPaymentWithDetails[];
 }
 
-function getStatusBadgeVariant(status: PaymentStatus) {
-  switch (status) {
-    case "PAID":
-      return "default"; // Green
-    case "PENDING":
-      return "secondary"; // Gray
-    case "FAILED":
-      return "destructive"; // Red
-    case "CANCELLED":
-      return "outline"; // Gray outline
-    case "REFUNDED":
-      return "secondary"; // Gray
-    default:
-      return "secondary";
-  }
-}
+// function getStatusBadgeVariant(status: PaymentStatus) {
+//   switch (status) {
+//     case "PAID":
+//       return "default"; // Green
+//     case "PENDING":
+//       return "secondary"; // Gray
+//     case "FAILED":
+//       return "destructive"; // Red
+//     case "CANCELLED":
+//       return "outline"; // Gray outline
+//     case "REFUNDED":
+//       return "secondary"; // Gray
+//     default:
+//       return "secondary";
+//   }
+// }
 
 function getStatusColor(status: PaymentStatus) {
   switch (status) {

@@ -1,16 +1,17 @@
 "use client";
 
+import { zodResolver } from "@hookform/resolvers/zod";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 import { z } from "zod";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { passwordSchema } from "@/lib/schemas/auth.schema";
-import { changePassword, ChangePasswordType } from "../actions/user.actions";
+
+import { ChangePasswordType, changePassword } from "../../actions/user.actions";
 
 const changePasswordSchema = z
   .object({
@@ -31,11 +32,6 @@ export default function PasswordChangeForm({
   userId,
 }: PasswordChangeFormProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [submitResult, setSubmitResult] = useState<{
-    success: boolean;
-    message?: string;
-    error?: string;
-  } | null>(null);
 
   const {
     register,
@@ -49,22 +45,15 @@ export default function PasswordChangeForm({
 
   const onSubmit = async (data: ChangePasswordType) => {
     setIsSubmitting(true);
-    setSubmitResult(null);
 
     try {
       const result = await changePassword(userId, data);
 
       if (result.success) {
-        setSubmitResult({
-          success: true,
-          message: result.message,
-        });
+        toast.success(result.message);
         reset(); // Clear the form
       } else {
-        setSubmitResult({
-          success: false,
-          error: result.error,
-        });
+        toast.error(result.error);
 
         // Set field-specific errors if they exist
         if (result.fieldErrors) {
@@ -78,10 +67,8 @@ export default function PasswordChangeForm({
         }
       }
     } catch (error) {
-      setSubmitResult({
-        success: false,
-        error: "An unexpected error occurred",
-      });
+      console.error(error);
+      toast.error("An unexpected error occurred");
     } finally {
       setIsSubmitting(false);
     }
@@ -95,22 +82,6 @@ export default function PasswordChangeForm({
           Update your password to keep your account secure
         </p>
       </div>
-
-      {submitResult && (
-        <Alert
-          className={
-            submitResult.success
-              ? "border-green-200 bg-green-50"
-              : "border-red-200 bg-red-50"
-          }
-        >
-          <AlertDescription
-            className={submitResult.success ? "text-green-800" : "text-red-800"}
-          >
-            {submitResult.success ? submitResult.message : submitResult.error}
-          </AlertDescription>
-        </Alert>
-      )}
 
       <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
         <div>

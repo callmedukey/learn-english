@@ -1,13 +1,15 @@
 "use client";
 
+import { Check, X } from "lucide-react";
 import { useState, useTransition } from "react";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DiscountCoupon } from "@/prisma/generated/prisma";
+
 import { validateCouponAction } from "../actions/coupon.actions";
-import { toast } from "sonner";
-import { Check, X } from "lucide-react";
 
 interface CouponInputProps {
   onCouponApplied: (coupon: DiscountCoupon | null) => void;
@@ -81,7 +83,7 @@ export default function CouponInput({
           <div className="flex items-center space-x-2">
             <Check className="h-4 w-4 text-green-600" />
             <span className="text-sm font-medium text-green-800">
-              Coupon "{appliedCoupon.code}" applied
+              Coupon &quot;{appliedCoupon.code}&quot; applied
             </span>
             <span className="text-sm text-green-600">
               {appliedCoupon.discount > 0

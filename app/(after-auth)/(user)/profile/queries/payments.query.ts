@@ -1,11 +1,6 @@
 "server only";
 
-import {
-  Payment,
-  PaymentStatus,
-  Plan,
-  UserSubscription,
-} from "@/prisma/generated/prisma";
+import { Payment, Plan, UserSubscription } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface UserPaymentWithDetails extends Payment {

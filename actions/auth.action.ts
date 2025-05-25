@@ -184,6 +184,13 @@ export async function signUpAction(
       },
     });
 
+    if (foundReferrer) {
+      await prisma.user.update({
+        where: { id: foundReferrer.id },
+        data: { referrerCount: { increment: 1 } },
+      });
+    }
+
     return {
       success: true,
       message: "Thank you for signing up!",
@@ -257,6 +264,16 @@ export async function socialSignUpAction(
         emailVerified: new Date(), // Mark email as verified for social sign-ups
       },
     });
+
+    if (foundReferrer) {
+      await prisma.user.update({
+        where: { id: foundReferrer.id },
+        data: {
+          referrerId: user.id,
+          referrerCount: { increment: 1 },
+        },
+      });
+    }
 
     if (!user) {
       return {

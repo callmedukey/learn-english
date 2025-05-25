@@ -74,6 +74,7 @@ export function RCQuizComponent({
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [quizStarted, setQuizStarted] = useState(false);
   const lastQuestionIdRef = useRef<string | null>(null);
+  const timerEffectRanAtLeastOnce = useRef(false);
 
   const questions = useMemo(
     () => questionSet.RCQuestion || [],
@@ -94,18 +95,19 @@ export function RCQuizComponent({
   );
 
   // Filter questions based on status (similar to novel quiz)
-  const getQuestionsToShow = useCallback(() => {
-    if (status === "retry") {
-      return questions; // Show all questions for retry
-    } else if (status === "continue") {
-      return questions.filter((q) => !isQuestionCompleted(q.id)); // Show only incomplete questions
-    } else {
-      return questions; // Show all questions for start
-    }
-  }, [questions, status, isQuestionCompleted]);
+  // const getQuestionsToShow = useCallback(() => {
+  //   if (status === "retry") {
+  //     return questions; // Show all questions for retry
+  //   } else if (status === "continue") {
+  //     // return questions.filter((q) => !isQuestionCompleted(q.id)); // Show only incomplete questions - REPLACED
+  //     return questions; // For "continue", we now restart from the beginning, so show all.
+  //   } else {
+  //     return questions; // Show all questions for start
+  //   }
+  // }, [questions, status, isQuestionCompleted]);
 
-  const questionsToShow = getQuestionsToShow();
-  const currentQuestion = questionsToShow[currentQuestionIndex];
+  // const questionsToShow = getQuestionsToShow(); // Now directly use 'questions'
+  const currentQuestion = questions[currentQuestionIndex];
 
   // Get completed score for a question
   const getCompletedScore = (questionId: string) => {
@@ -146,29 +148,34 @@ export function RCQuizComponent({
       setShowExplanation(false);
       setIsCorrect(false);
       setPointsAwarded(0);
+      timerEffectRanAtLeastOnce.current = false; // Reset for new question
 
       // For retry mode, don't check if question is completed - always allow fresh attempt
-      if (status !== "retry" && isQuestionCompleted(currentQuestion.id)) {
-        setIsAnswered(true);
-        setShowExplanation(true);
-        setTimeLeft(0);
-      }
+      // if (status !== "retry" && isQuestionCompleted(currentQuestion.id)) {
+      //   setIsAnswered(true);
+      //   setShowExplanation(true);
+      //   setTimeLeft(0);
+      // }
     }
   }, [currentQuestion, quizStarted, userId, status, isQuestionCompleted]);
 
   const handleTimeOut = useCallback(async () => {
     if (!currentQuestion) return;
-    if (status !== "retry" && isQuestionCompleted(currentQuestion.id)) return;
 
     setIsSubmitting(true);
     try {
+      // Determine if points should be disallowed
+      const disallowPoints =
+        status === "retry" ||
+        (status === "continue" && isQuestionCompleted(currentQuestion.id));
+
       const result = await submitRCAnswer(
         currentQuestion.id,
         "", // No answer selected
         keywordId,
         rcLevelId,
         true, // isTimedOut = true
-        status === "retry", // Pass retry flag
+        disallowPoints,
       );
 
       if (result.success) {
@@ -190,21 +197,21 @@ export function RCQuizComponent({
       !isAnswered &&
       !showExplanation &&
       quizStarted &&
-      currentQuestion &&
-      (status === "retry" || !isQuestionCompleted(currentQuestion.id))
+      currentQuestion
     ) {
       const timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1);
       }, 1000);
+      timerEffectRanAtLeastOnce.current = true; // Mark that timer logic has started for this question with timeLeft > 0
       return () => clearTimeout(timer);
     } else if (
       timeLeft === 0 &&
+      timerEffectRanAtLeastOnce.current && // Only if timer was active
       !isAnswered &&
       !showExplanation &&
       quizStarted &&
       currentQuestion &&
-      shuffledChoices.length > 0 &&
-      (status === "retry" || !isQuestionCompleted(currentQuestion.id))
+      shuffledChoices.length > 0
     ) {
       // Time's up - auto submit
       handleTimeOut();
@@ -217,8 +224,6 @@ export function RCQuizComponent({
     currentQuestion,
     shuffledChoices.length,
     handleTimeOut,
-    status,
-    isQuestionCompleted,
   ]);
 
   // Handle page visibility and cleanup
@@ -229,8 +234,7 @@ export function RCQuizComponent({
         currentQuestion &&
         !isAnswered &&
         !showExplanation &&
-        quizStarted &&
-        (status === "retry" || !isQuestionCompleted(currentQuestion.id))
+        quizStarted
       ) {
         // User switched tabs or minimized window - mark as timeout
         submitRCAnswer(
@@ -245,13 +249,7 @@ export function RCQuizComponent({
     };
 
     const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-      if (
-        currentQuestion &&
-        !isAnswered &&
-        !showExplanation &&
-        quizStarted &&
-        (status === "retry" || !isQuestionCompleted(currentQuestion.id))
-      ) {
+      if (currentQuestion && !isAnswered && !showExplanation && quizStarted) {
         // User is leaving the page - mark as timeout
         submitRCAnswer(
           currentQuestion.id,
@@ -282,34 +280,31 @@ export function RCQuizComponent({
     quizStarted,
     keywordId,
     rcLevelId,
-    status,
-    isQuestionCompleted,
   ]);
 
   const handleAnswerSelect = (answer: string) => {
-    if (
-      !isAnswered &&
-      timeLeft > 0 &&
-      !showExplanation &&
-      (status === "retry" || !isQuestionCompleted(currentQuestion?.id || ""))
-    ) {
+    if (!isAnswered && timeLeft > 0 && !showExplanation) {
       setSelectedAnswer(answer);
     }
   };
 
   const handleSubmitAnswer = async () => {
     if (!currentQuestion || !selectedAnswer || isSubmitting) return;
-    if (status !== "retry" && isQuestionCompleted(currentQuestion.id)) return;
 
     setIsSubmitting(true);
     try {
+      // Determine if points should be disallowed
+      const disallowPoints =
+        status === "retry" ||
+        (status === "continue" && isQuestionCompleted(currentQuestion.id));
+
       const result = await submitRCAnswer(
         currentQuestion.id,
         selectedAnswer,
         keywordId,
         rcLevelId,
         false, // isTimedOut = false
-        status === "retry", // Pass retry flag
+        disallowPoints,
       );
 
       if (result.success) {
@@ -329,7 +324,16 @@ export function RCQuizComponent({
   };
 
   const handleNextQuestion = () => {
-    if (currentQuestionIndex < questionsToShow.length - 1) {
+    if (currentQuestionIndex < questions.length - 1) {
+      // Reset states for the upcoming question
+      setSelectedAnswer("");
+      setIsAnswered(false);
+      setShowExplanation(false);
+      setIsCorrect(false);
+      setPointsAwarded(0);
+      // lastQuestionIdRef will be updated by the useEffect for the new question.
+      // timeLeft will be set by the useEffect for the new question.
+
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setQuizCompleted(true);
@@ -345,9 +349,9 @@ export function RCQuizComponent({
   };
 
   // Calculate overall progress
-  const totalQuestions = questionsToShow.length;
+  const totalQuestions = questions.length;
 
-  if (questionsToShow.length === 0) {
+  if (questions.length === 0) {
     return (
       <Card className="mx-auto max-w-4xl">
         <CardContent className="py-12 text-center">
@@ -392,9 +396,15 @@ export function RCQuizComponent({
               </div>
             </div>
 
-            {status !== "retry" && (
+            {status === "start" && (
               <p className="font-medium text-green-600">
                 Points earned: {totalPointsEarned}
+              </p>
+            )}
+            {status === "continue" && (
+              <p className="font-medium text-amber-600">
+                Points earned this session: {totalPointsEarned} (Previously
+                completed questions do not award new points)
               </p>
             )}
             {status === "retry" && (
@@ -495,7 +505,7 @@ export function RCQuizComponent({
 
         {/* Question Navigation */}
         <div className="flex flex-wrap gap-2">
-          {questionsToShow.map((question, index) => {
+          {questions.map((question, index) => {
             const completed =
               status !== "retry" && isQuestionCompleted(question.id);
             return (
@@ -563,7 +573,7 @@ export function RCQuizComponent({
             <RadioGroup
               value={selectedAnswer || ""}
               onValueChange={handleAnswerSelect}
-              disabled={questionCompleted || showExplanation || timeLeft === 0}
+              disabled={showExplanation || timeLeft === 0}
             >
               {shuffledChoices.map((choice, index) => {
                 const choiceLabel = String.fromCharCode(65 + index); // A, B, C, D
@@ -573,7 +583,7 @@ export function RCQuizComponent({
                 let choiceClassName =
                   "flex items-center space-x-2 rounded-lg border p-4 cursor-pointer hover:bg-accent transition-colors";
 
-                if (showExplanation || questionCompleted) {
+                if (showExplanation) {
                   if (isCorrectAnswer) {
                     choiceClassName += " border-green-500 bg-green-50";
                   } else if (isSelected && !isCorrectAnswer) {
@@ -581,8 +591,7 @@ export function RCQuizComponent({
                   }
                 }
 
-                const isDisabled =
-                  questionCompleted || showExplanation || timeLeft === 0;
+                const isDisabled = showExplanation || timeLeft === 0;
 
                 if (isDisabled) {
                   choiceClassName += " cursor-not-allowed opacity-75";
@@ -616,22 +625,19 @@ export function RCQuizComponent({
                       <span className="mr-2 font-bold">{choiceLabel}.</span>
                       {choice}
                     </Label>
-                    {(showExplanation || questionCompleted) &&
-                      isCorrectAnswer && (
-                        <CheckCircle className="pointer-events-none h-5 w-5 text-green-600" />
-                      )}
-                    {(showExplanation || questionCompleted) &&
-                      isSelected &&
-                      !isCorrectAnswer && (
-                        <XCircle className="pointer-events-none h-5 w-5 text-red-600" />
-                      )}
+                    {showExplanation && isCorrectAnswer && (
+                      <CheckCircle className="pointer-events-none h-5 w-5 text-green-600" />
+                    )}
+                    {showExplanation && isSelected && !isCorrectAnswer && (
+                      <XCircle className="pointer-events-none h-5 w-5 text-red-600" />
+                    )}
                   </div>
                 );
               })}
             </RadioGroup>
 
             {/* Submit Button */}
-            {!questionCompleted && !showExplanation && timeLeft > 0 && (
+            {!showExplanation && timeLeft > 0 && (
               <div className="mt-6">
                 <Button
                   onClick={handleSubmitAnswer}
@@ -644,10 +650,10 @@ export function RCQuizComponent({
             )}
 
             {/* Next Question Button */}
-            {(showExplanation || questionCompleted) && (
+            {showExplanation && (
               <div className="mt-6">
                 <Button onClick={handleNextQuestion} className="w-full">
-                  {currentQuestionIndex < questionsToShow.length - 1
+                  {currentQuestionIndex < questions.length - 1
                     ? "Next Question"
                     : "Finish Quiz"}
                 </Button>
@@ -655,21 +661,23 @@ export function RCQuizComponent({
             )}
 
             {/* Explanation */}
-            {(showExplanation || questionCompleted) && (
+            {showExplanation && (
               <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
                 <h4 className="mb-2 font-semibold text-amber-800">
                   Explanation
                 </h4>
                 <p className="text-amber-700">{currentQuestion.explanation}</p>
-                {showExplanation && !questionCompleted && (
-                  <p className="mt-2 text-sm text-amber-600">
-                    {isCorrect
-                      ? status === "retry"
+                <p className="mt-2 text-sm text-amber-600">
+                  {isCorrect
+                    ? pointsAwarded > 0
+                      ? `Correct! +${pointsAwarded} points`
+                      : status === "retry"
                         ? "Correct! (No points awarded for retry)"
-                        : `Correct! +${pointsAwarded} points`
+                        : "Correct! (Previously completed, no new points)"
+                    : timeLeft === 0
+                      ? "Time's up! No points awarded."
                       : "Incorrect. No points awarded."}
-                  </p>
-                )}
+                </p>
               </div>
             )}
           </CardContent>

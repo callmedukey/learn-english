@@ -72,18 +72,19 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   const canAccess = chapter.isFree || userHasPaidSubscription;
 
   // Filter questions based on status
-  const getQuestionsToShow = useCallback(() => {
-    if (status === "retry") {
-      return questions; // Show all questions for retry
-    } else if (status === "continue") {
-      return questions.filter((q) => !q.isCompleted); // Show only incomplete questions
-    } else {
-      return questions; // Show all questions for start
-    }
-  }, [questions, status]);
+  // const getQuestionsToShow = useCallback(() => {
+  //   if (status === "retry") {
+  //     return questions; // Show all questions for retry
+  //   } else if (status === "continue") {
+  //     // return questions.filter((q) => !q.isCompleted); // Show only incomplete questions - REPLACED BY NEW LOGIC
+  //     return questions; // For "continue", we now restart from the beginning, so show all.
+  //   } else {
+  //     return questions; // Show all questions for start
+  //   }
+  // }, [questions, status]);
 
-  const questionsToShow = getQuestionsToShow();
-  const currentQuestion = questionsToShow[currentQuestionIndex];
+  // const questionsToShow = getQuestionsToShow(); // Now directly use 'questions' as it's always the full list.
+  const currentQuestion = questions[currentQuestionIndex];
 
   // Reset quiz state when starting
   const handleStartQuiz = () => {
@@ -103,6 +104,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       currentQuestion &&
       quizStarted &&
       currentQuestion.id !== lastQuestionIdRef.current
+      // Removed: && !showExplanation // Don't reset if we're already showing explanation
     ) {
       lastQuestionIdRef.current = currentQuestion.id;
       const shuffled = [...currentQuestion.choices].sort(
@@ -110,24 +112,26 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       );
       setShuffledChoices(shuffled);
       setTimeLeft(currentQuestion.timeLimit);
-      setSelectedAnswer("");
-      setIsAnswered(false);
-      setShowExplanation(false);
-      setIsCorrect(false);
-      setPointsAwarded(0);
     }
-  }, [currentQuestion, quizStarted]);
+  }, [currentQuestion?.id, quizStarted]);
 
   const handleTimeOut = useCallback(async () => {
     if (!currentQuestion) return;
 
     setIsSubmitting(true);
+    // Determine if points should be disallowed
+    // Points are disallowed if status is retry, OR if status is continue and the question was already completed.
+    const disallowPoints =
+      status === "retry" ||
+      (status === "continue" && currentQuestion.isCompleted);
+
     const result = await completeQuestionAction(
       currentQuestion.id,
       userId,
       "", // No answer selected
       true, // Timed out
-      status === "retry",
+      // status === "retry", // Old logic
+      disallowPoints,
     );
 
     if (result.success) {
@@ -237,12 +241,20 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     if (!currentQuestion || !selectedAnswer || isSubmitting) return;
 
     setIsSubmitting(true);
+
+    // Determine if points should be disallowed
+    // Points are disallowed if status is retry, OR if status is continue and the question was already completed.
+    const disallowPoints =
+      status === "retry" ||
+      (status === "continue" && currentQuestion.isCompleted);
+
     const result = await completeQuestionAction(
       currentQuestion.id,
       userId,
       selectedAnswer,
       false, // Not timed out
-      status === "retry",
+      // status === "retry", // Old logic
+      disallowPoints,
     );
 
     if (result.success) {
@@ -259,7 +271,16 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   };
 
   const handleNextQuestion = () => {
-    if (currentQuestionIndex < questionsToShow.length - 1) {
+    if (currentQuestionIndex < questions.length - 1) {
+      // Reset states for the upcoming question
+      setSelectedAnswer("");
+      setIsAnswered(false);
+      setShowExplanation(false);
+      setIsCorrect(false);
+      setPointsAwarded(0);
+      // lastQuestionIdRef will be updated by the useEffect for the new question.
+      // timeLeft will be set by the useEffect for the new question.
+
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setQuizCompleted(true);
@@ -295,7 +316,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     );
   }
 
-  if (!chapter.novelQuestionSet || questionsToShow.length === 0) {
+  if (!chapter.novelQuestionSet || questions.length === 0) {
     return (
       <Card className="mx-auto max-w-4xl">
         <CardContent className="py-12 text-center">
@@ -330,7 +351,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
             <div className="mx-auto w-fit rounded-full border-2 border-primary/20 bg-primary/10 px-6 py-3">
               <div className="text-center">
                 <div className="text-2xl font-bold text-primary">
-                  {correctAnswersCount}/{questionsToShow.length}
+                  {correctAnswersCount}/{questions.length}
                 </div>
                 <div className="text-sm font-medium text-primary/80">
                   Correct Answers
@@ -338,9 +359,15 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
               </div>
             </div>
 
-            {status !== "retry" && (
+            {status === "start" && (
               <p className="font-medium text-green-600">
                 Points earned: {totalPointsEarned}
+              </p>
+            )}
+            {status === "continue" && (
+              <p className="font-medium text-amber-600">
+                Points earned this session: {totalPointsEarned} (Previously
+                completed questions do not award new points)
               </p>
             )}
             {status === "retry" && (
@@ -378,7 +405,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
               </p>
             </div>
             <div className="mx-auto max-w-md space-y-2 text-left text-sm text-gray-600">
-              <p>• {questionsToShow.length} questions total</p>
+              <p>• {questions.length} questions total</p>
               <p>• Each question has a time limit</p>
               <p>• You&apos;ll see explanations after each answer</p>
               {status === "retry" && (
@@ -413,7 +440,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   }
 
   const progressPercentage =
-    ((currentQuestionIndex + 1) / questionsToShow.length) * 100;
+    ((currentQuestionIndex + 1) / questions.length) * 100;
   const timePercentage = (timeLeft / currentQuestion.timeLimit) * 100;
 
   return (
@@ -425,7 +452,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
             <div className="flex items-center justify-between text-sm">
               <span>Question Progress</span>
               <span>
-                {currentQuestionIndex + 1} of {questionsToShow.length}
+                {currentQuestionIndex + 1} of {questions.length}
               </span>
             </div>
             <Progress value={progressPercentage} className="h-2" />
@@ -580,7 +607,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
 
               {showExplanation && (
                 <Button onClick={handleNextQuestion}>
-                  {currentQuestionIndex < questionsToShow.length - 1
+                  {currentQuestionIndex < questions.length - 1
                     ? "Next Question"
                     : "Finish Quiz"}
                 </Button>

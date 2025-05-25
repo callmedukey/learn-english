@@ -4,6 +4,7 @@ import { compare, hash } from "bcryptjs";
 import { z } from "zod";
 
 import { passwordSchema } from "@/lib/schemas/auth.schema";
+import { Gender } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 const changePasswordSchema = z
@@ -18,6 +19,12 @@ const changePasswordSchema = z
   });
 
 export type ChangePasswordType = z.infer<typeof changePasswordSchema>;
+
+const updateGenderSchema = z.object({
+  gender: z.nativeEnum(Gender),
+});
+
+export type UpdateGenderType = z.infer<typeof updateGenderSchema>;
 
 export async function changePassword(userId: string, data: ChangePasswordType) {
   try {
@@ -73,6 +80,58 @@ export async function changePassword(userId: string, data: ChangePasswordType) {
     };
   } catch (error) {
     console.error("Error changing password:", error);
+    return {
+      success: false,
+      error: "An unexpected error occurred",
+    };
+  }
+}
+
+export async function updateGender(userId: string, data: UpdateGenderType) {
+  try {
+    // Validate the input
+    const parsed = updateGenderSchema.safeParse(data);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: "Invalid gender value",
+        fieldErrors: parsed.error.flatten().fieldErrors,
+      };
+    }
+
+    // Get the current user to check if they can update gender
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { gender: true },
+    });
+
+    if (!user) {
+      return {
+        success: false,
+        error: "User not found",
+      };
+    }
+
+    // Check if user is allowed to update gender (null or "Other")
+    if (user.gender !== null && user.gender !== "Other") {
+      return {
+        success: false,
+        error: "Gender can only be updated when it's not set or set to 'Other'",
+      };
+    }
+
+    // Update the gender
+    await prisma.user.update({
+      where: { id: userId },
+      data: { gender: parsed.data.gender },
+    });
+
+    return {
+      success: true,
+      message: "Gender updated successfully",
+    };
+  } catch (error) {
+    console.error("Error updating gender:", error);
     return {
       success: false,
       error: "An unexpected error occurred",
