@@ -14,6 +14,9 @@ import { NotificationBell } from "../notifications/notification-bell";
 
 const Header = async () => {
   const session = await auth();
+  if (!session) {
+    return null;
+  }
 
   if (session?.user.role === Role.ADMIN) {
     return null;

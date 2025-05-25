@@ -27,8 +27,8 @@ const page = async () => {
           className="w-48 translate-y-2 xl:w-62"
         />
         <div className="col-span-2 space-y-2 text-primary xl:space-y-4">
-          <h1 className="text-6xl font-bold tracking-tight">READING CHAMP</h1>
-          <p className="flex flex-col gap-0 text-3xl font-bold">
+          <h1 className="text-5xl font-bold tracking-tight">READING CHAMP</h1>
+          <p className="flex flex-col gap-0 text-2xl font-bold">
             <span>Come and Join</span>
             <span>the Champions of Reading!</span>
           </p>
