@@ -49,12 +49,12 @@ export function Leaderboard({ userId, userGrade }: LeaderboardProps) {
                 </TabsList>
                 <TabsContent value="novel" className="mt-0">
                   <Suspense fallback={<LeaderboardSkeleton />}>
-                    <OverallRanking type="novel" />
+                    <OverallRanking type="novel" userId={userId} />
                   </Suspense>
                 </TabsContent>
                 <TabsContent value="rc" className="mt-0">
                   <Suspense fallback={<LeaderboardSkeleton />}>
-                    <OverallRanking type="rc" />
+                    <OverallRanking type="rc" userId={userId} />
                   </Suspense>
                 </TabsContent>
               </Tabs>
@@ -110,7 +110,7 @@ export function Leaderboard({ userId, userGrade }: LeaderboardProps) {
         </div>
 
         {/* User Stats */}
-        <div className="lg:col-span-2">
+        <div className="w-full lg:col-span-2">
           <Suspense fallback={<UserStatsSkeleton />}>
             <UserStats userId={userId} />
           </Suspense>

@@ -1,5 +1,6 @@
 import { RiCoupon2Line, RiMoneyDollarCircleLine } from "@remixicon/react";
 import { Book, Brain, Home, MapPin, Users } from "lucide-react";
+import { RiContractLine } from "react-icons/ri";
 
 import {
   Sidebar,
@@ -45,6 +46,11 @@ const items = [
     title: "Coupons",
     url: "/admin/coupons",
     icon: RiCoupon2Line,
+  },
+  {
+    title: "Plans",
+    url: "/admin/plans",
+    icon: RiContractLine,
   },
   {
     title: "Payments",

@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { auth } from "@/auth";
+import { checkAndCreateRankingNotification } from "@/lib/services/notification.service";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface RCQuestionCompletionResult {
@@ -141,6 +142,14 @@ export async function submitRCAnswer(
             score: pointsAwarded,
           },
         });
+      }
+
+      // Check for ranking achievements and create notifications
+      try {
+        await checkAndCreateRankingNotification(session.user.id, "rc");
+      } catch (error) {
+        console.error("Error checking ranking notifications:", error);
+        // Don't fail the main action if notification fails
       }
     }
 

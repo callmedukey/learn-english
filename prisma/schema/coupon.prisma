@@ -1,14 +1,14 @@
 model DiscountCoupon {
-  id        String   @id @default(cuid())
+  id String @id @default(cuid())
 
-  code      String   @unique
+  code String @unique
 
-  discount  Int      // Discount percentage (e.g., 10 for 10%)
-  flatDiscount Int    // Flat discount amount (e.g., 10 for $10)
-  active    Boolean  @default(true)
+  discount     Int // Discount percentage (e.g., 10 for 10%)
+  flatDiscount Int // Flat discount amount (e.g., 10 for $10)
+  active       Boolean @default(true)
 
   // Relations
-  payments  Payment[]
+  payments Payment[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

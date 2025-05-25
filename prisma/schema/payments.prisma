@@ -25,76 +25,73 @@ enum SubscriptionStatus {
 
 // Subscription plans with flexible pricing and duration
 model Plan {
-  id          String   @id @default(cuid())
-  name        String   // "1 Month Plan", "3 Month Plan", "Custom Plan", etc.
-  price       Int      // Price in KRW (e.g., 9900 for 9,900원)
-  duration    Int      // Duration in days (30, 90, 365, or any custom value)
+  id          String  @id @default(cuid())
+  name        String // "1 Month Plan", "3 Month Plan", "Custom Plan", etc.
+  price       Int // Price in KRW (e.g., 9900 for 9,900원)
+  duration    Int // Duration in days (30, 90, 365, or any custom value)
   description String?
-  isActive    Boolean  @default(true)
-  
-  // Optional categorization for display purposes
-  category    String?  // "monthly", "quarterly", "yearly", "custom", etc.
-  
+  isActive    Boolean @default(true)
+
   // Display order for sorting plans
-  sortOrder   Int      @default(0)
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  sortOrder Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   payments      Payment[]
   subscriptions UserSubscription[]
-  
+
   @@index([isActive, sortOrder])
 }
 
 // Payment records from Toss-Payment
 model Payment {
-  id          String        @id @default(cuid())
-  userId      String
-  planId      String
-  
+  id     String @id @default(cuid())
+  userId String
+  planId String
+
   // Coupon information (optional)
-  couponId    String?       // Reference to the coupon used
-  couponCode  String?       // Store the coupon code used
-  discountAmount Int?       // Amount discounted in KRW
-  originalAmount Int?       // Original amount before discount
-  
+  couponId       String? // Reference to the coupon used
+  couponCode     String? // Store the coupon code used
+  discountAmount Int? // Amount discounted in KRW
+  originalAmount Int? // Original amount before discount
+
   // Toss-Payment specific fields
-  paymentKey  String        @unique // From Toss-Payment response
-  orderId     String        @unique // Generated order ID
-  orderName   String        // Description of the order
-  amount      Int           // Final payment amount in KRW (after discount)
-  currency    String        @default("KRW")
-  method      PaymentMethod?
-  status      PaymentStatus @default(PENDING)
-  
+  paymentKey String         @unique // From Toss-Payment response
+  orderId    String         @unique // Generated order ID
+  orderName  String // Description of the order
+  amount     Int // Final payment amount in KRW (after discount)
+  currency   String         @default("KRW")
+  method     PaymentMethod?
+  status     PaymentStatus  @default(PENDING)
+
   // Customer information
   customerEmail       String?
   customerName        String?
   customerMobilePhone String?
-  
+
   // Payment timestamps
-  requestedAt   DateTime  @default(now())
-  approvedAt    DateTime?
-  cancelledAt   DateTime?
-  refundedAt    DateTime?
-  
+  requestedAt DateTime  @default(now())
+  approvedAt  DateTime?
+  cancelledAt DateTime?
+  refundedAt  DateTime?
+
   // Toss-Payment response data (JSON)
-  tossResponse  Json?     // Store the full Toss-Payment response
-  failureCode   String?   // Error code if payment failed
-  failureReason String?   // Error message if payment failed
-  
+  tossResponse  Json? // Store the full Toss-Payment response
+  failureCode   String? // Error code if payment failed
+  failureReason String? // Error message if payment failed
+
   // Relations
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
-  plan Plan @relation(fields: [planId], references: [id])
+  user   User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  plan   Plan            @relation(fields: [planId], references: [id])
   coupon DiscountCoupon? @relation(fields: [couponId], references: [id], onDelete: SetNull)
-  
+
   // Subscription created from this payment
   subscription UserSubscription?
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@index([userId])
   @@index([status])
   @@index([requestedAt])
@@ -103,48 +100,47 @@ model Payment {
 
 // User subscription status
 model UserSubscription {
-  id        String             @id @default(cuid())
+  id        String @id @default(cuid())
   userId    String
   planId    String
-  paymentId String             @unique // Link to the payment that created this subscription
-  
+  paymentId String @unique // Link to the payment that created this subscription
+
   status    SubscriptionStatus @default(PENDING)
   startDate DateTime
   endDate   DateTime
-  
+
   // Auto-renewal settings
-  autoRenew Boolean            @default(false)
-  
+  autoRenew Boolean @default(false)
+
   // Cancellation
-  cancelledAt DateTime?
+  cancelledAt  DateTime?
   cancelReason String?
-  
+
   // Relations
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan    Plan    @relation(fields: [planId], references: [id])
   payment Payment @relation(fields: [paymentId], references: [id])
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
+  @@unique([userId, paymentId]) // One subscription per payment
   @@index([userId])
   @@index([status])
   @@index([endDate])
-  @@unique([userId, paymentId]) // One subscription per payment
 }
 
 // Payment webhook logs for debugging
 model PaymentWebhook {
-  id        String   @id @default(cuid())
-  eventType String   // "PAYMENT_CONFIRMED", "PAYMENT_CANCELLED", etc.
+  id         String   @id @default(cuid())
+  eventType  String // "PAYMENT_CONFIRMED", "PAYMENT_CANCELLED", etc.
   paymentKey String?
-  orderId   String?
-  data      Json     // Full webhook payload
-  processed Boolean  @default(false)
-  createdAt DateTime @default(now())
-  
+  orderId    String?
+  data       Json // Full webhook payload
+  processed  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+
   @@index([paymentKey])
   @@index([orderId])
   @@index([processed])
 }
-

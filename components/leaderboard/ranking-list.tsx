@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 
+import { UserStatsPopover } from "./user-stats-popover";
+
 interface RankingItem {
   id: string;
   rank: number;
@@ -35,51 +37,52 @@ export function RankingList({ rankings, currentUserId }: RankingListProps) {
       ) : (
         <>
           {rankings.map((item) => (
-            <div
-              key={item.id}
-              className={`flex items-center gap-4 rounded-lg p-2 transition-colors ${
-                item.id === currentUserId
-                  ? "border border-amber-300 bg-amber-100"
-                  : "hover:bg-gray-50"
-              }`}
-            >
-              {/* Rank */}
-              <div className="w-6 text-center font-bold text-gray-600">
-                {item.rank}
-              </div>
+            <UserStatsPopover key={item.id} userId={item.id}>
+              <div
+                className={`flex items-center gap-4 rounded-lg p-2 transition-colors ${
+                  item.id === currentUserId
+                    ? "border border-amber-300 bg-amber-100"
+                    : "hover:bg-gray-50"
+                }`}
+              >
+                {/* Rank */}
+                <div className="w-6 text-center font-bold text-gray-600">
+                  {item.rank}
+                </div>
 
-              {/* User Info */}
-              <div className="flex min-w-0 flex-1 items-center gap-2">
-                {/* Country Flag */}
-                {item.countryIcon ? (
-                  <div className="relative h-4 w-6 flex-shrink-0">
-                    <Image
-                      src={item.countryIcon}
-                      alt="Country flag"
-                      fill
-                      className="rounded-sm object-cover"
-                    />
+                {/* User Info */}
+                <div className="flex min-w-0 flex-1 items-center gap-2">
+                  {/* Country Flag */}
+                  {item.countryIcon ? (
+                    <div className="relative h-4 w-6 flex-shrink-0">
+                      <Image
+                        src={item.countryIcon}
+                        alt="Country flag"
+                        fill
+                        className="rounded-sm object-cover"
+                      />
+                    </div>
+                  ) : (
+                    <div className="h-4 w-6 flex-shrink-0 rounded-sm bg-gray-200" />
+                  )}
+
+                  {/* Nickname */}
+                  <div className="truncate font-medium text-gray-900">
+                    {item.nickname}
                   </div>
-                ) : (
-                  <div className="h-4 w-6 flex-shrink-0 rounded-sm bg-gray-200" />
-                )}
+                </div>
 
-                {/* Nickname */}
-                <div className="truncate font-medium text-gray-900">
-                  {item.nickname}
+                {/* Grade */}
+                <div className="w-8 text-center font-semibold text-gray-700">
+                  {item.grade}
+                </div>
+
+                {/* Score */}
+                <div className="w-12 text-right font-bold text-amber-700">
+                  {item.score.toLocaleString()}
                 </div>
               </div>
-
-              {/* Grade */}
-              <div className="w-8 text-center font-semibold text-gray-700">
-                {item.grade}
-              </div>
-
-              {/* Score */}
-              <div className="w-12 text-right font-bold text-amber-700">
-                {item.score.toLocaleString()}
-              </div>
-            </div>
+            </UserStatsPopover>
           ))}
 
           {/* Fill empty slots if less than 5 rankings */}

@@ -180,7 +180,6 @@ export const seed = async () => {
             price: 9900, // 9,900원
             duration: 30,
             description: "Access to all features for 1 month",
-            category: "monthly",
             sortOrder: 1,
             isActive: true,
           },
@@ -189,7 +188,6 @@ export const seed = async () => {
             price: 24900, // 24,900원 (약 17% 할인)
             duration: 90,
             description: "Access to all features for 3 months - Best Value!",
-            category: "quarterly",
             sortOrder: 2,
             isActive: true,
           },
@@ -198,7 +196,6 @@ export const seed = async () => {
             price: 89900, // 89,900원 (약 25% 할인)
             duration: 365,
             description: "Access to all features for 1 year - Maximum Savings!",
-            category: "yearly",
             sortOrder: 3,
             isActive: true,
           },

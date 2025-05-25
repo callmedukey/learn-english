@@ -29,13 +29,13 @@ model RCKeyword {
   RCQuestionSet RCQuestionSet?
 
   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt 
+  updatedAt DateTime @updatedAt
 }
 
 model RCQuestionSet {
   id String @id @default(uuid())
 
-  title String
+  title   String
   passage String
 
   RCKeyword   RCKeyword? @relation(fields: [RCKeywordId], references: [id], onDelete: Cascade)

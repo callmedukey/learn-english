@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
+import { checkAndCreateRankingNotification } from "@/lib/services/notification.service";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface QuestionCompletionResult {
@@ -126,6 +127,14 @@ export const completeQuestionAction = async (
             score: pointsAwarded,
           },
         });
+      }
+
+      // Check for ranking achievements and create notifications
+      try {
+        await checkAndCreateRankingNotification(userId, "novel");
+      } catch (error) {
+        console.error("Error checking ranking notifications:", error);
+        // Don't fail the main action if notification fails
       }
     }
 

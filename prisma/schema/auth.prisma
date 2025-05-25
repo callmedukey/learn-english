@@ -47,6 +47,7 @@ model User {
   // Payment and subscription relations
   payments      Payment[]
   subscriptions UserSubscription[]
+  notifications Notification[]
 }
 
 model Account {

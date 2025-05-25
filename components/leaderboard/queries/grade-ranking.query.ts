@@ -1,5 +1,6 @@
 "server only";
 
+import calculateGrade from "@/lib/utils/calculate-grade";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface GradeRankingUser {
@@ -11,68 +12,47 @@ export interface GradeRankingUser {
   rank: number;
 }
 
+// Helper function to extract just the number from grade
+function formatGradeForDisplay(grade: string): string {
+  if (grade.startsWith("Grade ")) {
+    return grade.replace("Grade ", "");
+  }
+  if (grade === "Below Grade 1") {
+    return "K";
+  }
+  return grade; // For "Adult" and "N/A"
+}
+
 export async function getGradeRankings(
   type: "novel" | "rc",
   userId: string,
   userGrade?: string,
 ): Promise<GradeRankingUser[]> {
-  // If no user grade is provided, try to determine it from their scores
+  // If no user grade is provided, calculate it from the user's birthday
   let targetGrade = userGrade;
 
   if (!targetGrade) {
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      include: {
-        ARScore: {
-          include: {
-            AR: true,
-          },
-        },
-        RCScore: {
-          include: {
-            RCLevel: true,
-          },
-        },
+      select: {
+        birthday: true,
       },
     });
 
     if (user) {
-      if (type === "novel" && user.ARScore.length > 0) {
-        targetGrade = user.ARScore.reduce((highest, score) => {
-          const gradeNum = parseInt(score.AR.relevantGrade);
-          const currentHighest = parseInt(highest);
-          return gradeNum > currentHighest ? score.AR.relevantGrade : highest;
-        }, "0");
-      } else if (type === "rc" && user.RCScore.length > 0) {
-        targetGrade = user.RCScore.reduce((highest, score) => {
-          const gradeNum = parseInt(score.RCLevel.relevantGrade);
-          const currentHighest = parseInt(highest);
-          return gradeNum > currentHighest
-            ? score.RCLevel.relevantGrade
-            : highest;
-        }, "0");
-      }
+      targetGrade = calculateGrade(user.birthday);
     }
   }
 
-  if (!targetGrade) {
+  if (!targetGrade || targetGrade === "N/A") {
     return [];
   }
 
   if (type === "novel") {
-    // Get users with AR scores in the same grade
+    // Get all users with AR scores
     const users = await prisma.user.findMany({
       include: {
-        ARScore: {
-          include: {
-            AR: true,
-          },
-          where: {
-            AR: {
-              relevantGrade: targetGrade,
-            },
-          },
-        },
+        ARScore: true,
         country: {
           include: {
             countryIcon: true,
@@ -81,29 +61,29 @@ export async function getGradeRankings(
       },
       where: {
         ARScore: {
-          some: {
-            AR: {
-              relevantGrade: targetGrade,
-            },
-          },
+          some: {},
         },
       },
     });
 
-    // Calculate scores for the specific grade
-    const userScores = users.map((user) => {
-      const gradeScore = user.ARScore.filter(
-        (score) => score.AR.relevantGrade === targetGrade,
-      ).reduce((sum, score) => sum + score.score, 0);
+    // Filter users by the same grade and calculate their scores
+    const userScores = users
+      .filter((user) => calculateGrade(user.birthday) === targetGrade)
+      .map((user) => {
+        const userGradeCalculated = calculateGrade(user.birthday);
+        const totalScore = user.ARScore.reduce(
+          (sum, score) => sum + score.score,
+          0,
+        );
 
-      return {
-        id: user.id,
-        nickname: user.nickname || user.name || "Anonymous",
-        grade: targetGrade,
-        score: gradeScore,
-        countryIcon: user.country?.countryIcon?.iconUrl,
-      };
-    });
+        return {
+          id: user.id,
+          nickname: user.nickname || user.name || "Anonymous",
+          grade: formatGradeForDisplay(userGradeCalculated),
+          score: totalScore,
+          countryIcon: user.country?.countryIcon?.iconUrl,
+        };
+      });
 
     // Sort by score and return top 5
     return userScores
@@ -114,19 +94,10 @@ export async function getGradeRankings(
         rank: index + 1,
       }));
   } else {
-    // Get users with RC scores in the same grade
+    // Get all users with RC scores
     const users = await prisma.user.findMany({
       include: {
-        RCScore: {
-          include: {
-            RCLevel: true,
-          },
-          where: {
-            RCLevel: {
-              relevantGrade: targetGrade,
-            },
-          },
-        },
+        RCScore: true,
         country: {
           include: {
             countryIcon: true,
@@ -135,29 +106,29 @@ export async function getGradeRankings(
       },
       where: {
         RCScore: {
-          some: {
-            RCLevel: {
-              relevantGrade: targetGrade,
-            },
-          },
+          some: {},
         },
       },
     });
 
-    // Calculate scores for the specific grade
-    const userScores = users.map((user) => {
-      const gradeScore = user.RCScore.filter(
-        (score) => score.RCLevel.relevantGrade === targetGrade,
-      ).reduce((sum, score) => sum + score.score, 0);
+    // Filter users by the same grade and calculate their scores
+    const userScores = users
+      .filter((user) => calculateGrade(user.birthday) === targetGrade)
+      .map((user) => {
+        const userGradeCalculated = calculateGrade(user.birthday);
+        const totalScore = user.RCScore.reduce(
+          (sum, score) => sum + score.score,
+          0,
+        );
 
-      return {
-        id: user.id,
-        nickname: user.nickname || user.name || "Anonymous",
-        grade: targetGrade,
-        score: gradeScore,
-        countryIcon: user.country?.countryIcon?.iconUrl,
-      };
-    });
+        return {
+          id: user.id,
+          nickname: user.nickname || user.name || "Anonymous",
+          grade: formatGradeForDisplay(userGradeCalculated),
+          score: totalScore,
+          countryIcon: user.country?.countryIcon?.iconUrl,
+        };
+      });
 
     // Sort by score and return top 5
     return userScores

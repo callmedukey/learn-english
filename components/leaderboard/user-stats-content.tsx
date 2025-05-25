@@ -1,0 +1,121 @@
+"use client";
+
+import { use } from "react";
+
+interface UserStatsContentProps {
+  userId: string;
+}
+
+interface UserStatsData {
+  id: string;
+  nickname: string;
+  grade: string;
+  arStats: {
+    level: string;
+    score: number;
+    count: number;
+  }[];
+  rcStats: {
+    level: string;
+    score: number;
+    count: number;
+  }[];
+  totalArScore: number;
+  totalRcScore: number;
+}
+
+// Cache promises to prevent multiple requests for the same userId
+const promiseCache = new Map<string, Promise<UserStatsData>>();
+
+async function fetchUserStats(userId: string): Promise<UserStatsData> {
+  const response = await fetch(`/api/user-stats/${userId}`);
+
+  if (!response.ok) {
+    if (response.status === 404) {
+      throw new Error("User not found");
+    }
+    throw new Error("Failed to fetch user stats");
+  }
+
+  return response.json();
+}
+
+function getUserStatsPromise(userId: string): Promise<UserStatsData> {
+  if (!promiseCache.has(userId)) {
+    promiseCache.set(userId, fetchUserStats(userId));
+  }
+  return promiseCache.get(userId)!;
+}
+
+export function UserStatsContent({ userId }: UserStatsContentProps) {
+  const userStats = use(getUserStatsPromise(userId));
+
+  return (
+    <div className="p-4">
+      {/* Header */}
+      <div className="mb-3">
+        <h3 className="text-base font-semibold text-gray-900">
+          {userStats.nickname}
+        </h3>
+        <p className="text-xs text-gray-600">{userStats.grade}</p>
+      </div>
+
+      <div className="space-y-3">
+        {/* Novel (AR) Stats */}
+        <div>
+          <div className="mb-1 text-xs font-semibold text-amber-900">
+            NOVEL (AR) - Total: {userStats.totalArScore.toLocaleString()}
+          </div>
+          {userStats.arStats.length > 0 ? (
+            <div className="space-y-0.5">
+              {userStats.arStats.map((stat) => (
+                <div key={stat.level} className="flex justify-between text-xs">
+                  <span className="text-gray-700">{stat.level}</span>
+                  <span className="font-medium text-gray-900">
+                    {stat.score.toLocaleString()} ({stat.count})
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-gray-500">No AR scores yet</p>
+          )}
+        </div>
+
+        {/* RC Stats */}
+        <div>
+          <div className="mb-1 text-xs font-semibold text-amber-900">
+            READING COMPREHENSION - Total:{" "}
+            {userStats.totalRcScore.toLocaleString()}
+          </div>
+          {userStats.rcStats.length > 0 ? (
+            <div className="space-y-0.5">
+              {userStats.rcStats.map((stat) => (
+                <div key={stat.level} className="flex justify-between text-xs">
+                  <span className="text-gray-700">{stat.level}</span>
+                  <span className="font-medium text-gray-900">
+                    {stat.score.toLocaleString()} ({stat.count})
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-gray-500">No RC scores yet</p>
+          )}
+        </div>
+
+        {/* Total */}
+        <div className="border-t pt-2">
+          <div className="flex justify-between text-xs font-semibold">
+            <span className="text-gray-900">TOTAL SCORE</span>
+            <span className="text-primary">
+              {(
+                userStats.totalArScore + userStats.totalRcScore
+              ).toLocaleString()}
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

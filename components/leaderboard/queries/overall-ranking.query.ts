@@ -1,5 +1,6 @@
 "server only";
 
+import calculateGrade from "@/lib/utils/calculate-grade";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface OverallRankingUser {
@@ -9,6 +10,17 @@ export interface OverallRankingUser {
   score: number;
   countryIcon?: string;
   rank: number;
+}
+
+// Helper function to extract just the number from grade
+function formatGradeForDisplay(grade: string): string {
+  if (grade.startsWith("Grade ")) {
+    return grade.replace("Grade ", "");
+  }
+  if (grade === "Below Grade 1") {
+    return "K";
+  }
+  return grade; // For "Adult" and "N/A"
 }
 
 export async function getOverallRankings(
@@ -42,16 +54,12 @@ export async function getOverallRankings(
         (sum, score) => sum + score.score,
         0,
       );
-      const highestGrade = user.ARScore.reduce((highest, score) => {
-        const gradeNum = parseInt(score.AR.relevantGrade);
-        const currentHighest = parseInt(highest);
-        return gradeNum > currentHighest ? score.AR.relevantGrade : highest;
-      }, "0");
+      const grade = calculateGrade(user.birthday);
 
       return {
         id: user.id,
         nickname: user.nickname || user.name || "Anonymous",
-        grade: highestGrade,
+        grade: formatGradeForDisplay(grade),
         score: totalScore,
         countryIcon: user.country?.countryIcon?.iconUrl,
       };
@@ -93,18 +101,12 @@ export async function getOverallRankings(
         (sum, score) => sum + score.score,
         0,
       );
-      const highestGrade = user.RCScore.reduce((highest, score) => {
-        const gradeNum = parseInt(score.RCLevel.relevantGrade);
-        const currentHighest = parseInt(highest);
-        return gradeNum > currentHighest
-          ? score.RCLevel.relevantGrade
-          : highest;
-      }, "0");
+      const grade = calculateGrade(user.birthday);
 
       return {
         id: user.id,
         nickname: user.nickname || user.name || "Anonymous",
-        grade: highestGrade,
+        grade: formatGradeForDisplay(grade),
         score: totalScore,
         countryIcon: user.country?.countryIcon?.iconUrl,
       };
