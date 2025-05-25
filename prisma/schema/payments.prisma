@@ -6,15 +6,7 @@ enum PaymentStatus {
   REFUNDED
 }
 
-enum PaymentMethod {
-  CARD
-  TRANSFER
-  VIRTUAL_ACCOUNT
-  MOBILE_PHONE
-  GIFT_CERTIFICATE
-  EASY_PAY
-  FOREIGN_EASY_PAY
-}
+
 
 enum SubscriptionStatus {
   ACTIVE
@@ -62,7 +54,7 @@ model Payment {
   orderName  String // Description of the order
   amount     Int // Final payment amount in KRW (after discount)
   currency   String         @default("KRW")
-  method     PaymentMethod?
+  method     String?
   status     PaymentStatus  @default(PENDING)
 
   // Customer information

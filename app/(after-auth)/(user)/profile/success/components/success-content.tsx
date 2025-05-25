@@ -119,7 +119,7 @@ export default function SuccessContent({
             {paymentResult?.error || "Something went wrong"}
           </p>
           <Button
-            onClick={() => router.push("/plans")}
+            onClick={() => router.push("/profile")}
             variant="outline"
             className="border-red-300 text-red-700 hover:bg-red-50"
           >

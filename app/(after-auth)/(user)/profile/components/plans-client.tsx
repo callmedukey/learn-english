@@ -11,7 +11,10 @@ import CouponInput from "./coupon-input";
 import PaymentSummary from "./payment-summary";
 import PlanCard from "./plan-card";
 import { calculatePriceWithCouponAction } from "../actions/coupon.actions";
-import { createPaymentAction } from "../actions/payment.actions";
+import {
+  createPaymentAction,
+  deletePaymentAction,
+} from "../actions/payment.actions";
 
 interface PlansClientProps {
   plans: Plan[];
@@ -21,7 +24,7 @@ interface PlansClientProps {
 }
 
 // TODO: Replace with your actual TossPayments client key
-const TOSS_CLIENT_KEY = "test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm";
+const TOSS_CLIENT_KEY = process.env.NEXT_PUBLIC_TOSS_CLIENT_ID!;
 
 export default function PlansClient({
   plans,
@@ -29,6 +32,7 @@ export default function PlansClient({
   userEmail,
   userName,
 }: PlansClientProps) {
+  console.log(userId, userEmail, userName);
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [appliedCoupon, setAppliedCoupon] = useState<DiscountCoupon | null>(
     null,
@@ -105,29 +109,62 @@ export default function PlansClient({
 
         if (!paymentResult.success) {
           toast.error(paymentResult.error || "Failed to create payment");
+          const deleteResult = await deletePaymentAction(
+            paymentResult.payment!.id,
+          );
+          if (!deleteResult.success) {
+            console.error(
+              "Failed to delete payment record:",
+              deleteResult.error,
+            );
+          }
           return;
         }
 
-        // Initialize TossPayments widget
-        const widgets = tossPayments.widgets({
-          customerKey: userId,
-        });
+        // If we reach here, payment was created successfully
+        const payment = paymentResult.payment!;
 
-        // Set payment amount
-        await widgets.setAmount({
-          currency: "KRW",
-          value: paymentResult.payment!.amount,
-        });
+        try {
+          // Initialize TossPayments payment
+          const paymentWidget = tossPayments.payment({
+            customerKey: userId,
+          });
 
-        // Request payment
-        await widgets.requestPayment({
-          orderId: paymentResult.payment!.orderId,
-          orderName: paymentResult.payment!.orderName,
-          successUrl: `${window.location.origin}/plans/success`,
-          failUrl: `${window.location.origin}/plans/fail`,
-          customerEmail: userEmail,
-          customerName: userName,
-        });
+          // Request payment directly
+          await paymentWidget.requestPayment({
+            method: "CARD",
+            amount: {
+              currency: "KRW",
+              value: payment.amount,
+            },
+            orderId: payment.orderId,
+            orderName: payment.orderName,
+            successUrl: `${window.location.origin}/profile/success`,
+            failUrl: `${window.location.origin}/profile/fail`,
+            customerEmail: userEmail,
+            customerName: userName,
+            card: {
+              useEscrow: false,
+              flowMode: "DEFAULT",
+              useCardPoint: false,
+              useAppCardOnly: false,
+            },
+          });
+        } catch (paymentError) {
+          // If TossPayments fails, delete the created payment record
+          console.error("Payment widget error:", paymentError);
+
+          // Delete the payment record since the payment flow failed
+          const deleteResult = await deletePaymentAction(payment.id);
+          if (!deleteResult.success) {
+            console.error(
+              "Failed to delete payment record:",
+              deleteResult.error,
+            );
+          }
+
+          toast.error("Payment failed. Please try again.");
+        }
       } catch (error) {
         console.error("Payment error:", error);
         toast.error("Payment failed. Please try again.");
@@ -181,7 +218,7 @@ export default function PlansClient({
             className="w-full bg-amber-500 py-3 text-lg font-semibold text-white hover:bg-amber-600"
             size="lg"
           >
-            {isPending ? "Processing..." : "Confirm Payment"}
+            {isPending ? "Processing..." : "Proceed to Payment"}
           </Button>
 
           <p className="text-center text-xs text-gray-500">

@@ -15,7 +15,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   const params = await searchParams;
 
   if (!params.paymentKey || !params.orderId || !params.amount) {
-    redirect("/plans");
+    redirect("/profile");
   }
 
   return (

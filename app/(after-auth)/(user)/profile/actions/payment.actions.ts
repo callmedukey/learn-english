@@ -13,6 +13,18 @@ function generateOrderId(): string {
   return `ORDER_${timestamp}_${random}`;
 }
 
+export async function deletePaymentAction(paymentId: string) {
+  try {
+    await prisma.payment.delete({
+      where: { id: paymentId },
+    });
+    return { success: true };
+  } catch (error) {
+    console.error("Error deleting payment:", error);
+    return { success: false, error: "Failed to delete payment record" };
+  }
+}
+
 export async function createPaymentAction(data: {
   userId: string;
   planId: string;

@@ -71,9 +71,9 @@ export const seed = async () => {
     } else {
       const user = await prisma.user.create({
         data: {
-          email: "iamdevduke@gmail.com",
-          password: await bcrypt.hash("gen2kbgroup@", 10),
-          nickname: "devduke",
+          email: "admin@readingchamp.com",
+          password: await bcrypt.hash("admin2025@@@", 10),
+          nickname: "admin",
           role: Role.ADMIN,
           countryId: korea?.id,
           gender: Gender.Male,

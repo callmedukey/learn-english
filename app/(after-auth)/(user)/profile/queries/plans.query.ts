@@ -1,6 +1,10 @@
 "server only";
 
-import { Plan, DiscountCoupon } from "@/prisma/generated/prisma";
+import {
+  Plan,
+  DiscountCoupon,
+  UserSubscription,
+} from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export async function getActivePlans(): Promise<Plan[]> {
@@ -10,6 +14,30 @@ export async function getActivePlans(): Promise<Plan[]> {
     },
     orderBy: {
       sortOrder: "asc",
+    },
+  });
+}
+
+export interface UserActiveSubscription extends UserSubscription {
+  plan: Plan;
+}
+
+export async function getUserActiveSubscription(
+  userId: string,
+): Promise<UserActiveSubscription | null> {
+  return prisma.userSubscription.findFirst({
+    where: {
+      userId,
+      status: "ACTIVE",
+      endDate: {
+        gt: new Date(),
+      },
+    },
+    include: {
+      plan: true,
+    },
+    orderBy: {
+      endDate: "desc",
     },
   });
 }

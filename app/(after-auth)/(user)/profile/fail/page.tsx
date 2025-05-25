@@ -63,7 +63,7 @@ export default async function FailPage({ searchParams }: FailPageProps) {
                 asChild
                 className="flex-1 bg-amber-500 hover:bg-amber-600"
               >
-                <Link href="/plans">
+                <Link href="/profile">
                   <ArrowLeft className="mr-2 h-4 w-4" />
                   Try Again
                 </Link>
