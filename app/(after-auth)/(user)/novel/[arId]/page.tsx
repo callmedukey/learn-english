@@ -11,19 +11,79 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
 
 import { NovelCard } from "../components/novel-card";
+import { NovelFilters } from "./components/novel-filters";
 
 interface PageProps {
   params: Promise<{ arId: string }>;
+  searchParams: Promise<{
+    search?: string;
+    sortBy?: string;
+    sortOrder?: string;
+    status?: string;
+  }>;
 }
 
-async function ARNovels({ arId }: { arId: string }) {
+async function ARNovels({
+  arId,
+  searchParams,
+}: {
+  arId: string;
+  searchParams: {
+    search?: string;
+    sortBy?: string;
+    sortOrder?: string;
+    status?: string;
+  };
+}) {
   const session = await auth();
   const userId = session?.user?.id;
+
+  // Build the where clause for search
+  const searchWhere = searchParams.search
+    ? {
+        OR: [
+          {
+            title: {
+              contains: searchParams.search,
+              mode: "insensitive" as const,
+            },
+          },
+          {
+            description: {
+              contains: searchParams.search,
+              mode: "insensitive" as const,
+            },
+          },
+        ],
+      }
+    : {};
+
+  // Build the orderBy clause
+  const sortBy = searchParams.sortBy || "title";
+  const sortOrder = searchParams.sortOrder || "asc";
+
+  let orderBy: any = { title: "asc" };
+
+  switch (sortBy) {
+    case "title":
+      orderBy = { title: sortOrder };
+      break;
+    case "createdAt":
+      orderBy = { createdAt: sortOrder };
+      break;
+    case "chapterCount":
+      // We'll handle chapter count sorting after fetching the data
+      orderBy = { title: "asc" }; // Default sort for now
+      break;
+    default:
+      orderBy = { title: "asc" };
+  }
 
   const ar = await prisma.aR.findUnique({
     where: { id: arId },
     include: {
       novels: {
+        where: searchWhere,
         include: {
           image: true,
           novelChapters: {
@@ -52,15 +112,62 @@ async function ARNovels({ arId }: { arId: string }) {
             },
           },
         },
-        orderBy: {
-          title: "asc",
-        },
+        orderBy,
       },
     },
   });
 
   if (!ar) {
     notFound();
+  }
+
+  // Get total count for display (without search filter)
+  const totalNovelsCount = await prisma.novel.count({
+    where: { ARId: arId },
+  });
+
+  // Apply status filter on the server side if needed
+  let filteredNovels = ar.novels;
+
+  if (searchParams.status && searchParams.status !== "all" && userId) {
+    filteredNovels = ar.novels.filter((novel) => {
+      const totalChapters = novel.novelChapters.length;
+      const completedChapters = novel.novelChapters.filter((chapter) => {
+        if (!chapter.novelQuestionSet) return false;
+
+        const totalQuestions = chapter.novelQuestionSet.novelQuestions.length;
+        const completedQuestions =
+          chapter.novelQuestionSet.novelQuestions.filter((question) =>
+            question.novelQuestionCompleted.some(
+              (completed) => completed.userId === userId,
+            ),
+          ).length;
+
+        return totalQuestions > 0 && completedQuestions === totalQuestions;
+      }).length;
+
+      const progressPercentage =
+        totalChapters > 0 ? (completedChapters / totalChapters) * 100 : 0;
+
+      switch (searchParams.status) {
+        case "completed":
+          return progressPercentage === 100;
+        case "inProgress":
+          return progressPercentage > 0 && progressPercentage < 100;
+        case "notStarted":
+          return progressPercentage === 0;
+        default:
+          return true;
+      }
+    });
+  }
+
+  // Handle chapter count sorting after fetching data
+  if (sortBy === "chapterCount") {
+    filteredNovels.sort((a, b) => {
+      const comparison = a.novelChapters.length - b.novelChapters.length;
+      return sortOrder === "desc" ? -comparison : comparison;
+    });
   }
 
   return (
@@ -105,7 +212,8 @@ async function ARNovels({ arId }: { arId: string }) {
             variant="outline"
             className="border-muted-foreground/30 text-muted-foreground"
           >
-            {ar.novels.length} novel{ar.novels.length !== 1 ? "s" : ""}
+            {filteredNovels.length} of {totalNovelsCount} novel
+            {totalNovelsCount !== 1 ? "s" : ""}
           </Badge>
         </div>
 
@@ -114,20 +222,27 @@ async function ARNovels({ arId }: { arId: string }) {
         )}
       </div>
 
+      {/* Filters */}
+      <NovelFilters arId={arId} />
+
       {/* Novels Grid */}
-      {ar.novels.length === 0 ? (
+      {filteredNovels.length === 0 ? (
         <div className="py-12 text-center">
           <BookOpen className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
           <h3 className="mb-2 text-xl font-semibold text-foreground">
-            No novels available
+            {totalNovelsCount === 0
+              ? "No novels available"
+              : "No novels match your filters"}
           </h3>
           <p className="text-muted-foreground">
-            Novels for this AR level are coming soon.
+            {totalNovelsCount === 0
+              ? "Novels for this AR level are coming soon."
+              : "Try adjusting your search criteria or clearing the filters."}
           </p>
         </div>
       ) : (
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
-          {ar.novels.map((novel) => (
+          {filteredNovels.map((novel) => (
             <NovelCard
               key={novel.id}
               novel={novel}
@@ -198,12 +313,13 @@ function ARNovelsSkeleton() {
   );
 }
 
-export default async function Page({ params }: PageProps) {
+export default async function Page({ params, searchParams }: PageProps) {
   const { arId } = await params;
+  const resolvedSearchParams = await searchParams;
 
   return (
     <Suspense fallback={<ARNovelsSkeleton />}>
-      <ARNovels arId={arId} />
+      <ARNovels arId={arId} searchParams={resolvedSearchParams} />
     </Suspense>
   );
 }

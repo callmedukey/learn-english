@@ -1,4 +1,3 @@
-import { CheckCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -75,17 +74,6 @@ export function NovelCard({ novel, arId, userId }: NovelCardProps) {
               className="object-fit transition-transform duration-200 group-hover:scale-105"
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
             />
-            {hasProgress && (
-              <div className="absolute top-2 right-2">
-                <Badge
-                  variant="secondary"
-                  className="border-primary bg-primary/90 text-primary-foreground"
-                >
-                  <CheckCircle className="mr-1 h-3 w-3" />
-                  {Math.round(progressPercentage)}%
-                </Badge>
-              </div>
-            )}
           </div>
         )}
 

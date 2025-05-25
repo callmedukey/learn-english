@@ -61,6 +61,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   const [shuffledChoices, setShuffledChoices] = useState<string[]>([]);
   const [quizCompleted, setQuizCompleted] = useState(false);
   const [totalPointsEarned, setTotalPointsEarned] = useState(0);
+  const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [quizStarted, setQuizStarted] = useState(false);
   const lastQuestionIdRef = useRef<string | null>(null);
 
@@ -92,6 +93,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     setShowExplanation(false);
     setQuizCompleted(false);
     setTotalPointsEarned(0);
+    setCorrectAnswersCount(0);
     setQuizStarted(true);
   };
 
@@ -249,6 +251,9 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       setTotalPointsEarned((prev) => prev + (result.pointsAwarded || 0));
       setShowExplanation(true);
       setIsAnswered(true);
+      if (result.isCorrect) {
+        setCorrectAnswersCount((prev) => prev + 1);
+      }
     }
     setIsSubmitting(false);
   };
@@ -315,11 +320,24 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
         </CardHeader>
         <CardContent className="space-y-4 text-center">
           <div className="mb-4 text-4xl">🎉</div>
-          <div className="space-y-2">
+          <div className="space-y-4">
             <p className="text-lg">
               You&apos;ve completed Chapter {chapter.orderNumber}:{" "}
               {chapter.title}
             </p>
+
+            {/* Score Display */}
+            <div className="mx-auto w-fit rounded-full border-2 border-primary/20 bg-primary/10 px-6 py-3">
+              <div className="text-center">
+                <div className="text-2xl font-bold text-primary">
+                  {correctAnswersCount}/{questionsToShow.length}
+                </div>
+                <div className="text-sm font-medium text-primary/80">
+                  Correct Answers
+                </div>
+              </div>
+            </div>
+
             {status !== "retry" && (
               <p className="font-medium text-green-600">
                 Points earned: {totalPointsEarned}
