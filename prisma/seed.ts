@@ -81,6 +81,18 @@ export const seed = async () => {
         },
       });
 
+      await prisma.user.create({
+        data: {
+          email: "test@readingchamp.com",
+          password: await bcrypt.hash("test2025@@@", 10),
+          nickname: "TESTUSER",
+          role: Role.USER,
+          countryId: korea?.id,
+          gender: Gender.Male,
+          birthday: new Date("2000-01-01"),
+        },
+      });
+
       console.log("User created:", user);
       console.log("User country:", user.countryId);
     }

@@ -8,7 +8,7 @@ import Kakao, { Gender } from "next-auth/providers/kakao";
 import Naver from "next-auth/providers/naver";
 
 import { signInSchema } from "./lib/schemas/auth.schema";
-import { Role } from "./prisma/generated/prisma";
+import { Role, SubscriptionStatus } from "./prisma/generated/prisma";
 import { prisma } from "./prisma/prisma-client";
 
 declare module "next-auth" {
@@ -155,7 +155,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       const activeSubscriptions =
         foundUser?.subscriptions.filter(
           (subscription) =>
-            subscription.status === "ACTIVE" && subscription.endDate > now,
+            subscription.status === SubscriptionStatus.ACTIVE &&
+            subscription.endDate > now,
         ) || [];
 
       const hasPaidSubscription = activeSubscriptions.length > 0;
