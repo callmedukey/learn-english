@@ -1,7 +1,8 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { AlertTriangle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface FailPageProps {
   searchParams: Promise<{
@@ -14,7 +15,7 @@ export default async function FailPage({ searchParams }: FailPageProps) {
   const params = await searchParams;
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto py-8">
       <div className="mx-auto max-w-2xl">
         <Card className="border-red-200 text-center">
           <CardHeader>
@@ -27,8 +28,8 @@ export default async function FailPage({ searchParams }: FailPageProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-600">
-              We're sorry, but your payment could not be processed. Please try
-              again or contact support if the problem persists.
+              We&apos;re sorry, but your payment could not be processed. Please
+              try again or contact support if the problem persists.
             </p>
 
             {params.message && (

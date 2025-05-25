@@ -1,11 +1,12 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { CheckCircle, ArrowRight } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface SuccessContentProps {
   paymentKey: string;

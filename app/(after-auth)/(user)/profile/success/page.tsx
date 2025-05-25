@@ -1,5 +1,5 @@
-import { Suspense } from "react";
 import { redirect } from "next/navigation";
+import { Suspense } from "react";
 
 import SuccessContent from "./components/success-content";
 
@@ -19,7 +19,7 @@ export default async function SuccessPage({ searchParams }: SuccessPageProps) {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto py-8">
       <div className="mx-auto max-w-2xl">
         <Suspense fallback={<div>Processing payment...</div>}>
           <SuccessContent

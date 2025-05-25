@@ -60,6 +60,7 @@ export async function createPaymentAction(data: {
         couponCode: coupon?.code,
         originalAmount: priceCalculation.originalPrice,
         discountAmount: priceCalculation.discountAmount,
+        paymentKey: `TEMP_${orderId}`, // Temporary key, will be updated by Toss-Payment
         orderId,
         orderName: `${plan.name} - Learn English Subscription`,
         amount: priceCalculation.finalPrice,
