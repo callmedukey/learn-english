@@ -3,6 +3,7 @@ import { compare } from "bcryptjs";
 import NextAuth, { CredentialsSignin } from "next-auth";
 import type { DefaultSession } from "next-auth";
 import Credentials from "next-auth/providers/credentials";
+import Google from "next-auth/providers/google";
 import Kakao, { Gender } from "next-auth/providers/kakao";
 import Naver from "next-auth/providers/naver";
 
@@ -51,6 +52,11 @@ class UserNotFoundError extends CredentialsSignin {
 
 export const { handlers, signIn, signOut, auth } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  pages: {
+    signIn: "/login",
+    signOut: "/login",
+    error: "/login",
+  },
   providers: [
     Credentials({
       credentials: {
@@ -100,6 +106,10 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     Kakao({
       clientId: process.env.KAKAO_CLIENT_ID,
       clientSecret: process.env.KAKAO_CLIENT_SECRET,
+    }),
+    Google({
+      clientId: process.env.GOOGLE_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET,
     }),
   ],
   session: {
