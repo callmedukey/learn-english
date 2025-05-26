@@ -64,6 +64,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
   const [quizStarted, setQuizStarted] = useState(false);
   const lastQuestionIdRef = useRef<string | null>(null);
+  const [isTransitioning, setIsTransitioning] = useState(false);
 
   const questions = useMemo(
     () => chapter.novelQuestionSet?.novelQuestions || [],
@@ -104,7 +105,6 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       currentQuestion &&
       quizStarted &&
       currentQuestion.id !== lastQuestionIdRef.current
-      // Removed: && !showExplanation // Don't reset if we're already showing explanation
     ) {
       lastQuestionIdRef.current = currentQuestion.id;
       const shuffled = [...currentQuestion.choices].sort(
@@ -112,6 +112,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       );
       setShuffledChoices(shuffled);
       setTimeLeft(currentQuestion.timeLimit);
+      setIsTransitioning(false); // Clear transition flag when new question is ready
     }
   }, [currentQuestion?.id, quizStarted]);
 
@@ -150,7 +151,8 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       !isAnswered &&
       !showExplanation &&
       quizStarted &&
-      currentQuestion
+      currentQuestion &&
+      !isTransitioning // Don't run timer during transition
     ) {
       const timer = setTimeout(() => {
         setTimeLeft(timeLeft - 1);
@@ -162,7 +164,8 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       !showExplanation &&
       quizStarted &&
       currentQuestion &&
-      shuffledChoices.length > 0 // Ensure question is fully loaded
+      shuffledChoices.length > 0 && // Ensure question is fully loaded
+      !isTransitioning // Don't auto-submit during transition
     ) {
       // Time's up - auto submit
       handleTimeOut();
@@ -174,6 +177,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     quizStarted,
     currentQuestion,
     shuffledChoices.length,
+    isTransitioning,
     handleTimeOut,
   ]);
 
@@ -272,6 +276,9 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
 
   const handleNextQuestion = () => {
     if (currentQuestionIndex < questions.length - 1) {
+      // Set transition flag to prevent timer from auto-submitting
+      setIsTransitioning(true);
+
       // Reset states for the upcoming question
       setSelectedAnswer("");
       setIsAnswered(false);
