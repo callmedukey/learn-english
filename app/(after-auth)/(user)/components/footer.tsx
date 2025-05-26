@@ -12,22 +12,22 @@ const Footer = () => {
               <div className="space-y-2">
                 <div>
                   <span className="font-semibold">Business Registration:</span>
-                  <span className="ml-2 text-gray-500">123-45-67890</span>
+                  <span className="ml-2 text-gray-500">393-81-00352</span>
                 </div>
                 <div>
                   <span className="font-semibold">CEO:</span>
-                  <span className="ml-2 text-gray-500">John Smith</span>
+                  <span className="ml-2 text-gray-500">David Kim</span>
                 </div>
                 <div>
                   <span className="font-semibold">Phone:</span>
-                  <span className="ml-2 text-gray-500">+1 (555) 123-4567</span>
+                  <span className="ml-2 text-gray-500">+82-0507-1432-0332</span>
                 </div>
               </div>
               <div className="space-y-2">
                 <div>
                   <span className="font-semibold">Email:</span>
                   <span className="ml-2 text-gray-500">
-                    contact@learnenglish.com
+                    readingchamp25@gmail.com
                   </span>
                 </div>
                 <div>
@@ -39,7 +39,8 @@ const Footer = () => {
                 <div>
                   <span className="font-semibold">Address:</span>
                   <span className="ml-2 text-gray-500">
-                    123 Education St, Learning City, LC 12345
+                    8th floor, 385, Seongnam-daero, Bundang-gu, Seongnam-si,
+                    Gyeonggi-do, Republic of Korea
                   </span>
                 </div>
               </div>
