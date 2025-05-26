@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 
 import { auth } from "@/auth";
+import { NotificationType } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface NotificationData {
@@ -138,6 +139,7 @@ export async function createTestNotification(
         message:
           "This is a test notification to verify the notification system is working correctly!",
         isRead: false,
+        type: NotificationType.NOVEL,
       },
     });
 

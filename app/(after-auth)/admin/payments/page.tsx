@@ -1,6 +1,6 @@
 import React, { Suspense } from "react";
 
-import { PaymentStatus, PaymentMethod } from "@/prisma/generated/prisma";
+import { PaymentStatus } from "@/prisma/generated/prisma";
 
 import PaymentsClient from "./components/payments-client";
 import {
@@ -37,12 +37,8 @@ async function PaymentsContent({ searchParams }: PaymentsPageProps) {
     filters.status = params.status as PaymentStatus;
   }
 
-  if (
-    params.method &&
-    params.method !== "ALL" &&
-    Object.values(PaymentMethod).includes(params.method as PaymentMethod)
-  ) {
-    filters.method = params.method as PaymentMethod;
+  if (params.method && params.method !== "ALL") {
+    filters.method = params.method;
   }
 
   if (params.search) {

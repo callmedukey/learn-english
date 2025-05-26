@@ -19,7 +19,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { PaymentStatus, PaymentMethod } from "@/prisma/generated/prisma";
+import { PaymentStatus } from "@/prisma/generated/prisma";
 
 import { PaymentFilters } from "../queries/payments.query";
 
@@ -134,34 +134,13 @@ export default function PaymentFiltersComponent({
         {/* Method Filter */}
         <div className="space-y-2">
           <label className="text-sm font-medium">Payment Method</label>
-          <Select
-            value={filters.method || "ALL"}
-            onValueChange={(value) =>
-              handleFilterChange("method", value === "ALL" ? undefined : value)
+          <Input
+            placeholder="Enter payment method..."
+            value={filters.method || ""}
+            onChange={(e) =>
+              handleFilterChange("method", e.target.value || undefined)
             }
-          >
-            <SelectTrigger>
-              <SelectValue placeholder="All Methods" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="ALL">All Methods</SelectItem>
-              <SelectItem value={PaymentMethod.CARD}>Card</SelectItem>
-              <SelectItem value={PaymentMethod.TRANSFER}>Transfer</SelectItem>
-              <SelectItem value={PaymentMethod.VIRTUAL_ACCOUNT}>
-                Virtual Account
-              </SelectItem>
-              <SelectItem value={PaymentMethod.MOBILE_PHONE}>
-                Mobile Phone
-              </SelectItem>
-              <SelectItem value={PaymentMethod.GIFT_CERTIFICATE}>
-                Gift Certificate
-              </SelectItem>
-              <SelectItem value={PaymentMethod.EASY_PAY}>Easy Pay</SelectItem>
-              <SelectItem value={PaymentMethod.FOREIGN_EASY_PAY}>
-                Foreign Easy Pay
-              </SelectItem>
-            </SelectContent>
-          </Select>
+          />
         </div>
 
         {/* Plan Filter */}

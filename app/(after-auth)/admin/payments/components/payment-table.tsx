@@ -1,7 +1,7 @@
 import { format } from "date-fns";
 
 import { Badge } from "@/components/ui/badge";
-import { PaymentStatus, PaymentMethod } from "@/prisma/generated/prisma";
+import { PaymentStatus } from "@/prisma/generated/prisma";
 
 import { PaymentWithDetails } from "../queries/payments.query";
 
@@ -36,22 +36,6 @@ export default function PaymentTable({ payments }: PaymentTableProps) {
 
     const config = statusConfig[status];
     return <Badge className={config.color}>{status}</Badge>;
-  };
-
-  const getMethodDisplay = (method: PaymentMethod | null) => {
-    if (!method) return "N/A";
-
-    const methodLabels = {
-      [PaymentMethod.CARD]: "Card",
-      [PaymentMethod.TRANSFER]: "Transfer",
-      [PaymentMethod.VIRTUAL_ACCOUNT]: "Virtual Account",
-      [PaymentMethod.MOBILE_PHONE]: "Mobile Phone",
-      [PaymentMethod.GIFT_CERTIFICATE]: "Gift Certificate",
-      [PaymentMethod.EASY_PAY]: "Easy Pay",
-      [PaymentMethod.FOREIGN_EASY_PAY]: "Foreign Easy Pay",
-    };
-
-    return methodLabels[method] || method;
   };
 
   const formatCurrency = (amount: number) => {
@@ -126,7 +110,7 @@ export default function PaymentTable({ payments }: PaymentTableProps) {
                   {formatCurrency(payment.amount)}
                 </td>
                 <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                  {getMethodDisplay(payment.method)}
+                  {payment.method}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap">
                   {getStatusBadge(payment.status)}

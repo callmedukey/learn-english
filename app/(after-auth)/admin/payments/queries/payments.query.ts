@@ -3,7 +3,6 @@
 import {
   Payment,
   PaymentStatus,
-  PaymentMethod,
   Plan,
   UserSubscription,
 } from "@/prisma/generated/prisma";
@@ -22,7 +21,7 @@ export interface PaymentWithDetails extends Payment {
 
 export interface PaymentFilters {
   status?: PaymentStatus | "ALL";
-  method?: PaymentMethod | "ALL";
+  method?: string | "ALL";
   dateFrom?: Date;
   dateTo?: Date;
   search?: string; // Search by user email, name, or order ID
