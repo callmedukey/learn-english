@@ -104,6 +104,8 @@ export const getUsers = async ({
     whereClause.email = { contains: email, mode: "insensitive" };
   }
 
+  whereClause.role = Role.USER;
+
   const skip = (page - 1) * limit;
 
   const usersFromDb: UserWithReferrerAndCountryAndSubscription[] =
