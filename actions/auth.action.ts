@@ -73,7 +73,11 @@ export async function signInAction(
       if ("code" in error && typeof error.code === "string") {
         switch (error.code) {
           case "InvalidCredentials":
-            return { success: false, message: "Invalid credentials", inputs };
+            return {
+              success: false,
+              message: "Invalid ID/Password",
+              inputs,
+            };
           case "UserNotFound":
             return { success: false, message: "User not found", inputs };
           default:

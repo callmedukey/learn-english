@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import React, { useActionState } from "react";
+import React, { useActionState, useEffect } from "react";
+import { toast } from "sonner";
 
 import { signInAction } from "@/actions/auth.action";
 import ButtonWithLoading from "@/components/custom-ui/button-with-loading";
@@ -19,6 +20,12 @@ const initialState: ActionResponse<SignInType> = {
 
 const LoginForm = ({ previousEmail }: { previousEmail?: string }) => {
   const [state, action, isPending] = useActionState(signInAction, initialState);
+
+  useEffect(() => {
+    if (state.message && !state.success) {
+      toast.error(state.message);
+    }
+  }, [state.message, state.success]);
 
   return (
     <form action={action} className="flex flex-col gap-4">
