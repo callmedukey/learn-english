@@ -117,7 +117,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     maxAge: 7 * 24 * 60 * 60,
     updateAge: 24 * 60 * 60,
   },
-
+  trustHost: process.env.NODE_ENV === "production",
   callbacks: {
     async session({ session, token }) {
       session.user.id = token.sub as string;
@@ -199,7 +199,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
   logger: {
     error(error: Error) {
       if ((error as any).type === "CredentialsSignin") {
-        return;
+        console.log("CredentialsSignin", error);
       }
       console.error(error);
     },
