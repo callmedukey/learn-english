@@ -79,7 +79,7 @@ async function ChapterContent({
                 </p>
               </div>
               <Button asChild>
-                <Link href="/pricing">Upgrade to Premium</Link>
+                <Link href="/profile">Upgrade to Premium</Link>
               </Button>
             </div>
           </CardContent>

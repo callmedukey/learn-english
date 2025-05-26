@@ -314,7 +314,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
             <div className="mb-4 text-4xl">🔒</div>
             <h3 className="mb-2 text-lg font-medium">Premium Content</h3>
             <p>Upgrade to premium to access this chapter.</p>
-            <Button className="mt-4" onClick={() => router.push("/pricing")}>
+            <Button className="mt-4" onClick={() => router.push("/profile")}>
               Upgrade Now
             </Button>
           </div>
