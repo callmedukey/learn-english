@@ -8,18 +8,10 @@ export const updateARAction = async (formData: FormData) => {
   const arId = formData.get("arId") as string;
   const level = formData.get("level") as string;
   const score = formData.get("score") as string;
-  const relevantGrade = formData.get("relevantGrade") as string;
   const stars = parseInt(formData.get("stars") as string);
   const description = formData.get("description") as string;
 
-  if (
-    !arId ||
-    !level ||
-    !score ||
-    !relevantGrade ||
-    !description ||
-    isNaN(stars)
-  ) {
+  if (!arId || !level || !score || !description || isNaN(stars)) {
     return {
       error: "All fields are required and stars must be a valid number",
     };
@@ -43,7 +35,6 @@ export const updateARAction = async (formData: FormData) => {
       data: {
         level,
         score,
-        relevantGrade,
         stars,
         description,
       },
@@ -103,11 +94,10 @@ export const deleteARAction = async (arId: string) => {
 export const createARAction = async (formData: FormData) => {
   const level = formData.get("level") as string;
   const score = formData.get("score") as string;
-  const relevantGrade = formData.get("relevantGrade") as string;
   const stars = parseInt(formData.get("stars") as string);
   const description = formData.get("description") as string;
 
-  if (!level || !score || !relevantGrade || isNaN(stars)) {
+  if (!level || !score || isNaN(stars)) {
     return {
       error: "All fields are required and stars must be a valid number",
     };
@@ -122,7 +112,6 @@ export const createARAction = async (formData: FormData) => {
       data: {
         level,
         score,
-        relevantGrade,
         stars,
         description,
       },
