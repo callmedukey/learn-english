@@ -58,7 +58,7 @@ const CreateRCForm = () => {
               id="relevantGrade"
               name="relevantGrade"
               type="text"
-              placeholder="Grade 3-4"
+              placeholder="Grades 3-4"
               required
               disabled={isPending}
             />

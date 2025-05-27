@@ -72,7 +72,7 @@ const CreateARForm = () => {
               id="relevantGrade"
               name="relevantGrade"
               type="text"
-              placeholder="Grade 1~2, Grade 3~4, Grade 5~6, Grade 7~8, Grade 9~10"
+              placeholder="Grades 1~2, Grades 3~4, Grades 5~6, Grades 7~8, Grades 9~10"
               required
               disabled={isPending}
             />

@@ -67,18 +67,6 @@ const EditARForm: React.FC<EditARFormProps> = ({ ar, onARUpdated }) => {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="relevantGrade">Relevant Grade</Label>
-        <Input
-          id="relevantGrade"
-          name="relevantGrade"
-          defaultValue={ar.relevantGrade}
-          placeholder="e.g., Grade 3-4, Grade 5-6"
-          required
-          disabled={isPending}
-        />
-      </div>
-
-      <div className="space-y-2">
         <Label htmlFor="stars">Stars (1-5)</Label>
         <Select
           name="stars"
