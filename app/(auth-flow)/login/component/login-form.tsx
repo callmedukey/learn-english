@@ -20,7 +20,6 @@ const initialState: ActionResponse<SignInType> = {
 
 const LoginForm = ({ previousEmail }: { previousEmail?: string }) => {
   const [state, action, isPending] = useActionState(signInAction, initialState);
-
   useEffect(() => {
     if (state.message && !state.success) {
       toast.error(state.message);

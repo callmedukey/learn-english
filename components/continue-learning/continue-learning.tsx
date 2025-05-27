@@ -1,5 +1,4 @@
 import { BookOpen, Brain } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import React, { Suspense } from "react";
 
@@ -47,20 +46,6 @@ async function ContinueLearningContent({ userId }: { userId: string }) {
             <>
               <div className="flex flex-1 flex-col justify-center space-y-4">
                 <div className="flex items-start gap-4">
-                  {data.novelProgress.novel.image ? (
-                    <div className="relative h-20 w-14 flex-shrink-0 overflow-hidden rounded">
-                      <Image
-                        src={data.novelProgress.novel.image.imageUrl}
-                        alt={data.novelProgress.novel.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  ) : (
-                    <div className="flex h-20 w-14 flex-shrink-0 items-center justify-center rounded bg-gray-100 text-xs text-gray-500">
-                      No Image
-                    </div>
-                  )}
                   <div className="min-w-0 flex-1">
                     <h3 className="truncate font-semibold text-gray-900">
                       {data.novelProgress.novel.title}

@@ -2,7 +2,6 @@
 
 import { revalidatePath } from "next/cache";
 
-import { deleteFile } from "@/lib/utils/delete-file";
 import { prisma } from "@/prisma/prisma-client";
 
 export const deleteNovel = async (novelId: string) => {
@@ -13,16 +12,9 @@ export const deleteNovel = async (novelId: string) => {
       },
       include: {
         AR: true,
-        image: true,
       },
     });
 
-    if (novel.image) {
-      const result = await deleteFile(novel.image.imageUrl);
-      if (!result.success) {
-        console.error("Failed to delete novel image:", result.error);
-      }
-    }
     revalidatePath(`/admin/novels/${novel.AR?.id}`);
     revalidatePath(`/admin/novels/${novel.AR?.id}/novels`);
     return { success: true };

@@ -15,7 +15,6 @@ async function ARChoices() {
     include: {
       novels: {
         include: {
-          image: true,
           novelChapters: {
             include: {
               novelQuestionSet: {

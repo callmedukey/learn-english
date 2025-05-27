@@ -85,7 +85,6 @@ async function ARNovels({
       novels: {
         where: searchWhere,
         include: {
-          image: true,
           novelChapters: {
             include: {
               novelQuestionSet: {
@@ -197,16 +196,10 @@ async function ARNovels({
 
         <div className="mb-4 flex items-center gap-3">
           <Badge
-            variant="secondary"
-            className="border-primary/20 bg-primary/10 text-primary"
-          >
-            Grade {ar.relevantGrade}
-          </Badge>
-          <Badge
             variant="outline"
             className="border-muted-foreground/30 text-muted-foreground"
           >
-            Score: {ar.score}
+            AR: {ar.score}
           </Badge>
           <Badge
             variant="outline"

@@ -53,7 +53,6 @@ export async function getContinueLearningData(
                 include: {
                   novel: {
                     include: {
-                      image: true,
                       AR: true,
                       novelChapters: {
                         select: {
@@ -123,7 +122,6 @@ export async function getContinueLearningData(
         id: novel.id,
         title: novel.title,
         ARId: novel.ARId,
-        image: novel.image,
         AR: novel.AR,
       },
       totalChapters,

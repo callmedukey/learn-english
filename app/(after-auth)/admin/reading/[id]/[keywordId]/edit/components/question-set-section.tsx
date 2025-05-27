@@ -32,6 +32,8 @@ import {
   updateQuestionSetAction,
   deleteQuestionSetAction,
   createQuestionAction,
+  updateQuestionAction,
+  deleteQuestionAction,
 } from "../actions/question-set.actions";
 
 interface QuestionSetSectionProps {
@@ -437,39 +439,316 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
         )}
 
         {keyword.RCQuestionSet.RCQuestion.map((question) => (
-          <Card key={question.id}>
-            <CardHeader>
-              <CardTitle className="text-base">
-                Question {question.orderNumber}
-              </CardTitle>
-              <CardDescription>
-                Score: {question.score} • Time: {question.timeLimit}s
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <p className="mb-2 font-medium">{question.question}</p>
-              <div className="mb-2 space-y-1">
-                {question.choices.map((choice, choiceIndex) => (
-                  <div
-                    key={choiceIndex}
-                    className={`rounded p-2 text-sm ${
-                      choice === question.answer
-                        ? "bg-green-100 font-medium text-green-800"
-                        : "bg-gray-50"
-                    }`}
-                  >
-                    {String.fromCharCode(65 + choiceIndex)}. {choice}
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm text-gray-600">
-                <strong>Explanation:</strong> {question.explanation}
-              </p>
-            </CardContent>
-          </Card>
+          <QuestionCard
+            key={question.id}
+            question={question}
+            onUpdate={() => window.location.reload()}
+          />
         ))}
       </div>
     </div>
+  );
+};
+
+// Individual Question Card Component
+interface QuestionCardProps {
+  question: {
+    id: string;
+    orderNumber: number;
+    question: string;
+    choices: string[];
+    answer: string;
+    explanation: string;
+    score: number;
+    timeLimit: number;
+  };
+  onUpdate: () => void;
+}
+
+const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
+  const [isEditing, setIsEditing] = useState(false);
+  const [isPending, startTransition] = useTransition();
+  const [editForm, setEditForm] = useState({
+    question: question.question,
+    choices: [...question.choices],
+    answer: question.answer,
+    explanation: question.explanation,
+    score: question.score,
+    timeLimit: question.timeLimit,
+  });
+
+  // Validation helper
+  const isAnswerValid = (answer: string, choices: string[]) => {
+    const validChoices = choices.filter((c) => c.trim());
+    return validChoices.includes(answer);
+  };
+
+  const handleUpdate = () => {
+    // Client-side validation
+    const validChoices = editForm.choices.filter((c) => c.trim());
+    if (!isAnswerValid(editForm.answer, validChoices)) {
+      toast.error(
+        "The correct answer must exactly match one of the provided choices",
+      );
+      return;
+    }
+
+    startTransition(async () => {
+      const formData = new FormData();
+      formData.append("questionId", question.id);
+      formData.append("question", editForm.question);
+      formData.append("choices", JSON.stringify(validChoices));
+      formData.append("answer", editForm.answer);
+      formData.append("explanation", editForm.explanation);
+      formData.append("score", editForm.score.toString());
+      formData.append("timeLimit", editForm.timeLimit.toString());
+
+      const result = await updateQuestionAction(formData);
+
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("Question updated successfully");
+        setIsEditing(false);
+        onUpdate();
+      }
+    });
+  };
+
+  const handleDelete = () => {
+    startTransition(async () => {
+      const result = await deleteQuestionAction(question.id);
+
+      if (result.error) {
+        toast.error(result.error);
+      } else {
+        toast.success("Question deleted successfully");
+        onUpdate();
+      }
+    });
+  };
+
+  const validEditChoices = editForm.choices.filter((c) => c.trim());
+  const isEditAnswerValid = isAnswerValid(editForm.answer, validEditChoices);
+
+  if (isEditing) {
+    return (
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-base">
+            Edit Question {question.orderNumber}
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <div>
+            <Label htmlFor={`question-${question.id}`}>Question</Label>
+            <Textarea
+              id={`question-${question.id}`}
+              value={editForm.question}
+              onChange={(e) =>
+                setEditForm({ ...editForm, question: e.target.value })
+              }
+              rows={3}
+            />
+          </div>
+
+          <div>
+            <Label>Answer Choices</Label>
+            {editForm.choices.map((choice, index) => (
+              <Input
+                key={index}
+                value={choice}
+                onChange={(e) => {
+                  const newChoices = [...editForm.choices];
+                  newChoices[index] = e.target.value;
+                  setEditForm({ ...editForm, choices: newChoices });
+                }}
+                placeholder={`Choice ${String.fromCharCode(65 + index)}`}
+                className="mt-1"
+              />
+            ))}
+          </div>
+
+          <div>
+            <Label htmlFor={`answer-${question.id}`}>Correct Answer</Label>
+            <Input
+              id={`answer-${question.id}`}
+              value={editForm.answer}
+              onChange={(e) =>
+                setEditForm({ ...editForm, answer: e.target.value })
+              }
+              placeholder="Enter the correct answer exactly as written above"
+              className={
+                !editForm.answer || isEditAnswerValid
+                  ? ""
+                  : "border-red-500 bg-red-50"
+              }
+            />
+            {editForm.answer && !isEditAnswerValid && (
+              <p className="mt-1 text-xs text-red-600">
+                Answer must exactly match one of the choices above
+              </p>
+            )}
+          </div>
+
+          <div>
+            <Label htmlFor={`explanation-${question.id}`}>Explanation</Label>
+            <Textarea
+              id={`explanation-${question.id}`}
+              value={editForm.explanation}
+              onChange={(e) =>
+                setEditForm({ ...editForm, explanation: e.target.value })
+              }
+              rows={2}
+            />
+          </div>
+
+          <div className="grid grid-cols-2 gap-4">
+            <div>
+              <Label htmlFor={`score-${question.id}`}>Score</Label>
+              <Input
+                id={`score-${question.id}`}
+                type="number"
+                value={editForm.score}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    score: parseInt(e.target.value) || 1,
+                  })
+                }
+                min="1"
+              />
+            </div>
+            <div>
+              <Label htmlFor={`timeLimit-${question.id}`}>
+                Time Limit (seconds)
+              </Label>
+              <Input
+                id={`timeLimit-${question.id}`}
+                type="number"
+                value={editForm.timeLimit}
+                onChange={(e) =>
+                  setEditForm({
+                    ...editForm,
+                    timeLimit: parseInt(e.target.value) || 60,
+                  })
+                }
+                min="10"
+              />
+            </div>
+          </div>
+
+          <div className="flex justify-end space-x-2">
+            <Button
+              variant="outline"
+              onClick={() => {
+                setIsEditing(false);
+                // Reset form to original values
+                setEditForm({
+                  question: question.question,
+                  choices: [...question.choices],
+                  answer: question.answer,
+                  explanation: question.explanation,
+                  score: question.score,
+                  timeLimit: question.timeLimit,
+                });
+              }}
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={handleUpdate}
+              disabled={
+                isPending ||
+                !editForm.question ||
+                !editForm.answer ||
+                !isEditAnswerValid ||
+                validEditChoices.length === 0
+              }
+            >
+              <Save className="mr-2 h-4 w-4" />
+              {isPending ? "Updating..." : "Update"}
+            </Button>
+          </div>
+        </CardContent>
+      </Card>
+    );
+  }
+
+  return (
+    <Card>
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div>
+            <CardTitle className="text-base">
+              Question {question.orderNumber}
+            </CardTitle>
+            <CardDescription>
+              Score: {question.score} • Time: {question.timeLimit}s
+            </CardDescription>
+          </div>
+          <div className="flex space-x-1">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => setIsEditing(true)}
+            >
+              <Edit className="h-4 w-4" />
+            </Button>
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This action cannot be undone. This will permanently delete
+                    question &quot;<strong>Q{question.orderNumber}</strong>
+                    &quot;.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleDelete}
+                    className="bg-red-600 hover:bg-red-700"
+                  >
+                    Yes, delete question
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </div>
+        </div>
+      </CardHeader>
+      <CardContent>
+        <p className="mb-2 font-medium">{question.question}</p>
+        <div className="mb-2 space-y-1">
+          {question.choices.map((choice, choiceIndex) => (
+            <div
+              key={choiceIndex}
+              className={`rounded p-2 text-sm ${
+                choice === question.answer
+                  ? "bg-green-100 font-medium text-green-800"
+                  : "bg-gray-50"
+              }`}
+            >
+              {String.fromCharCode(65 + choiceIndex)}. {choice}
+            </div>
+          ))}
+        </div>
+        <p className="text-sm text-gray-600">
+          <strong>Explanation:</strong> {question.explanation}
+        </p>
+      </CardContent>
+    </Card>
   );
 };
 

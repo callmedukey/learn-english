@@ -10,14 +10,8 @@ export interface NovelDetailsData {
     id: string;
     level: string;
     score: string;
-    relevantGrade: string;
     stars: number;
     description: string | null;
-  } | null;
-  image: {
-    imageUrl: string;
-    width: number;
-    height: number;
   } | null;
   novelChapters: {
     id: string;
@@ -50,16 +44,8 @@ export const getNovelDetails = async (
           id: true,
           level: true,
           score: true,
-          relevantGrade: true,
           stars: true,
           description: true,
-        },
-      },
-      image: {
-        select: {
-          imageUrl: true,
-          width: true,
-          height: true,
         },
       },
       novelChapters: {
@@ -136,7 +122,6 @@ export const getNovelDetails = async (
     title: novel.title,
     description: novel.description,
     AR: novel.AR,
-    image: novel.image,
     novelChapters: novelChaptersWithProgress,
     createdAt: novel.createdAt,
     updatedAt: novel.updatedAt,

@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -17,11 +16,6 @@ interface NovelCardProps {
     id: string;
     title: string;
     description: string | null;
-    image: {
-      imageUrl: string;
-      width: number;
-      height: number;
-    } | null;
     novelChapters: Array<{
       id: string;
       isFree: boolean;
@@ -65,18 +59,6 @@ export function NovelCard({ novel, arId, userId }: NovelCardProps) {
   return (
     <Card className="group h-full border-border bg-card transition-all duration-200 hover:scale-105 hover:shadow-lg">
       <CardHeader className="pb-4">
-        {novel.image && (
-          <div className="relative mb-4 h-48 w-full overflow-hidden rounded-lg bg-muted">
-            <Image
-              src={novel.image.imageUrl}
-              alt={novel.title}
-              fill
-              className="object-fit transition-transform duration-200 group-hover:scale-105"
-              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 25vw"
-            />
-          </div>
-        )}
-
         <CardTitle className="line-clamp-2 text-lg font-semibold text-card-foreground">
           {novel.title}
         </CardTitle>

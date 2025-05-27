@@ -71,7 +71,7 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl font-semibold text-card-foreground">
-              Level {rcLevel.level}
+              {rcLevel.level}
             </CardTitle>
             <div className="flex items-center gap-1">
               {Array.from({ length: rcLevel.stars }).map((_, i) => (
@@ -87,7 +87,7 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
               variant="secondary"
               className="border-primary/20 bg-primary/10 text-primary"
             >
-              Grade {rcLevel.relevantGrade}
+              {rcLevel.relevantGrade}
             </Badge>
             <Badge
               variant="outline"

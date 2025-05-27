@@ -1,7 +1,6 @@
 "use client";
 
-import Image from "next/image";
-import React, { useState, useTransition } from "react";
+import React, { useTransition } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -23,22 +22,6 @@ const AddNovelForm: React.FC<AddNovelFormProps> = ({
   setShowForm,
 }) => {
   const [isPending, startTransition] = useTransition();
-  const [thumbnailPreview, setThumbnailPreview] = useState<string | null>(null);
-
-  const handleThumbnailChange = (
-    event: React.ChangeEvent<HTMLInputElement>,
-  ) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setThumbnailPreview(reader.result as string);
-      };
-      reader.readAsDataURL(file);
-    } else {
-      setThumbnailPreview(null);
-    }
-  };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -52,7 +35,6 @@ const AddNovelForm: React.FC<AddNovelFormProps> = ({
         toast.error(result.error);
       } else if (result.success && result.novel) {
         toast.success(`Novel '${result.novel.title}' created successfully!`);
-        setThumbnailPreview(null);
         if (onNovelCreated) {
           onNovelCreated(result.novel.id);
         }
@@ -88,31 +70,6 @@ const AddNovelForm: React.FC<AddNovelFormProps> = ({
           disabled={isPending}
           rows={4}
         />
-      </div>
-
-      <div>
-        <Label htmlFor="thumbnailFile">Novel Thumbnail</Label>
-        <Input
-          id="thumbnailFile"
-          name="thumbnailFile"
-          type="file"
-          accept="image/*"
-          required
-          onChange={handleThumbnailChange}
-          disabled={isPending}
-        />
-        {thumbnailPreview && (
-          <div className="mt-2">
-            <p className="text-sm text-gray-500">Thumbnail Preview:</p>
-            <Image
-              src={thumbnailPreview}
-              alt="Thumbnail Preview"
-              className="object-fit mt-1 h-32 w-32 rounded border"
-              width={128}
-              height={128}
-            />
-          </div>
-        )}
       </div>
 
       <div className="flex space-x-2">

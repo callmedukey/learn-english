@@ -31,7 +31,6 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
 import ChapterSection from "./chapter-section";
-import ImageUploadSection from "./image-upload-section";
 import {
   deleteNovelAction,
   updateNovelAction,
@@ -47,12 +46,6 @@ interface NovelEditFormProps {
       id: string;
       level: string;
       description?: string | null;
-    } | null;
-    image: {
-      id: string;
-      imageUrl: string;
-      width: number;
-      height: number;
     } | null;
     novelChapters: Array<{
       id: string;
@@ -92,7 +85,6 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({ novel, arLevels }) => {
   const [title, setTitle] = useState(novel.title);
   const [description, setDescription] = useState(novel.description || "");
   const [selectedARId, setSelectedARId] = useState(novel.ARId || "");
-  const [imageFile, setImageFile] = useState<File | null>(null);
 
   const handleSave = () => {
     startTransition(async () => {
@@ -101,10 +93,6 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({ novel, arLevels }) => {
       formData.append("title", title);
       formData.append("description", description);
       formData.append("arId", selectedARId);
-
-      if (imageFile) {
-        formData.append("imageFile", imageFile);
-      }
 
       const result = await updateNovelAction(formData);
 
@@ -231,13 +219,6 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({ novel, arLevels }) => {
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          <div>
-            <ImageUploadSection
-              currentImage={novel.image}
-              onImageChange={setImageFile}
-            />
           </div>
         </div>
       </div>

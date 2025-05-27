@@ -3,7 +3,6 @@ model AR {
 
   level         String
   score         String
-  relevantGrade String
   stars         Int
   description   String?
 
@@ -25,8 +24,6 @@ model Novel {
 
   novelChapters NovelChapter[]
 
-  image   NovelImage?
-  imageId String?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -51,19 +48,6 @@ model NovelChapter {
   updatedAt DateTime @updatedAt
 }
 
-model NovelImage {
-  id String @id @default(uuid())
-
-  imageUrl String
-  width    Int
-  height   Int
-
-  novel   Novel  @relation(fields: [novelId], references: [id], onDelete: Cascade)
-  novelId String @unique
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
 
 model NovelQuestionSet {
   id String @id @default(uuid())

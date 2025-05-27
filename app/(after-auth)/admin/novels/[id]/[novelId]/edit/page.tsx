@@ -19,7 +19,6 @@ const NovelEditPage = async ({ params }: PageProps) => {
     where: { id: novelId },
     include: {
       AR: true,
-      image: true,
       novelChapters: {
         orderBy: { orderNumber: "asc" },
         include: {

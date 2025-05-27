@@ -113,7 +113,7 @@ async function RCKeywordContent({
                   <strong>Level:</strong> {keyword.RCLevel.level}
                 </p>
                 <p>
-                  <strong>Grade:</strong> {keyword.RCLevel.relevantGrade}
+                  <strong>{keyword.RCLevel.relevantGrade}</strong>
                 </p>
               </div>
               <Button asChild>
@@ -190,7 +190,7 @@ async function RCKeywordContent({
                   <strong>Level:</strong> {keyword.RCLevel.level}
                 </p>
                 <p>
-                  <strong>Grade:</strong> {keyword.RCLevel.relevantGrade}
+                  <strong>{keyword.RCLevel.relevantGrade}</strong>
                 </p>
               </div>
               <Button asChild>
@@ -300,7 +300,7 @@ async function RCKeywordContent({
                 <strong>Level:</strong> RC {keyword.RCLevel.level}
               </p>
               <p>
-                <strong>Grade:</strong> {keyword.RCLevel.relevantGrade}
+                <strong>{keyword.RCLevel.relevantGrade}</strong>
               </p>
               <p>
                 <strong>Questions:</strong> {questions.length}

@@ -16,7 +16,6 @@ interface ARCardProps {
     id: string;
     level: string;
     score: string;
-    relevantGrade: string;
     stars: number;
     description: string | null;
     novels: Array<{
@@ -73,7 +72,7 @@ export function ARCard({ ar, userId }: ARCardProps) {
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <CardTitle className="text-xl font-semibold text-card-foreground">
-              Level {ar.level}
+              {ar.level}
             </CardTitle>
             <div className="flex items-center gap-1">
               {Array.from({ length: ar.stars }).map((_, i) => (
@@ -86,16 +85,10 @@ export function ARCard({ ar, userId }: ARCardProps) {
           </div>
           <div className="flex flex-wrap items-center gap-2">
             <Badge
-              variant="secondary"
-              className="border-primary/20 bg-primary/10 text-primary"
-            >
-              Grade {ar.relevantGrade}
-            </Badge>
-            <Badge
               variant="outline"
-              className="border-muted-foreground/30 text-muted-foreground"
+              className="border-primary/30 bg-primary/10 text-primary"
             >
-              Score: {ar.score}
+              AR: {ar.score}
             </Badge>
             {hasProgress && (
               <Badge

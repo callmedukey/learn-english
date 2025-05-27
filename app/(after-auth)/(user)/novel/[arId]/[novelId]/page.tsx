@@ -1,4 +1,3 @@
-import Image from "next/image";
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import React, { Suspense } from "react";
@@ -62,32 +61,6 @@ async function NovelContent({
 
       {/* Novel Header */}
       <div className="mb-8 grid grid-cols-1 gap-8 lg:grid-cols-3">
-        {/* Cover Image */}
-        <div className="lg:col-span-1">
-          <Card className="overflow-hidden py-0">
-            <CardContent className="p-0">
-              {novel.image ? (
-                <div className="relative aspect-[3/4] w-full">
-                  <Image
-                    src={novel.image.imageUrl}
-                    alt={novel.title}
-                    fill
-                    className="object-fit"
-                    priority
-                  />
-                </div>
-              ) : (
-                <div className="flex aspect-[3/4] w-full items-center justify-center bg-gray-100">
-                  <div className="text-center text-gray-500">
-                    <div className="mb-2 text-4xl">📚</div>
-                    <p>No Cover Image</p>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-
         {/* Novel Details */}
         <div className="space-y-6 lg:col-span-2">
           <div>
@@ -97,16 +70,13 @@ async function NovelContent({
             {novel.AR && (
               <div className="mb-4 flex flex-wrap gap-2">
                 <Badge variant="outline" className="bg-primary/10 text-primary">
-                  Level: {novel.AR.level}
+                  {novel.AR.level}
                 </Badge>
                 <Badge
                   variant="outline"
                   className="bg-amber-100 text-amber-800"
                 >
-                  Score: {novel.AR.score}
-                </Badge>
-                <Badge variant="outline" className="bg-gray-100 text-gray-700">
-                  Grade: {novel.AR.relevantGrade}
+                  AR: {novel.AR.score}
                 </Badge>
                 <div className="flex items-center">
                   <span className="mr-1 text-sm text-gray-600">Rating:</span>

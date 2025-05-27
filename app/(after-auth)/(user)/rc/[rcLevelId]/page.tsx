@@ -178,7 +178,7 @@ async function RCKeywords({
             variant="secondary"
             className="border-primary/20 bg-primary/10 text-primary"
           >
-            Grade {rcLevel.relevantGrade}
+            {rcLevel.relevantGrade}
           </Badge>
           <Badge
             variant="outline"

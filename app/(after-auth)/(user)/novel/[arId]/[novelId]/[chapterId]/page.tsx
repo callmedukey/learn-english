@@ -75,7 +75,7 @@ async function ChapterContent({
                   <strong>Novel:</strong> {chapter.novel.title}
                 </p>
                 <p>
-                  <strong>Level:</strong> {chapter.novel.AR?.level}
+                  <strong>{chapter.novel.AR?.level}</strong>
                 </p>
               </div>
               <Button asChild>
@@ -254,7 +254,7 @@ async function ChapterContent({
                 <strong>Novel:</strong> {chapter.novel.title}
               </p>
               <p>
-                <strong>Level:</strong> {chapter.novel.AR?.level}
+                <strong>{chapter.novel.AR?.level}</strong>
               </p>
               {chapter.description && (
                 <p>
