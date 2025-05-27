@@ -64,10 +64,6 @@ const NovelsListPage = async ({ params }: PageProps) => {
             <p className="text-lg font-semibold">{arLevel.score}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Relevant Grade</p>
-            <p className="text-lg font-semibold">{arLevel.relevantGrade}</p>
-          </div>
-          <div>
             <p className="text-sm font-medium text-gray-500">Difficulty</p>
             <div className="flex items-center">
               {"★".repeat(arLevel.stars)}

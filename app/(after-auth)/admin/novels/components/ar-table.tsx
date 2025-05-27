@@ -32,7 +32,6 @@ const ARTable: React.FC<ARTableProps> = ({ ars }) => {
         <TableRow>
           <TableHead>Level</TableHead>
           <TableHead>Score</TableHead>
-          <TableHead>Relevant Grade</TableHead>
           <TableHead>Stars</TableHead>
           <TableHead>Description</TableHead>
           <TableHead>Novel Count</TableHead>
@@ -53,7 +52,6 @@ const ARTable: React.FC<ARTableProps> = ({ ars }) => {
               </Link>
             </TableCell>
             <TableCell>{ar.score}</TableCell>
-            <TableCell>{ar.relevantGrade}</TableCell>
             <TableCell>
               <div className="flex items-center">
                 {"★".repeat(ar.stars)}

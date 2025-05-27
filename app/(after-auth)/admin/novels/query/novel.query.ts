@@ -8,11 +8,6 @@ export interface NovelData extends Novel {
     id: string;
     level: string;
   } | null;
-  image: {
-    imageUrl: string;
-    width: number;
-    height: number;
-  } | null;
   novelChapters: {
     id: string;
     title: string;
@@ -34,13 +29,6 @@ export const getNovelsByARLevel = async (id: string): Promise<NovelData[]> => {
         select: {
           id: true,
           level: true,
-        },
-      },
-      image: {
-        select: {
-          imageUrl: true,
-          width: true,
-          height: true,
         },
       },
       novelChapters: {

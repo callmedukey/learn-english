@@ -1,6 +1,5 @@
 import { format } from "date-fns";
 import { Edit } from "lucide-react";
-import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
@@ -34,7 +33,6 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels }) => {
     <Table>
       <TableHeader>
         <TableRow>
-          <TableHead>Image</TableHead>
           <TableHead>Title</TableHead>
           <TableHead>Description</TableHead>
           <TableHead>Chapters</TableHead>
@@ -51,22 +49,6 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels }) => {
 
           return (
             <TableRow key={novel.id}>
-              <TableCell>
-                {novel.image ? (
-                  <div className="relative h-16 w-12 overflow-hidden rounded">
-                    <Image
-                      src={novel.image.imageUrl}
-                      alt={novel.title}
-                      fill
-                      className="object-cover"
-                    />
-                  </div>
-                ) : (
-                  <div className="flex h-16 w-12 items-center justify-center rounded bg-gray-100 text-xs text-gray-500">
-                    No Image
-                  </div>
-                )}
-              </TableCell>
               <TableCell className="font-medium">{novel.title}</TableCell>
               <TableCell className="max-w-xs truncate">
                 {novel.description}
