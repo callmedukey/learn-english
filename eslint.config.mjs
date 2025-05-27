@@ -47,6 +47,7 @@ const eslintConfig = [
         },
       ],
     },
+
     ignorePatterns: ["components/ui/**", "components/magicui/**"],
     overrides: [
       {
@@ -56,7 +57,7 @@ const eslintConfig = [
           "@typescript-eslint/no-unused-vars": "error",
           "unused-imports/no-unused-imports": "error",
           "unused-imports/no-unused-vars": "error",
-          "@typescript-eslint/no-explicit-any": "warn",
+          "@typescript-eslint/no-explicit-any": "off",
         },
       },
     ],

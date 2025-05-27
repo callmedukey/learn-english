@@ -2,8 +2,19 @@
 
 import { use } from "react";
 
+import { Badge } from "@/components/ui/badge";
+
 interface UserStatsContentProps {
   userId: string;
+}
+
+interface UserRankingData {
+  overallRankingPercentage: string;
+  gradeRankingPercentage: string;
+  totalUsers: number;
+  usersInGrade: number;
+  userRank: number;
+  userRankInGrade: number;
 }
 
 interface UserStatsData {
@@ -22,6 +33,7 @@ interface UserStatsData {
   }[];
   totalArScore: number;
   totalRcScore: number;
+  ranking?: UserRankingData | null;
 }
 
 // Cache promises to prevent multiple requests for the same userId
@@ -58,6 +70,24 @@ export function UserStatsContent({ userId }: UserStatsContentProps) {
           {userStats.nickname}
         </h3>
         <p className="text-xs text-gray-600">{userStats.grade}</p>
+
+        {/* Ranking Badges */}
+        {userStats.ranking && (
+          <div className="mt-2 flex flex-col gap-1">
+            <Badge
+              variant="destructive"
+              className="bg-primary px-2 py-1 text-xs font-bold text-white hover:bg-primary"
+            >
+              {userStats.ranking.overallRankingPercentage} Overall
+            </Badge>
+            <Badge
+              variant="destructive"
+              className="bg-amber-500 px-2 py-1 text-xs font-bold text-white hover:bg-amber-600"
+            >
+              {userStats.ranking.gradeRankingPercentage} in {userStats.grade}
+            </Badge>
+          </div>
+        )}
       </div>
 
       <div className="space-y-3">

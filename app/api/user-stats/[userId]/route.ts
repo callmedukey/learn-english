@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { getUserRanking } from "@/components/leaderboard/queries/user-ranking.query";
 import { getUserStats } from "@/components/leaderboard/queries/user-stats.query";
 
 export async function GET(
@@ -16,13 +17,19 @@ export async function GET(
       );
     }
 
-    const userStats = await getUserStats(userId);
+    const [userStats, userRanking] = await Promise.all([
+      getUserStats(userId),
+      getUserRanking(userId),
+    ]);
 
     if (!userStats) {
       return NextResponse.json({ error: "User not found" }, { status: 404 });
     }
 
-    return NextResponse.json(userStats);
+    return NextResponse.json({
+      ...userStats,
+      ranking: userRanking,
+    });
   } catch (error) {
     console.error("Error fetching user stats:", error);
     return NextResponse.json(

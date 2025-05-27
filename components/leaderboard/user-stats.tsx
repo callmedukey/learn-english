@@ -1,6 +1,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
+import { getUserRanking } from "./queries/user-ranking.query";
 import { getUserStats } from "./queries/user-stats.query";
 import { UserStatsPopover } from "./user-stats-popover";
 
@@ -9,7 +10,10 @@ interface UserStatsProps {
 }
 
 export async function UserStats({ userId }: UserStatsProps) {
-  const userStats = await getUserStats(userId);
+  const [userStats, userRanking] = await Promise.all([
+    getUserStats(userId),
+    getUserRanking(userId),
+  ]);
 
   if (!userStats) {
     return (
@@ -68,12 +72,26 @@ export async function UserStats({ userId }: UserStatsProps) {
                   {totalScore.toLocaleString()}
                 </div>
               </div>
-              <Badge
-                variant="destructive"
-                className="bg-primary px-4 py-2 font-bold text-white hover:bg-primary"
-              >
-                {userStats.grade}
-              </Badge>
+
+              {/* Ranking Badges */}
+              <div className="flex flex-col gap-2">
+                {userRanking && (
+                  <>
+                    <Badge
+                      variant="destructive"
+                      className="bg-primary px-4 py-2 font-bold text-white hover:bg-primary"
+                    >
+                      {userRanking.overallRankingPercentage} Overall
+                    </Badge>
+                    <Badge
+                      variant="destructive"
+                      className="bg-amber-500 px-4 py-2 font-bold text-white hover:bg-amber-600"
+                    >
+                      {userRanking.gradeRankingPercentage} in {userStats.grade}
+                    </Badge>
+                  </>
+                )}
+              </div>
             </div>
           </div>
         </CardContent>

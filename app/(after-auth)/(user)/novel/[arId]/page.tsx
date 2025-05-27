@@ -184,9 +184,7 @@ async function ARNovels({
         </Link>
 
         <div className="mb-4 flex items-center gap-4">
-          <h1 className="text-3xl font-bold text-foreground">
-            AR Level {ar.level}
-          </h1>
+          <h1 className="text-3xl font-bold text-foreground">{ar.level}</h1>
           <div className="flex items-center gap-1">
             {Array.from({ length: ar.stars }).map((_, i) => (
               <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
