@@ -14,6 +14,7 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
+import { cn } from "@/lib/utils";
 
 import {
   markNotificationAsRead,
@@ -79,6 +80,14 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
     if (diffInDays < 7) return `${diffInDays}d ago`;
 
     return date.toLocaleDateString();
+  };
+
+  const containsKorean = (text: string) => {
+    return /[\u3131-\u3163\uac00-\ud7a3]/g.test(text);
+  };
+
+  const getBreakClass = (message: string) => {
+    return containsKorean(message) ? "break-all" : "break-words";
   };
 
   return (
@@ -207,7 +216,12 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
                               <div className="h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
                             )}
                           </div>
-                          <p className="mt-1 text-xs break-words whitespace-pre-wrap text-gray-600">
+                          <p
+                            className={cn(
+                              "mt-1 text-xs whitespace-pre-wrap text-gray-600",
+                              getBreakClass(notification.message),
+                            )}
+                          >
                             {notification.message}
                           </p>
                           <p className="mt-1 text-xs text-gray-400">

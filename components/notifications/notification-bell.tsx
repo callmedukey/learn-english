@@ -11,6 +11,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { cn } from "@/lib/utils";
 
 import {
   markNotificationAsRead,
@@ -79,6 +80,14 @@ export function NotificationBell({
     return date.toLocaleDateString();
   };
 
+  const containsKorean = (text: string) => {
+    return /[\u3131-\u3163\uac00-\ud7a3]/g.test(text);
+  };
+
+  const getBreakClass = (message: string) => {
+    return containsKorean(message) ? "break-all" : "break-words";
+  };
+
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
       <DropdownMenuTrigger asChild>
@@ -140,7 +149,12 @@ export function NotificationBell({
                           <div className="h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
                         )}
                       </div>
-                      <p className="mt-1 text-xs break-words whitespace-pre-wrap text-gray-600">
+                      <p
+                        className={cn(
+                          "mt-1 text-xs whitespace-pre-wrap text-gray-600",
+                          getBreakClass(notification.message),
+                        )}
+                      >
                         {notification.message}
                       </p>
                       <p className="mt-1 text-xs text-gray-400">
