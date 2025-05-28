@@ -140,7 +140,7 @@ export function NotificationBell({
                           <div className="h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
                         )}
                       </div>
-                      <p className="mt-1 text-xs whitespace-pre-wrap text-gray-600">
+                      <p className="mt-1 text-xs break-words whitespace-pre-wrap text-gray-600">
                         {notification.message}
                       </p>
                       <p className="mt-1 text-xs text-gray-400">

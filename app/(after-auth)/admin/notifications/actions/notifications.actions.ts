@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { NotificationType, Role } from "@/prisma/generated/prisma";
+import { NotificationType } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 import { ActionResponse } from "@/types/actions";
 
@@ -13,10 +13,7 @@ const createNotificationSchema = z.object({
     .string()
     .min(1, "Title is required")
     .max(100, "Title must be less than 100 characters"),
-  message: z
-    .string()
-    .min(1, "Message is required")
-    .max(500, "Message must be less than 500 characters"),
+  message: z.string().min(1, "Message is required"),
 });
 
 export type CreateNotificationType = z.infer<typeof createNotificationSchema>;
@@ -46,7 +43,7 @@ export async function createNotificationForAllUsersAction(
     // Get all user IDs
     const users = await prisma.user.findMany({
       where: {
-        role: Role.USER,
+        // role: Role.USER,
       },
       select: { id: true },
     });
