@@ -76,13 +76,13 @@ export function UserStatsContent({ userId }: UserStatsContentProps) {
           <div className="mt-2 flex flex-col gap-1">
             <Badge
               variant="destructive"
-              className="bg-primary px-2 py-1 text-xs font-bold text-white hover:bg-primary"
+              className="flex justify-center bg-primary px-2 py-1 text-xs font-bold text-white hover:bg-primary"
             >
               {userStats.ranking.overallRankingPercentage} Overall
             </Badge>
             <Badge
               variant="destructive"
-              className="bg-amber-500 px-2 py-1 text-xs font-bold text-white hover:bg-amber-600"
+              className="flex justify-center bg-amber-500 px-2 py-1 text-xs font-bold text-white hover:bg-amber-600"
             >
               {userStats.ranking.gradeRankingPercentage} in {userStats.grade}
             </Badge>

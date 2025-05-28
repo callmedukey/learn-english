@@ -1,6 +1,7 @@
 enum NotificationType {
   NOVEL
   RC
+  ANNOUNCEMENT
   // Add other notification types here if needed
 }
 

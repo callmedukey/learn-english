@@ -54,6 +54,7 @@ interface QuestionSetSectionProps {
         score: number;
         timeLimit: number;
       }>;
+      timeLimit: number;
     } | null;
   };
 }
@@ -66,6 +67,9 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
   // Question Set form state
   const [title, setTitle] = useState(keyword.RCQuestionSet?.title || "");
   const [passage, setPassage] = useState(keyword.RCQuestionSet?.passage || "");
+  const [questionSetTimeLimit, setQuestionSetTimeLimit] = useState(
+    keyword.RCQuestionSet?.timeLimit || 60,
+  );
 
   // Question form state
   const [questionText, setQuestionText] = useState("");
@@ -90,6 +94,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
       formData.append("keywordId", keyword.id);
       formData.append("title", title);
       formData.append("passage", passage);
+      formData.append("timeLimit", questionSetTimeLimit.toString());
 
       const result = await createQuestionSetAction(formData);
       if (result.error) {
@@ -110,6 +115,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
       formData.append("questionSetId", keyword.RCQuestionSet!.id);
       formData.append("title", title);
       formData.append("passage", passage);
+      formData.append("timeLimit", questionSetTimeLimit.toString());
 
       const result = await updateQuestionSetAction(formData);
       if (result.error) {
@@ -199,6 +205,25 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
                   rows={8}
                 />
               </div>
+              <div>
+                <Label htmlFor="questionSetTimeLimit">
+                  Time Limit (seconds)
+                </Label>
+                <Input
+                  id="questionSetTimeLimit"
+                  type="number"
+                  value={questionSetTimeLimit}
+                  onChange={(e) =>
+                    setQuestionSetTimeLimit(parseInt(e.target.value) || 60)
+                  }
+                  placeholder="60"
+                  min="10"
+                />
+                <p className="mt-1 text-sm text-gray-500">
+                  Default time limit for this reading passage (minimum 10
+                  seconds)
+                </p>
+              </div>
               <div className="flex space-x-2">
                 <Button onClick={handleCreateQuestionSet} disabled={isPending}>
                   {isPending ? "Creating..." : "Create"}
@@ -209,6 +234,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
                     setEditingQuestionSet(false);
                     setTitle("");
                     setPassage("");
+                    setQuestionSetTimeLimit(60);
                   }}
                 >
                   Cancel
@@ -279,6 +305,9 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
                     setEditingQuestionSet(false);
                     setTitle(keyword.RCQuestionSet?.title || "");
                     setPassage(keyword.RCQuestionSet?.passage || "");
+                    setQuestionSetTimeLimit(
+                      keyword.RCQuestionSet?.timeLimit || 60,
+                    );
                   }}
                 >
                   <X className="mr-2 h-4 w-4" />
@@ -310,6 +339,21 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
                 rows={8}
               />
             </div>
+            <div>
+              <Label htmlFor="editQuestionSetTimeLimit">
+                Time Limit (seconds)
+              </Label>
+              <Input
+                id="editQuestionSetTimeLimit"
+                type="number"
+                value={questionSetTimeLimit}
+                onChange={(e) =>
+                  setQuestionSetTimeLimit(parseInt(e.target.value) || 60)
+                }
+                placeholder="60"
+                min="0"
+              />
+            </div>
           </div>
         ) : (
           <div className="space-y-4">
@@ -317,6 +361,9 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
               <h4 className="text-lg font-medium">
                 {keyword.RCQuestionSet.title}
               </h4>
+              <p className="text-sm text-gray-600">
+                Time Limit: {keyword.RCQuestionSet.timeLimit} seconds
+              </p>
             </div>
             <div className="rounded-lg bg-gray-50 p-4">
               <p className="whitespace-pre-wrap text-gray-700">
@@ -633,7 +680,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
                     timeLimit: parseInt(e.target.value) || 60,
                   })
                 }
-                min="10"
+                min="0"
               />
             </div>
           </div>

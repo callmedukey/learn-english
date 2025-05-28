@@ -9,10 +9,17 @@ export const createQuestionSetAction = async (formData: FormData) => {
   const keywordId = formData.get("keywordId") as string;
   const title = formData.get("title") as string;
   const passage = formData.get("passage") as string;
+  const timeLimit = parseInt(formData.get("timeLimit") as string) || 60;
 
   if (!keywordId || !title || !passage) {
     return {
       error: "Keyword ID, title, and passage are required",
+    };
+  }
+
+  if (timeLimit < 0) {
+    return {
+      error: "Time limit must not be negative",
     };
   }
 
@@ -36,6 +43,7 @@ export const createQuestionSetAction = async (formData: FormData) => {
       data: {
         title: title.trim(),
         passage: passage.trim(),
+        timeLimit,
         RCKeywordId: keywordId,
       },
     });
@@ -54,10 +62,17 @@ export const updateQuestionSetAction = async (formData: FormData) => {
   const questionSetId = formData.get("questionSetId") as string;
   const title = formData.get("title") as string;
   const passage = formData.get("passage") as string;
+  const timeLimit = parseInt(formData.get("timeLimit") as string);
 
   if (!questionSetId || !title || !passage) {
     return {
       error: "Question set ID, title, and passage are required",
+    };
+  }
+
+  if (timeLimit < 0) {
+    return {
+      error: "Time limit must not be negative",
     };
   }
 
@@ -71,12 +86,19 @@ export const updateQuestionSetAction = async (formData: FormData) => {
       return { error: "Question set not found" };
     }
 
+    const updateData: any = {
+      title: title.trim(),
+      passage: passage.trim(),
+    };
+
+    // Only update timeLimit if it's provided
+    if (timeLimit) {
+      updateData.timeLimit = timeLimit;
+    }
+
     const updatedQuestionSet = await prisma.rCQuestionSet.update({
       where: { id: questionSetId },
-      data: {
-        title: title.trim(),
-        passage: passage.trim(),
-      },
+      data: updateData,
     });
 
     revalidatePath(`/admin/reading/${questionSet.RCKeyword?.rcLevelId}`);

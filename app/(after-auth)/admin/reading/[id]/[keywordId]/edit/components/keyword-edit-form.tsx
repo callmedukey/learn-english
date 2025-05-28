@@ -54,6 +54,7 @@ interface KeywordEditFormProps {
       title: string;
       passage: string;
       active: boolean;
+      timeLimit: number;
       RCQuestion: Array<{
         id: string;
         orderNumber: number;

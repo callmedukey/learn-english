@@ -140,10 +140,7 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
                   <Bell className="size-4" />
                   Notifications
                   {userId && unreadCount > 0 && (
-                    <Badge
-                      variant="destructive"
-                      className="ml-auto h-5 w-5 rounded-full p-0 text-xs"
-                    >
+                    <Badge className="ml-auto flex h-5 w-5 items-center justify-center rounded-full bg-amber-700 p-0 text-xs text-white">
                       {unreadCount > 9 ? "9+" : unreadCount}
                     </Badge>
                   )}
@@ -210,7 +207,7 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
                               <div className="h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
                             )}
                           </div>
-                          <p className="mt-1 text-xs leading-relaxed text-gray-600">
+                          <p className="mt-1 text-xs whitespace-pre-wrap text-gray-600">
                             {notification.message}
                           </p>
                           <p className="mt-1 text-xs text-gray-400">

@@ -86,19 +86,18 @@ export async function getUserRanking(
   const userRank = activeUsers.findIndex((u) => u.id === userId) + 1;
   const totalUsers = activeUsers.length;
 
-  // Handle edge case where user is the only one
-  if (totalUsers === 0) {
-    return {
-      overallRankingPercentage: "Top 100%",
-      gradeRankingPercentage: "Top 100%",
-      totalUsers: 1,
-      usersInGrade: 1,
-      userRank: 1,
-      userRankInGrade: 1,
-    };
+  // Calculate percentile - what percentage of users you're better than
+  let overallPercentile: number;
+  if (totalUsers === 1) {
+    // If you're the only user, you're in the top 1%
+    overallPercentile = 1;
+  } else {
+    // Calculate what percentage of users are below you
+    const usersBelowYou = totalUsers - userRank;
+    const percentageBelowYou = (usersBelowYou / (totalUsers - 1)) * 100;
+    // You're in the top X%, where X = 100 - percentage below you
+    overallPercentile = Math.max(1, 100 - percentageBelowYou);
   }
-
-  const overallPercentile = ((totalUsers - userRank + 1) / totalUsers) * 100;
 
   // Calculate grade-specific ranking
   const userGrade = calculateGrade(user.birthday);
@@ -109,11 +108,21 @@ export async function getUserRanking(
     activeUsersInSameGrade.findIndex((u) => u.id === userId) + 1;
   const usersInGrade = activeUsersInSameGrade.length;
 
-  // Handle edge case for grade ranking
-  const gradePercentile =
-    usersInGrade > 0
-      ? ((usersInGrade - userRankInGrade + 1) / usersInGrade) * 100
-      : 100;
+  // Calculate grade percentile
+  let gradePercentile: number;
+  if (usersInGrade === 1) {
+    // If you're the only user in your grade, you're in the top 1%
+    gradePercentile = 1;
+  } else if (usersInGrade > 1) {
+    // Calculate what percentage of users in your grade are below you
+    const usersBelowYouInGrade = usersInGrade - userRankInGrade;
+    const percentageBelowYouInGrade =
+      (usersBelowYouInGrade / (usersInGrade - 1)) * 100;
+    // You're in the top X%, where X = 100 - percentage below you
+    gradePercentile = Math.max(1, 100 - percentageBelowYouInGrade);
+  } else {
+    gradePercentile = 1;
+  }
 
   return {
     overallRankingPercentage: `Top ${Math.ceil(overallPercentile)}%`,

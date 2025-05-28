@@ -30,6 +30,7 @@ interface RCQuizComponentProps {
     id: string;
     title: string;
     passage: string;
+    timeLimit: number;
     RCQuestion: Array<{
       id: string;
       orderNumber: number;
@@ -75,6 +76,11 @@ export function RCQuizComponent({
   const [quizStarted, setQuizStarted] = useState(false);
   const lastQuestionIdRef = useRef<string | null>(null);
   const timerEffectRanAtLeastOnce = useRef(false);
+
+  // New states for reading phase
+  const [isReadingPhase, setIsReadingPhase] = useState(false);
+  const [readingTimeLeft, setReadingTimeLeft] = useState(0);
+  const [hasStartedReading, setHasStartedReading] = useState(false);
 
   const questions = useMemo(
     () => questionSet.RCQuestion || [],
@@ -129,6 +135,32 @@ export function RCQuizComponent({
     setCorrectAnswersCount(0);
     setQuizStarted(true);
   };
+
+  // New function to handle starting reading phase
+  const handleStartReading = () => {
+    setIsReadingPhase(true);
+    setHasStartedReading(true);
+    setReadingTimeLeft(questionSet.timeLimit || 60); // Default to 60 seconds if not set
+  };
+
+  // New function to handle finishing reading and starting quiz
+  const handleFinishReading = () => {
+    setIsReadingPhase(false);
+    handleStartQuiz();
+  };
+
+  // Timer effect for reading phase
+  useEffect(() => {
+    if (readingTimeLeft > 0 && isReadingPhase) {
+      const timer = setTimeout(() => {
+        setReadingTimeLeft(readingTimeLeft - 1);
+      }, 1000);
+      return () => clearTimeout(timer);
+    } else if (readingTimeLeft === 0 && isReadingPhase) {
+      // Time's up - automatically move to quiz
+      handleFinishReading();
+    }
+  }, [readingTimeLeft, isReadingPhase]);
 
   // Shuffle choices when question changes
   useEffect(() => {
@@ -426,24 +458,28 @@ export function RCQuizComponent({
 
   if (!currentQuestion) return null;
 
-  // Show start quiz screen if quiz hasn't started
-  if (!quizStarted) {
+  // Show start quiz screen if quiz hasn't started and reading hasn't started
+  if (!hasStartedReading) {
     return (
       <Card className="mx-auto max-w-4xl">
         <CardContent className="py-12 text-center">
           <div className="space-y-6">
-            <div className="text-6xl">🚀</div>
+            <div className="text-6xl">📖</div>
             <div>
               <h3 className="mb-2 text-xl font-semibold">Ready to Start?</h3>
               <p className="text-gray-600">
-                Once you click start, the timer will begin for each question.
+                You&apos;ll have {questionSet.timeLimit || 60} seconds to read
+                the passage before the questions begin.
               </p>
             </div>
             <div className="mx-auto max-w-md space-y-2 text-left text-sm text-gray-600">
-              <p>• {totalQuestions} questions total</p>
-              <p>• Each question has a time limit in seconds</p>
-              <p>• You&apos;ll see explanations after each answer</p>
-              <p>• Read the passage carefully before starting</p>
+              <p>• Read the passage carefully during the reading time</p>
+              <p>
+                • After reading time, you&apos;ll answer {totalQuestions}{" "}
+                questions
+              </p>
+              <p>• Each question has its own time limit</p>
+              <p>• You can start the quiz early if you finish reading</p>
               {status === "retry" && (
                 <p className="font-medium text-amber-600">
                   • No points will be awarded for retry attempts
@@ -454,12 +490,75 @@ export function RCQuizComponent({
               <Button variant="outline" onClick={() => router.back()}>
                 Go Back
               </Button>
-              <Button onClick={handleStartQuiz}>Start Quiz</Button>
+              <Button onClick={handleStartReading}>Start Reading</Button>
             </div>
           </div>
         </CardContent>
       </Card>
     );
+  }
+
+  // Show reading phase if in reading phase
+  if (isReadingPhase) {
+    return (
+      <div className="mx-auto max-w-6xl space-y-4">
+        {/* Timer and Controls */}
+        <Card>
+          <CardHeader>
+            <div className="flex items-center justify-between">
+              <div>
+                <CardTitle>Reading Time</CardTitle>
+                <CardDescription>
+                  Read the passage carefully before the questions begin
+                </CardDescription>
+              </div>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center gap-2">
+                  <span className="text-sm text-gray-600">Time Remaining:</span>
+                  <div className="w-24">
+                    <Progress
+                      value={
+                        (readingTimeLeft / (questionSet.timeLimit || 60)) * 100
+                      }
+                      className={`h-2 ${readingTimeLeft <= 10 ? "bg-red-100" : ""}`}
+                    />
+                  </div>
+                  <span
+                    className={`text-lg font-medium ${readingTimeLeft <= 10 ? "text-red-600" : "text-gray-700"}`}
+                  >
+                    {Math.floor(readingTimeLeft / 60)}:
+                    {String(readingTimeLeft % 60).padStart(2, "0")}
+                  </span>
+                </div>
+                <Button onClick={handleFinishReading} variant="outline">
+                  Start Quiz Early
+                </Button>
+              </div>
+            </div>
+          </CardHeader>
+        </Card>
+
+        {/* Passage */}
+        <Card>
+          <CardHeader>
+            <CardTitle>{questionSet.title}</CardTitle>
+            <CardDescription>Reading Passage</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="prose prose-sm max-w-none">
+              <div className="text-base leading-relaxed whitespace-pre-wrap">
+                {questionSet.passage}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Show quiz only after reading phase is complete
+  if (!quizStarted) {
+    return null;
   }
 
   const questionCompleted =
@@ -537,7 +636,8 @@ export function RCQuizComponent({
                 <div className="text-sm text-gray-600">
                   Points: {currentQuestion.score}
                 </div>
-                {!questionCompleted && timeLeft > 0 && (
+                {/* Show timer if question is not answered in current session */}
+                {!isAnswered && !showExplanation && timeLeft > 0 && (
                   <div className="flex items-center gap-2">
                     <span className="text-sm text-gray-600">Time:</span>
                     <div className="w-16">
@@ -553,13 +653,23 @@ export function RCQuizComponent({
                     </span>
                   </div>
                 )}
-                {questionCompleted && (
+                {/* Show completed badge only after answering in current session */}
+                {(isAnswered || showExplanation) && questionCompleted && (
                   <Badge
                     variant="secondary"
                     className="border-green-200 bg-green-100 text-green-800"
                   >
                     <CheckCircle className="mr-1 h-3 w-3" />
                     Completed ({completedScore}/{currentQuestion.score})
+                  </Badge>
+                )}
+                {/* Show timeout message if time ran out */}
+                {!isAnswered && !showExplanation && timeLeft === 0 && (
+                  <Badge
+                    variant="secondary"
+                    className="border-red-200 bg-red-100 text-red-800"
+                  >
+                    Time&apos;s Up
                   </Badge>
                 )}
               </div>
@@ -573,7 +683,7 @@ export function RCQuizComponent({
             <RadioGroup
               value={selectedAnswer || ""}
               onValueChange={handleAnswerSelect}
-              disabled={showExplanation || timeLeft === 0}
+              disabled={showExplanation || timeLeft === 0 || isAnswered}
             >
               {shuffledChoices.map((choice, index) => {
                 const choiceLabel = String.fromCharCode(65 + index); // A, B, C, D

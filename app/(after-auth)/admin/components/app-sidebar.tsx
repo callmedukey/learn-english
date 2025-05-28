@@ -1,4 +1,8 @@
-import { RiCoupon2Line, RiMoneyDollarCircleLine } from "@remixicon/react";
+import {
+  RiCoupon2Line,
+  RiMoneyDollarCircleLine,
+  RiNotificationLine,
+} from "@remixicon/react";
 import { Book, Brain, Home, MapPin, Users } from "lucide-react";
 import { RiContractLine } from "react-icons/ri";
 
@@ -56,6 +60,11 @@ const items = [
     title: "Payments",
     url: "/admin/payments",
     icon: RiMoneyDollarCircleLine,
+  },
+  {
+    title: "Notifications",
+    url: "/admin/notifications",
+    icon: RiNotificationLine,
   },
 ];
 

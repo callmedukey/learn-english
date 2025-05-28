@@ -20,7 +20,9 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
   onFinish,
 }) => {
   const [isPending, startTransition] = useTransition();
-  const [passages, setPassages] = useState([{ title: "", passage: "" }]);
+  const [passages, setPassages] = useState([
+    { title: "", passage: "", timeLimit: 60 },
+  ]);
 
   const removePassage = (index: number) => {
     if (passages.length > 1) {
@@ -28,13 +30,19 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
     }
   };
 
-  const updatePassage = (
+  const updatePassageText = (
     index: number,
     field: "title" | "passage",
     value: string,
   ) => {
     const newPassages = [...passages];
     newPassages[index][field] = value;
+    setPassages(newPassages);
+  };
+
+  const updatePassageTimeLimit = (index: number, value: number) => {
+    const newPassages = [...passages];
+    newPassages[index].timeLimit = value;
     setPassages(newPassages);
   };
 
@@ -48,11 +56,17 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
       return;
     }
 
+    if (firstPassage.timeLimit < 0) {
+      toast.error("Time limit must not be negative");
+      return;
+    }
+
     startTransition(async () => {
       const formData = new FormData();
       formData.append("keywordId", keywordId);
       formData.append("title", firstPassage.title.trim());
       formData.append("passage", firstPassage.passage.trim());
+      formData.append("timeLimit", firstPassage.timeLimit.toString());
 
       const result = await createQuestionSetAction(formData);
       if (result.error) {
@@ -107,7 +121,7 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
                   id={`title-${index}`}
                   value={passage.title}
                   onChange={(e) =>
-                    updatePassage(index, "title", e.target.value)
+                    updatePassageText(index, "title", e.target.value)
                   }
                   placeholder="Enter the title of the reading passage"
                   disabled={isPending}
@@ -120,10 +134,29 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
                   id={`passage-${index}`}
                   value={passage.passage}
                   onChange={(e) =>
-                    updatePassage(index, "passage", e.target.value)
+                    updatePassageText(index, "passage", e.target.value)
                   }
                   placeholder="Enter the reading passage text..."
                   rows={8}
+                  disabled={isPending}
+                />
+              </div>
+
+              <div>
+                <Label htmlFor={`timeLimit-${index}`}>
+                  Time Limit (seconds)
+                </Label>
+                <Input
+                  id={`timeLimit-${index}`}
+                  type="number"
+                  value={passage.timeLimit}
+                  onChange={(e) =>
+                    updatePassageTimeLimit(
+                      index,
+                      parseInt(e.target.value) || 60,
+                    )
+                  }
+                  placeholder="60"
                   disabled={isPending}
                 />
               </div>
