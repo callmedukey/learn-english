@@ -43,7 +43,7 @@ export async function createNotificationForAllUsersAction(
     // Get all user IDs
     const users = await prisma.user.findMany({
       where: {
-        // role: Role.USER,
+        role: Role.USER,
       },
       select: { id: true },
     });
