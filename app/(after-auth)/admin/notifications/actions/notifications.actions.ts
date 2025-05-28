@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
-import { NotificationType } from "@/prisma/generated/prisma";
+import { NotificationType, Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 import { ActionResponse } from "@/types/actions";
 
