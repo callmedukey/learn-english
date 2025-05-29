@@ -1,8 +1,9 @@
+import { Target, Repeat, Lock } from "lucide-react";
 import Link from "next/link";
 import React from "react";
-import { Target, Repeat, Lock } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
@@ -11,7 +12,6 @@ import {
   CardDescription,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
-import { Button } from "@/components/ui/button";
 
 interface ChapterCardProps {
   chapter: {
@@ -51,10 +51,6 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
   userHasPaidSubscription = false,
 }) => {
   const canAccess = chapter.isFree || userHasPaidSubscription;
-  const progressPercentage =
-    chapter.totalQuestionsCount > 0
-      ? (chapter.completedQuestionsCount / chapter.totalQuestionsCount) * 100
-      : 0;
 
   // Determine chapter status based on try data
   const getTryStatus = () => {
