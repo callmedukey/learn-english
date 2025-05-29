@@ -23,7 +23,10 @@ import { Label } from "@/components/ui/label";
 import { Progress } from "@/components/ui/progress";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 
-import { submitRCAnswer } from "../actions/rc-question.actions";
+import {
+  submitRCAnswer,
+  saveRCQuizCompletion,
+} from "../actions/rc-question.actions";
 
 interface RCQuizComponentProps {
   questionSet: {
@@ -355,7 +358,7 @@ export function RCQuizComponent({
     setIsSubmitting(false);
   };
 
-  const handleNextQuestion = () => {
+  const handleNextQuestion = async () => {
     if (currentQuestionIndex < questions.length - 1) {
       // Reset states for the upcoming question
       setSelectedAnswer("");
@@ -369,6 +372,20 @@ export function RCQuizComponent({
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setQuizCompleted(true);
+
+      // Save quiz completion result for first/second try tracking
+      try {
+        await saveRCQuizCompletion(
+          questionSet.id,
+          keywordId,
+          rcLevelId,
+          questions.length,
+          correctAnswersCount,
+        );
+      } catch (error) {
+        console.error("Error saving quiz completion:", error);
+        // Don't prevent quiz completion if saving fails
+      }
     }
   };
 

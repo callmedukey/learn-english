@@ -11,7 +11,8 @@
     "db:migrate": "npx prisma migrate dev",
     "db:push": "npx prisma db push",
     "test": "jest",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch",
+    "reset-scores": "tsx scripts/reset-scores.ts"
   },
   "prisma": {
     "schema": "./prisma/schema",

@@ -6,8 +6,6 @@ enum PaymentStatus {
   REFUNDED
 }
 
-
-
 enum SubscriptionStatus {
   ACTIVE
   EXPIRED
@@ -49,13 +47,13 @@ model Payment {
   originalAmount Int? // Original amount before discount
 
   // Toss-Payment specific fields
-  paymentKey String         @unique // From Toss-Payment response
-  orderId    String         @unique // Generated order ID
+  paymentKey String        @unique // From Toss-Payment response
+  orderId    String        @unique // Generated order ID
   orderName  String // Description of the order
   amount     Int // Final payment amount in KRW (after discount)
-  currency   String         @default("KRW")
+  currency   String        @default("KRW")
   method     String?
-  status     PaymentStatus  @default(PENDING)
+  status     PaymentStatus @default(PENDING)
 
   // Customer information
   customerEmail       String?

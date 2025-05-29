@@ -1,4 +1,4 @@
-import { FileText, Lock, CheckCircle, Clock } from "lucide-react";
+import { FileText, Lock, Target, Repeat } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +28,18 @@ interface RCKeywordCardProps {
           userId: string;
         }>;
       }>;
+      RCQuestionFirstTry: Array<{
+        id: string;
+        totalQuestions: number;
+        correctAnswers: number;
+        createdAt: Date;
+      }>;
+      RCQuestionSecondTry: Array<{
+        id: string;
+        totalQuestions: number;
+        correctAnswers: number;
+        createdAt: Date;
+      }>;
     } | null;
   };
   rcLevelId: string;
@@ -39,68 +51,65 @@ export function RCKeywordCard({
   rcLevelId,
   userId,
 }: RCKeywordCardProps) {
-  // Calculate progress for this keyword
+  // Calculate quiz attempt status
   let totalQuestions = 0;
-  let completedQuestions = 0;
-  let progressPercentage = 0;
+  let firstTryData: { totalQuestions: number; correctAnswers: number } | null =
+    null;
+  let secondTryData: { totalQuestions: number; correctAnswers: number } | null =
+    null;
 
   if (keyword.RCQuestionSet && userId) {
     totalQuestions = keyword.RCQuestionSet.RCQuestion.length;
-    completedQuestions = keyword.RCQuestionSet.RCQuestion.filter((question) =>
-      question.RCQuestionCompleted.some(
-        (completed) => completed.userId === userId,
-      ),
-    ).length;
-    progressPercentage =
-      totalQuestions > 0 ? (completedQuestions / totalQuestions) * 100 : 0;
+    firstTryData = keyword.RCQuestionSet.RCQuestionFirstTry[0] || null;
+    secondTryData = keyword.RCQuestionSet.RCQuestionSecondTry[0] || null;
   }
 
-  const isCompleted = progressPercentage === 100;
-  const hasProgress = progressPercentage > 0;
   const hasQuestionSet = keyword.RCQuestionSet !== null;
   const isQuestionSetActive = keyword.RCQuestionSet?.active === true;
   const hasQuestions = totalQuestions > 0;
 
-  // Determine status
+  // Determine status based on first/second try completion
   let status:
     | "available"
     | "locked"
-    | "completed"
-    | "in-progress"
+    | "first-try-completed"
+    | "second-try-completed"
     | "no-content" = "no-content";
 
   if (!hasQuestionSet || !isQuestionSetActive || !hasQuestions) {
     status = "no-content";
   } else if (!keyword.isFree && !userId) {
     status = "locked";
-  } else if (isCompleted) {
-    status = "completed";
-  } else if (hasProgress) {
-    status = "in-progress";
+  } else if (secondTryData) {
+    status = "second-try-completed";
+  } else if (firstTryData) {
+    status = "first-try-completed";
   } else {
     status = "available";
   }
 
   const getStatusBadge = () => {
     switch (status) {
-      case "completed":
-        return (
-          <Badge
-            variant="secondary"
-            className="border-green-200 bg-green-100 text-green-800"
-          >
-            <CheckCircle className="mr-1 h-3 w-3" />
-            Completed
-          </Badge>
-        );
-      case "in-progress":
+      case "first-try-completed":
         return (
           <Badge
             variant="secondary"
             className="border-amber-200 bg-amber-100 text-amber-800"
           >
-            <Clock className="mr-1 h-3 w-3" />
-            In Progress
+            <Target className="mr-1 h-3 w-3" />
+            First Try: {firstTryData?.correctAnswers}/
+            {firstTryData?.totalQuestions}
+          </Badge>
+        );
+      case "second-try-completed":
+        return (
+          <Badge
+            variant="secondary"
+            className="border-green-200 bg-green-100 text-green-800"
+          >
+            <Repeat className="mr-1 h-3 w-3" />
+            Second Try: {secondTryData?.correctAnswers}/
+            {secondTryData?.totalQuestions}
           </Badge>
         );
       case "locked":
@@ -131,6 +140,21 @@ export function RCKeywordCard({
             Available
           </Badge>
         );
+    }
+  };
+
+  const getButtonText = () => {
+    switch (status) {
+      case "first-try-completed":
+        return "Second Try";
+      case "second-try-completed":
+        return "Retry";
+      case "available":
+        return "Start";
+      case "locked":
+        return "Premium Required";
+      default:
+        return "Coming Soon";
     }
   };
 
@@ -176,18 +200,53 @@ export function RCKeywordCard({
           </div>
         )}
 
-        {/* Progress bar */}
-        {userId && hasQuestionSet && isQuestionSetActive && hasQuestions && (
-          <div className="mt-3">
-            <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-              <span>Progress</span>
-              <span>
-                {completedQuestions}/{totalQuestions} questions
-              </span>
+        {/* Progress display for attempts */}
+        {userId &&
+          hasQuestionSet &&
+          isQuestionSetActive &&
+          hasQuestions &&
+          (firstTryData || secondTryData) && (
+            <div className="mt-3 space-y-2">
+              {firstTryData && (
+                <div>
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>First Try</span>
+                    <span>
+                      {firstTryData.correctAnswers}/
+                      {firstTryData.totalQuestions} correct
+                    </span>
+                  </div>
+                  <Progress
+                    value={
+                      (firstTryData.correctAnswers /
+                        firstTryData.totalQuestions) *
+                      100
+                    }
+                    className="h-2"
+                  />
+                </div>
+              )}
+              {secondTryData && (
+                <div>
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Second Try</span>
+                    <span>
+                      {secondTryData.correctAnswers}/
+                      {secondTryData.totalQuestions} correct
+                    </span>
+                  </div>
+                  <Progress
+                    value={
+                      (secondTryData.correctAnswers /
+                        secondTryData.totalQuestions) *
+                      100
+                    }
+                    className="h-2"
+                  />
+                </div>
+              )}
             </div>
-            <Progress value={progressPercentage} className="h-2" />
-          </div>
-        )}
+          )}
       </CardHeader>
 
       <CardContent className="flex flex-1 flex-col pt-0">
@@ -204,25 +263,13 @@ export function RCKeywordCard({
           {isClickable ? (
             <Button
               className="w-full"
-              variant={hasProgress ? "default" : "outline"}
+              variant={status === "available" ? "outline" : "default"}
             >
-              {status === "completed"
-                ? "Retry"
-                : hasProgress
-                  ? "Continue"
-                  : "Start"}
+              {getButtonText()}
             </Button>
           ) : (
             <Button className="w-full" variant="outline" disabled>
-              {status === "locked"
-                ? "Premium Required"
-                : !hasQuestionSet
-                  ? "Coming Soon"
-                  : !isQuestionSetActive
-                    ? "Coming Soon"
-                    : !hasQuestions
-                      ? "Questions Coming Soon"
-                      : "Coming Soon"}
+              {getButtonText()}
             </Button>
           )}
         </div>

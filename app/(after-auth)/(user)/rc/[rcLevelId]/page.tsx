@@ -100,6 +100,32 @@ async function RCKeywords({
                   orderNumber: "asc",
                 },
               },
+              RCQuestionFirstTry: userId
+                ? {
+                    where: {
+                      userId: userId,
+                    },
+                    select: {
+                      id: true,
+                      totalQuestions: true,
+                      correctAnswers: true,
+                      createdAt: true,
+                    },
+                  }
+                : false,
+              RCQuestionSecondTry: userId
+                ? {
+                    where: {
+                      userId: userId,
+                    },
+                    select: {
+                      id: true,
+                      totalQuestions: true,
+                      correctAnswers: true,
+                      createdAt: true,
+                    },
+                  }
+                : false,
             },
           },
         },
@@ -124,24 +150,20 @@ async function RCKeywords({
     filteredKeywords = rcLevel.RCKeyword.filter((keyword) => {
       if (!keyword.RCQuestionSet) return searchParams.status === "notStarted";
 
-      const totalQuestions = keyword.RCQuestionSet.RCQuestion.length;
-      const completedQuestions = keyword.RCQuestionSet.RCQuestion.filter(
-        (question) =>
-          question.RCQuestionCompleted.some(
-            (completed) => completed.userId === userId,
-          ),
-      ).length;
-
-      const progressPercentage =
-        totalQuestions > 0 ? (completedQuestions / totalQuestions) * 100 : 0;
+      const firstTryData = keyword.RCQuestionSet.RCQuestionFirstTry[0] || null;
+      const secondTryData =
+        keyword.RCQuestionSet.RCQuestionSecondTry[0] || null;
 
       switch (searchParams.status) {
         case "completed":
-          return progressPercentage === 100;
+          // Completed means has at least first try (could show both first and second try completed)
+          return firstTryData !== null;
         case "inProgress":
-          return progressPercentage > 0 && progressPercentage < 100;
+          // In progress means has first try but could do second try
+          return firstTryData !== null && secondTryData === null;
         case "notStarted":
-          return progressPercentage === 0;
+          // Not started means no attempts yet
+          return firstTryData === null;
         default:
           return true;
       }

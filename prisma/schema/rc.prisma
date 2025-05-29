@@ -41,10 +41,12 @@ model RCQuestionSet {
   RCKeyword   RCKeyword? @relation(fields: [RCKeywordId], references: [id], onDelete: Cascade)
   RCKeywordId String?    @unique
 
-  RCQuestion RCQuestion[]
+  RCQuestion          RCQuestion[]
+  RCQuestionFirstTry  RCQuestionFirstTry[]
+  RCQuestionSecondTry RCQuestionSecondTry[]
 
-  active Boolean @default(false)
-  timeLimit Int @default(60)
+  active    Boolean @default(false)
+  timeLimit Int     @default(60)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -85,6 +87,38 @@ model RCQuestionCompleted {
   RCScoreId String?
 
   score Int
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RCQuestionFirstTry {
+  id String @id @default(uuid())
+
+  RCQuestionSetId String
+  RCQuestionSet   RCQuestionSet @relation(fields: [RCQuestionSetId], references: [id], onDelete: Cascade)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  totalQuestions Int @default(0)
+  correctAnswers Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model RCQuestionSecondTry {
+  id String @id @default(uuid())
+
+  RCQuestionSetId String
+  RCQuestionSet   RCQuestionSet @relation(fields: [RCQuestionSetId], references: [id], onDelete: Cascade)
+
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId String
+
+  totalQuestions Int @default(0)
+  correctAnswers Int @default(0)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

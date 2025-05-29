@@ -48,6 +48,11 @@ model User {
   payments      Payment[]
   subscriptions UserSubscription[]
   notifications Notification[]
+
+  RCQuestionFirstTry     RCQuestionFirstTry[]
+  RCQuestionSecondTry    RCQuestionSecondTry[]
+  NovelQuestionFirstTry  NovelQuestionFirstTry[]
+  NovelQuestionSecondTry NovelQuestionSecondTry[]
 }
 
 model Account {

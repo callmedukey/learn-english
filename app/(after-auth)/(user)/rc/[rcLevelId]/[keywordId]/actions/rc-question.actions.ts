@@ -14,6 +14,109 @@ export interface RCQuestionCompletionResult {
   explanation?: string;
 }
 
+export interface RCQuizCompletionResult {
+  success: boolean;
+  error?: string;
+  tryNumber?: 1 | 2;
+}
+
+export async function saveRCQuizCompletion(
+  questionSetId: string,
+  keywordId: string,
+  rcLevelId: string,
+  totalQuestions: number,
+  correctAnswers: number,
+): Promise<RCQuizCompletionResult> {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      throw new Error("Unauthorized");
+    }
+
+    if (!questionSetId || !keywordId || !rcLevelId) {
+      throw new Error("Missing required fields");
+    }
+
+    // Verify the question set belongs to the correct keyword and level
+    const questionSet = await prisma.rCQuestionSet.findUnique({
+      where: { id: questionSetId },
+      include: {
+        RCKeyword: true,
+      },
+    });
+
+    if (!questionSet) {
+      return { success: false, error: "Question set not found" };
+    }
+
+    if (
+      questionSet.RCKeyword?.id !== keywordId ||
+      questionSet.RCKeyword?.rcLevelId !== rcLevelId
+    ) {
+      return { success: false, error: "Invalid question set context" };
+    }
+
+    // Check if user has already completed this quiz
+    const existingFirstTry = await prisma.rCQuestionFirstTry.findFirst({
+      where: {
+        RCQuestionSetId: questionSetId,
+        userId: session.user.id,
+      },
+    });
+
+    const existingSecondTry = await prisma.rCQuestionSecondTry.findFirst({
+      where: {
+        RCQuestionSetId: questionSetId,
+        userId: session.user.id,
+      },
+    });
+
+    let tryNumber: 1 | 2;
+
+    if (!existingFirstTry) {
+      // This is the first attempt
+      await prisma.rCQuestionFirstTry.create({
+        data: {
+          RCQuestionSetId: questionSetId,
+          userId: session.user.id,
+          totalQuestions,
+          correctAnswers,
+        },
+      });
+      tryNumber = 1;
+    } else if (!existingSecondTry) {
+      // This is the second attempt
+      await prisma.rCQuestionSecondTry.create({
+        data: {
+          RCQuestionSetId: questionSetId,
+          userId: session.user.id,
+          totalQuestions,
+          correctAnswers,
+        },
+      });
+      tryNumber = 2;
+    } else {
+      // User has already completed both attempts, don't save additional attempts
+      return { success: true, tryNumber: 2 };
+    }
+
+    // Revalidate the RC level page to update the UI
+    revalidatePath(`/rc/${rcLevelId}`);
+
+    return {
+      success: true,
+      tryNumber,
+    };
+  } catch (error) {
+    console.error("Error saving RC quiz completion:", error);
+    return {
+      success: false,
+      error: "Failed to save quiz completion. Please try again.",
+    };
+  }
+}
+
 export async function submitRCAnswer(
   questionId: string,
   answer: string,
