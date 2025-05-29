@@ -14,7 +14,10 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 
-import { completeQuestionAction } from "../actions/question.actions";
+import {
+  completeQuestionAction,
+  saveNovelQuizCompletion,
+} from "../actions/question.actions";
 import type {
   ChapterDetailsData,
   ChapterStatus,
@@ -274,7 +277,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     setIsSubmitting(false);
   };
 
-  const handleNextQuestion = () => {
+  const handleNextQuestion = async () => {
     if (currentQuestionIndex < questions.length - 1) {
       // Set transition flag to prevent timer from auto-submitting
       setIsTransitioning(true);
@@ -291,6 +294,24 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       setCurrentQuestionIndex(currentQuestionIndex + 1);
     } else {
       setQuizCompleted(true);
+
+      // Save quiz completion result for first/second try tracking
+      if (chapter.novelQuestionSet) {
+        try {
+          await saveNovelQuizCompletion(
+            chapter.novelQuestionSet.id,
+            chapter.id,
+            novelId,
+            arId,
+            questions.length,
+            correctAnswersCount,
+            userId,
+          );
+        } catch (error) {
+          console.error("Error saving quiz completion:", error);
+          // Don't prevent quiz completion if saving fails
+        }
+      }
     }
   };
 

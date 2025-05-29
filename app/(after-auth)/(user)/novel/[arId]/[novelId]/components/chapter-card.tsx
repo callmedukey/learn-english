@@ -1,9 +1,17 @@
 import Link from "next/link";
 import React from "react";
+import { Target, Repeat, Lock } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+} from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import { Button } from "@/components/ui/button";
 
 interface ChapterCardProps {
   chapter: {
@@ -15,6 +23,16 @@ interface ChapterCardProps {
     isCompleted: boolean;
     completedQuestionsCount: number;
     totalQuestionsCount: number;
+    firstTryData: {
+      totalQuestions: number;
+      correctAnswers: number;
+      createdAt: Date;
+    } | null;
+    secondTryData: {
+      totalQuestions: number;
+      correctAnswers: number;
+      createdAt: Date;
+    } | null;
     novelQuestionSet: {
       id: string;
       instructions: string;
@@ -38,69 +56,178 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
       ? (chapter.completedQuestionsCount / chapter.totalQuestionsCount) * 100
       : 0;
 
+  // Determine chapter status based on try data
+  const getTryStatus = () => {
+    if (chapter.secondTryData) {
+      return "second-try-completed";
+    } else if (chapter.firstTryData) {
+      return "first-try-completed";
+    } else if (chapter.totalQuestionsCount > 0) {
+      return "available";
+    } else {
+      return "no-questions";
+    }
+  };
+
+  const tryStatus = getTryStatus();
+
+  const getTryBadge = () => {
+    switch (tryStatus) {
+      case "first-try-completed":
+        return (
+          <Badge
+            variant="secondary"
+            className="border-amber-200 bg-amber-100 text-amber-800"
+          >
+            <Target className="mr-1 h-3 w-3" />
+            First Try: {chapter.firstTryData?.correctAnswers}/
+            {chapter.firstTryData?.totalQuestions}
+          </Badge>
+        );
+      case "second-try-completed":
+        return (
+          <Badge
+            variant="secondary"
+            className="border-green-200 bg-green-100 text-green-800"
+          >
+            <Repeat className="mr-1 h-3 w-3" />
+            Second Try: {chapter.secondTryData?.correctAnswers}/
+            {chapter.secondTryData?.totalQuestions}
+          </Badge>
+        );
+      case "available":
+        return (
+          <Badge
+            variant="secondary"
+            className="border-primary/20 bg-primary/10 text-primary"
+          >
+            Available
+          </Badge>
+        );
+      default:
+        return null;
+    }
+  };
+
   const cardContent = (
     <Card className="h-full">
-      <CardHeader className="pb-3">
-        <div className="flex items-center justify-between">
-          <CardTitle className="text-lg">
-            Chapter {chapter.orderNumber}: {chapter.title}
-          </CardTitle>
-          <div className="flex gap-2">
-            {chapter.isFree && (
-              <Badge
-                variant="secondary"
-                className="bg-amber-100 text-amber-800"
-              >
-                Free
-              </Badge>
-            )}
-            {chapter.isCompleted && (
-              <Badge variant="default" className="bg-green-100 text-green-800">
-                Completed
-              </Badge>
-            )}
-            {!canAccess && (
-              <Badge
-                variant="destructive"
-                className="bg-gray-100 text-gray-600"
-              >
-                Premium
-              </Badge>
-            )}
-          </div>
+      <CardHeader className="pb-4">
+        {/* Title first */}
+        <CardTitle className="line-clamp-1 text-lg font-semibold text-card-foreground">
+          Chapter {chapter.orderNumber}: {chapter.title}
+        </CardTitle>
+
+        {/* Badges below title */}
+        <div className="flex flex-wrap items-center gap-2">
+          {chapter.isFree && (
+            <Badge variant="secondary" className="bg-amber-100 text-amber-800">
+              Free
+            </Badge>
+          )}
+          {!canAccess && (
+            <Badge variant="destructive" className="bg-gray-100 text-gray-600">
+              <Lock className="mr-1 h-3 w-3" />
+              Premium
+            </Badge>
+          )}
+          {canAccess && getTryBadge()}
         </div>
-      </CardHeader>
-      <CardContent className="space-y-4">
-        {chapter.description && (
-          <p className="line-clamp-2 text-sm text-gray-600">
-            {chapter.description}
-          </p>
-        )}
 
-        {chapter.novelQuestionSet && (
-          <div className="space-y-2">
-            <div className="flex items-center justify-between text-sm">
-              <span className="text-gray-600">Progress</span>
-              <span className="font-medium">
-                {chapter.completedQuestionsCount}/{chapter.totalQuestionsCount}{" "}
-                questions
-              </span>
+        {/* Progress bars below badges */}
+        {chapter.novelQuestionSet &&
+          chapter.totalQuestionsCount > 0 &&
+          (chapter.firstTryData || chapter.secondTryData) && (
+            <div className="mt-3 space-y-2">
+              {chapter.firstTryData && (
+                <div>
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>First Try</span>
+                    <span>
+                      {chapter.firstTryData.correctAnswers}/
+                      {chapter.firstTryData.totalQuestions} correct
+                    </span>
+                  </div>
+                  <Progress
+                    value={
+                      (chapter.firstTryData.correctAnswers /
+                        chapter.firstTryData.totalQuestions) *
+                      100
+                    }
+                    className="h-2"
+                  />
+                </div>
+              )}
+
+              {chapter.secondTryData && (
+                <div>
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Second Try</span>
+                    <span>
+                      {chapter.secondTryData.correctAnswers}/
+                      {chapter.secondTryData.totalQuestions} correct
+                    </span>
+                  </div>
+                  <Progress
+                    value={
+                      (chapter.secondTryData.correctAnswers /
+                        chapter.secondTryData.totalQuestions) *
+                      100
+                    }
+                    className="h-2"
+                  />
+                </div>
+              )}
             </div>
-            <Progress value={progressPercentage} className="h-2" />
-          </div>
-        )}
+          )}
+      </CardHeader>
 
-        {!chapter.novelQuestionSet && (
-          <div className="text-sm text-gray-500 italic">
-            No questions available yet
-          </div>
-        )}
+      <CardContent className="flex flex-1 flex-col pt-0">
+        <div className="flex-1">
+          {chapter.description && (
+            <CardDescription className="line-clamp-2 text-sm text-gray-600">
+              {chapter.description}
+            </CardDescription>
+          )}
 
-        {!canAccess && (
-          <div className="text-sm text-gray-500 italic">
-            Upgrade to premium to access this chapter
-          </div>
-        )}
+          {!chapter.novelQuestionSet && (
+            <div className="text-sm text-gray-500 italic">
+              No questions available yet
+            </div>
+          )}
+
+          {chapter.novelQuestionSet &&
+            chapter.totalQuestionsCount > 0 &&
+            !chapter.firstTryData &&
+            !chapter.secondTryData && (
+              <div className="text-sm text-gray-600">
+                {chapter.totalQuestionsCount} question
+                {chapter.totalQuestionsCount !== 1 ? "s" : ""} available
+              </div>
+            )}
+
+          {!canAccess && (
+            <div className="text-sm text-gray-500 italic">
+              Upgrade to premium to access this chapter
+            </div>
+          )}
+        </div>
+
+        {/* Button positioned at bottom */}
+        <div className="mt-4">
+          <Button
+            className="w-full"
+            variant={tryStatus === "available" ? "outline" : "default"}
+            disabled={!canAccess}
+          >
+            {canAccess
+              ? tryStatus === "first-try-completed"
+                ? "Second Try"
+                : tryStatus === "second-try-completed"
+                  ? "Retry"
+                  : "Start Quiz"
+              : "Premium Required"}
+          </Button>
+        </div>
       </CardContent>
     </Card>
   );

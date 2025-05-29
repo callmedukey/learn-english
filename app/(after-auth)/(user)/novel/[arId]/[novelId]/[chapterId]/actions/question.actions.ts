@@ -13,6 +13,110 @@ export interface QuestionCompletionResult {
   explanation?: string;
 }
 
+export interface NovelQuizCompletionResult {
+  success: boolean;
+  error?: string;
+  tryNumber?: 1 | 2;
+}
+
+export async function saveNovelQuizCompletion(
+  questionSetId: string,
+  chapterId: string,
+  novelId: string,
+  arId: string,
+  totalQuestions: number,
+  correctAnswers: number,
+  userId: string,
+): Promise<NovelQuizCompletionResult> {
+  try {
+    if (!questionSetId || !chapterId || !novelId || !arId || !userId) {
+      throw new Error("Missing required fields");
+    }
+
+    // Verify the question set belongs to the correct chapter
+    const questionSet = await prisma.novelQuestionSet.findUnique({
+      where: { id: questionSetId },
+      include: {
+        novelChapter: {
+          include: {
+            novel: true,
+          },
+        },
+      },
+    });
+
+    if (!questionSet) {
+      return { success: false, error: "Question set not found" };
+    }
+
+    if (
+      questionSet.novelChapter?.id !== chapterId ||
+      questionSet.novelChapter?.novelId !== novelId ||
+      questionSet.novelChapter?.novel.ARId !== arId
+    ) {
+      return { success: false, error: "Invalid question set context" };
+    }
+
+    // Check if user has already completed this quiz
+    const existingFirstTry = await prisma.novelQuestionFirstTry.findFirst({
+      where: {
+        novelQuestionSetId: questionSetId,
+        userId: userId,
+      },
+    });
+
+    const existingSecondTry = await prisma.novelQuestionSecondTry.findFirst({
+      where: {
+        novelQuestionSetId: questionSetId,
+        userId: userId,
+      },
+    });
+
+    let tryNumber: 1 | 2;
+
+    if (!existingFirstTry) {
+      // This is the first attempt
+      await prisma.novelQuestionFirstTry.create({
+        data: {
+          novelQuestionSetId: questionSetId,
+          userId: userId,
+          totalQuestions,
+          correctAnswers,
+        },
+      });
+      tryNumber = 1;
+    } else if (!existingSecondTry) {
+      // This is the second attempt
+      await prisma.novelQuestionSecondTry.create({
+        data: {
+          novelQuestionSetId: questionSetId,
+          userId: userId,
+          totalQuestions,
+          correctAnswers,
+        },
+      });
+      tryNumber = 2;
+    } else {
+      // User has already completed both attempts, don't save additional attempts
+      return { success: true, tryNumber: 2 };
+    }
+
+    // Revalidate the novel page to update the UI
+    revalidatePath(`/novel/${arId}/${novelId}`);
+
+    return {
+      success: true,
+      tryNumber,
+    };
+  } catch (error) {
+    console.error("Error saving novel quiz completion:", error);
+    return {
+      success: false,
+      error: "Failed to save quiz completion. Please try again.",
+    };
+  }
+}
+
 export const completeQuestionAction = async (
   questionId: string,
   userId: string,
