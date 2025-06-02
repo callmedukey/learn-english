@@ -79,7 +79,9 @@ async function NovelContent({
                   AR: {novel.AR.score}
                 </Badge>
                 <div className="flex items-center">
-                  <span className="mr-1 text-sm text-gray-600">Rating:</span>
+                  <span className="mr-1 text-sm text-gray-600">
+                    Difficulty:
+                  </span>
                   <div className="flex">
                     {Array.from({ length: 5 }, (_, i) => (
                       <span
