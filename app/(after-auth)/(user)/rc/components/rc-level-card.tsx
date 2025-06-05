@@ -1,4 +1,4 @@
-import { Star, BookOpen, FileText } from "lucide-react";
+import { Star, BookOpen } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +32,18 @@ interface RCLevelCardProps {
             userId: string;
           }>;
         }>;
+        RCQuestionFirstTry: Array<{
+          id: string;
+          totalQuestions: number;
+          correctAnswers: number;
+          createdAt: Date;
+        }>;
+        RCQuestionSecondTry: Array<{
+          id: string;
+          totalQuestions: number;
+          correctAnswers: number;
+          createdAt: Date;
+        }>;
       } | null;
     }>;
   };
@@ -39,31 +51,47 @@ interface RCLevelCardProps {
 }
 
 export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
-  // Calculate overall progress across all question sets in this RC level
-  let totalQuestions = 0;
-  let completedQuestions = 0;
+  // Calculate total first and second try statistics across all question sets
+  let totalFirstTryQuestions = 0;
+  let totalFirstTryCorrect = 0;
+  let totalSecondTryQuestions = 0;
+  let totalSecondTryCorrect = 0;
+  let keywordsWithFirstTry = 0;
+  let keywordsWithSecondTry = 0;
   const totalKeywords = rcLevel.RCKeyword.length;
 
   if (userId) {
     rcLevel.RCKeyword.forEach((keyword) => {
       if (keyword.RCQuestionSet) {
-        const questions = keyword.RCQuestionSet.RCQuestion;
-        totalQuestions += questions.length;
+        const firstTryData = keyword.RCQuestionSet.RCQuestionFirstTry[0];
+        const secondTryData = keyword.RCQuestionSet.RCQuestionSecondTry[0];
 
-        const keywordCompletedQuestions = questions.filter((question) =>
-          question.RCQuestionCompleted.some(
-            (completed) => completed.userId === userId,
-          ),
-        ).length;
+        if (firstTryData) {
+          keywordsWithFirstTry++;
+          totalFirstTryQuestions += firstTryData.totalQuestions;
+          totalFirstTryCorrect += firstTryData.correctAnswers;
+        }
 
-        completedQuestions += keywordCompletedQuestions;
+        if (secondTryData) {
+          keywordsWithSecondTry++;
+          totalSecondTryQuestions += secondTryData.totalQuestions;
+          totalSecondTryCorrect += secondTryData.correctAnswers;
+        }
       }
     });
   }
 
-  const progressPercentage =
-    totalQuestions > 0 ? (completedQuestions / totalQuestions) * 100 : 0;
-  const hasProgress = userId && completedQuestions > 0;
+  const firstTryPercentage =
+    totalFirstTryQuestions > 0
+      ? (totalFirstTryCorrect / totalFirstTryQuestions) * 100
+      : 0;
+  const secondTryPercentage =
+    totalSecondTryQuestions > 0
+      ? (totalSecondTryCorrect / totalSecondTryQuestions) * 100
+      : 0;
+
+  const hasFirstTry = userId && keywordsWithFirstTry > 0;
+  const hasSecondTry = userId && keywordsWithSecondTry > 0;
 
   return (
     <Link href={`/rc/${rcLevel.id}`} className="group">
@@ -95,27 +123,35 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
             >
               {rcLevel.numberOfQuestions} Questions
             </Badge>
-            {hasProgress && (
-              <Badge
-                variant="secondary"
-                className="border-amber-200 bg-amber-100 text-amber-800"
-              >
-                <FileText className="mr-1 h-3 w-3" />
-                {Math.round(progressPercentage)}% complete
-              </Badge>
-            )}
           </div>
 
-          {/* Progress bar for overall RC level progress */}
-          {userId && totalQuestions > 0 && (
-            <div className="mt-3">
-              <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                <span>Overall Progress</span>
-                <span>
-                  {completedQuestions}/{totalQuestions} questions
-                </span>
-              </div>
-              <Progress value={progressPercentage} className="h-2" />
+          {/* First and Second Try Statistics */}
+          {userId && (hasFirstTry || hasSecondTry) && (
+            <div className="mt-3 space-y-2">
+              {hasFirstTry && (
+                <div>
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>First Try ({keywordsWithFirstTry} topics)</span>
+                    <span>
+                      {totalFirstTryCorrect}/{totalFirstTryQuestions} correct (
+                      {Math.round(firstTryPercentage)}%)
+                    </span>
+                  </div>
+                  <Progress value={firstTryPercentage} className="h-2" />
+                </div>
+              )}
+              {hasSecondTry && (
+                <div>
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Second Try ({keywordsWithSecondTry} topics)</span>
+                    <span>
+                      {totalSecondTryCorrect}/{totalSecondTryQuestions} correct
+                      ({Math.round(secondTryPercentage)}%)
+                    </span>
+                  </div>
+                  <Progress value={secondTryPercentage} className="h-2" />
+                </div>
+              )}
             </div>
           )}
         </CardHeader>
@@ -133,7 +169,7 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
               {totalKeywords} topic{totalKeywords !== 1 ? "s" : ""} available
             </span>
             <span className="text-primary transition-colors group-hover:text-primary/80">
-              {hasProgress ? "Continue →" : "Explore →"}
+              {hasFirstTry ? "Continue →" : "Explore →"}
             </span>
           </div>
         </CardContent>

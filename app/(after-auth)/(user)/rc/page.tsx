@@ -31,6 +31,32 @@ async function RCLevels() {
                   },
                 },
               },
+              RCQuestionFirstTry: userId
+                ? {
+                    where: {
+                      userId: userId,
+                    },
+                    select: {
+                      id: true,
+                      totalQuestions: true,
+                      correctAnswers: true,
+                      createdAt: true,
+                    },
+                  }
+                : false,
+              RCQuestionSecondTry: userId
+                ? {
+                    where: {
+                      userId: userId,
+                    },
+                    select: {
+                      id: true,
+                      totalQuestions: true,
+                      correctAnswers: true,
+                      createdAt: true,
+                    },
+                  }
+                : false,
             },
           },
         },

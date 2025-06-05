@@ -1,4 +1,4 @@
-import { Star, BookOpen } from "lucide-react";
+import { Star } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -28,6 +28,14 @@ interface ARCardProps {
               userId: string;
             }>;
           }>;
+          NovelQuestionFirstTry?: Array<{
+            totalQuestions: number;
+            correctAnswers: number;
+          }>;
+          NovelQuestionSecondTry?: Array<{
+            totalQuestions: number;
+            correctAnswers: number;
+          }>;
         } | null;
       }>;
     }>;
@@ -36,35 +44,48 @@ interface ARCardProps {
 }
 
 export function ARCard({ ar, userId }: ARCardProps) {
-  // Calculate overall progress across all novels in this AR level
-  let totalChapters = 0;
-  let completedChapters = 0;
+  // Calculate first and second try statistics across all novels and chapters
+  let totalChaptersAttempted = 0;
+  let firstTryCorrect = 0;
+  let firstTryTotal = 0;
+  let secondTryCorrect = 0;
+  let secondTryTotal = 0;
 
   if (userId) {
     ar.novels.forEach((novel) => {
       novel.novelChapters.forEach((chapter) => {
-        totalChapters++;
-
         if (chapter.novelQuestionSet) {
-          const totalQuestions = chapter.novelQuestionSet.novelQuestions.length;
-          const completedQuestions =
-            chapter.novelQuestionSet.novelQuestions.filter((question) =>
-              question.novelQuestionCompleted.some(
-                (completed) => completed.userId === userId,
-              ),
-            ).length;
+          // First Try Data
+          if (
+            chapter.novelQuestionSet.NovelQuestionFirstTry &&
+            chapter.novelQuestionSet.NovelQuestionFirstTry.length > 0
+          ) {
+            totalChaptersAttempted++;
+            const firstTry = chapter.novelQuestionSet.NovelQuestionFirstTry[0];
+            firstTryCorrect += firstTry.correctAnswers;
+            firstTryTotal += firstTry.totalQuestions;
+          }
 
-          if (totalQuestions > 0 && completedQuestions === totalQuestions) {
-            completedChapters++;
+          // Second Try Data
+          if (
+            chapter.novelQuestionSet.NovelQuestionSecondTry &&
+            chapter.novelQuestionSet.NovelQuestionSecondTry.length > 0
+          ) {
+            const secondTry =
+              chapter.novelQuestionSet.NovelQuestionSecondTry[0];
+            secondTryCorrect += secondTry.correctAnswers;
+            secondTryTotal += secondTry.totalQuestions;
           }
         }
       });
     });
   }
 
-  const progressPercentage =
-    totalChapters > 0 ? (completedChapters / totalChapters) * 100 : 0;
-  const hasProgress = userId && completedChapters > 0;
+  const firstTryPercentage =
+    firstTryTotal > 0 ? (firstTryCorrect / firstTryTotal) * 100 : 0;
+  const secondTryPercentage =
+    secondTryTotal > 0 ? (secondTryCorrect / secondTryTotal) * 100 : 0;
+  const hasProgress = userId && totalChaptersAttempted > 0;
 
   return (
     <Link href={`/novel/${ar.id}`} className="group">
@@ -90,27 +111,36 @@ export function ARCard({ ar, userId }: ARCardProps) {
             >
               AR: {ar.score}
             </Badge>
-            {hasProgress && (
-              <Badge
-                variant="secondary"
-                className="border-amber-200 bg-amber-100 text-amber-800"
-              >
-                <BookOpen className="mr-1 h-3 w-3" />
-                {Math.round(progressPercentage)}% complete
-              </Badge>
-            )}
           </div>
 
-          {/* Progress bar for overall AR level progress */}
-          {userId && totalChapters > 0 && (
-            <div className="mt-3">
-              <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                <span>Overall Progress</span>
-                <span>
-                  {completedChapters}/{totalChapters} chapters
-                </span>
-              </div>
-              <Progress value={progressPercentage} className="h-2" />
+          {/* Progress bars for first and second try */}
+          {userId && totalChaptersAttempted > 0 && (
+            <div className="mt-3 space-y-2">
+              {firstTryTotal > 0 && (
+                <div>
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>First Try</span>
+                    <span>
+                      {firstTryCorrect}/{firstTryTotal} correct (
+                      {Math.round(firstTryPercentage)}%)
+                    </span>
+                  </div>
+                  <Progress value={firstTryPercentage} className="h-2" />
+                </div>
+              )}
+
+              {secondTryTotal > 0 && (
+                <div>
+                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                    <span>Second Try</span>
+                    <span>
+                      {secondTryCorrect}/{secondTryTotal} correct (
+                      {Math.round(secondTryPercentage)}%)
+                    </span>
+                  </div>
+                  <Progress value={secondTryPercentage} className="h-2" />
+                </div>
+              )}
             </div>
           )}
         </CardHeader>

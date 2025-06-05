@@ -33,6 +33,20 @@ async function ARChoices() {
                       },
                     },
                   },
+                  NovelQuestionFirstTry: userId
+                    ? {
+                        where: {
+                          userId: userId,
+                        },
+                      }
+                    : undefined,
+                  NovelQuestionSecondTry: userId
+                    ? {
+                        where: {
+                          userId: userId,
+                        },
+                      }
+                    : undefined,
                 },
               },
             },
