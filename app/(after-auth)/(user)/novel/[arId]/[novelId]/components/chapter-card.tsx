@@ -136,7 +136,7 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
             <div className="mt-3 space-y-2">
               {chapter.firstTryData && (
                 <div>
-                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
                     <span>First Try</span>
                     <span>
                       {chapter.firstTryData.correctAnswers}/

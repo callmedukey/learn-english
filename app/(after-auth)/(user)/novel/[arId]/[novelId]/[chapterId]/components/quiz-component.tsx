@@ -8,6 +8,7 @@ import React, {
   useRef,
   useMemo,
 } from "react";
+import { CheckCircle } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -487,6 +488,40 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
           </div>
         </CardContent>
       </Card>
+
+      {/* Question Navigation */}
+      <div className="flex flex-wrap gap-2">
+        {questions.map((question, index) => {
+          const completed = status !== "retry" && question.isCompleted;
+          return (
+            <Button
+              key={question.id}
+              variant={index === currentQuestionIndex ? "default" : "outline"}
+              size="sm"
+              onClick={() => {
+                // Set transition flag to prevent timer issues when switching questions
+                setIsTransitioning(true);
+
+                // Reset states for the new question
+                setSelectedAnswer("");
+                setIsAnswered(false);
+                setShowExplanation(false);
+                setIsCorrect(false);
+                setPointsAwarded(0);
+
+                setCurrentQuestionIndex(index);
+              }}
+              className={`relative ${completed ? "border-green-500" : ""}`}
+              disabled={!quizStarted}
+            >
+              {index + 1}
+              {completed && (
+                <CheckCircle className="absolute -top-1 -right-1 h-3 w-3 text-green-600" />
+              )}
+            </Button>
+          );
+        })}
+      </div>
 
       {/* Question */}
       <Card>

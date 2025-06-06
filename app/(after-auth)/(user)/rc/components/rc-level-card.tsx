@@ -130,7 +130,7 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
             <div className="mt-3 space-y-2">
               {hasFirstTry && (
                 <div>
-                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
                     <span>First Try ({keywordsWithFirstTry} topics)</span>
                     <span>
                       {totalFirstTryCorrect}/{totalFirstTryQuestions} correct (

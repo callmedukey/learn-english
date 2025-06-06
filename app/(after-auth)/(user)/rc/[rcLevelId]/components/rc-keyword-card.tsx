@@ -209,7 +209,7 @@ export function RCKeywordCard({
             <div className="mt-3 space-y-2">
               {firstTryData && (
                 <div>
-                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
                     <span>First Try</span>
                     <span>
                       {firstTryData.correctAnswers}/

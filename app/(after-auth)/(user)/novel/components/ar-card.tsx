@@ -118,7 +118,7 @@ export function ARCard({ ar, userId }: ARCardProps) {
             <div className="mt-3 space-y-2">
               {firstTryTotal > 0 && (
                 <div>
-                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                  <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
                     <span>First Try</span>
                     <span>
                       {firstTryCorrect}/{firstTryTotal} correct (

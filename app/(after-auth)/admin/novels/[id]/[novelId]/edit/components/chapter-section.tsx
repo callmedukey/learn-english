@@ -754,7 +754,7 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
     answer: "",
     explanation: "",
     score: 10,
-    timeLimit: 60,
+    timeLimit: 40,
     orderNumber: questions.length + 1,
   });
 
@@ -796,7 +796,7 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
         answer: "",
         explanation: "",
         score: 10,
-        timeLimit: 60,
+        timeLimit: 40,
         orderNumber: questions.length + 2,
       });
       setShowCreateForm(false);
