@@ -51,6 +51,29 @@ interface RCLevelCardProps {
 }
 
 export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
+  // Calculate completion progress
+  const totalKeywords = rcLevel.RCKeyword.length;
+  const completedKeywords = userId
+    ? rcLevel.RCKeyword.filter((keyword) => {
+        if (!keyword.RCQuestionSet) return false;
+
+        // Check if all questions in this keyword are completed by the user
+        const totalQuestions = keyword.RCQuestionSet.RCQuestion.length;
+        const completedQuestions = keyword.RCQuestionSet.RCQuestion.filter(
+          (question) =>
+            question.RCQuestionCompleted.some(
+              (completed) => completed.userId === userId,
+            ),
+        ).length;
+
+        return totalQuestions > 0 && completedQuestions === totalQuestions;
+      }).length
+    : 0;
+
+  const progressPercentage =
+    totalKeywords > 0 ? (completedKeywords / totalKeywords) * 100 : 0;
+  const hasProgress = userId && completedKeywords > 0;
+
   // Calculate total first and second try statistics across all question sets
   let totalFirstTryQuestions = 0;
   let totalFirstTryCorrect = 0;
@@ -58,7 +81,6 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
   let totalSecondTryCorrect = 0;
   let keywordsWithFirstTry = 0;
   let keywordsWithSecondTry = 0;
-  const totalKeywords = rcLevel.RCKeyword.length;
 
   if (userId) {
     rcLevel.RCKeyword.forEach((keyword) => {
@@ -123,6 +145,14 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
             >
               {rcLevel.numberOfQuestions} Questions
             </Badge>
+            {hasProgress && (
+              <Badge
+                variant="secondary"
+                className="border-primary/20 bg-primary/10 text-xs text-primary"
+              >
+                {completedKeywords}/{totalKeywords} completed
+              </Badge>
+            )}
           </div>
 
           {/* First and Second Try Statistics */}
@@ -154,6 +184,18 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
               )}
             </div>
           )}
+          {/* Progress bar for user progress */}
+          {userId && totalKeywords > 0 && (
+            <div className="mt-3">
+              <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
+                <span>Progress</span>
+                <span>
+                  {completedKeywords}/{totalKeywords} topics
+                </span>
+              </div>
+              <Progress value={progressPercentage} className="h-2" />
+            </div>
+          )}
         </CardHeader>
 
         <CardContent className="pt-0">
@@ -169,7 +211,7 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
               {totalKeywords} topic{totalKeywords !== 1 ? "s" : ""} available
             </span>
             <span className="text-primary transition-colors group-hover:text-primary/80">
-              {hasFirstTry ? "Continue →" : "Explore →"}
+              {hasProgress ? "Continue →" : "Explore →"}
             </span>
           </div>
         </CardContent>
