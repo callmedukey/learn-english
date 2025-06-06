@@ -1,5 +1,6 @@
 "use client";
 
+import { CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, {
   useCallback,
@@ -8,7 +9,6 @@ import React, {
   useRef,
   useMemo,
 } from "react";
-import { CheckCircle } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
