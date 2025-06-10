@@ -38,12 +38,6 @@ interface RCLevelCardProps {
           correctAnswers: number;
           createdAt: Date;
         }>;
-        RCQuestionSecondTry: Array<{
-          id: string;
-          totalQuestions: number;
-          correctAnswers: number;
-          createdAt: Date;
-        }>;
       } | null;
     }>;
   };
@@ -74,30 +68,20 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
     totalKeywords > 0 ? (completedKeywords / totalKeywords) * 100 : 0;
   const hasProgress = userId && completedKeywords > 0;
 
-  // Calculate total first and second try statistics across all question sets
+  // Calculate total first try statistics across all question sets
   let totalFirstTryQuestions = 0;
   let totalFirstTryCorrect = 0;
-  let totalSecondTryQuestions = 0;
-  let totalSecondTryCorrect = 0;
   let keywordsWithFirstTry = 0;
-  let keywordsWithSecondTry = 0;
 
   if (userId) {
     rcLevel.RCKeyword.forEach((keyword) => {
       if (keyword.RCQuestionSet) {
         const firstTryData = keyword.RCQuestionSet.RCQuestionFirstTry[0];
-        const secondTryData = keyword.RCQuestionSet.RCQuestionSecondTry[0];
 
         if (firstTryData) {
           keywordsWithFirstTry++;
           totalFirstTryQuestions += firstTryData.totalQuestions;
           totalFirstTryCorrect += firstTryData.correctAnswers;
-        }
-
-        if (secondTryData) {
-          keywordsWithSecondTry++;
-          totalSecondTryQuestions += secondTryData.totalQuestions;
-          totalSecondTryCorrect += secondTryData.correctAnswers;
         }
       }
     });
@@ -107,13 +91,8 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
     totalFirstTryQuestions > 0
       ? (totalFirstTryCorrect / totalFirstTryQuestions) * 100
       : 0;
-  const secondTryPercentage =
-    totalSecondTryQuestions > 0
-      ? (totalSecondTryCorrect / totalSecondTryQuestions) * 100
-      : 0;
 
   const hasFirstTry = userId && keywordsWithFirstTry > 0;
-  const hasSecondTry = userId && keywordsWithSecondTry > 0;
 
   return (
     <Link href={`/rc/${rcLevel.id}`} className="group">
@@ -155,33 +134,19 @@ export function RCLevelCard({ rcLevel, userId }: RCLevelCardProps) {
             )}
           </div>
 
-          {/* First and Second Try Statistics */}
-          {userId && (hasFirstTry || hasSecondTry) && (
+          {/* Performance Statistics */}
+          {userId && hasFirstTry && (
             <div className="mt-3 space-y-2">
-              {hasFirstTry && (
-                <div>
-                  <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
-                    <span>First Try ({keywordsWithFirstTry} topics)</span>
-                    <span>
-                      {totalFirstTryCorrect}/{totalFirstTryQuestions} correct (
-                      {Math.round(firstTryPercentage)}%)
-                    </span>
-                  </div>
-                  <Progress value={firstTryPercentage} className="h-2" />
+              <div>
+                <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
+                  <span>Performance ({keywordsWithFirstTry} topics)</span>
+                  <span>
+                    {totalFirstTryCorrect}/{totalFirstTryQuestions} correct (
+                    {Math.round(firstTryPercentage)}%)
+                  </span>
                 </div>
-              )}
-              {hasSecondTry && (
-                <div>
-                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Second Try ({keywordsWithSecondTry} topics)</span>
-                    <span>
-                      {totalSecondTryCorrect}/{totalSecondTryQuestions} correct
-                      ({Math.round(secondTryPercentage)}%)
-                    </span>
-                  </div>
-                  <Progress value={secondTryPercentage} className="h-2" />
-                </div>
-              )}
+                <Progress value={firstTryPercentage} className="h-2" />
+              </div>
             </div>
           )}
           {/* Progress bar for user progress */}

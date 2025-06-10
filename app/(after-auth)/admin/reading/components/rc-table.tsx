@@ -80,7 +80,7 @@ const RCTable: React.FC<RCTableProps> = ({ rcLevels }) => {
                 </span>
               ) : (
                 <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-500">
-                  No free
+                  None
                 </span>
               )}
             </TableCell>

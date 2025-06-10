@@ -54,6 +54,14 @@ async function RCKeywords({
               mode: "insensitive" as const,
             },
           },
+          {
+            RCQuestionSet: {
+              title: {
+                contains: searchParams.search,
+                mode: "insensitive" as const,
+              },
+            },
+          },
         ],
       }
     : {};

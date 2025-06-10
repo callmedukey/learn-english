@@ -32,10 +32,6 @@ interface ARCardProps {
             totalQuestions: number;
             correctAnswers: number;
           }>;
-          NovelQuestionSecondTry?: Array<{
-            totalQuestions: number;
-            correctAnswers: number;
-          }>;
         } | null;
       }>;
     }>;
@@ -44,18 +40,16 @@ interface ARCardProps {
 }
 
 export function ARCard({ ar, userId }: ARCardProps) {
-  // Calculate first and second try statistics across all novels and chapters
+  // Calculate first try statistics across all novels and chapters
   let totalChaptersAttempted = 0;
   let firstTryCorrect = 0;
   let firstTryTotal = 0;
-  let secondTryCorrect = 0;
-  let secondTryTotal = 0;
 
   if (userId) {
     ar.novels.forEach((novel) => {
       novel.novelChapters.forEach((chapter) => {
         if (chapter.novelQuestionSet) {
-          // First Try Data
+          // Performance Data
           if (
             chapter.novelQuestionSet.NovelQuestionFirstTry &&
             chapter.novelQuestionSet.NovelQuestionFirstTry.length > 0
@@ -65,17 +59,6 @@ export function ARCard({ ar, userId }: ARCardProps) {
             firstTryCorrect += firstTry.correctAnswers;
             firstTryTotal += firstTry.totalQuestions;
           }
-
-          // Second Try Data
-          if (
-            chapter.novelQuestionSet.NovelQuestionSecondTry &&
-            chapter.novelQuestionSet.NovelQuestionSecondTry.length > 0
-          ) {
-            const secondTry =
-              chapter.novelQuestionSet.NovelQuestionSecondTry[0];
-            secondTryCorrect += secondTry.correctAnswers;
-            secondTryTotal += secondTry.totalQuestions;
-          }
         }
       });
     });
@@ -83,8 +66,6 @@ export function ARCard({ ar, userId }: ARCardProps) {
 
   const firstTryPercentage =
     firstTryTotal > 0 ? (firstTryCorrect / firstTryTotal) * 100 : 0;
-  const secondTryPercentage =
-    secondTryTotal > 0 ? (secondTryCorrect / secondTryTotal) * 100 : 0;
   const hasProgress = userId && totalChaptersAttempted > 0;
 
   return (
@@ -113,32 +94,19 @@ export function ARCard({ ar, userId }: ARCardProps) {
             </Badge>
           </div>
 
-          {/* Progress bars for first and second try */}
+          {/* Progress bar for performance */}
           {userId && totalChaptersAttempted > 0 && (
             <div className="mt-3 space-y-2">
               {firstTryTotal > 0 && (
                 <div>
                   <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
-                    <span>First Try</span>
+                    <span>Performance</span>
                     <span>
                       {firstTryCorrect}/{firstTryTotal} correct (
                       {Math.round(firstTryPercentage)}%)
                     </span>
                   </div>
                   <Progress value={firstTryPercentage} className="h-2" />
-                </div>
-              )}
-
-              {secondTryTotal > 0 && (
-                <div>
-                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Second Try</span>
-                    <span>
-                      {secondTryCorrect}/{secondTryTotal} correct (
-                      {Math.round(secondTryPercentage)}%)
-                    </span>
-                  </div>
-                  <Progress value={secondTryPercentage} className="h-2" />
                 </div>
               )}
             </div>

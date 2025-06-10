@@ -132,47 +132,25 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
         {/* Progress bars below badges */}
         {chapter.novelQuestionSet &&
           chapter.totalQuestionsCount > 0 &&
-          (chapter.firstTryData || chapter.secondTryData) && (
+          chapter.firstTryData && (
             <div className="mt-3 space-y-2">
-              {chapter.firstTryData && (
-                <div>
-                  <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
-                    <span>First Try</span>
-                    <span>
-                      {chapter.firstTryData.correctAnswers}/
-                      {chapter.firstTryData.totalQuestions} correct
-                    </span>
-                  </div>
-                  <Progress
-                    value={
-                      (chapter.firstTryData.correctAnswers /
-                        chapter.firstTryData.totalQuestions) *
-                      100
-                    }
-                    className="h-2"
-                  />
+              <div>
+                <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
+                  <span>Performance</span>
+                  <span>
+                    {chapter.firstTryData.correctAnswers}/
+                    {chapter.firstTryData.totalQuestions} correct
+                  </span>
                 </div>
-              )}
-
-              {chapter.secondTryData && (
-                <div>
-                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Second Try</span>
-                    <span>
-                      {chapter.secondTryData.correctAnswers}/
-                      {chapter.secondTryData.totalQuestions} correct
-                    </span>
-                  </div>
-                  <Progress
-                    value={
-                      (chapter.secondTryData.correctAnswers /
-                        chapter.secondTryData.totalQuestions) *
-                      100
-                    }
-                    className="h-2"
-                  />
-                </div>
-              )}
+                <Progress
+                  value={
+                    (chapter.firstTryData.correctAnswers /
+                      chapter.firstTryData.totalQuestions) *
+                    100
+                  }
+                  className="h-2"
+                />
+              </div>
             </div>
           )}
       </CardHeader>

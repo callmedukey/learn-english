@@ -7,6 +7,7 @@ import {
   X,
   ChevronDown,
   ChevronUp,
+  Loader2,
 } from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useEffect, useCallback } from "react";
@@ -20,6 +21,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { useDebounce } from "@/hooks/use-debounce";
 
 interface RCKeywordFiltersProps {
   rcLevelId: string;
@@ -39,6 +41,12 @@ export function RCKeywordFilters({ rcLevelId }: RCKeywordFiltersProps) {
   );
   const [status, setStatus] = useState(searchParams.get("status") || "all");
 
+  // Debounce the search input to avoid updating URL on every keystroke
+  const debouncedSearchInput = useDebounce(searchInput, 500);
+
+  // Track if we're waiting for debounce
+  const isSearchPending = searchInput !== debouncedSearchInput;
+
   const hasActiveFilters =
     searchInput.trim() !== "" ||
     sortBy !== "name" ||
@@ -46,11 +54,11 @@ export function RCKeywordFilters({ rcLevelId }: RCKeywordFiltersProps) {
     status !== "all";
 
   const updateFilters = useCallback(
-    (newSearchInput?: string) => {
+    (overrideSearch?: string) => {
       const params = new URLSearchParams();
 
       const searchValue =
-        newSearchInput !== undefined ? newSearchInput : searchInput;
+        overrideSearch !== undefined ? overrideSearch : debouncedSearchInput;
 
       if (searchValue.trim()) {
         params.set("search", searchValue.trim());
@@ -71,10 +79,15 @@ export function RCKeywordFilters({ rcLevelId }: RCKeywordFiltersProps) {
       const queryString = params.toString();
       router.push(`/rc/${rcLevelId}${queryString ? `?${queryString}` : ""}`);
     },
-    [rcLevelId, router, searchInput, sortBy, sortOrder, status],
+    [rcLevelId, router, debouncedSearchInput, sortBy, sortOrder, status],
   );
 
-  // Auto-apply filters when select values change
+  // Update URL when debounced search input changes
+  useEffect(() => {
+    updateFilters();
+  }, [debouncedSearchInput, updateFilters]);
+
+  // Auto-apply filters when select values change (immediate, no debounce needed)
   useEffect(() => {
     updateFilters();
   }, [sortBy, sortOrder, status, updateFilters]);
@@ -96,12 +109,9 @@ export function RCKeywordFilters({ rcLevelId }: RCKeywordFiltersProps) {
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
-      updateFilters();
+      // Force immediate update on Enter key
+      updateFilters(searchInput);
     }
-  };
-
-  const handleSearchClick = () => {
-    updateFilters();
   };
 
   return (
@@ -116,6 +126,12 @@ export function RCKeywordFilters({ rcLevelId }: RCKeywordFiltersProps) {
             <div className="flex items-center gap-2">
               <div className="h-2 w-2 rounded-full bg-primary"></div>
               <span className="text-sm text-muted-foreground">Active</span>
+            </div>
+          )}
+          {isSearchPending && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Loader2 className="h-3 w-3 animate-spin" />
+              <span className="text-xs">Searching...</span>
             </div>
           )}
         </div>
@@ -167,20 +183,19 @@ export function RCKeywordFilters({ rcLevelId }: RCKeywordFiltersProps) {
               <label className="text-sm font-medium text-card-foreground">
                 Search
               </label>
-              <div className="flex gap-2">
-                <div className="relative flex-1">
+              <div className="relative">
+                {isSearchPending ? (
+                  <Loader2 className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform animate-spin text-muted-foreground" />
+                ) : (
                   <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-muted-foreground" />
-                  <Input
-                    placeholder="Search topics..."
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                    onKeyPress={handleKeyPress}
-                    className="pl-10"
-                  />
-                </div>
-                <Button onClick={handleSearchClick} size="sm">
-                  Search
-                </Button>
+                )}
+                <Input
+                  placeholder="Search topics and titles..."
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  className="pl-10"
+                />
               </div>
             </div>
 
@@ -243,13 +258,6 @@ export function RCKeywordFilters({ rcLevelId }: RCKeywordFiltersProps) {
                 </SelectContent>
               </Select>
             </div>
-          </div>
-
-          {/* Apply Filters Button for mobile */}
-          <div className="flex justify-end md:hidden">
-            <Button onClick={handleSearchClick} className="w-full">
-              Apply Filters
-            </Button>
           </div>
         </div>
       </div>

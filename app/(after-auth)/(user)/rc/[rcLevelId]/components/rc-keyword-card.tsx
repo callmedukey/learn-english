@@ -200,51 +200,30 @@ export function RCKeywordCard({
           </div>
         )}
 
-        {/* Progress display for attempts */}
+        {/* Progress display for performance */}
         {userId &&
           hasQuestionSet &&
           isQuestionSetActive &&
           hasQuestions &&
-          (firstTryData || secondTryData) && (
+          firstTryData && (
             <div className="mt-3 space-y-2">
-              {firstTryData && (
-                <div>
-                  <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
-                    <span>First Try</span>
-                    <span>
-                      {firstTryData.correctAnswers}/
-                      {firstTryData.totalQuestions} correct
-                    </span>
-                  </div>
-                  <Progress
-                    value={
-                      (firstTryData.correctAnswers /
-                        firstTryData.totalQuestions) *
-                      100
-                    }
-                    className="h-2"
-                  />
+              <div>
+                <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
+                  <span>Performance</span>
+                  <span>
+                    {firstTryData.correctAnswers}/{firstTryData.totalQuestions}{" "}
+                    correct
+                  </span>
                 </div>
-              )}
-              {secondTryData && (
-                <div>
-                  <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
-                    <span>Second Try</span>
-                    <span>
-                      {secondTryData.correctAnswers}/
-                      {secondTryData.totalQuestions} correct
-                    </span>
-                  </div>
-                  <Progress
-                    value={
-                      (secondTryData.correctAnswers /
-                        secondTryData.totalQuestions) *
-                      100
-                    }
-                    className="h-2"
-                  />
-                </div>
-              )}
+                <Progress
+                  value={
+                    (firstTryData.correctAnswers /
+                      firstTryData.totalQuestions) *
+                    100
+                  }
+                  className="h-2"
+                />
+              </div>
             </div>
           )}
       </CardHeader>
