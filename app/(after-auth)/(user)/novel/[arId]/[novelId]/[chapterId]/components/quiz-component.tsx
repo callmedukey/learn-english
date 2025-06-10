@@ -493,32 +493,21 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       <div className="flex flex-wrap gap-2">
         {questions.map((question, index) => {
           const completed = status !== "retry" && question.isCompleted;
+          const isCurrent = index === currentQuestionIndex;
           return (
-            <Button
+            <div
               key={question.id}
-              variant={index === currentQuestionIndex ? "default" : "outline"}
-              size="sm"
-              onClick={() => {
-                // Set transition flag to prevent timer issues when switching questions
-                setIsTransitioning(true);
-
-                // Reset states for the new question
-                setSelectedAnswer("");
-                setIsAnswered(false);
-                setShowExplanation(false);
-                setIsCorrect(false);
-                setPointsAwarded(0);
-
-                setCurrentQuestionIndex(index);
-              }}
-              className={`relative ${completed ? "border-green-500" : ""}`}
-              disabled={!quizStarted}
+              className={`relative inline-flex h-8 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium whitespace-nowrap transition-all ${
+                isCurrent
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "border bg-background shadow-xs"
+              } ${completed && !isCurrent ? "border-green-500" : ""}`}
             >
               {index + 1}
               {completed && (
                 <CheckCircle className="absolute -top-1 -right-1 h-3 w-3 text-green-600" />
               )}
-            </Button>
+            </div>
           );
         })}
       </div>

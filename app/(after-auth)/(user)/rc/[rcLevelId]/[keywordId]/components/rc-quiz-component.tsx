@@ -624,20 +624,21 @@ export function RCQuizComponent({
           {questions.map((question, index) => {
             const completed =
               status !== "retry" && isQuestionCompleted(question.id);
+            const isCurrent = index === currentQuestionIndex;
             return (
-              <Button
+              <div
                 key={question.id}
-                variant={index === currentQuestionIndex ? "default" : "outline"}
-                size="sm"
-                onClick={() => setCurrentQuestionIndex(index)}
-                className={`relative ${completed ? "border-green-500" : ""}`}
-                disabled={!quizStarted}
+                className={`relative inline-flex h-8 items-center justify-center gap-1.5 rounded-md px-3 text-sm font-medium whitespace-nowrap transition-all ${
+                  isCurrent
+                    ? "bg-primary text-primary-foreground shadow-xs"
+                    : "border bg-background shadow-xs"
+                } ${completed && !isCurrent ? "border-green-500" : ""}`}
               >
                 {index + 1}
                 {completed && (
-                  <CheckCircle className="absolute -top-1 -right-1 h-3 w-3 text-green-600" />
+                  <CheckCircle className="absolute -top-1 -right-1 h-4 w-4 text-green-600" />
                 )}
-              </Button>
+              </div>
             );
           })}
         </div>

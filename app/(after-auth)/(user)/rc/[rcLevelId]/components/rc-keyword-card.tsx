@@ -44,12 +44,14 @@ interface RCKeywordCardProps {
   };
   rcLevelId: string;
   userId?: string;
+  hasPaidSubscription?: boolean;
 }
 
 export function RCKeywordCard({
   keyword,
   rcLevelId,
   userId,
+  hasPaidSubscription,
 }: RCKeywordCardProps) {
   // Calculate quiz attempt status
   let totalQuestions = 0;
@@ -78,7 +80,7 @@ export function RCKeywordCard({
 
   if (!hasQuestionSet || !isQuestionSetActive || !hasQuestions) {
     status = "no-content";
-  } else if (!keyword.isFree && !userId) {
+  } else if (!keyword.isFree && !hasPaidSubscription) {
     status = "locked";
   } else if (secondTryData) {
     status = "second-try-completed";
@@ -162,7 +164,7 @@ export function RCKeywordCard({
     hasQuestionSet &&
     isQuestionSetActive &&
     hasQuestions &&
-    (keyword.isFree || userId);
+    (keyword.isFree || hasPaidSubscription);
 
   const cardContent = (
     <Card

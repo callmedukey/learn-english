@@ -37,6 +37,7 @@ async function RCKeywords({
 }) {
   const session = await auth();
   const userId = session?.user?.id;
+  const hasPaidSubscription = session?.user?.hasPaidSubscription;
 
   // Build the where clause for search
   const searchWhere = searchParams.search
@@ -256,6 +257,7 @@ async function RCKeywords({
               keyword={keyword}
               rcLevelId={rcLevelId}
               userId={userId}
+              hasPaidSubscription={hasPaidSubscription}
             />
           ))}
         </div>
