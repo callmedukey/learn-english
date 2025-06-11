@@ -28,12 +28,17 @@ const Header = async () => {
     : [];
 
   return (
-    <header className="flex h-24 items-center justify-between border-b px-4">
+    <header className="relative flex h-24 items-center justify-center border-b px-4">
       {/* Logo */}
-      <Image src={logo} alt="Reading Champ" quality={100} priority />
+      <div className="absolute left-4 flex items-center space-x-4">
+        <Image src={logo} alt="Reading Champ" quality={100} priority />
+        <p className="text-xl font-bold tracking-tight text-primary">
+          READING CHAMP
+        </p>
+      </div>
 
       {/* Desktop Navigation Items - Hidden on mobile */}
-      <nav className="hidden items-center space-x-8 md:flex">
+      <nav className="hidden items-center space-x-8 lg:flex">
         <Link
           href="/dashboard"
           className="text-base font-medium text-gray-700 underline-offset-4 transition-colors hover:text-primary hover:underline"
@@ -55,9 +60,9 @@ const Header = async () => {
       </nav>
 
       {/* Right Side Icons */}
-      <div className="flex items-center space-x-2">
+      <div className="absolute right-4 flex items-center space-x-2">
         {/* Mobile Menu - Shown only on mobile */}
-        <div className="md:hidden">
+        <div className="lg:hidden">
           <MobileMenu
             userId={session?.user?.id}
             notifications={notifications}
@@ -65,7 +70,7 @@ const Header = async () => {
         </div>
 
         {/* Desktop Icons - Hidden on mobile */}
-        <div className="hidden items-center space-x-2 md:flex">
+        <div className="ml-auto hidden items-center space-x-2 lg:flex">
           {session?.user?.id && (
             <NotificationBell
               userId={session.user.id}
