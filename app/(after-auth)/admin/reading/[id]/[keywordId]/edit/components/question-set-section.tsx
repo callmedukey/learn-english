@@ -57,9 +57,15 @@ interface QuestionSetSectionProps {
       timeLimit: number;
     } | null;
   };
+  defaultTimer: number;
+  defaultScore: number;
 }
 
-const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
+const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
+  keyword,
+  defaultTimer,
+  defaultScore,
+}) => {
   const [isPending, startTransition] = useTransition();
   const [editingQuestionSet, setEditingQuestionSet] = useState(false);
   const [showAddQuestion, setShowAddQuestion] = useState(false);
@@ -68,7 +74,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
   const [title, setTitle] = useState(keyword.RCQuestionSet?.title || "");
   const [passage, setPassage] = useState(keyword.RCQuestionSet?.passage || "");
   const [questionSetTimeLimit, setQuestionSetTimeLimit] = useState(
-    keyword.RCQuestionSet?.timeLimit || 60,
+    keyword.RCQuestionSet?.timeLimit || defaultTimer,
   );
 
   // Question form state
@@ -76,16 +82,16 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
   const [choices, setChoices] = useState(["", "", "", ""]);
   const [answer, setAnswer] = useState("");
   const [explanation, setExplanation] = useState("");
-  const [score, setScore] = useState(1);
-  const [timeLimit, setTimeLimit] = useState(60);
+  const [score, setScore] = useState(defaultScore);
+  const [timeLimit, setTimeLimit] = useState(defaultTimer);
 
   const resetQuestionForm = () => {
     setQuestionText("");
     setChoices(["", "", "", ""]);
     setAnswer("");
     setExplanation("");
-    setScore(1);
-    setTimeLimit(60);
+    setScore(defaultScore);
+    setTimeLimit(defaultTimer);
   };
 
   const handleCreateQuestionSet = () => {
@@ -214,9 +220,11 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
                   type="number"
                   value={questionSetTimeLimit}
                   onChange={(e) =>
-                    setQuestionSetTimeLimit(parseInt(e.target.value) || 60)
+                    setQuestionSetTimeLimit(
+                      parseInt(e.target.value) || defaultTimer,
+                    )
                   }
-                  placeholder="60"
+                  placeholder={defaultTimer.toString()}
                   min="10"
                 />
                 <p className="mt-1 text-sm text-gray-500">
@@ -234,7 +242,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
                     setEditingQuestionSet(false);
                     setTitle("");
                     setPassage("");
-                    setQuestionSetTimeLimit(60);
+                    setQuestionSetTimeLimit(defaultTimer);
                   }}
                 >
                   Cancel
@@ -306,7 +314,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
                     setTitle(keyword.RCQuestionSet?.title || "");
                     setPassage(keyword.RCQuestionSet?.passage || "");
                     setQuestionSetTimeLimit(
-                      keyword.RCQuestionSet?.timeLimit || 60,
+                      keyword.RCQuestionSet?.timeLimit || defaultTimer,
                     );
                   }}
                 >
@@ -348,9 +356,11 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
                 type="number"
                 value={questionSetTimeLimit}
                 onChange={(e) =>
-                  setQuestionSetTimeLimit(parseInt(e.target.value) || 60)
+                  setQuestionSetTimeLimit(
+                    parseInt(e.target.value) || defaultTimer,
+                  )
                 }
-                placeholder="60"
+                placeholder={defaultTimer.toString()}
                 min="0"
               />
             </div>
@@ -460,7 +470,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
                     type="number"
                     value={timeLimit}
                     onChange={(e) =>
-                      setTimeLimit(parseInt(e.target.value) || 60)
+                      setTimeLimit(parseInt(e.target.value) || defaultTimer)
                     }
                     min="10"
                   />
@@ -490,6 +500,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({ keyword }) => {
             key={question.id}
             question={question}
             onUpdate={() => window.location.reload()}
+            defaultTimer={defaultTimer}
           />
         ))}
       </div>
@@ -510,9 +521,14 @@ interface QuestionCardProps {
     timeLimit: number;
   };
   onUpdate: () => void;
+  defaultTimer: number;
 }
 
-const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
+const QuestionCard: React.FC<QuestionCardProps> = ({
+  question,
+  onUpdate,
+  defaultTimer,
+}) => {
   const [isEditing, setIsEditing] = useState(false);
   const [isPending, startTransition] = useTransition();
   const [editForm, setEditForm] = useState({
@@ -677,7 +693,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
                 onChange={(e) =>
                   setEditForm({
                     ...editForm,
-                    timeLimit: parseInt(e.target.value) || 60,
+                    timeLimit: parseInt(e.target.value) || defaultTimer,
                   })
                 }
                 min="0"

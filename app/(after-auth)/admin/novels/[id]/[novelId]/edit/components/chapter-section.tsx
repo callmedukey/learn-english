@@ -74,12 +74,16 @@ interface ChapterSectionProps {
   novelId: string;
   chapters: Chapter[];
   onChapterUpdate: () => void;
+  defaultTimer: number;
+  defaultScore: number;
 }
 
 const ChapterSection: React.FC<ChapterSectionProps> = ({
   novelId,
   chapters,
   onChapterUpdate,
+  defaultTimer,
+  defaultScore,
 }) => {
   const [isPending, startTransition] = useTransition();
   const [expandedChapters, setExpandedChapters] = useState<Set<string>>(
@@ -255,6 +259,8 @@ const ChapterSection: React.FC<ChapterSectionProps> = ({
             onUpdate={onChapterUpdate}
             onDelete={() => handleDeleteChapter(chapter.id)}
             isPending={isPending}
+            defaultTimer={defaultTimer}
+            defaultScore={defaultScore}
           />
         ))}
       </div>
@@ -276,6 +282,8 @@ interface ChapterCardProps {
   onUpdate: () => void;
   onDelete: () => void;
   isPending: boolean;
+  defaultTimer: number;
+  defaultScore: number;
 }
 
 const ChapterCard: React.FC<ChapterCardProps> = ({
@@ -285,6 +293,8 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
   onUpdate,
   onDelete,
   isPending,
+  defaultTimer,
+  defaultScore,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -491,6 +501,8 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
               chapterId={chapter.id}
               questionSet={chapter.novelQuestionSet}
               onUpdate={onUpdate}
+              defaultTimer={defaultTimer}
+              defaultScore={defaultScore}
             />
           </div>
         </CollapsibleContent>
@@ -504,12 +516,16 @@ interface QuestionSetSectionProps {
   chapterId: string;
   questionSet: Chapter["novelQuestionSet"];
   onUpdate: () => void;
+  defaultTimer: number;
+  defaultScore: number;
 }
 
 const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
   chapterId,
   questionSet,
   onUpdate,
+  defaultTimer,
+  defaultScore,
 }) => {
   const [isEditing, setIsEditing] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
@@ -721,6 +737,8 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
         questionSetId={questionSet?.id || ""}
         questions={questionSet?.novelQuestions || []}
         onUpdate={onUpdate}
+        defaultTimer={defaultTimer}
+        defaultScore={defaultScore}
       />
     </div>
   );
@@ -740,12 +758,16 @@ interface QuestionsSectionProps {
     timeLimit: number;
   }>;
   onUpdate: () => void;
+  defaultTimer: number;
+  defaultScore: number;
 }
 
 const QuestionsSection: React.FC<QuestionsSectionProps> = ({
   questionSetId,
   questions,
   onUpdate,
+  defaultTimer,
+  defaultScore,
 }) => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [newQuestion, setNewQuestion] = useState({
@@ -753,8 +775,8 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
     choices: ["", "", "", ""],
     answer: "",
     explanation: "",
-    score: 10,
-    timeLimit: 40,
+    score: defaultScore,
+    timeLimit: defaultTimer,
     orderNumber: questions.length + 1,
   });
 
@@ -795,8 +817,8 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
         choices: ["", "", "", ""],
         answer: "",
         explanation: "",
-        score: 10,
-        timeLimit: 40,
+        score: defaultScore,
+        timeLimit: defaultTimer,
         orderNumber: questions.length + 2,
       });
       setShowCreateForm(false);

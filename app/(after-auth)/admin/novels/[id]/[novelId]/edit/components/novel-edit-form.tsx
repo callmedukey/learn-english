@@ -75,9 +75,18 @@ interface NovelEditFormProps {
     level: string;
     description?: string | null;
   }>;
+  novelSettings: {
+    id: string;
+    defaultTimer: number;
+    defaultScore: number;
+  } | null;
 }
 
-const NovelEditForm: React.FC<NovelEditFormProps> = ({ novel, arLevels }) => {
+const NovelEditForm: React.FC<NovelEditFormProps> = ({
+  novel,
+  arLevels,
+  novelSettings,
+}) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [isDeleting, startDeleteTransition] = useTransition();
@@ -238,6 +247,8 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({ novel, arLevels }) => {
           novelId={novel.id}
           chapters={novel.novelChapters}
           onChapterUpdate={() => router.refresh()}
+          defaultTimer={novelSettings?.defaultTimer || 40}
+          defaultScore={novelSettings?.defaultScore || 10}
         />
       </div>
     </div>

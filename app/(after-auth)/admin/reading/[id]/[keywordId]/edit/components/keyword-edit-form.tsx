@@ -72,11 +72,17 @@ interface KeywordEditFormProps {
     level: string;
     description?: string | null;
   }>;
+  rcSettings: {
+    id: string;
+    defaultTimer: number;
+    defaultScore: number;
+  } | null;
 }
 
 const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
   keyword,
   rcLevels,
+  rcSettings,
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -260,7 +266,11 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
       <Separator />
 
       {/* Question Set Section */}
-      <QuestionSetSection keyword={keyword} />
+      <QuestionSetSection
+        keyword={keyword}
+        defaultTimer={rcSettings?.defaultTimer || 60}
+        defaultScore={rcSettings?.defaultScore || 1}
+      />
     </div>
   );
 };

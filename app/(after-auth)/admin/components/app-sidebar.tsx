@@ -3,7 +3,7 @@ import {
   RiMoneyDollarCircleLine,
   RiNotificationLine,
 } from "@remixicon/react";
-import { Book, Brain, Home, MapPin, Users } from "lucide-react";
+import { Book, Brain, Home, MapPin, Settings, Users } from "lucide-react";
 import { RiContractLine } from "react-icons/ri";
 
 import {
@@ -65,6 +65,11 @@ const items = [
     title: "Notifications",
     url: "/admin/notifications",
     icon: RiNotificationLine,
+  },
+  {
+    title: "Settings",
+    url: "/admin/settings",
+    icon: Settings,
   },
 ];
 

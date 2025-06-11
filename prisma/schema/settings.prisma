@@ -1,0 +1,13 @@
+model RCSettings {
+  id        String   @id @default(uuid())
+
+  defaultTimer Int @default(0)
+  defaultScore Int @default(0)
+}
+
+model NovelSettings {
+  id        String   @id @default(uuid())
+
+  defaultTimer Int @default(0)
+  defaultScore Int @default(0)
+}
