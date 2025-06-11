@@ -34,7 +34,9 @@ const Footer = () => {
                   <span className="font-semibold">
                     Mail-order Sales Registration:
                   </span>
-                  <span className="ml-2 text-gray-500">2024-Seoul-0001</span>
+                  <span className="ml-2 text-gray-500">
+                    2025 - Seongnam Bundang B-0472
+                  </span>
                 </div>
                 <div>
                   <span className="font-semibold">Address:</span>
