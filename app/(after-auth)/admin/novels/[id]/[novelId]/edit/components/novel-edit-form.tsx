@@ -6,17 +6,6 @@ import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -31,10 +20,8 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
 import ChapterSection from "./chapter-section";
-import {
-  deleteNovelAction,
-  updateNovelAction,
-} from "../actions/novel-edit.actions";
+import DeleteNovelDialog from "./delete-novel-dialog";
+import { updateNovelAction } from "../actions/novel-edit.actions";
 
 interface NovelEditFormProps {
   novel: {
@@ -89,7 +76,6 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [isDeleting, startDeleteTransition] = useTransition();
   // Form state
   const [title, setTitle] = useState(novel.title);
   const [description, setDescription] = useState(novel.description || "");
@@ -110,19 +96,6 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
       } else {
         toast.success("Novel updated successfully");
         router.refresh();
-      }
-    });
-  };
-
-  const handleDelete = () => {
-    startDeleteTransition(async () => {
-      const result = await deleteNovelAction(novel.id);
-
-      if (result.error) {
-        toast.error(result.error);
-      } else {
-        toast.success("Novel deleted successfully");
-        router.push(`/admin/novels/${novel.ARId}`);
       }
     });
   };
@@ -154,36 +127,16 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
             <Save className="mr-2 h-4 w-4" />
             {isPending ? "Saving..." : "Save Changes"}
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button disabled={isDeleting} variant="destructive">
-                <Trash2 className="mr-2 h-4 w-4" />
-                {isDeleting ? "Deleting..." : "Delete Novel"}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the
-                  novel &quot;<strong>{novel.title}</strong>&quot; and all of
-                  its chapters, question sets, and questions.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel disabled={isDeleting}>
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  {isDeleting ? "Deleting..." : "Yes, delete novel"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DeleteNovelDialog
+            novelId={novel.id}
+            novelTitle={novel.title}
+            redirectPath={`/admin/novels/${novel.ARId}`}
+          >
+            <Button variant="destructive">
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete Novel
+            </Button>
+          </DeleteNovelDialog>
         </div>
       </div>
 

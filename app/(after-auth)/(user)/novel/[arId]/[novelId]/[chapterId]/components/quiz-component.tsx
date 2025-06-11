@@ -70,6 +70,9 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   const lastQuestionIdRef = useRef<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  // Store the initial status to use throughout the quiz
+  const [initialStatus] = useState(status);
+
   const questions = useMemo(
     () => chapter.novelQuestionSet?.novelQuestions || [],
     [chapter.novelQuestionSet?.novelQuestions],
@@ -127,8 +130,8 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     // Determine if points should be disallowed
     // Points are disallowed if status is retry, OR if status is continue and the question was already completed.
     const disallowPoints =
-      status === "retry" ||
-      (status === "continue" && currentQuestion.isCompleted);
+      initialStatus === "retry" ||
+      (initialStatus === "continue" && currentQuestion.isCompleted);
 
     const result = await completeQuestionAction(
       currentQuestion.id,
@@ -146,7 +149,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       setIsAnswered(true);
     }
     setIsSubmitting(false);
-  }, [currentQuestion, userId, status]);
+  }, [currentQuestion, userId, initialStatus]);
 
   // Timer effect
   useEffect(() => {
@@ -201,7 +204,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
           userId,
           "", // No answer selected
           true, // Timed out/left page
-          status === "retry",
+          initialStatus === "retry",
         );
       }
     };
@@ -214,7 +217,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
           userId,
           "", // No answer selected
           true, // Timed out/left page
-          status === "retry",
+          initialStatus === "retry",
         );
 
         // Show confirmation dialog
@@ -235,7 +238,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     isAnswered,
     showExplanation,
     userId,
-    status,
+    initialStatus,
     quizStarted,
   ]);
 
@@ -253,8 +256,8 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     // Determine if points should be disallowed
     // Points are disallowed if status is retry, OR if status is continue and the question was already completed.
     const disallowPoints =
-      status === "retry" ||
-      (status === "continue" && currentQuestion.isCompleted);
+      initialStatus === "retry" ||
+      (initialStatus === "continue" && currentQuestion.isCompleted);
 
     const result = await completeQuestionAction(
       currentQuestion.id,
@@ -363,6 +366,17 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   }
 
   if (quizCompleted) {
+    // Debug: Log the status when quiz is completed
+    console.log(
+      "Quiz completed with status:",
+      status,
+      "Initial status:",
+      initialStatus,
+    );
+
+    // Use the initial status that was set when the quiz started
+    const effectiveStatus = initialStatus;
+
     return (
       <Card className="mx-auto max-w-4xl">
         <CardHeader>
@@ -377,31 +391,46 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
             </p>
 
             {/* Score Display */}
-            <div className="mx-auto w-fit rounded-full border-2 border-primary/20 bg-primary/10 px-6 py-3">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">
-                  {correctAnswersCount}/{questions.length}
-                </div>
-                <div className="text-sm font-medium text-primary/80">
-                  Correct Answers
+            <div className="mx-auto flex w-fit gap-8">
+              <div className="rounded-full border-2 border-primary/20 bg-primary/10 px-6 py-3">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary">
+                    {correctAnswersCount}/{questions.length}
+                  </div>
+                  <div className="text-sm font-medium text-primary/80">
+                    Correct Answers
+                  </div>
                 </div>
               </div>
+              {effectiveStatus !== "retry" && (
+                <div className="rounded-full border-2 border-amber-500/20 bg-amber-500/10 px-6 py-3">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-amber-600">
+                      {totalPointsEarned}
+                    </div>
+                    <div className="text-sm font-medium text-amber-600/80">
+                      Total Score
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {status === "start" && (
-              <p className="font-medium text-green-600">
-                Points earned: {totalPointsEarned}
+            {effectiveStatus === "start" && totalPointsEarned > 0 && (
+              <p className="text-sm text-green-600">
+                Great job! You earned {totalPointsEarned} points
               </p>
             )}
-            {status === "continue" && (
-              <p className="font-medium text-amber-600">
-                Points earned this session: {totalPointsEarned} (Previously
-                completed questions do not award new points)
+            {effectiveStatus === "continue" && (
+              <p className="text-sm text-amber-600">
+                {totalPointsEarned > 0
+                  ? `Points earned this session: ${totalPointsEarned} (Previously completed questions do not award new points)`
+                  : "Previously completed questions do not award new points"}
               </p>
             )}
-            {status === "retry" && (
-              <p className="font-medium text-amber-600">
-                Quiz completed (no points awarded for retry)
+            {effectiveStatus === "retry" && (
+              <p className="text-sm text-amber-600">
+                Retry mode - no points awarded
               </p>
             )}
           </div>
@@ -437,7 +466,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
               <p>• {questions.length} questions total</p>
               <p>• Each question has a time limit</p>
               <p>• You&apos;ll see explanations after each answer</p>
-              {status === "retry" && (
+              {initialStatus === "retry" && (
                 <p className="font-medium text-amber-600">
                   • No points will be awarded for retry attempts
                 </p>
@@ -492,7 +521,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       {/* Question Navigation */}
       <div className="flex flex-wrap gap-2">
         {questions.map((question, index) => {
-          const completed = status !== "retry" && question.isCompleted;
+          const completed = initialStatus !== "retry" && question.isCompleted;
           const isCurrent = index === currentQuestionIndex;
           return (
             <div
@@ -623,7 +652,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
                       +{pointsAwarded} points
                     </Badge>
                   )}
-                  {status === "retry" && (
+                  {initialStatus === "retry" && (
                     <Badge className="bg-gray-100 text-gray-600">
                       Retry Mode
                     </Badge>

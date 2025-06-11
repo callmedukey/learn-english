@@ -6,17 +6,6 @@ import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -32,10 +21,8 @@ import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
 import QuestionSetSection from "./question-set-section";
-import {
-  deleteKeywordAction,
-  updateKeywordAction,
-} from "../actions/keyword-edit.actions";
+import DeleteKeywordDialog from "./delete-keyword-dialog";
+import { updateKeywordAction } from "../actions/keyword-edit.actions";
 
 interface KeywordEditFormProps {
   keyword: {
@@ -86,7 +73,6 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-  const [isDeleting, startDeleteTransition] = useTransition();
 
   // Form state
   const [name, setName] = useState(keyword.name);
@@ -122,19 +108,6 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
     });
   };
 
-  const handleDelete = () => {
-    startDeleteTransition(async () => {
-      const result = await deleteKeywordAction(keyword.id);
-
-      if (result.error) {
-        toast.error(result.error);
-      } else {
-        toast.success("Keyword deleted successfully");
-        router.push(`/admin/reading/${keyword.rcLevelId}`);
-      }
-    });
-  };
-
   return (
     <div className="space-y-8">
       {/* Header */}
@@ -163,36 +136,16 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
             <Save className="mr-2 h-4 w-4" />
             {isPending ? "Saving..." : "Save Changes"}
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button disabled={isDeleting} variant="destructive">
-                <Trash2 className="mr-2 h-4 w-4" />
-                {isDeleting ? "Deleting..." : "Delete Keyword"}
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete the
-                  keyword &quot;<strong>{keyword.name}</strong>&quot; and all of
-                  its question sets and questions.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel disabled={isDeleting}>
-                  Cancel
-                </AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDelete}
-                  disabled={isDeleting}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  {isDeleting ? "Deleting..." : "Yes, delete keyword"}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DeleteKeywordDialog
+            keywordId={keyword.id}
+            keywordName={keyword.name}
+            rcLevelId={keyword.rcLevelId}
+          >
+            <Button variant="destructive">
+              <Trash2 className="mr-2 h-4 w-4" />
+              Delete Keyword
+            </Button>
+          </DeleteKeywordDialog>
         </div>
       </div>
 

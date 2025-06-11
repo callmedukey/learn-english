@@ -16,6 +16,8 @@ import {
   AlertDialogDescription,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 import { deleteKeyword } from "../actions/delete-keyword.action";
 
@@ -27,6 +29,7 @@ interface DeleteKeywordAlertProps {
 const DeleteKeywordAlert = ({ keywordId, name }: DeleteKeywordAlertProps) => {
   const [isPending, startTransition] = useTransition();
   const [isOpen, setIsOpen] = useState(false);
+  const [confirmText, setConfirmText] = useState("");
 
   return (
     <AlertDialog open={isOpen} onOpenChange={setIsOpen}>
@@ -52,11 +55,24 @@ const DeleteKeywordAlert = ({ keywordId, name }: DeleteKeywordAlertProps) => {
             and questions.
           </AlertDialogDescription>
         </AlertDialogHeader>
+        <div className="py-4">
+          <Label htmlFor="confirm-delete" className="text-sm font-medium">
+            Type &quot;delete&quot; to confirm
+          </Label>
+          <Input
+            id="confirm-delete"
+            type="text"
+            value={confirmText}
+            onChange={(e) => setConfirmText(e.target.value)}
+            placeholder="Type 'delete' to confirm"
+            className="mt-2"
+          />
+        </div>
         <AlertDialogFooter>
           <AlertDialogCancel>Cancel</AlertDialogCancel>
           <AlertDialogAction className="bg-red-600 hover:bg-red-700" asChild>
             <Button
-              disabled={isPending}
+              disabled={isPending || confirmText !== "delete"}
               onClick={() => {
                 startTransition(async () => {
                   const result = await deleteKeyword(keywordId);

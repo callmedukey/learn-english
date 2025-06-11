@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 import {
@@ -17,31 +18,34 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 
-import { deleteARAction } from "../actions/ar.actions";
+import { deleteNovelAction } from "../actions/novel-edit.actions";
 
-interface DeleteARDialogProps {
-  arId: string;
-  arLevel: string;
-  novelCount: number;
+interface DeleteNovelDialogProps {
+  novelId: string;
+  novelTitle: string;
+  redirectPath: string;
   children: React.ReactNode;
 }
 
-const DeleteARDialog: React.FC<DeleteARDialogProps> = ({
-  arId,
-  arLevel,
-  novelCount,
+const DeleteNovelDialog: React.FC<DeleteNovelDialogProps> = ({
+  novelId,
+  novelTitle,
+  redirectPath,
   children,
 }) => {
+  const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [confirmationText, setConfirmationText] = useState("");
 
-  const handleDelete = async () => {
+  const handleDelete = () => {
     startTransition(async () => {
-      const result = await deleteARAction(arId);
+      const result = await deleteNovelAction(novelId);
+
       if (result.error) {
         toast.error(result.error);
       } else {
-        toast.success(`AR record '${arLevel}' deleted successfully!`);
+        toast.success("Novel deleted successfully");
+        router.push(redirectPath);
       }
     });
   };
@@ -52,8 +56,7 @@ const DeleteARDialog: React.FC<DeleteARDialogProps> = ({
     }
   };
 
-  const canDelete =
-    confirmationText.toLowerCase() === "delete" && novelCount === 0;
+  const canDelete = confirmationText.toLowerCase() === "delete";
 
   return (
     <AlertDialog onOpenChange={handleOpenChange}>
@@ -62,16 +65,9 @@ const DeleteARDialog: React.FC<DeleteARDialogProps> = ({
         <AlertDialogHeader>
           <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
           <AlertDialogDescription>
-            This action cannot be undone. This will permanently delete the AR
-            record &quot;<strong>{arLevel}</strong>&quot;
-            {novelCount > 0 && (
-              <>
-                {" "}
-                and its <strong>{novelCount}</strong> associated novel
-                {novelCount !== 1 ? "s" : ""}
-              </>
-            )}
-            . Are you sure you want to proceed?
+            This action cannot be undone. This will permanently delete the novel
+            &quot;<strong>{novelTitle}</strong>&quot; and all of its chapters,
+            question sets, and questions.
           </AlertDialogDescription>
         </AlertDialogHeader>
 
@@ -85,13 +81,8 @@ const DeleteARDialog: React.FC<DeleteARDialogProps> = ({
             value={confirmationText}
             onChange={(e) => setConfirmationText(e.target.value)}
             placeholder="Type 'delete' to confirm"
-            disabled={isPending || novelCount > 0}
+            disabled={isPending}
           />
-          {novelCount > 0 && (
-            <p className="text-sm text-red-600">
-              Cannot delete AR records with associated novels
-            </p>
-          )}
         </div>
 
         <AlertDialogFooter>
@@ -101,7 +92,7 @@ const DeleteARDialog: React.FC<DeleteARDialogProps> = ({
             disabled={isPending || !canDelete}
             className="bg-red-600 hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {isPending ? "Deleting..." : "Delete AR record"}
+            {isPending ? "Deleting..." : "Delete novel"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>
@@ -109,4 +100,4 @@ const DeleteARDialog: React.FC<DeleteARDialogProps> = ({
   );
 };
 
-export default DeleteARDialog;
+export default DeleteNovelDialog;

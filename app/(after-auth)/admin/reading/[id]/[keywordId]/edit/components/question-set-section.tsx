@@ -4,17 +4,6 @@ import { Plus, Edit, Trash2, Save, X } from "lucide-react";
 import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -27,13 +16,13 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 
+import DeleteQuestionSetDialog from "./delete-question-set-dialog";
+import DeleteRCQuestionDialog from "./delete-rc-question-dialog";
 import {
   createQuestionSetAction,
   updateQuestionSetAction,
-  deleteQuestionSetAction,
   createQuestionAction,
   updateQuestionAction,
-  deleteQuestionAction,
 } from "../actions/question-set.actions";
 
 interface QuestionSetSectionProps {
@@ -129,20 +118,6 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
       } else {
         toast.success("Question set updated successfully");
         setEditingQuestionSet(false);
-        window.location.reload();
-      }
-    });
-  };
-
-  const handleDeleteQuestionSet = () => {
-    if (!keyword.RCQuestionSet) return;
-
-    startTransition(async () => {
-      const result = await deleteQuestionSetAction(keyword.RCQuestionSet!.id);
-      if (result.error) {
-        toast.error(result.error);
-      } else {
-        toast.success("Question set deleted successfully");
         window.location.reload();
       }
     });
@@ -272,34 +247,16 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
                   <Edit className="mr-2 h-4 w-4" />
                   Edit Passage
                 </Button>
-                <AlertDialog>
-                  <AlertDialogTrigger asChild>
-                    <Button variant="destructive" size="sm">
-                      <Trash2 className="mr-2 h-4 w-4" />
-                      Delete Passage
-                    </Button>
-                  </AlertDialogTrigger>
-                  <AlertDialogContent>
-                    <AlertDialogHeader>
-                      <AlertDialogTitle>
-                        Delete Reading Passage?
-                      </AlertDialogTitle>
-                      <AlertDialogDescription>
-                        This will permanently delete the reading passage and all{" "}
-                        {keyword.RCQuestionSet.RCQuestion.length} questions.
-                      </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
-                      <AlertDialogAction
-                        onClick={handleDeleteQuestionSet}
-                        className="bg-red-600 hover:bg-red-700"
-                      >
-                        Delete
-                      </AlertDialogAction>
-                    </AlertDialogFooter>
-                  </AlertDialogContent>
-                </AlertDialog>
+                <DeleteQuestionSetDialog
+                  questionSetId={keyword.RCQuestionSet!.id}
+                  questionCount={keyword.RCQuestionSet.RCQuestion.length}
+                  onSuccess={() => window.location.reload()}
+                >
+                  <Button variant="destructive" size="sm">
+                    <Trash2 className="mr-2 h-4 w-4" />
+                    Delete Passage
+                  </Button>
+                </DeleteQuestionSetDialog>
               </>
             ) : (
               <div className="flex space-x-2">
@@ -578,19 +535,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
     });
   };
 
-  const handleDelete = () => {
-    startTransition(async () => {
-      const result = await deleteQuestionAction(question.id);
-
-      if (result.error) {
-        toast.error(result.error);
-      } else {
-        toast.success("Question deleted successfully");
-        onUpdate();
-      }
-    });
-  };
-
   const validEditChoices = editForm.choices.filter((c) => c.trim());
   const isEditAnswerValid = isAnswerValid(editForm.answer, validEditChoices);
 
@@ -758,36 +702,19 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             >
               <Edit className="h-4 w-4" />
             </Button>
-            <AlertDialog>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="text-red-600 hover:text-red-700"
-                >
-                  <Trash2 className="h-4 w-4" />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This action cannot be undone. This will permanently delete
-                    question &quot;<strong>Q{question.orderNumber}</strong>
-                    &quot;.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction
-                    onClick={handleDelete}
-                    className="bg-red-600 hover:bg-red-700"
-                  >
-                    Yes, delete question
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
+            <DeleteRCQuestionDialog
+              questionId={question.id}
+              questionNumber={question.orderNumber}
+              onSuccess={onUpdate}
+            >
+              <Button
+                variant="outline"
+                size="sm"
+                className="text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="h-4 w-4" />
+              </Button>
+            </DeleteRCQuestionDialog>
           </div>
         </div>
       </CardHeader>

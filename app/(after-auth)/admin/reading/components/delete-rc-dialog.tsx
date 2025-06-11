@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import {
@@ -14,6 +14,8 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 
 import { deleteRCLevelAction } from "../actions/rc.actions";
 
@@ -31,6 +33,7 @@ const DeleteRCDialog: React.FC<DeleteRCDialogProps> = ({
   children,
 }) => {
   const [isPending, startTransition] = useTransition();
+  const [confirmText, setConfirmText] = useState("");
 
   const handleDelete = async () => {
     startTransition(async () => {
@@ -62,11 +65,26 @@ const DeleteRCDialog: React.FC<DeleteRCDialogProps> = ({
             . Are you sure you want to proceed?
           </AlertDialogDescription>
         </AlertDialogHeader>
+        {keywordCount === 0 && (
+          <div className="py-4">
+            <Label htmlFor="confirm-delete" className="text-sm font-medium">
+              Type &quot;delete&quot; to confirm
+            </Label>
+            <Input
+              id="confirm-delete"
+              type="text"
+              value={confirmText}
+              onChange={(e) => setConfirmText(e.target.value)}
+              placeholder="Type 'delete' to confirm"
+              className="mt-2"
+            />
+          </div>
+        )}
         <AlertDialogFooter>
           <AlertDialogCancel disabled={isPending}>Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={handleDelete}
-            disabled={isPending || keywordCount > 0}
+            disabled={isPending || keywordCount > 0 || confirmText !== "delete"}
             className="bg-red-600 hover:bg-red-700"
           >
             {isPending ? "Deleting..." : "Yes, delete RC level"}

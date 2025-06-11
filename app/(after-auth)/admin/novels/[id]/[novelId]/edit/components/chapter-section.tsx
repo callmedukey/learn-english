@@ -12,17 +12,6 @@ import {
 import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
-import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -35,16 +24,16 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
 
+import DeleteChapterDialog from "./delete-chapter-dialog";
+import DeleteQuestionDialog from "./delete-question-dialog";
+import DeleteQuestionSetDialog from "./delete-question-set-dialog";
 import {
   createChapterAction,
-  deleteChapterAction,
   updateChapterAction,
   createQuestionSetAction,
   updateQuestionSetAction,
-  deleteQuestionSetAction,
   createQuestionAction,
   updateQuestionAction,
-  deleteQuestionAction,
 } from "../actions/chapter.actions";
 
 interface Chapter {
@@ -133,19 +122,6 @@ const ChapterSection: React.FC<ChapterSectionProps> = ({
           isFree: false,
         });
         setShowNewChapterForm(false);
-        onChapterUpdate();
-      }
-    });
-  };
-
-  const handleDeleteChapter = (chapterId: string) => {
-    startTransition(async () => {
-      const result = await deleteChapterAction(chapterId);
-
-      if (result.error) {
-        toast.error(result.error);
-      } else {
-        toast.success("Chapter deleted successfully");
         onChapterUpdate();
       }
     });
@@ -257,7 +233,6 @@ const ChapterSection: React.FC<ChapterSectionProps> = ({
             isExpanded={expandedChapters.has(chapter.id)}
             onToggle={() => toggleChapter(chapter.id)}
             onUpdate={onChapterUpdate}
-            onDelete={() => handleDeleteChapter(chapter.id)}
             isPending={isPending}
             defaultTimer={defaultTimer}
             defaultScore={defaultScore}
@@ -280,7 +255,6 @@ interface ChapterCardProps {
   isExpanded: boolean;
   onToggle: () => void;
   onUpdate: () => void;
-  onDelete: () => void;
   isPending: boolean;
   defaultTimer: number;
   defaultScore: number;
@@ -291,7 +265,6 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
   isExpanded,
   onToggle,
   onUpdate,
-  onDelete,
   isPending,
   defaultTimer,
   defaultScore,
@@ -388,42 +361,20 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
               >
                 <Edit className="h-4 w-4" />
               </Button>
-              <AlertDialog>
-                <AlertDialogTrigger asChild>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    disabled={isPending}
-                    className="text-red-600 hover:text-red-700"
-                  >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </AlertDialogTrigger>
-                <AlertDialogContent>
-                  <AlertDialogHeader>
-                    <AlertDialogTitle>
-                      Are you absolutely sure?
-                    </AlertDialogTitle>
-                    <AlertDialogDescription>
-                      This action cannot be undone. This will permanently delete
-                      chapter &quot;<strong>{chapter.title}</strong>&quot; and
-                      all of its question sets and questions.
-                    </AlertDialogDescription>
-                  </AlertDialogHeader>
-                  <AlertDialogFooter>
-                    <AlertDialogCancel disabled={isPending}>
-                      Cancel
-                    </AlertDialogCancel>
-                    <AlertDialogAction
-                      onClick={onDelete}
-                      disabled={isPending}
-                      className="bg-red-600 hover:bg-red-700"
-                    >
-                      Yes, delete chapter
-                    </AlertDialogAction>
-                  </AlertDialogFooter>
-                </AlertDialogContent>
-              </AlertDialog>
+              <DeleteChapterDialog
+                chapterId={chapter.id}
+                chapterTitle={chapter.title}
+                onSuccess={onUpdate}
+              >
+                <Button
+                  variant="outline"
+                  size="sm"
+                  disabled={isPending}
+                  className="text-red-600 hover:text-red-700"
+                >
+                  <Trash2 className="h-4 w-4" />
+                </Button>
+              </DeleteChapterDialog>
             </div>
           </div>
         </CollapsibleTrigger>
@@ -570,19 +521,6 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
     }
   };
 
-  const handleDeleteQuestionSet = async () => {
-    if (!questionSet) return;
-
-    const result = await deleteQuestionSetAction(questionSet.id);
-
-    if (result.error) {
-      toast.error(result.error);
-    } else {
-      toast.success("Question set deleted successfully");
-      onUpdate();
-    }
-  };
-
   if (!questionSet && !showCreateForm) {
     return (
       <div className="py-6 text-center">
@@ -662,35 +600,18 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
           >
             <Edit className="h-4 w-4" />
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-red-600 hover:text-red-700"
-              >
-                <Trash2 className="h-4 w-4" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  this question set and all of its questions.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDeleteQuestionSet}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  Yes, delete question set
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DeleteQuestionSetDialog
+            questionSetId={questionSet?.id || ""}
+            onSuccess={onUpdate}
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-red-600 hover:text-red-700"
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          </DeleteQuestionSetDialog>
         </div>
       </div>
 
@@ -1065,17 +986,6 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
     }
   };
 
-  const handleDelete = async () => {
-    const result = await deleteQuestionAction(question.id);
-
-    if (result.error) {
-      toast.error(result.error);
-    } else {
-      toast.success("Question deleted successfully");
-      onUpdate();
-    }
-  };
-
   const validEditChoices = editForm.choices.filter((c) => c.trim());
   const isEditAnswerValid = isAnswerValid(editForm.answer, validEditChoices);
 
@@ -1251,35 +1161,19 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
           >
             <Edit className="h-3 w-3" />
           </Button>
-          <AlertDialog>
-            <AlertDialogTrigger asChild>
-              <Button
-                variant="outline"
-                size="sm"
-                className="text-red-600 hover:text-red-700"
-              >
-                <Trash2 className="h-3 w-3" />
-              </Button>
-            </AlertDialogTrigger>
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
-                <AlertDialogDescription>
-                  This action cannot be undone. This will permanently delete
-                  question &quot;<strong>Q{question.orderNumber}</strong>&quot;.
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>Cancel</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleDelete}
-                  className="bg-red-600 hover:bg-red-700"
-                >
-                  Yes, delete question
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
+          <DeleteQuestionDialog
+            questionId={question.id}
+            questionNumber={question.orderNumber}
+            onSuccess={onUpdate}
+          >
+            <Button
+              variant="outline"
+              size="sm"
+              className="text-red-600 hover:text-red-700"
+            >
+              <Trash2 className="h-3 w-3" />
+            </Button>
+          </DeleteQuestionDialog>
         </div>
       </div>
     </div>

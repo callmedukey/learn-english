@@ -80,6 +80,9 @@ export function RCQuizComponent({
   const lastQuestionIdRef = useRef<string | null>(null);
   const timerEffectRanAtLeastOnce = useRef(false);
 
+  // Store the initial status to use throughout the quiz
+  const [initialStatus] = useState(status);
+
   // New states for reading phase
   const [isReadingPhase, setIsReadingPhase] = useState(false);
   const [readingTimeLeft, setReadingTimeLeft] = useState(0);
@@ -192,7 +195,13 @@ export function RCQuizComponent({
       //   setTimeLeft(0);
       // }
     }
-  }, [currentQuestion, quizStarted, userId, status, isQuestionCompleted]);
+  }, [
+    currentQuestion,
+    quizStarted,
+    userId,
+    initialStatus,
+    isQuestionCompleted,
+  ]);
 
   const handleTimeOut = useCallback(async () => {
     if (!currentQuestion) return;
@@ -201,8 +210,9 @@ export function RCQuizComponent({
     try {
       // Determine if points should be disallowed
       const disallowPoints =
-        status === "retry" ||
-        (status === "continue" && isQuestionCompleted(currentQuestion.id));
+        initialStatus === "retry" ||
+        (initialStatus === "continue" &&
+          isQuestionCompleted(currentQuestion.id));
 
       const result = await submitRCAnswer(
         currentQuestion.id,
@@ -223,7 +233,13 @@ export function RCQuizComponent({
       console.error("Error submitting timeout:", error);
     }
     setIsSubmitting(false);
-  }, [currentQuestion, keywordId, rcLevelId, status, isQuestionCompleted]);
+  }, [
+    currentQuestion,
+    keywordId,
+    rcLevelId,
+    initialStatus,
+    isQuestionCompleted,
+  ]);
 
   // Timer effect
   useEffect(() => {
@@ -278,7 +294,7 @@ export function RCQuizComponent({
           keywordId,
           rcLevelId,
           true, // Timed out/left page
-          status === "retry",
+          initialStatus === "retry",
         );
       }
     };
@@ -292,7 +308,7 @@ export function RCQuizComponent({
           keywordId,
           rcLevelId,
           true, // Timed out/left page
-          status === "retry",
+          initialStatus === "retry",
         );
 
         // Show confirmation dialog
@@ -315,6 +331,7 @@ export function RCQuizComponent({
     quizStarted,
     keywordId,
     rcLevelId,
+    initialStatus,
   ]);
 
   const handleAnswerSelect = (answer: string) => {
@@ -330,8 +347,9 @@ export function RCQuizComponent({
     try {
       // Determine if points should be disallowed
       const disallowPoints =
-        status === "retry" ||
-        (status === "continue" && isQuestionCompleted(currentQuestion.id));
+        initialStatus === "retry" ||
+        (initialStatus === "continue" &&
+          isQuestionCompleted(currentQuestion.id));
 
       const result = await submitRCAnswer(
         currentQuestion.id,
@@ -420,6 +438,9 @@ export function RCQuizComponent({
   }
 
   if (quizCompleted) {
+    // Use the initial status that was set when the quiz started
+    const effectiveStatus = initialStatus;
+
     return (
       <Card className="mx-auto max-w-4xl">
         <CardHeader>
@@ -434,31 +455,46 @@ export function RCQuizComponent({
             </p>
 
             {/* Score Display */}
-            <div className="mx-auto w-fit rounded-full border-2 border-primary/20 bg-primary/10 px-6 py-3">
-              <div className="text-center">
-                <div className="text-2xl font-bold text-primary">
-                  {correctAnswersCount}/{totalQuestions}
-                </div>
-                <div className="text-sm font-medium text-primary/80">
-                  Correct Answers
+            <div className="mx-auto flex w-fit gap-8">
+              <div className="rounded-full border-2 border-primary/20 bg-primary/10 px-6 py-3">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary">
+                    {correctAnswersCount}/{totalQuestions}
+                  </div>
+                  <div className="text-sm font-medium text-primary/80">
+                    Correct Answers
+                  </div>
                 </div>
               </div>
+              {effectiveStatus !== "retry" && (
+                <div className="rounded-full border-2 border-amber-500/20 bg-amber-500/10 px-6 py-3">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-amber-600">
+                      {totalPointsEarned}
+                    </div>
+                    <div className="text-sm font-medium text-amber-600/80">
+                      Total Score
+                    </div>
+                  </div>
+                </div>
+              )}
             </div>
 
-            {status === "start" && (
-              <p className="font-medium text-green-600">
-                Points earned: {totalPointsEarned}
+            {effectiveStatus === "start" && totalPointsEarned > 0 && (
+              <p className="text-sm text-green-600">
+                Great job! You earned {totalPointsEarned} points
               </p>
             )}
-            {status === "continue" && (
-              <p className="font-medium text-amber-600">
-                Points earned this session: {totalPointsEarned} (Previously
-                completed questions do not award new points)
+            {effectiveStatus === "continue" && (
+              <p className="text-sm text-amber-600">
+                {totalPointsEarned > 0
+                  ? `Points earned this session: ${totalPointsEarned} (Previously completed questions do not award new points)`
+                  : "Previously completed questions do not award new points"}
               </p>
             )}
-            {status === "retry" && (
-              <p className="font-medium text-amber-600">
-                Quiz completed (no points awarded for retry)
+            {effectiveStatus === "retry" && (
+              <p className="text-sm text-amber-600">
+                Retry mode - no points awarded
               </p>
             )}
           </div>
@@ -497,7 +533,7 @@ export function RCQuizComponent({
               </p>
               <p>• Each question has its own time limit</p>
               <p>• You can start the quiz early if you finish reading</p>
-              {status === "retry" && (
+              {initialStatus === "retry" && (
                 <p className="font-medium text-amber-600">
                   • No points will be awarded for retry attempts
                 </p>
@@ -579,7 +615,7 @@ export function RCQuizComponent({
   }
 
   const questionCompleted =
-    status !== "retry" && isQuestionCompleted(currentQuestion.id);
+    initialStatus !== "retry" && isQuestionCompleted(currentQuestion.id);
   const completedScore = getCompletedScore(currentQuestion.id);
 
   return (
@@ -623,7 +659,7 @@ export function RCQuizComponent({
         <div className="flex flex-wrap gap-2">
           {questions.map((question, index) => {
             const completed =
-              status !== "retry" && isQuestionCompleted(question.id);
+              initialStatus !== "retry" && isQuestionCompleted(question.id);
             const isCurrent = index === currentQuestionIndex;
             return (
               <div
@@ -799,7 +835,7 @@ export function RCQuizComponent({
                   {isCorrect
                     ? pointsAwarded > 0
                       ? `Correct! +${pointsAwarded} points`
-                      : status === "retry"
+                      : initialStatus === "retry"
                         ? "Correct! (No points awarded for retry)"
                         : "Correct! (Previously completed, no new points)"
                     : timeLeft === 0
