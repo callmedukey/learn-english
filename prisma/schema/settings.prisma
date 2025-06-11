@@ -1,3 +1,10 @@
+enum FontSize {
+  BASE
+  LARGE
+  XLARGE
+}
+
+
 model RCSettings {
   id        String   @id @default(uuid())
 
@@ -10,4 +17,22 @@ model NovelSettings {
 
   defaultTimer Int @default(0)
   defaultScore Int @default(0)
+}
+
+model ARSettings {
+  id        String   @id @default(uuid())
+
+  AR AR @relation(fields: [ARId], references: [id], onDelete: Cascade)
+  ARId String @unique
+
+  fontSize FontSize @default(BASE)
+}
+
+model RCLevelSettings {
+  id        String   @id @default(uuid())
+
+  RCLevel RCLevel @relation(fields: [RCLevelId], references: [id], onDelete: Cascade)
+  RCLevelId String @unique
+
+  fontSize FontSize @default(BASE)
 }

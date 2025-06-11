@@ -37,6 +37,7 @@ const RCTable: React.FC<RCTableProps> = ({ rcLevels }) => {
           <TableHead>Keywords</TableHead>
           <TableHead>Free Keywords</TableHead>
           <TableHead>Total Questions</TableHead>
+          <TableHead>Font Size</TableHead>
           <TableHead>Description</TableHead>
           <TableHead>Created At</TableHead>
           <TableHead className="text-right">Actions</TableHead>
@@ -87,6 +88,11 @@ const RCTable: React.FC<RCTableProps> = ({ rcLevels }) => {
             <TableCell>
               <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
                 {rcLevel.questionCount}
+              </span>
+            </TableCell>
+            <TableCell>
+              <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
+                {rcLevel.RCLevelSettings?.fontSize || "BASE"}
               </span>
             </TableCell>
             <TableCell

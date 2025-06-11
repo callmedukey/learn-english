@@ -87,6 +87,35 @@ const EditARForm: React.FC<EditARFormProps> = ({ ar, onARUpdated }) => {
       </div>
 
       <div className="space-y-2">
+        <Label htmlFor="relevantGrade">Relevant Grades</Label>
+        <Input
+          id="relevantGrade"
+          name="relevantGrade"
+          defaultValue={ar.relevantGrade || ""}
+          placeholder="e.g., Grades 1~2, Grades 3~4"
+          disabled={isPending}
+        />
+      </div>
+
+      <div className="space-y-2">
+        <Label htmlFor="fontSize">Font Size</Label>
+        <Select
+          name="fontSize"
+          defaultValue={ar.ARSettings?.fontSize || "BASE"}
+          disabled={isPending}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select font size" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="BASE">Base</SelectItem>
+            <SelectItem value="LARGE">Large</SelectItem>
+            <SelectItem value="XLARGE">Extra Large</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"

@@ -1,11 +1,12 @@
 "server only";
 
-import { AR } from "@/prisma/generated/prisma";
+import { AR, ARSettings } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface ARData extends AR {
   novelCount: number;
   freeChapterCount: number;
+  ARSettings: ARSettings | null;
 }
 
 export const getARs = async (): Promise<ARData[]> => {
@@ -16,6 +17,7 @@ export const getARs = async (): Promise<ARData[]> => {
           novels: true,
         },
       },
+      ARSettings: true,
       novels: {
         include: {
           _count: {
@@ -44,6 +46,7 @@ export const getARs = async (): Promise<ARData[]> => {
       ...ar,
       novelCount: ar._count.novels,
       freeChapterCount,
+      ARSettings: ar.ARSettings,
     };
   });
 

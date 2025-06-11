@@ -101,6 +101,24 @@ const EditRCForm: React.FC<EditRCFormProps> = ({ rcLevel, onRCUpdated }) => {
       </div>
 
       <div className="space-y-2">
+        <Label htmlFor="fontSize">Font Size</Label>
+        <Select
+          name="fontSize"
+          defaultValue={rcLevel.RCLevelSettings?.fontSize || "BASE"}
+          disabled={isPending}
+        >
+          <SelectTrigger>
+            <SelectValue placeholder="Select font size" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="BASE">Base</SelectItem>
+            <SelectItem value="LARGE">Large</SelectItem>
+            <SelectItem value="XLARGE">Extra Large</SelectItem>
+          </SelectContent>
+        </Select>
+      </div>
+
+      <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"

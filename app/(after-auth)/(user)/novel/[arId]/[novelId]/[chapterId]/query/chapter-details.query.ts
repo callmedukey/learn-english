@@ -14,6 +14,9 @@ export interface ChapterDetailsData {
     AR: {
       id: string;
       level: string;
+      ARSettings: {
+        fontSize: "BASE" | "LARGE" | "XLARGE";
+      } | null;
     } | null;
   };
   nextChapter: {
@@ -56,6 +59,11 @@ export const getChapterDetails = async (
             select: {
               id: true,
               level: true,
+              ARSettings: {
+                select: {
+                  fontSize: true,
+                },
+              },
             },
           },
         },

@@ -11,6 +11,8 @@ model RCLevel {
   RCKeyword RCKeyword[]
   RCScore   RCScore[]
 
+  RCLevelSettings RCLevelSettings?
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

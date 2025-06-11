@@ -600,7 +600,7 @@ export function RCQuizComponent({
           <CardContent>
             <div className="prose prose-sm max-w-none">
               <div className="text-base leading-relaxed whitespace-pre-wrap">
-                {questionSet.passage}
+                <span>{questionSet.passage}</span>
               </div>
             </div>
           </CardContent>
@@ -630,7 +630,7 @@ export function RCQuizComponent({
           <CardContent>
             <div className="prose prose-sm max-w-none">
               <div className="text-sm leading-relaxed whitespace-pre-wrap">
-                {questionSet.passage}
+                <span>{questionSet.passage}</span>
               </div>
             </div>
           </CardContent>
@@ -682,7 +682,7 @@ export function RCQuizComponent({
         {/* Timer and Current Question */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between">
               <CardTitle className="text-lg">
                 Question {currentQuestion.orderNumber}
               </CardTitle>
@@ -729,7 +729,7 @@ export function RCQuizComponent({
               </div>
             </div>
             <CardDescription className="text-base leading-relaxed">
-              {currentQuestion.question}
+              <span>{currentQuestion.question}</span>
             </CardDescription>
           </CardHeader>
 
@@ -787,7 +787,7 @@ export function RCQuizComponent({
                       className="pointer-events-none flex-1 cursor-pointer font-medium"
                     >
                       <span className="mr-2 font-bold">{choiceLabel}.</span>
-                      {choice}
+                      <span>{choice}</span>
                     </Label>
                     {showExplanation && isCorrectAnswer && (
                       <CheckCircle className="pointer-events-none h-5 w-5 text-green-600" />

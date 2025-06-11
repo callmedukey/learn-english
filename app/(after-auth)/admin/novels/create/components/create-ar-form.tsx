@@ -7,6 +7,13 @@ import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
 import { createARAction } from "../../actions/ar.actions";
@@ -95,6 +102,25 @@ const CreateARForm = () => {
             />
             <p className="mt-1 text-sm text-gray-500">
               Difficulty rating (1 = easiest, 5 = hardest)
+            </p>
+          </div>
+        </div>
+
+        <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+          <div>
+            <Label htmlFor="fontSize">Font Size</Label>
+            <Select name="fontSize" defaultValue="BASE" disabled={isPending}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select font size" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="BASE">Base</SelectItem>
+                <SelectItem value="LARGE">Large</SelectItem>
+                <SelectItem value="XLARGE">Extra Large</SelectItem>
+              </SelectContent>
+            </Select>
+            <p className="mt-1 text-sm text-gray-500">
+              Default font size for this AR level
             </p>
           </div>
         </div>

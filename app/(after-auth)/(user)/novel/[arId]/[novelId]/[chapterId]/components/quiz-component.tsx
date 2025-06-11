@@ -544,7 +544,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       {/* Question */}
       <Card>
         <CardHeader>
-          <div className="flex items-center justify-between">
+          <div className="flex flex-wrap items-center justify-between">
             <CardTitle className="text-lg">
               Question {currentQuestion.orderNumber}
             </CardTitle>

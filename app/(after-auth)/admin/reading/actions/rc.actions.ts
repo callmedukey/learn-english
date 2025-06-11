@@ -13,6 +13,7 @@ export const updateRCLevelAction = async (formData: FormData) => {
     formData.get("numberOfQuestions") as string,
   );
   const description = formData.get("description") as string;
+  const fontSize = formData.get("fontSize") as string;
 
   if (
     !rcLevelId ||
@@ -34,24 +35,54 @@ export const updateRCLevelAction = async (formData: FormData) => {
     return { error: "Number of questions must be at least 1" };
   }
 
+  // Validate fontSize enum value
+  if (fontSize && !["BASE", "LARGE", "XLARGE"].includes(fontSize)) {
+    return { error: "Invalid font size selected" };
+  }
+
   try {
     const existingRCLevel = await prisma.rCLevel.findUnique({
       where: { id: rcLevelId },
+      include: { RCLevelSettings: true },
     });
 
     if (!existingRCLevel) {
       return { error: "RC level not found" };
     }
 
-    const updatedRCLevel = await prisma.rCLevel.update({
-      where: { id: rcLevelId },
-      data: {
-        level,
-        relevantGrade,
-        stars,
-        numberOfQuestions,
-        description: description || null,
-      },
+    // Update RCLevel and RCLevelSettings in a transaction
+    const updatedRCLevel = await prisma.$transaction(async (tx) => {
+      const rcLevel = await tx.rCLevel.update({
+        where: { id: rcLevelId },
+        data: {
+          level,
+          relevantGrade,
+          stars,
+          numberOfQuestions,
+          description: description || null,
+        },
+      });
+
+      // Update or create RCLevelSettings
+      if (fontSize) {
+        if (existingRCLevel.RCLevelSettings) {
+          await tx.rCLevelSettings.update({
+            where: { RCLevelId: rcLevelId },
+            data: {
+              fontSize: fontSize as "BASE" | "LARGE" | "XLARGE",
+            },
+          });
+        } else {
+          await tx.rCLevelSettings.create({
+            data: {
+              RCLevelId: rcLevelId,
+              fontSize: fontSize as "BASE" | "LARGE" | "XLARGE",
+            },
+          });
+        }
+      }
+
+      return rcLevel;
     });
 
     revalidatePath("/admin/reading");
@@ -113,6 +144,7 @@ export const createRCLevelAction = async (formData: FormData) => {
     formData.get("numberOfQuestions") as string,
   );
   const description = formData.get("description") as string;
+  const fontSize = formData.get("fontSize") as string;
 
   if (!level || !relevantGrade || isNaN(stars) || isNaN(numberOfQuestions)) {
     return {
@@ -128,15 +160,33 @@ export const createRCLevelAction = async (formData: FormData) => {
     return { error: "Number of questions must be at least 1" };
   }
 
+  // Validate fontSize enum value
+  if (!["BASE", "LARGE", "XLARGE"].includes(fontSize)) {
+    return { error: "Invalid font size selected" };
+  }
+
   try {
-    await prisma.rCLevel.create({
-      data: {
-        level,
-        relevantGrade,
-        stars,
-        numberOfQuestions,
-        description: description || null,
-      },
+    // Create RCLevel with RCLevelSettings in a transaction
+    const newRCLevel = await prisma.$transaction(async (tx) => {
+      const rcLevel = await tx.rCLevel.create({
+        data: {
+          level,
+          relevantGrade,
+          stars,
+          numberOfQuestions,
+          description: description || null,
+        },
+      });
+
+      // Create RCLevelSettings for this RCLevel
+      await tx.rCLevelSettings.create({
+        data: {
+          RCLevelId: rcLevel.id,
+          fontSize: fontSize as "BASE" | "LARGE" | "XLARGE",
+        },
+      });
+
+      return rcLevel;
     });
 
     revalidatePath("/admin/reading");

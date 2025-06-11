@@ -1,12 +1,13 @@
 "server only";
 
-import { RCLevel } from "@/prisma/generated/prisma";
+import { RCLevel, RCLevelSettings } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface RCLevelData extends RCLevel {
   keywordCount: number;
   questionCount: number;
   freeKeywordCount: number;
+  RCLevelSettings: RCLevelSettings | null;
 }
 
 export const getRCLevels = async (): Promise<RCLevelData[]> => {
@@ -17,6 +18,7 @@ export const getRCLevels = async (): Promise<RCLevelData[]> => {
           RCKeyword: true,
         },
       },
+      RCLevelSettings: true,
       RCKeyword: {
         include: {
           RCQuestionSet: {
@@ -50,6 +52,7 @@ export const getRCLevels = async (): Promise<RCLevelData[]> => {
       keywordCount: rcLevel._count.RCKeyword,
       questionCount,
       freeKeywordCount,
+      RCLevelSettings: rcLevel.RCLevelSettings,
     };
   });
 

@@ -36,6 +36,7 @@ const ARTable: React.FC<ARTableProps> = ({ ars }) => {
           <TableHead>Description</TableHead>
           <TableHead>Novel Count</TableHead>
           <TableHead>Free Chapters</TableHead>
+          <TableHead>Font Size</TableHead>
           <TableHead>Created At</TableHead>
           <TableHead className="text-right">Actions</TableHead>
         </TableRow>
@@ -80,6 +81,11 @@ const ARTable: React.FC<ARTableProps> = ({ ars }) => {
                   None
                 </span>
               )}
+            </TableCell>
+            <TableCell>
+              <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
+                {ar.ARSettings?.fontSize || "BASE"}
+              </span>
             </TableCell>
             <TableCell className="text-sm text-gray-500">
               {format(new Date(ar.createdAt), "yyyy/MM/dd")}

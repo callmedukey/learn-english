@@ -10,6 +10,8 @@ export const updateARAction = async (formData: FormData) => {
   const score = formData.get("score") as string;
   const stars = parseInt(formData.get("stars") as string);
   const description = formData.get("description") as string;
+  const relevantGrade = formData.get("relevantGrade") as string;
+  const fontSize = formData.get("fontSize") as string;
 
   if (!arId || !level || !score || !description || isNaN(stars)) {
     return {
@@ -21,23 +23,54 @@ export const updateARAction = async (formData: FormData) => {
     return { error: "Stars must be between 1 and 5" };
   }
 
+  // Validate fontSize enum value
+  if (fontSize && !["BASE", "LARGE", "XLARGE"].includes(fontSize)) {
+    return { error: "Invalid font size selected" };
+  }
+
   try {
     const existingAR = await prisma.aR.findUnique({
       where: { id: arId },
+      include: { ARSettings: true },
     });
 
     if (!existingAR) {
       return { error: "AR record not found" };
     }
 
-    const updatedAR = await prisma.aR.update({
-      where: { id: arId },
-      data: {
-        level,
-        score,
-        stars,
-        description,
-      },
+    // Update AR and ARSettings in a transaction
+    const updatedAR = await prisma.$transaction(async (tx) => {
+      const ar = await tx.aR.update({
+        where: { id: arId },
+        data: {
+          level,
+          score,
+          stars,
+          description,
+          relevantGrade,
+        },
+      });
+
+      // Update or create ARSettings
+      if (fontSize) {
+        if (existingAR.ARSettings) {
+          await tx.aRSettings.update({
+            where: { ARId: arId },
+            data: {
+              fontSize: fontSize as "BASE" | "LARGE" | "XLARGE",
+            },
+          });
+        } else {
+          await tx.aRSettings.create({
+            data: {
+              ARId: arId,
+              fontSize: fontSize as "BASE" | "LARGE" | "XLARGE",
+            },
+          });
+        }
+      }
+
+      return ar;
     });
 
     revalidatePath("/admin/novels");
@@ -96,6 +129,8 @@ export const createARAction = async (formData: FormData) => {
   const score = formData.get("score") as string;
   const stars = parseInt(formData.get("stars") as string);
   const description = formData.get("description") as string;
+  const relevantGrade = formData.get("relevantGrade") as string;
+  const fontSize = formData.get("fontSize") as string;
 
   if (!level || !score || isNaN(stars)) {
     return {
@@ -107,14 +142,33 @@ export const createARAction = async (formData: FormData) => {
     return { error: "Stars must be between 1 and 5" };
   }
 
+  // Validate fontSize enum value
+  if (!["BASE", "LARGE", "XLARGE"].includes(fontSize)) {
+    return { error: "Invalid font size selected" };
+  }
+
   try {
-    await prisma.aR.create({
-      data: {
-        level,
-        score,
-        stars,
-        description,
-      },
+    // Create AR record with ARSettings in a transaction
+    const newAR = await prisma.$transaction(async (tx) => {
+      const ar = await tx.aR.create({
+        data: {
+          level,
+          score,
+          stars,
+          description,
+          relevantGrade,
+        },
+      });
+
+      // Create ARSettings for this AR
+      await tx.aRSettings.create({
+        data: {
+          ARId: ar.id,
+          fontSize: fontSize as "BASE" | "LARGE" | "XLARGE",
+        },
+      });
+
+      return ar;
     });
 
     revalidatePath("/admin/novels");

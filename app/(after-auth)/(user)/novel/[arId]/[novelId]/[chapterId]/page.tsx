@@ -14,6 +14,21 @@ import {
   getChapterStatus,
 } from "./query/chapter-details.query";
 
+// Utility function to get font size classes based on AR settings
+function getFontSizeClasses(
+  fontSize: "BASE" | "LARGE" | "XLARGE" | undefined,
+): string {
+  switch (fontSize) {
+    case "LARGE":
+      return "[&_p]:text-lg [&_span]:text-lg [&_.badge]:text-lg";
+    case "XLARGE":
+      return "[&_p]:text-xl [&_span]:text-xl [&_.badge]:text-xl";
+    case "BASE":
+    default:
+      return "";
+  }
+}
+
 interface ChapterPageProps {
   params: Promise<{
     arId: string;
@@ -48,11 +63,17 @@ async function ChapterContent({
     notFound();
   }
 
+  const fontSizeClasses = getFontSizeClasses(
+    chapter.novel.AR?.ARSettings?.fontSize,
+  );
+
   const canAccess = chapter.isFree || session.user.hasPaidSubscription;
 
   if (!canAccess) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-8">
+      <div
+        className={`container mx-auto max-w-4xl px-4 py-8 ${fontSizeClasses}`}
+      >
         <div className="mb-6">
           <Button variant="outline" asChild>
             <Link href={`/novel/${arId}/${novelId}`}>← Back to Novel</Link>
@@ -90,7 +111,9 @@ async function ChapterContent({
 
   if (!chapter.novelQuestionSet) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-8">
+      <div
+        className={`container mx-auto max-w-4xl px-4 py-8 ${fontSizeClasses}`}
+      >
         <div className="mb-6">
           <Button variant="outline" asChild>
             <Link href={`/novel/${arId}/${novelId}`}>← Back to Novel</Link>
@@ -129,7 +152,9 @@ async function ChapterContent({
   // Block access if question set is inactive
   if (!chapter.novelQuestionSet.active) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-8">
+      <div
+        className={`container mx-auto max-w-4xl px-4 py-8 ${fontSizeClasses}`}
+      >
         <div className="mb-6">
           <Button variant="outline" asChild>
             <Link href={`/novel/${arId}/${novelId}`}>← Back to Novel</Link>
@@ -169,7 +194,9 @@ async function ChapterContent({
 
   if (questions.length === 0) {
     return (
-      <div className="container mx-auto max-w-4xl px-4 py-8">
+      <div
+        className={`container mx-auto max-w-4xl px-4 py-8 ${fontSizeClasses}`}
+      >
         <div className="mb-6">
           <Button variant="outline" asChild>
             <Link href={`/novel/${arId}/${novelId}`}>← Back to Novel</Link>
@@ -216,7 +243,7 @@ async function ChapterContent({
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className={`container mx-auto px-4 py-8 ${fontSizeClasses}`}>
       {/* Back Button */}
       <div className="mb-6">
         <Button variant="outline" asChild>
@@ -228,24 +255,22 @@ async function ChapterContent({
       {status !== "continue" && (
         <Card className="mx-auto mb-6 max-w-4xl">
           <CardHeader>
-            <div className="flex items-center justify-between">
-              <CardTitle>
-                Chapter {chapter.orderNumber}: {chapter.title}
-              </CardTitle>
-              <div className="flex gap-2">
-                {chapter.isFree && (
-                  <Badge
-                    variant="secondary"
-                    className="bg-amber-100 text-amber-800"
-                  >
-                    Free
-                  </Badge>
-                )}
-                <Badge variant="outline" className="bg-primary/10 text-primary">
-                  {status === "start" && "Ready to Start"}
-                  {status === "retry" && "Ready to Retry"}
+            <CardTitle>
+              Chapter {chapter.orderNumber}: {chapter.title}
+            </CardTitle>
+            <div className="flex gap-2">
+              {chapter.isFree && (
+                <Badge
+                  variant="secondary"
+                  className="bg-amber-100 text-amber-800"
+                >
+                  Free
                 </Badge>
-              </div>
+              )}
+              <Badge variant="outline" className="bg-primary/10 text-primary">
+                {status === "start" && "Ready to Start"}
+                {status === "retry" && "Ready to Retry"}
+              </Badge>
             </div>
           </CardHeader>
           <CardContent className="space-y-4">
