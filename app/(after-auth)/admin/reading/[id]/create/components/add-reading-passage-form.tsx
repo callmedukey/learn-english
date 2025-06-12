@@ -4,6 +4,7 @@ import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -23,6 +24,7 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
   const [passages, setPassages] = useState([
     { title: "", passage: "", timeLimit: 60 },
   ]);
+  const [isActive, setIsActive] = useState(true);
 
   const removePassage = (index: number) => {
     if (passages.length > 1) {
@@ -67,7 +69,7 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
       formData.append("title", firstPassage.title.trim());
       formData.append("passage", firstPassage.passage.trim());
       formData.append("timeLimit", firstPassage.timeLimit.toString());
-
+      formData.append("isActive", isActive.toString());
       const result = await createQuestionSetAction(formData);
       if (result.error) {
         toast.error(result.error);
@@ -159,6 +161,17 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
                   placeholder="60"
                   disabled={isPending}
                 />
+              </div>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="isActive"
+                  name="isActive"
+                  checked={isActive}
+                  onCheckedChange={(checked) =>
+                    setIsActive(checked === "indeterminate" ? true : checked)
+                  }
+                />
+                <Label htmlFor="isActive">Active</Label>
               </div>
             </div>
           </div>

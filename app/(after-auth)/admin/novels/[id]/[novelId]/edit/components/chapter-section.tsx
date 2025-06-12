@@ -481,9 +481,9 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
   const [isEditing, setIsEditing] = useState(false);
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [instructions, setInstructions] = useState(
-    questionSet?.instructions || "",
+    questionSet?.instructions || "Find the best answer for each question.",
   );
-  const [active, setActive] = useState<boolean>(questionSet?.active ?? false);
+  const [active, setActive] = useState<boolean>(questionSet?.active ?? true);
 
   const handleCreateQuestionSet = async () => {
     const formData = new FormData();

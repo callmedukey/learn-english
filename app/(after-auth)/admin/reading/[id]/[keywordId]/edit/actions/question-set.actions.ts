@@ -10,6 +10,7 @@ export const createQuestionSetAction = async (formData: FormData) => {
   const title = formData.get("title") as string;
   const passage = formData.get("passage") as string;
   const timeLimit = parseInt(formData.get("timeLimit") as string) || 60;
+  const isActive = formData.get("isActive") === "true";
 
   if (!keywordId || !title || !passage) {
     return {
@@ -44,6 +45,7 @@ export const createQuestionSetAction = async (formData: FormData) => {
         title: title.trim(),
         passage: passage.trim(),
         timeLimit,
+        active: isActive,
         RCKeywordId: keywordId,
       },
     });
