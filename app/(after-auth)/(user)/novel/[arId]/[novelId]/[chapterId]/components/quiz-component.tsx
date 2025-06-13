@@ -1,5 +1,6 @@
 "use client";
 
+import DOMPurify from "isomorphic-dompurify";
 import { CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, {
@@ -571,9 +572,12 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
         </CardHeader>
         <CardContent className="space-y-6">
           <div>
-            <h3 className="mb-4 text-lg font-medium">
-              {currentQuestion.question}
-            </h3>
+            <h3
+              className="mb-4 text-lg font-medium"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(currentQuestion.question),
+              }}
+            />
 
             <div className="space-y-3">
               {shuffledChoices.map((choice, index) => {
@@ -623,7 +627,11 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
                       <div className="flex h-6 w-6 items-center justify-center rounded-full border-2 text-sm font-medium">
                         {String.fromCharCode(65 + index)}
                       </div>
-                      <span>{choice}</span>
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(choice),
+                        }}
+                      />
                     </div>
                   </div>
                 );
@@ -660,11 +668,21 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
                 </div>
                 <div>
                   <h4 className="mb-2 font-medium">Explanation:</h4>
-                  <p className="text-gray-700">{currentQuestion.explanation}</p>
+                  <p
+                    className="text-gray-700"
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(currentQuestion.explanation),
+                    }}
+                  />
                 </div>
                 <div className="text-sm text-gray-600">
                   <p>
-                    <strong>Correct Answer:</strong> {currentQuestion.answer}
+                    <strong>Correct Answer:</strong>{" "}
+                    <span
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(currentQuestion.answer),
+                      }}
+                    />
                   </p>
                 </div>
               </div>

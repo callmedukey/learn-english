@@ -1,5 +1,6 @@
 "use client";
 
+import DOMPurify from "isomorphic-dompurify";
 import { CheckCircle, XCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, {
@@ -450,9 +451,14 @@ export function RCQuizComponent({
           <div className="mb-4 text-4xl">🎉</div>
           <div className="space-y-4">
             <p className="text-lg">
-              You&apos;ve completed the reading comprehension quiz for:{" "}
-              {questionSet.title}
+              You&apos;ve completed the reading comprehension quiz for:
             </p>
+            <p
+              className="text-lg"
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(questionSet.title),
+              }}
+            />
 
             {/* Score Display */}
             <div className="mx-auto flex w-fit gap-8">
@@ -594,13 +600,23 @@ export function RCQuizComponent({
         {/* Passage */}
         <Card>
           <CardHeader>
-            <CardTitle>{questionSet.title}</CardTitle>
+            <CardTitle>
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(questionSet.title),
+                }}
+              />
+            </CardTitle>
             <CardDescription>Reading Passage</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="prose prose-sm max-w-none">
               <div className="text-base leading-relaxed whitespace-pre-wrap">
-                <span>{questionSet.passage}</span>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(questionSet.passage),
+                  }}
+                />
               </div>
             </div>
           </CardContent>
@@ -624,13 +640,23 @@ export function RCQuizComponent({
       <div className="space-y-4">
         <Card>
           <CardHeader>
-            <CardTitle className="text-lg">{questionSet.title}</CardTitle>
+            <CardTitle className="text-lg">
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(questionSet.title),
+                }}
+              />
+            </CardTitle>
             <CardDescription>Reading Passage</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="prose prose-sm max-w-none">
               <div className="text-sm leading-relaxed whitespace-pre-wrap">
-                <span>{questionSet.passage}</span>
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(questionSet.passage),
+                  }}
+                />
               </div>
             </div>
           </CardContent>
@@ -729,7 +755,11 @@ export function RCQuizComponent({
               </div>
             </div>
             <CardDescription className="text-base leading-relaxed">
-              <span>{currentQuestion.question}</span>
+              <span
+                dangerouslySetInnerHTML={{
+                  __html: DOMPurify.sanitize(currentQuestion.question),
+                }}
+              />
             </CardDescription>
           </CardHeader>
 
@@ -784,10 +814,14 @@ export function RCQuizComponent({
                     </div>
                     <Label
                       htmlFor={`choice-${index}`}
-                      className="pointer-events-none flex-1 cursor-pointer font-medium"
+                      className="pointer-events-none flex flex-1 cursor-pointer flex-wrap font-medium"
                     >
                       <span className="mr-2 font-bold">{choiceLabel}.</span>
-                      <span>{choice}</span>
+                      <span
+                        dangerouslySetInnerHTML={{
+                          __html: DOMPurify.sanitize(choice),
+                        }}
+                      />
                     </Label>
                     {showExplanation && isCorrectAnswer && (
                       <CheckCircle className="pointer-events-none h-5 w-5 text-green-600" />
@@ -830,7 +864,12 @@ export function RCQuizComponent({
                 <h4 className="mb-2 font-semibold text-amber-800">
                   Explanation
                 </h4>
-                <p className="text-amber-700">{currentQuestion.explanation}</p>
+                <p
+                  className="text-amber-700"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(currentQuestion.explanation),
+                  }}
+                />
                 <p className="mt-2 text-sm text-amber-600">
                   {isCorrect
                     ? pointsAwarded > 0

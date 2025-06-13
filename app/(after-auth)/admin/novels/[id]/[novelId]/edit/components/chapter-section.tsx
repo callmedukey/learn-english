@@ -1,5 +1,6 @@
 "use client";
 
+import DOMPurify from "isomorphic-dompurify";
 import {
   ChevronDown,
   ChevronRight,
@@ -12,6 +13,7 @@ import {
 import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { TiptapEditor } from "@/components/custom-ui/tiptap-editor";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -21,8 +23,8 @@ import {
 } from "@/components/ui/collapsible";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Separator } from "@/components/ui/separator";
-import { Textarea } from "@/components/ui/textarea";
 
 import DeleteChapterDialog from "./delete-chapter-dialog";
 import DeleteQuestionDialog from "./delete-question-dialog";
@@ -183,11 +185,10 @@ const ChapterSection: React.FC<ChapterSectionProps> = ({
             </div>
             <div className="md:col-span-1">
               <Label htmlFor="new-chapter-description">Description</Label>
-              <Textarea
-                id="new-chapter-description"
+              <TiptapEditor
                 value={newChapter.description}
-                onChange={(e) =>
-                  setNewChapter({ ...newChapter, description: e.target.value })
+                onChange={(value) =>
+                  setNewChapter({ ...newChapter, description: value })
                 }
                 placeholder="Chapter description"
                 rows={2}
@@ -410,14 +411,15 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
                   </div>
                   <div className="md:col-span-1">
                     <Label>Description</Label>
-                    <Textarea
+                    <TiptapEditor
                       value={editForm.description}
-                      onChange={(e) =>
+                      onChange={(value) =>
                         setEditForm({
                           ...editForm,
-                          description: e.target.value,
+                          description: value,
                         })
                       }
+                      placeholder="Chapter description"
                       rows={2}
                     />
                   </div>
@@ -544,9 +546,9 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
         <div className="space-y-4">
           <div>
             <Label>Instructions</Label>
-            <Textarea
+            <TiptapEditor
               value={instructions}
-              onChange={(e) => setInstructions(e.target.value)}
+              onChange={(value) => setInstructions(value)}
               placeholder="Enter instructions for this question set"
               rows={3}
             />
@@ -620,9 +622,9 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
           <div className="space-y-4">
             <div>
               <Label>Instructions</Label>
-              <Textarea
+              <TiptapEditor
                 value={instructions}
-                onChange={(e) => setInstructions(e.target.value)}
+                onChange={(value) => setInstructions(value)}
                 rows={3}
               />
             </div>
@@ -701,16 +703,26 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
     orderNumber: questions.length + 1,
   });
 
+  // Helper to extract plain text from HTML
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
+
   // Validation helper
   const isAnswerValid = (answer: string, choices: string[]) => {
-    const validChoices = choices.filter((c) => c.trim());
-    return validChoices.includes(answer);
+    const answerText = stripHtml(answer).trim();
+    const validChoices = choices
+      .filter((c) => c.trim())
+      .map((c) => stripHtml(c).trim());
+    return validChoices.includes(answerText);
   };
 
   const handleCreateQuestion = async () => {
     // Client-side validation
-    const validChoices = newQuestion.choices.filter((c) => c.trim());
-    if (!isAnswerValid(newQuestion.answer, validChoices)) {
+    const validChoices = newQuestion.choices.filter((c) => stripHtml(c).trim());
+    if (!isAnswerValid(newQuestion.answer, newQuestion.choices)) {
       toast.error(
         "The correct answer must exactly match one of the provided choices",
       );
@@ -747,10 +759,12 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
     }
   };
 
-  const validChoices = newQuestion.choices.filter((c) => c.trim());
+  const validChoicesForButton = newQuestion.choices.filter((c) =>
+    stripHtml(c).trim(),
+  );
   const isNewQuestionAnswerValid = isAnswerValid(
     newQuestion.answer,
-    validChoices,
+    newQuestion.choices,
   );
 
   return (
@@ -775,10 +789,10 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
           <div className="space-y-4">
             <div>
               <Label>Question</Label>
-              <Textarea
+              <TiptapEditor
                 value={newQuestion.question}
-                onChange={(e) =>
-                  setNewQuestion({ ...newQuestion, question: e.target.value })
+                onChange={(value) =>
+                  setNewQuestion({ ...newQuestion, question: value })
                 }
                 placeholder="Enter the question"
                 rows={3}
@@ -788,49 +802,64 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
             <div>
               <Label>Answer Choices</Label>
               {newQuestion.choices.map((choice, index) => (
-                <Input
-                  key={index}
-                  value={choice}
-                  onChange={(e) => {
-                    const newChoices = [...newQuestion.choices];
-                    newChoices[index] = e.target.value;
-                    setNewQuestion({ ...newQuestion, choices: newChoices });
-                  }}
-                  placeholder={`Choice ${String.fromCharCode(65 + index)}`}
-                  className="mt-1"
-                />
+                <div key={index} className="mt-1">
+                  <TiptapEditor
+                    value={choice}
+                    onChange={(value) => {
+                      const newChoices = [...newQuestion.choices];
+                      newChoices[index] = value;
+                      setNewQuestion({ ...newQuestion, choices: newChoices });
+                    }}
+                    placeholder={`Choice ${String.fromCharCode(65 + index)}`}
+                    rows={1}
+                  />
+                </div>
               ))}
             </div>
 
             <div>
               <Label>Correct Answer</Label>
-              <Input
+              <RadioGroup
                 value={newQuestion.answer}
-                onChange={(e) =>
-                  setNewQuestion({ ...newQuestion, answer: e.target.value })
+                onValueChange={(value) =>
+                  setNewQuestion({ ...newQuestion, answer: value })
                 }
-                placeholder="Enter the correct answer exactly as written above"
-                className={
-                  !newQuestion.answer || isNewQuestionAnswerValid
-                    ? ""
-                    : "border-red-500 bg-red-50"
-                }
-              />
-              {newQuestion.answer && !isNewQuestionAnswerValid && (
-                <p className="mt-1 text-xs text-red-600">
-                  Answer must exactly match one of the choices above
+                className="mt-2"
+              >
+                {newQuestion.choices.map((choice, index) => {
+                  const choiceText = stripHtml(choice).trim();
+                  if (!choiceText) return null;
+                  return (
+                    <div key={index} className="flex items-center space-x-2">
+                      <RadioGroupItem value={choice} id={`choice-${index}`} />
+                      <Label
+                        htmlFor={`choice-${index}`}
+                        className="flex-1 cursor-pointer font-normal"
+                      >
+                        <span className="mr-2 font-medium">
+                          {String.fromCharCode(65 + index)}.
+                        </span>
+                        <span dangerouslySetInnerHTML={{ __html: choice }} />
+                      </Label>
+                    </div>
+                  );
+                })}
+              </RadioGroup>
+              {!newQuestion.answer && validChoicesForButton.length > 0 && (
+                <p className="mt-1 text-xs text-muted-foreground">
+                  Please select the correct answer
                 </p>
               )}
             </div>
 
             <div>
               <Label>Explanation</Label>
-              <Textarea
+              <TiptapEditor
                 value={newQuestion.explanation}
-                onChange={(e) =>
+                onChange={(value) =>
                   setNewQuestion({
                     ...newQuestion,
-                    explanation: e.target.value,
+                    explanation: value,
                   })
                 }
                 placeholder="Explanation for the correct answer"
@@ -892,7 +921,7 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
                 !newQuestion.question ||
                 !newQuestion.answer ||
                 !isNewQuestionAnswerValid ||
-                validChoices.length === 0
+                validChoicesForButton.length === 0
               }
             >
               <Save className="mr-2 h-4 w-4" />
@@ -949,10 +978,20 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
     orderNumber: question.orderNumber,
   });
 
+  // Helper to extract plain text from HTML
+  const stripHtml = (html: string) => {
+    const tmp = document.createElement("div");
+    tmp.innerHTML = html;
+    return tmp.textContent || tmp.innerText || "";
+  };
+
   // Validation helper
   const isAnswerValid = (answer: string, choices: string[]) => {
-    const validChoices = choices.filter((c) => c.trim());
-    return validChoices.includes(answer);
+    const answerText = stripHtml(answer).trim();
+    const validChoices = choices
+      .filter((c) => c.trim())
+      .map((c) => stripHtml(c).trim());
+    return validChoices.includes(answerText);
   };
 
   const handleUpdate = async () => {
@@ -997,11 +1036,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
         <div className="space-y-4">
           <div>
             <Label>Question</Label>
-            <Textarea
+            <TiptapEditor
               value={editForm.question}
-              onChange={(e) =>
-                setEditForm({ ...editForm, question: e.target.value })
+              onChange={(value) =>
+                setEditForm({ ...editForm, question: value })
               }
+              placeholder="Enter the question"
               rows={3}
             />
           </div>
@@ -1009,47 +1049,62 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
           <div>
             <Label>Answer Choices</Label>
             {editForm.choices.map((choice, index) => (
-              <Input
-                key={index}
-                value={choice}
-                onChange={(e) => {
-                  const newChoices = [...editForm.choices];
-                  newChoices[index] = e.target.value;
-                  setEditForm({ ...editForm, choices: newChoices });
-                }}
-                placeholder={`Choice ${String.fromCharCode(65 + index)}`}
-                className="mt-1"
-              />
+              <div key={index} className="mt-1">
+                <TiptapEditor
+                  value={choice}
+                  onChange={(value) => {
+                    const newChoices = [...editForm.choices];
+                    newChoices[index] = value;
+                    setEditForm({ ...editForm, choices: newChoices });
+                  }}
+                  placeholder={`Choice ${String.fromCharCode(65 + index)}`}
+                  rows={1}
+                />
+              </div>
             ))}
           </div>
 
           <div>
             <Label>Correct Answer</Label>
-            <Input
+            <RadioGroup
               value={editForm.answer}
-              onChange={(e) =>
-                setEditForm({ ...editForm, answer: e.target.value })
+              onValueChange={(value) =>
+                setEditForm({ ...editForm, answer: value })
               }
-              placeholder="Enter the correct answer exactly as written above"
-              className={
-                !editForm.answer || isEditAnswerValid
-                  ? ""
-                  : "border-red-500 bg-red-50"
-              }
-            />
-            {editForm.answer && !isEditAnswerValid && (
-              <p className="mt-1 text-xs text-red-600">
-                Answer must exactly match one of the choices above
+              className="mt-2"
+            >
+              {editForm.choices.map((choice, index) => {
+                const choiceText = stripHtml(choice).trim();
+                if (!choiceText) return null;
+                return (
+                  <div key={index} className="flex items-center space-x-2">
+                    <RadioGroupItem value={choice} id={`choice-${index}`} />
+                    <Label
+                      htmlFor={`choice-${index}`}
+                      className="flex-1 cursor-pointer font-normal"
+                    >
+                      <span className="mr-2 font-medium">
+                        {String.fromCharCode(65 + index)}.
+                      </span>
+                      <span dangerouslySetInnerHTML={{ __html: choice }} />
+                    </Label>
+                  </div>
+                );
+              })}
+            </RadioGroup>
+            {!editForm.answer && validEditChoices.length > 0 && (
+              <p className="mt-1 text-xs text-muted-foreground">
+                Please select the correct answer
               </p>
             )}
           </div>
 
           <div>
             <Label>Explanation</Label>
-            <Textarea
+            <TiptapEditor
               value={editForm.explanation}
-              onChange={(e) =>
-                setEditForm({ ...editForm, explanation: e.target.value })
+              onChange={(value) =>
+                setEditForm({ ...editForm, explanation: value })
               }
               placeholder="Explanation for the correct answer"
               rows={2}
@@ -1134,23 +1189,38 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
               {question.timeLimit}s
             </span>
           </div>
-          <p className="mb-2 font-medium">{question.question}</p>
+          <p
+            className="mb-2 font-medium"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(question.question),
+            }}
+          />
           <div className="mb-2 space-y-1">
             {question.choices.map((choice, choiceIndex) => (
               <div
                 key={choiceIndex}
-                className={`rounded p-2 text-sm ${
+                className={`flex flex-wrap gap-1 rounded p-2 text-sm ${
                   choice === question.answer
                     ? "bg-green-100 font-medium text-green-800"
                     : "bg-gray-50"
                 }`}
               >
-                {String.fromCharCode(65 + choiceIndex)}. {choice}
+                {String.fromCharCode(65 + choiceIndex)}.{" "}
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(choice),
+                  }}
+                />
               </div>
             ))}
           </div>
           <p className="text-sm text-gray-600">
-            <strong>Explanation:</strong> {question.explanation}
+            <strong>Explanation:</strong>{" "}
+            <span
+              dangerouslySetInnerHTML={{
+                __html: DOMPurify.sanitize(question.explanation),
+              }}
+            />
           </p>
         </div>
         <div className="ml-4 flex space-x-1">
