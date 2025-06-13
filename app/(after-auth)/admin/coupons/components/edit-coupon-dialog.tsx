@@ -31,6 +31,7 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
     "percentage" | "flat" | null
   >(null);
   const [isActive, setIsActive] = useState(coupon.active);
+  const [isOneTimeUse, setIsOneTimeUse] = useState(coupon.oneTimeUse);
 
   // Set initial discount type based on coupon data
   useEffect(() => {
@@ -174,6 +175,25 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
             <input type="hidden" name="active" value={isActive.toString()} />
             <Label htmlFor="edit-active">Active</Label>
           </div>
+
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="edit-oneTimeUse"
+              checked={isOneTimeUse}
+              onCheckedChange={setIsOneTimeUse}
+              disabled={isPending}
+            />
+            <input
+              type="hidden"
+              name="oneTimeUse"
+              value={isOneTimeUse.toString()}
+            />
+            <Label htmlFor="edit-oneTimeUse">One-time use only</Label>
+          </div>
+          <p className="text-xs text-gray-500">
+            If enabled, this coupon will be automatically deactivated after a
+            single successful use
+          </p>
 
           {coupon._count.payments > 0 && (
             <div className="rounded-md bg-yellow-50 p-3">

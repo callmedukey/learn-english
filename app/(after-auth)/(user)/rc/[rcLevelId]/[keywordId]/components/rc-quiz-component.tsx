@@ -564,14 +564,14 @@ export function RCQuizComponent({
         {/* Timer and Controls */}
         <Card>
           <CardHeader>
-            <div className="flex items-center justify-between">
+            <div className="flex flex-wrap items-center justify-between gap-4">
               <div>
                 <CardTitle>Reading Time</CardTitle>
                 <CardDescription>
                   Read the passage carefully before the questions begin
                 </CardDescription>
               </div>
-              <div className="flex items-center gap-4">
+              <div className="flex flex-wrap items-center gap-4">
                 <div className="flex items-center gap-2">
                   <span className="text-sm text-gray-600">Time Remaining:</span>
                   <div className="w-24">

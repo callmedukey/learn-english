@@ -36,6 +36,7 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
   const [currentNotifications, setCurrentNotifications] =
     useState(notifications);
   const [showNotifications, setShowNotifications] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
 
   const unreadCount = currentNotifications.filter((n) => !n.isRead).length;
 
@@ -91,7 +92,7 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
   };
 
   return (
-    <Sheet>
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
         <Button
           variant="ghost"
@@ -117,18 +118,21 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
                 <Link
                   href="/dashboard"
                   className="flex h-10 items-center rounded-md px-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-primary"
+                  onClick={() => setIsOpen(false)}
                 >
                   Dashboard
                 </Link>
                 <Link
                   href="/novel"
                   className="flex h-10 items-center rounded-md px-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-primary"
+                  onClick={() => setIsOpen(false)}
                 >
                   Novel
                 </Link>
                 <Link
                   href="/rc"
                   className="flex h-10 items-center rounded-md px-3 text-sm font-medium text-gray-700 transition-colors hover:bg-gray-100 hover:text-primary"
+                  onClick={() => setIsOpen(false)}
                 >
                   Reading Comprehension
                 </Link>

@@ -100,6 +100,7 @@ export async function createCoupon(data: {
   discount: number;
   flatDiscount: number;
   active?: boolean;
+  oneTimeUse?: boolean;
 }) {
   return prisma.discountCoupon.create({
     data: {
@@ -107,6 +108,7 @@ export async function createCoupon(data: {
       discount: data.discount,
       flatDiscount: data.flatDiscount,
       active: data.active ?? true,
+      oneTimeUse: data.oneTimeUse ?? false,
     },
   });
 }
@@ -118,6 +120,7 @@ export async function updateCoupon(
     discount?: number;
     flatDiscount?: number;
     active?: boolean;
+    oneTimeUse?: boolean;
   },
 ) {
   return prisma.discountCoupon.update({
@@ -129,6 +132,7 @@ export async function updateCoupon(
         flatDiscount: data.flatDiscount,
       }),
       ...(data.active !== undefined && { active: data.active }),
+      ...(data.oneTimeUse !== undefined && { oneTimeUse: data.oneTimeUse }),
     },
   });
 }

@@ -26,6 +26,7 @@ export default function CreateCouponDialog() {
     "percentage" | "flat" | null
   >(null);
   const [isActive, setIsActive] = useState(true);
+  const [isOneTimeUse, setIsOneTimeUse] = useState(false);
 
   const handleSubmit = async (formData: FormData) => {
     startTransition(async () => {
@@ -36,6 +37,7 @@ export default function CreateCouponDialog() {
         setOpen(false);
         setDiscountType(null);
         setIsActive(true);
+        setIsOneTimeUse(false);
       } else {
         toast.error(result.error);
       }
@@ -164,6 +166,25 @@ export default function CreateCouponDialog() {
             <Label htmlFor="active">Active</Label>
           </div>
 
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="oneTimeUse"
+              checked={isOneTimeUse}
+              onCheckedChange={setIsOneTimeUse}
+              disabled={isPending}
+            />
+            <input
+              type="hidden"
+              name="oneTimeUse"
+              value={isOneTimeUse.toString()}
+            />
+            <Label htmlFor="oneTimeUse">One-time use only</Label>
+          </div>
+          <p className="text-xs text-gray-500">
+            If enabled, this coupon will be automatically deactivated after a
+            single successful use
+          </p>
+
           <div className="flex justify-end space-x-2 pt-4">
             <Button
               type="button"
@@ -172,6 +193,7 @@ export default function CreateCouponDialog() {
                 setOpen(false);
                 setDiscountType(null);
                 setIsActive(true);
+                setIsOneTimeUse(false);
               }}
               disabled={isPending}
             >

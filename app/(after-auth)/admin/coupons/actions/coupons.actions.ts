@@ -25,6 +25,7 @@ const createCouponSchema = z.object({
     .max(100, "Discount percentage cannot exceed 100%"),
   flatDiscount: z.number().min(0, "Flat discount cannot be negative"),
   active: z.boolean().optional(),
+  oneTimeUse: z.boolean().optional(),
 });
 
 const updateCouponSchema = z.object({
@@ -48,6 +49,7 @@ const updateCouponSchema = z.object({
     .min(0, "Flat discount cannot be negative")
     .optional(),
   active: z.boolean().optional(),
+  oneTimeUse: z.boolean().optional(),
 });
 
 export async function createCouponAction(formData: FormData) {
@@ -57,6 +59,7 @@ export async function createCouponAction(formData: FormData) {
       discount: parseInt(formData.get("discount") as string) || 0,
       flatDiscount: parseInt(formData.get("flatDiscount") as string) || 0,
       active: formData.get("active") === "true",
+      oneTimeUse: formData.get("oneTimeUse") === "true",
     };
 
     const validatedData = createCouponSchema.parse(data);
@@ -125,6 +128,7 @@ export async function updateCouponAction(formData: FormData) {
       discount: parseInt(formData.get("discount") as string) || 0,
       flatDiscount: parseInt(formData.get("flatDiscount") as string) || 0,
       active: formData.get("active") === "true",
+      oneTimeUse: formData.get("oneTimeUse") === "true",
     };
 
     const validatedData = updateCouponSchema.parse(data);
@@ -171,6 +175,7 @@ export async function updateCouponAction(formData: FormData) {
       discount: validatedData.discount,
       flatDiscount: validatedData.flatDiscount,
       active: validatedData.active,
+      oneTimeUse: validatedData.oneTimeUse,
     });
 
     revalidatePath("/admin/coupons");

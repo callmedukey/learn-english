@@ -22,6 +22,7 @@ export async function POST(request: NextRequest) {
       include: {
         plan: true,
         user: true,
+        coupon: true,
       },
     });
 
@@ -111,6 +112,14 @@ export async function POST(request: NextRequest) {
           endDate,
         },
       });
+
+      // Mark oneTimeUse coupon as inactive
+      if (payment.coupon && payment.coupon.oneTimeUse) {
+        await tx.discountCoupon.update({
+          where: { id: payment.coupon.id },
+          data: { active: false },
+        });
+      }
 
       return { updatedPayment, subscription };
     });

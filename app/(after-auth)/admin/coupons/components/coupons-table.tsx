@@ -143,15 +143,22 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
                         }
                         disabled={isPending}
                       />
-                      <Badge
-                        className={
-                          coupon.active
-                            ? "bg-green-100 text-green-800"
-                            : "bg-gray-100 text-gray-800"
-                        }
-                      >
-                        {coupon.active ? "Active" : "Inactive"}
-                      </Badge>
+                      <div className="flex flex-col">
+                        <Badge
+                          className={
+                            coupon.active
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
+                          }
+                        >
+                          {coupon.active ? "Active" : "Inactive"}
+                        </Badge>
+                        {coupon.oneTimeUse && (
+                          <Badge className="mt-1 bg-amber-100 text-xs text-amber-800">
+                            One-time use
+                          </Badge>
+                        )}
+                      </div>
                     </div>
                   </td>
                   <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
@@ -174,7 +181,7 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
                     <div className="flex items-center space-x-2">
                       <EditCouponDialog
                         coupon={coupon}
-                        key={`${coupon.id}-${coupon.active}-${coupon?.discount}-${coupon?.flatDiscount}-${coupon?.code}`}
+                        key={`${coupon.id}-${coupon.active}-${coupon?.discount}-${coupon?.flatDiscount}-${coupon?.code}-${coupon?.oneTimeUse}`}
                       />
 
                       <AlertDialog>
