@@ -149,7 +149,7 @@ export const createARAction = async (formData: FormData) => {
 
   try {
     // Create AR record with ARSettings in a transaction
-    const newAR = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       const ar = await tx.aR.create({
         data: {
           level,

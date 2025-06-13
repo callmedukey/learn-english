@@ -167,7 +167,7 @@ export const createRCLevelAction = async (formData: FormData) => {
 
   try {
     // Create RCLevel with RCLevelSettings in a transaction
-    const newRCLevel = await prisma.$transaction(async (tx) => {
+    await prisma.$transaction(async (tx) => {
       const rcLevel = await tx.rCLevel.create({
         data: {
           level,
