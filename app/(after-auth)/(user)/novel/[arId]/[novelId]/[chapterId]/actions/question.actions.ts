@@ -152,7 +152,7 @@ export const completeQuestionAction = async (
     const isCorrect = selectedAnswer === question.answer && !isTimedOut;
     const pointsAwarded = isCorrect && !isRetry ? question.score : 0;
 
-    // Check if user has already completed this question
+    // Check if user already has a completion record (should always exist now)
     const existingCompletion = await prisma.novelQuestionCompleted.findFirst({
       where: {
         novelQuestionId: questionId,
@@ -161,7 +161,7 @@ export const completeQuestionAction = async (
     });
 
     if (existingCompletion) {
-      // Update existing completion (for retry scenarios)
+      // Update existing completion with the actual score
       await prisma.novelQuestionCompleted.update({
         where: { id: existingCompletion.id },
         data: {
@@ -169,7 +169,11 @@ export const completeQuestionAction = async (
         },
       });
     } else {
-      // Create new completion record
+      // Fallback: Create completion record if it doesn't exist
+      // This shouldn't happen in normal flow but keeping as safety net
+      console.warn(
+        `Question ${questionId} was not marked as started before submission`,
+      );
       await prisma.novelQuestionCompleted.create({
         data: {
           novelQuestionId: questionId,
@@ -262,3 +266,73 @@ export const completeQuestionAction = async (
     };
   }
 };
+
+export async function markNovelQuestionAsStarted(
+  questionId: string,
+  novelId: string,
+  arId: string,
+  userId: string,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    if (!questionId || !novelId || !arId || !userId) {
+      throw new Error("Missing required fields");
+    }
+
+    // Check if user already has a completion record for this question
+    const existingCompletion = await prisma.novelQuestionCompleted.findFirst({
+      where: {
+        novelQuestionId: questionId,
+        userId: userId,
+      },
+    });
+
+    // If already exists, don't create a new one
+    if (existingCompletion) {
+      return { success: true };
+    }
+
+    // Verify the question belongs to the correct novel and AR
+    const question = await prisma.novelQuestion.findUnique({
+      where: { id: questionId },
+      include: {
+        novelQuestionSet: {
+          include: {
+            novelChapter: {
+              include: {
+                novel: true,
+              },
+            },
+          },
+        },
+      },
+    });
+
+    if (!question) {
+      return { success: false, error: "Question not found" };
+    }
+
+    if (
+      question.novelQuestionSet?.novelChapter?.novelId !== novelId ||
+      question.novelQuestionSet?.novelChapter?.novel.ARId !== arId
+    ) {
+      return { success: false, error: "Invalid question context" };
+    }
+
+    // Create completion record with score 0
+    await prisma.novelQuestionCompleted.create({
+      data: {
+        novelQuestionId: questionId,
+        userId: userId,
+        score: 0, // Mark as started with 0 score
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error marking novel question as started:", error);
+    return {
+      success: false,
+      error: "Failed to mark question as started",
+    };
+  }
+}

@@ -20,6 +20,77 @@ export interface RCQuizCompletionResult {
   tryNumber?: 1 | 2;
 }
 
+export async function markRCQuestionAsStarted(
+  questionId: string,
+  keywordId: string,
+  rcLevelId: string,
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const session = await auth();
+
+    if (!session?.user?.id) {
+      throw new Error("Unauthorized");
+    }
+
+    if (!questionId || !keywordId || !rcLevelId) {
+      throw new Error("Missing required fields");
+    }
+
+    // Check if user already has a completion record for this question
+    const existingCompletion = await prisma.rCQuestionCompleted.findFirst({
+      where: {
+        RCQuestionId: questionId,
+        userId: session.user.id,
+      },
+    });
+
+    // If already exists, don't create a new one
+    if (existingCompletion) {
+      return { success: true };
+    }
+
+    // Verify the question belongs to the correct keyword and level
+    const question = await prisma.rCQuestion.findUnique({
+      where: { id: questionId },
+      include: {
+        RCQuestionSet: {
+          include: {
+            RCKeyword: true,
+          },
+        },
+      },
+    });
+
+    if (!question) {
+      return { success: false, error: "Question not found" };
+    }
+
+    if (
+      question.RCQuestionSet?.RCKeyword?.id !== keywordId ||
+      question.RCQuestionSet?.RCKeyword?.rcLevelId !== rcLevelId
+    ) {
+      return { success: false, error: "Invalid question context" };
+    }
+
+    // Create completion record with score 0
+    await prisma.rCQuestionCompleted.create({
+      data: {
+        RCQuestionId: questionId,
+        userId: session.user.id,
+        score: 0, // Mark as started with 0 score
+      },
+    });
+
+    return { success: true };
+  } catch (error) {
+    console.error("Error marking RC question as started:", error);
+    return {
+      success: false,
+      error: "Failed to mark question as started",
+    };
+  }
+}
+
 export async function saveRCQuizCompletion(
   questionSetId: string,
   keywordId: string,
@@ -168,7 +239,7 @@ export async function submitRCAnswer(
     const isCorrect = answer === question.answer && !isTimedOut;
     const pointsAwarded = isCorrect && !isRetry ? question.score : 0;
 
-    // Check if user already completed this question
+    // Check if user already has a completion record (should always exist now)
     const existingCompletion = await prisma.rCQuestionCompleted.findFirst({
       where: {
         RCQuestionId: questionId,
@@ -177,7 +248,7 @@ export async function submitRCAnswer(
     });
 
     if (existingCompletion) {
-      // Update existing completion (for retry scenarios)
+      // Update existing completion with the actual score
       await prisma.rCQuestionCompleted.update({
         where: { id: existingCompletion.id },
         data: {
@@ -185,7 +256,11 @@ export async function submitRCAnswer(
         },
       });
     } else {
-      // Create completion record
+      // Fallback: Create completion record if it doesn't exist
+      // This shouldn't happen in normal flow but keeping as safety net
+      console.warn(
+        `Question ${questionId} was not marked as started before submission`,
+      );
       await prisma.rCQuestionCompleted.create({
         data: {
           RCQuestionId: questionId,

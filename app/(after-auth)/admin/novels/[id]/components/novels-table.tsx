@@ -14,13 +14,20 @@ import {
 } from "@/components/ui/table";
 
 import DeleteNovelAlert from "./delete-novel-alert";
+import MoveNovelDialog from "./move-novel-dialog";
 import { NovelData } from "../../query/novel.query";
 
 interface NovelsTableProps {
   novels: NovelData[];
+  arLevels: {
+    id: string;
+    level: string;
+    description: string | null;
+    stars: number;
+  }[];
 }
 
-const NovelsTable: React.FC<NovelsTableProps> = ({ novels }) => {
+const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels }) => {
   if (!novels || novels.length === 0) {
     return (
       <p className="text-center text-gray-500">
@@ -87,6 +94,14 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels }) => {
                       <Edit className="h-4 w-4" />
                     </Link>
                   </Button>
+                  {novel.AR && (
+                    <MoveNovelDialog
+                      novelId={novel.id}
+                      novelTitle={novel.title}
+                      currentARId={novel.AR.id}
+                      arLevels={arLevels}
+                    />
+                  )}
                   <DeleteNovelAlert novelId={novel.id} title={novel.title} />
                 </div>
               </TableCell>

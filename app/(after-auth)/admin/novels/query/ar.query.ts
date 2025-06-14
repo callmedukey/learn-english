@@ -52,3 +52,18 @@ export const getARs = async (): Promise<ARData[]> => {
 
   return arsWithNovelCount;
 };
+
+// Simple query to get all AR levels for selection
+export const getARLevelsForSelection = async () => {
+  return await prisma.aR.findMany({
+    select: {
+      id: true,
+      level: true,
+      description: true,
+      stars: true,
+    },
+    orderBy: {
+      level: "asc",
+    },
+  });
+};

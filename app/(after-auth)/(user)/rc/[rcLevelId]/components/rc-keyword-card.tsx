@@ -1,3 +1,4 @@
+import DOMPurify from "isomorphic-dompurify";
 import { FileText, Lock, Target, Repeat } from "lucide-react";
 import Link from "next/link";
 
@@ -196,7 +197,11 @@ export function RCKeywordCard({
                 variant="outline"
                 className="border-muted-foreground/30 text-muted-foreground"
               >
-                {keyword.RCQuestionSet.title}
+                <span
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(keyword.RCQuestionSet.title),
+                  }}
+                />
               </Badge>
             )}
           </div>

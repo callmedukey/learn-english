@@ -40,6 +40,9 @@ async function resetScores() {
         RCQuestionSecondTry: {
           deleteMany: {},
         },
+        notifications: {
+          deleteMany: {},
+        },
       },
     });
   }

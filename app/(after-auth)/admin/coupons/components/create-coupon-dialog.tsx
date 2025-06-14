@@ -26,7 +26,7 @@ export default function CreateCouponDialog() {
     "percentage" | "flat" | null
   >(null);
   const [isActive, setIsActive] = useState(true);
-  const [isOneTimeUse, setIsOneTimeUse] = useState(false);
+  const [isOneTimeUse, setIsOneTimeUse] = useState(true);
 
   const handleSubmit = async (formData: FormData) => {
     startTransition(async () => {

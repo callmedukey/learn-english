@@ -19,6 +19,7 @@ import { Progress } from "@/components/ui/progress";
 import {
   completeQuestionAction,
   saveNovelQuizCompletion,
+  markNovelQuestionAsStarted,
 } from "../actions/question.actions";
 import type {
   ChapterDetailsData,
@@ -121,8 +122,20 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       setShuffledChoices(shuffled);
       setTimeLeft(currentQuestion.timeLimit);
       setIsTransitioning(false); // Clear transition flag when new question is ready
+
+      // Mark question as started immediately when displayed
+      // This prevents users from exiting and coming back
+      markNovelQuestionAsStarted(currentQuestion.id, novelId, arId, userId)
+        .then((result) => {
+          if (!result.success) {
+            console.error("Failed to mark question as started:", result.error);
+          }
+        })
+        .catch((error) => {
+          console.error("Error marking question as started:", error);
+        });
     }
-  }, [currentQuestion?.id, quizStarted]);
+  }, [currentQuestion, quizStarted, novelId, arId, userId, lastQuestionIdRef]);
 
   const handleTimeOut = useCallback(async () => {
     if (!currentQuestion) return;

@@ -5,6 +5,7 @@ import React, { Suspense } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import { getARLevelsForSelection } from "../query/ar.query";
 import { getARByLevel, getNovelsByARLevel } from "../query/novel.query";
 import NovelsTable from "./components/novels-table";
 
@@ -20,8 +21,11 @@ const NovelsListPage = async ({ params }: PageProps) => {
     notFound();
   }
 
-  // Fetch novels for this level
-  const novels = await getNovelsByARLevel(id);
+  // Fetch novels for this level and all AR levels for moving novels
+  const [novels, arLevels] = await Promise.all([
+    getNovelsByARLevel(id),
+    getARLevelsForSelection(),
+  ]);
 
   return (
     <div className="space-y-6 px-1">
@@ -81,7 +85,7 @@ const NovelsListPage = async ({ params }: PageProps) => {
         <Suspense
           fallback={<div className="py-8 text-center">Loading novels...</div>}
         >
-          <NovelsTable novels={novels} />
+          <NovelsTable novels={novels} arLevels={arLevels} />
         </Suspense>
       </div>
     </div>
