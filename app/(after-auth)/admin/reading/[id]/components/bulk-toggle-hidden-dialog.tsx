@@ -1,5 +1,10 @@
 "use client";
 
+import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -9,14 +14,10 @@ import {
   AlertDialogFooter,
   AlertDialogHeader,
   AlertDialogTitle,
-  AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+
 import { toggleKeywordsHiddenStatus } from "../actions";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 interface BulkToggleHiddenDialogProps {
   selectedKeywordIds: string[];
@@ -49,6 +50,7 @@ export function BulkToggleHiddenDialog({
         toast.error(result.message || "Failed to update keywords");
       }
     } catch (error) {
+      console.error(error);
       toast.error("An error occurred while updating keywords");
     }
   };

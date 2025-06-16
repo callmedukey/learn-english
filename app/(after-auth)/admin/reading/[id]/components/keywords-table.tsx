@@ -16,10 +16,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { BulkToggleHiddenDialog } from "./bulk-toggle-hidden-dialog";
 import DeleteKeywordAlert from "./delete-keyword-alert";
 import MoveKeywordDialog from "./move-keyword-dialog";
 import { RCKeywordData } from "../../query/rc-detail.query";
-import { BulkToggleHiddenDialog } from "./bulk-toggle-hidden-dialog";
 
 interface KeywordsTableProps {
   keywords: RCKeywordData[];

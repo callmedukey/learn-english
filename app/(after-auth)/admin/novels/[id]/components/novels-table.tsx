@@ -16,10 +16,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { BulkToggleHiddenDialog } from "./bulk-toggle-hidden-dialog";
 import DeleteNovelAlert from "./delete-novel-alert";
 import MoveNovelDialog from "./move-novel-dialog";
 import { NovelData } from "../../query/novel.query";
-import { BulkToggleHiddenDialog } from "./bulk-toggle-hidden-dialog";
 
 interface NovelsTableProps {
   novels: NovelData[];

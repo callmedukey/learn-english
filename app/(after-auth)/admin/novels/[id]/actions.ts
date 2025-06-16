@@ -1,7 +1,8 @@
 "use server";
 
-import { prisma } from "@/prisma/prisma-client";
 import { revalidatePath } from "next/cache";
+
+import { prisma } from "@/prisma/prisma-client";
 
 export async function toggleNovelsHiddenStatus(
   novelIds: string[],

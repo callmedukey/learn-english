@@ -1,5 +1,10 @@
 "use client";
 
+import { Eye, EyeOff } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { toast } from "sonner";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -11,11 +16,8 @@ import {
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
 import { Button } from "@/components/ui/button";
-import { Eye, EyeOff } from "lucide-react";
-import { useState } from "react";
+
 import { toggleNovelsHiddenStatus } from "../actions";
-import { useRouter } from "next/navigation";
-import { toast } from "sonner";
 
 interface BulkToggleHiddenDialogProps {
   selectedNovelIds: string[];
@@ -48,6 +50,7 @@ export function BulkToggleHiddenDialog({
         toast.error(result.message || "Failed to update novels");
       }
     } catch (error) {
+      console.error(error);
       toast.error("An error occurred while updating novels");
     }
   };
