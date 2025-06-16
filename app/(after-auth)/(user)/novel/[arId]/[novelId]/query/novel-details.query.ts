@@ -6,6 +6,7 @@ export interface NovelDetailsData {
   id: string;
   title: string;
   description: string | null;
+  hidden: boolean;
   AR: {
     id: string;
     level: string;
@@ -116,7 +117,7 @@ export const getNovelDetails = async (
     },
   });
 
-  if (!novel) {
+  if (!novel || novel.hidden) {
     return null;
   }
 
@@ -176,6 +177,7 @@ export const getNovelDetails = async (
     id: novel.id,
     title: novel.title,
     description: novel.description,
+    hidden: novel.hidden,
     AR: novel.AR,
     novelChapters: novelChaptersWithProgress,
     createdAt: novel.createdAt,

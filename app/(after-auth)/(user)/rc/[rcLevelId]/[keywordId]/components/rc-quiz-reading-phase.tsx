@@ -75,7 +75,7 @@ export function RCQuizReadingPhase({
         </CardHeader>
         <CardContent>
           <div className="prose prose-sm max-w-none">
-            <div className="text-base leading-relaxed whitespace-pre-wrap">
+            <div className="text-base leading-relaxed whitespace-pre-wrap [&_p]:mb-2 [&_p:empty]:h-4 [&_p:last-child]:mb-0">
               <span
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(passage),

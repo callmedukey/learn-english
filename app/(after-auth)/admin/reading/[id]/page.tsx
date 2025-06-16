@@ -88,13 +88,11 @@ const RCLevelDetailPage = async ({ params }: PageProps) => {
       </div>
 
       {/* Keywords Table */}
-      <div className="rounded-lg border">
-        <Suspense
-          fallback={<div className="py-8 text-center">Loading keywords...</div>}
-        >
-          <KeywordsTable keywords={keywords} rcLevels={rcLevels} />
-        </Suspense>
-      </div>
+      <Suspense
+        fallback={<div className="py-8 text-center">Loading keywords...</div>}
+      >
+        <KeywordsTable keywords={keywords} rcLevels={rcLevels} />
+      </Suspense>
     </div>
   );
 };

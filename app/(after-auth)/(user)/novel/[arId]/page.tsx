@@ -83,7 +83,10 @@ async function ARNovels({
     where: { id: arId },
     include: {
       novels: {
-        where: searchWhere,
+        where: {
+          ...searchWhere,
+          hidden: false,
+        },
         include: {
           novelChapters: {
             include: {
@@ -120,9 +123,12 @@ async function ARNovels({
     notFound();
   }
 
-  // Get total count for display (without search filter)
+  // Get total count for display (only visible novels)
   const totalNovelsCount = await prisma.novel.count({
-    where: { ARId: arId },
+    where: {
+      ARId: arId,
+      hidden: false,
+    },
   });
 
   // Apply status filter on the server side if needed

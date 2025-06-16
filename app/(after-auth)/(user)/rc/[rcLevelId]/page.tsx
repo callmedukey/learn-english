@@ -88,7 +88,10 @@ async function RCKeywords({
     where: { id: rcLevelId },
     include: {
       RCKeyword: {
-        where: searchWhere,
+        where: {
+          ...searchWhere,
+          hidden: false,
+        },
         include: {
           RCQuestionSet: {
             include: {
@@ -147,9 +150,12 @@ async function RCKeywords({
     notFound();
   }
 
-  // Get total count for display (without search filter)
+  // Get total count for display (only visible keywords)
   const totalKeywordsCount = await prisma.rCKeyword.count({
-    where: { rcLevelId: rcLevelId },
+    where: {
+      rcLevelId: rcLevelId,
+      hidden: false,
+    },
   });
 
   // Apply status filter on the server side if needed

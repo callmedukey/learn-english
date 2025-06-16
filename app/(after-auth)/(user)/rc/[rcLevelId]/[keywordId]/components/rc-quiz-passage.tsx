@@ -29,7 +29,7 @@ export function RCQuizPassage({ title, passage }: PassageProps) {
       <CardContent>
         <div className="prose prose-sm max-w-none">
           <div
-            className="text-sm leading-relaxed whitespace-pre-wrap [&_p]:mb-2 [&_p:empty]:h-4 [&_p:last-child]:mb-0"
+            className="text-sm leading-relaxed whitespace-pre-line [&_p]:mb-2 [&_p:empty]:h-4 [&_p:last-child]:mb-0"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(passage),
             }}

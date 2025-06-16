@@ -14,6 +14,9 @@ async function RCLevels() {
   const rcLevels = await prisma.rCLevel.findMany({
     include: {
       RCKeyword: {
+        where: {
+          hidden: false,
+        },
         include: {
           RCQuestionSet: {
             include: {

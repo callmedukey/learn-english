@@ -14,6 +14,9 @@ async function ARChoices() {
   const arChoices = await prisma.aR.findMany({
     include: {
       novels: {
+        where: {
+          hidden: false,
+        },
         include: {
           novelChapters: {
             include: {

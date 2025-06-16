@@ -100,7 +100,8 @@ async function RCKeywordContent({
     },
   });
 
-  if (!keyword || keyword.rcLevelId !== rcLevelId) {
+  // Return 404 if keyword doesn't exist, is hidden, or belongs to different level
+  if (!keyword || keyword.rcLevelId !== rcLevelId || keyword.hidden) {
     notFound();
   }
 

@@ -81,13 +81,11 @@ const NovelsListPage = async ({ params }: PageProps) => {
       </div>
 
       {/* Novels Table */}
-      <div className="rounded-lg border">
-        <Suspense
-          fallback={<div className="py-8 text-center">Loading novels...</div>}
-        >
-          <NovelsTable novels={novels} arLevels={arLevels} />
-        </Suspense>
-      </div>
+      <Suspense
+        fallback={<div className="py-8 text-center">Loading novels...</div>}
+      >
+        <NovelsTable novels={novels} arLevels={arLevels} />
+      </Suspense>
     </div>
   );
 };
