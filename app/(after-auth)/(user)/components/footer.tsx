@@ -1,3 +1,4 @@
+import Link from "next/link";
 import React from "react";
 import { SiFacebook, SiInstagram, SiX } from "react-icons/si";
 
@@ -21,6 +22,11 @@ const Footer = () => {
                 <div>
                   <span className="font-semibold">Phone:</span>
                   <span className="ml-2 text-gray-500">+82-0507-1432-0332</span>
+                </div>
+                <div className="">
+                  <Link href="/refund-policy" className="text-gray-500">
+                    Refund Policy
+                  </Link>
                 </div>
               </div>
               <div className="space-y-2">
