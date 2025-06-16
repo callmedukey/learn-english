@@ -16,6 +16,7 @@ interface ReadingPhaseProps {
   timeLimit: number;
   readingTimeLeft: number;
   onFinishReading: () => void;
+  fontSizeClasses: string;
 }
 
 export function RCQuizReadingPhase({
@@ -24,6 +25,7 @@ export function RCQuizReadingPhase({
   timeLimit,
   readingTimeLeft,
   onFinishReading,
+  fontSizeClasses,
 }: ReadingPhaseProps) {
   return (
     <div className="mx-auto max-w-6xl space-y-4">
@@ -75,7 +77,9 @@ export function RCQuizReadingPhase({
         </CardHeader>
         <CardContent>
           <div className="prose prose-sm max-w-none">
-            <div className="text-base leading-relaxed whitespace-pre-wrap [&_p]:mb-2 [&_p:empty]:h-4 [&_p:last-child]:mb-0">
+            <div
+              className={`text-base leading-relaxed whitespace-pre-wrap [&_p]:mb-2 [&_p:empty]:h-4 [&_p:last-child]:mb-0 ${fontSizeClasses}`}
+            >
               <span
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(passage),

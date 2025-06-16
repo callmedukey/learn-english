@@ -11,9 +11,14 @@ import {
 interface PassageProps {
   title: string;
   passage: string;
+  fontSizeClasses: string;
 }
 
-export function RCQuizPassage({ title, passage }: PassageProps) {
+export function RCQuizPassage({
+  title,
+  passage,
+  fontSizeClasses,
+}: PassageProps) {
   return (
     <Card>
       <CardHeader>
@@ -29,7 +34,7 @@ export function RCQuizPassage({ title, passage }: PassageProps) {
       <CardContent>
         <div className="prose prose-sm max-w-none">
           <div
-            className="text-sm leading-relaxed whitespace-pre-line [&_p]:mb-2 [&_p:empty]:h-4 [&_p:last-child]:mb-0"
+            className={`text-sm leading-relaxed whitespace-pre-line [&_p]:mb-2 [&_p:empty]:h-4 [&_p:last-child]:mb-0 ${fontSizeClasses}`}
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(passage),
             }}

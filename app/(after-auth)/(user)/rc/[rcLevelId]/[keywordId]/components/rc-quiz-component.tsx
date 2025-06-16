@@ -47,6 +47,7 @@ interface RCQuizComponentProps {
   rcLevelId: string;
   userHasPaidSubscription: boolean;
   status: "start" | "continue" | "retry";
+  fontSizeClasses: string;
 }
 
 export function RCQuizComponent({
@@ -55,6 +56,7 @@ export function RCQuizComponent({
   keywordId,
   rcLevelId,
   status,
+  fontSizeClasses,
 }: RCQuizComponentProps) {
   const router = useRouter();
   const [initialStatus] = useState(status);
@@ -400,6 +402,7 @@ export function RCQuizComponent({
         timeLimit={questionSet.timeLimit || 60}
         readingTimeLeft={readingTimeLeft}
         onFinishReading={handleFinishReading}
+        fontSizeClasses={fontSizeClasses}
       />
     );
   }
@@ -424,6 +427,7 @@ export function RCQuizComponent({
         <RCQuizPassage
           title={questionSet.title}
           passage={questionSet.passage}
+          fontSizeClasses={fontSizeClasses}
         />
       </div>
 
@@ -454,6 +458,7 @@ export function RCQuizComponent({
           currentQuestionIndex={currentQuestionIndex}
           totalQuestions={totalQuestions}
           initialStatus={initialStatus}
+          fontSizeClasses={fontSizeClasses}
         />
       </div>
     </div>

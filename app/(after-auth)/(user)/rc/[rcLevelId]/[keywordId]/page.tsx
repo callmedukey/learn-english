@@ -355,6 +355,7 @@ async function RCKeywordContent({
         rcLevelId={rcLevelId}
         userHasPaidSubscription={session.user.hasPaidSubscription}
         status={status}
+        fontSizeClasses={fontSizeClasses}
       />
     </div>
   );

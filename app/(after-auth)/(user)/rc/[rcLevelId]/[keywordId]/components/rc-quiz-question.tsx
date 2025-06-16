@@ -40,6 +40,7 @@ interface QuestionProps {
   currentQuestionIndex: number;
   totalQuestions: number;
   initialStatus: string;
+  fontSizeClasses: string;
 }
 
 export function RCQuizQuestion({
@@ -60,6 +61,7 @@ export function RCQuizQuestion({
   currentQuestionIndex,
   totalQuestions,
   initialStatus,
+  fontSizeClasses,
 }: QuestionProps) {
   return (
     <Card>
@@ -110,7 +112,9 @@ export function RCQuizQuestion({
             )}
           </div>
         </div>
-        <CardDescription className="text-base leading-relaxed">
+        <CardDescription
+          className={`text-base leading-relaxed ${fontSizeClasses}`}
+        >
           <span
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(question.question),
@@ -167,7 +171,7 @@ export function RCQuizQuestion({
                 </div>
                 <Label
                   htmlFor={`choice-${index}`}
-                  className="pointer-events-none flex flex-1 cursor-pointer flex-wrap font-medium"
+                  className={`pointer-events-none flex flex-1 cursor-pointer flex-wrap font-medium ${fontSizeClasses}`}
                 >
                   <span className="mr-2 font-bold">{choiceLabel}.</span>
                   <span
@@ -216,7 +220,7 @@ export function RCQuizQuestion({
           <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
             <h4 className="mb-2 font-semibold text-amber-800">Explanation</h4>
             <p
-              className="text-amber-700"
+              className={`text-amber-700 ${fontSizeClasses}`}
               dangerouslySetInnerHTML={{
                 __html: DOMPurify.sanitize(question.explanation),
               }}
