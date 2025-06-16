@@ -344,7 +344,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
             </div>
             <div className="rounded-lg bg-gray-50 p-4">
               <div
-                className="whitespace-pre-wrap text-gray-700"
+                className="text-gray-700 [&_p]:mb-2 [&_p:empty]:h-4 [&_p:last-child]:mb-0"
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(keyword.RCQuestionSet.passage),
                 }}
@@ -424,7 +424,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
                           <span className="mr-2 font-medium">
                             {String.fromCharCode(65 + index)}.
                           </span>
-                          <span
+                          <div
                             dangerouslySetInnerHTML={{
                               __html: DOMPurify.sanitize(choice),
                             }}
@@ -788,7 +788,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
         </div>
       </CardHeader>
       <CardContent>
-        <p
+        <div
           className="mb-2 font-medium"
           dangerouslySetInnerHTML={{
             __html: DOMPurify.sanitize(question.question),
@@ -807,7 +807,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
               <span className="mr-2">
                 {String.fromCharCode(65 + choiceIndex)}.
               </span>
-              <span
+              <div
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(choice),
                 }}
@@ -815,14 +815,14 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             </div>
           ))}
         </div>
-        <p className="text-sm text-gray-600">
+        <div className="text-sm text-gray-600">
           <strong>Explanation:</strong>{" "}
-          <span
+          <div
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(question.explanation),
             }}
           />
-        </p>
+        </div>
       </CardContent>
     </Card>
   );

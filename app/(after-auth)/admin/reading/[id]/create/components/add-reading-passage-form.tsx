@@ -3,11 +3,11 @@
 import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { TiptapEditor } from "@/components/custom-ui/tiptap-editor";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 
 import { createQuestionSetAction } from "../../[keywordId]/edit/actions/question-set.actions";
 
@@ -119,28 +119,23 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
             <div className="space-y-4">
               <div>
                 <Label htmlFor={`title-${index}`}>Passage Title</Label>
-                <Input
-                  id={`title-${index}`}
+                <TiptapEditor
                   value={passage.title}
-                  onChange={(e) =>
-                    updatePassageText(index, "title", e.target.value)
-                  }
+                  onChange={(value) => updatePassageText(index, "title", value)}
                   placeholder="Enter the title of the reading passage"
-                  disabled={isPending}
+                  rows={1}
                 />
               </div>
 
               <div>
                 <Label htmlFor={`passage-${index}`}>Reading Passage</Label>
-                <Textarea
-                  id={`passage-${index}`}
+                <TiptapEditor
                   value={passage.passage}
-                  onChange={(e) =>
-                    updatePassageText(index, "passage", e.target.value)
+                  onChange={(value) =>
+                    updatePassageText(index, "passage", value)
                   }
                   placeholder="Enter the reading passage text..."
                   rows={8}
-                  disabled={isPending}
                 />
               </div>
 

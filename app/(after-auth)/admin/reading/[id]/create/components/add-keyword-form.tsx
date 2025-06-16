@@ -71,7 +71,7 @@ const AddKeywordForm: React.FC<AddKeywordFormProps> = ({
           name="description"
           placeholder="Describe what this keyword focuses on..."
           disabled={isPending}
-          defaultValue="Find the best answer for each question."
+          defaultValue="Choose the best answer after reading the passage."
           rows={4}
         />
       </div>

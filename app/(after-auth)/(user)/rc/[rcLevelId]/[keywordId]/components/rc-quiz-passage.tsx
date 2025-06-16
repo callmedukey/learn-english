@@ -18,7 +18,7 @@ export function RCQuizPassage({ title, passage }: PassageProps) {
     <Card>
       <CardHeader>
         <CardTitle className="text-lg">
-          <span
+          <div
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(title),
             }}
@@ -28,13 +28,12 @@ export function RCQuizPassage({ title, passage }: PassageProps) {
       </CardHeader>
       <CardContent>
         <div className="prose prose-sm max-w-none">
-          <div className="text-sm leading-relaxed whitespace-pre-wrap">
-            <span
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(passage),
-              }}
-            />
-          </div>
+          <div
+            className="text-sm leading-relaxed whitespace-pre-wrap [&_p]:mb-2 [&_p:empty]:h-4 [&_p:last-child]:mb-0"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(passage),
+            }}
+          />
         </div>
       </CardContent>
     </Card>

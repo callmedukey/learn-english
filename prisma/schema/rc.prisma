@@ -26,6 +26,8 @@ model RCKeyword {
   RCLevel   RCLevel @relation(fields: [rcLevelId], references: [id], onDelete: Cascade)
   rcLevelId String
 
+  hidden Boolean @default(false)
+
   isFree Boolean @default(false)
 
   RCQuestionSet RCQuestionSet?

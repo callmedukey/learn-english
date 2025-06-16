@@ -22,6 +22,8 @@ model Novel {
   title       String
   description String?
 
+  hidden Boolean @default(false)
+
   AR   AR?     @relation(fields: [ARId], references: [id], onDelete: Cascade)
   ARId String?
 
