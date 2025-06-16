@@ -161,9 +161,12 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
                 <Button
                   variant="ghost"
                   className="h-10 w-full justify-start gap-3 px-3"
+                  asChild
                 >
-                  <User className="size-4" />
-                  Profile
+                  <Link href="/profile" onClick={() => setIsOpen(false)}>
+                    <User className="size-4" />
+                    Profile
+                  </Link>
                 </Button>
               </div>
             </div>

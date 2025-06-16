@@ -53,3 +53,18 @@ export const getRCLevelById = async (id: string) => {
     },
   });
 };
+
+// Simple query to get all RC levels for selection
+export const getRCLevelsForSelection = async () => {
+  return await prisma.rCLevel.findMany({
+    select: {
+      id: true,
+      level: true,
+      description: true,
+      stars: true,
+    },
+    orderBy: {
+      level: "asc",
+    },
+  });
+};

@@ -14,13 +14,23 @@ import {
 } from "@/components/ui/table";
 
 import DeleteKeywordAlert from "./delete-keyword-alert";
+import MoveKeywordDialog from "./move-keyword-dialog";
 import { RCKeywordData } from "../../query/rc-detail.query";
 
 interface KeywordsTableProps {
   keywords: RCKeywordData[];
+  rcLevels: {
+    id: string;
+    level: string;
+    description: string | null;
+    stars: number;
+  }[];
 }
 
-const KeywordsTable: React.FC<KeywordsTableProps> = ({ keywords }) => {
+const KeywordsTable: React.FC<KeywordsTableProps> = ({
+  keywords,
+  rcLevels,
+}) => {
   if (!keywords || keywords.length === 0) {
     return (
       <div className="py-8 text-center">
@@ -95,6 +105,12 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({ keywords }) => {
                       <Edit className="h-4 w-4" />
                     </Link>
                   </Button>
+                  <MoveKeywordDialog
+                    keywordId={keyword.id}
+                    keywordName={keyword.name}
+                    currentRCLevelId={keyword.rcLevelId}
+                    rcLevels={rcLevels}
+                  />
                   <DeleteKeywordAlert
                     keywordId={keyword.id}
                     name={keyword.name}

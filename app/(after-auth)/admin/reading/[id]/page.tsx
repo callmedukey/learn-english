@@ -5,7 +5,11 @@ import React, { Suspense } from "react";
 
 import { Button } from "@/components/ui/button";
 
-import { getRCLevelById, getRCKeywordsByLevel } from "../query/rc-detail.query";
+import {
+  getRCLevelById,
+  getRCKeywordsByLevel,
+  getRCLevelsForSelection,
+} from "../query/rc-detail.query";
 import KeywordsTable from "./components/keywords-table";
 
 interface PageProps {
@@ -20,8 +24,11 @@ const RCLevelDetailPage = async ({ params }: PageProps) => {
     notFound();
   }
 
-  // Fetch keywords for this level
-  const keywords = await getRCKeywordsByLevel(id);
+  // Fetch keywords for this level and all RC levels for moving keywords
+  const [keywords, rcLevels] = await Promise.all([
+    getRCKeywordsByLevel(id),
+    getRCLevelsForSelection(),
+  ]);
 
   return (
     <div className="space-y-6 px-1">
@@ -85,7 +92,7 @@ const RCLevelDetailPage = async ({ params }: PageProps) => {
         <Suspense
           fallback={<div className="py-8 text-center">Loading keywords...</div>}
         >
-          <KeywordsTable keywords={keywords} />
+          <KeywordsTable keywords={keywords} rcLevels={rcLevels} />
         </Suspense>
       </div>
     </div>
