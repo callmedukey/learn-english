@@ -4,6 +4,7 @@ import React, { useTransition } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -70,6 +71,11 @@ const AddNovelForm: React.FC<AddNovelFormProps> = ({
           disabled={isPending}
           rows={4}
         />
+      </div>
+
+      <div className="flex items-center space-x-2">
+        <Checkbox id="hidden" name="hidden" defaultChecked />
+        <Label htmlFor="hidden">Hidden</Label>
       </div>
 
       <div className="flex space-x-2">

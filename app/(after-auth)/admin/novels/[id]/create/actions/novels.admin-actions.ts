@@ -8,6 +8,7 @@ export const createNovel = async (formData: FormData) => {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const level = formData.get("level") as string;
+  const hidden = formData.get("hidden") === "on";
 
   if (!title || !level) {
     return {
@@ -21,6 +22,7 @@ export const createNovel = async (formData: FormData) => {
         data: {
           title,
           description,
+          hidden,
           AR: {
             connect: {
               id: level,
@@ -48,6 +50,7 @@ export const updateNovel = async (formData: FormData) => {
   const novelId = formData.get("novelId") as string;
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
+  const hidden = formData.get("hidden") === "on";
 
   if (!novelId || !title || !description) {
     return {
@@ -67,7 +70,7 @@ export const updateNovel = async (formData: FormData) => {
     const result = await prisma.$transaction(async (tx) => {
       await tx.novel.update({
         where: { id: novelId },
-        data: { title, description },
+        data: { title, description, hidden },
       });
 
       const finalUpdatedNovel = await tx.novel.findUnique({

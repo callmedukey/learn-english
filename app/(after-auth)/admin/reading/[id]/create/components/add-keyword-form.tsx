@@ -81,6 +81,11 @@ const AddKeywordForm: React.FC<AddKeywordFormProps> = ({
         <Label htmlFor="isFree">Free Access</Label>
       </div>
 
+      <div className="flex items-center space-x-2">
+        <Checkbox id="hidden" name="hidden" defaultChecked />
+        <Label htmlFor="hidden">Hidden</Label>
+      </div>
+
       <div className="flex space-x-2">
         <Button type="submit" disabled={isPending}>
           {isPending ? "Creating..." : "Create Keyword"}

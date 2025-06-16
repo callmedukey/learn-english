@@ -9,6 +9,7 @@ export const createKeywordAction = async (formData: FormData) => {
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
   const isFree = formData.get("isFree") === "on";
+  const hidden = formData.get("hidden") === "on";
 
   if (!rcLevelId || !name) {
     return {
@@ -50,6 +51,7 @@ export const createKeywordAction = async (formData: FormData) => {
         description: description?.trim() || null,
         rcLevelId,
         isFree,
+        hidden,
       },
     });
 
