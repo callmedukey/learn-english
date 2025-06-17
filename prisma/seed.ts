@@ -16,14 +16,14 @@ export const seed = async () => {
         email: "admin2@readingchamp.com",
       },
       update: {
-        password: await bcrypt.hash("admin2025@@@", 10),
+        password: await bcrypt.hash("gen2kbgroup@", 10),
         countryId: korea?.id,
         gender: Gender.Male,
         birthday: new Date("2000-01-01"),
       },
       create: {
         email: "admin2@readingchamp.com",
-        password: await bcrypt.hash("admin2025@@@", 10),
+        password: await bcrypt.hash("gen2kbgroup@", 10),
         nickname: "admin2",
         role: Role.ADMIN,
         countryId: korea?.id,
