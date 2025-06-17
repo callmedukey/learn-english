@@ -5,22 +5,32 @@ import { prisma } from "./prisma-client";
 
 export const seed = async () => {
   try {
-    await prisma.user.create({
-      data: {
+    const korea = await prisma.country.findFirst({
+      where: {
+        name: "South Korea",
+      },
+    });
+
+    await prisma.user.upsert({
+      where: {
+        email: "admin2@readingchamp.com",
+      },
+      update: {
+        password: await bcrypt.hash("admin2025@@@", 10),
+        countryId: korea?.id,
+        gender: Gender.Male,
+        birthday: new Date("2000-01-01"),
+      },
+      create: {
         email: "admin2@readingchamp.com",
         password: await bcrypt.hash("admin2025@@@", 10),
         nickname: "admin2",
         role: Role.ADMIN,
-        country: {
-          connect: {
-            name: "South Korea",
-          },
-        },
+        countryId: korea?.id,
         gender: Gender.Male,
         birthday: new Date("2000-01-01"),
       },
     });
-    // const korea: Country | null = null;
     // const [hasKorea, hasUser, hasAR, hasRCLevel, hasPlans] = await Promise.all([
     //   prisma.country.findFirst({
     //     where: {
