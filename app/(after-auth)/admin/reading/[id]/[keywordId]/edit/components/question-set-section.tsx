@@ -816,7 +816,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           ))}
         </div>
         <div className="text-sm text-gray-600">
-          <strong>Explanation:</strong>{" "}
+          <strong className="block">Explanation:</strong>{" "}
           <div
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(question.explanation),

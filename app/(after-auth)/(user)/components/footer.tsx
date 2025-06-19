@@ -12,12 +12,18 @@ const Footer = () => {
             <div className="grid grid-cols-1 gap-4 text-center text-sm md:grid-cols-2 md:text-left">
               <div className="space-y-2">
                 <div>
+                  <span className="font-semibold">Business Name:</span>
+                  <span className="ml-2 text-gray-500">
+                    (주)비피에이교육 (BPA Education)
+                  </span>
+                </div>
+                <div>
                   <span className="font-semibold">Business Registration:</span>
                   <span className="ml-2 text-gray-500">393-81-00352</span>
                 </div>
                 <div>
                   <span className="font-semibold">CEO:</span>
-                  <span className="ml-2 text-gray-500">David Kim</span>
+                  <span className="ml-2 text-gray-500">KIM DAVID EUNKEE</span>
                 </div>
                 <div>
                   <span className="font-semibold">Phone:</span>
@@ -41,7 +47,8 @@ const Footer = () => {
                     Mail-order Sales Registration:
                   </span>
                   <span className="ml-2 text-gray-500">
-                    2025 - Seongnam Bundang B-0472
+                    {/* 2025 - Seongnam Bundang B-0472 */}
+                    2025-성남분당B-0472
                   </span>
                 </div>
                 <div>
