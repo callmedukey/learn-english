@@ -20,7 +20,7 @@ interface UsersFilterProps {
 }
 
 const gradeOptions = [
-  "Below Grade 1",
+  "Kinder",
   ...Array.from({ length: 12 }, (_, i) => `Grade ${i + 1}`),
   "Adult",
 ];

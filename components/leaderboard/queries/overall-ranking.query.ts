@@ -17,7 +17,7 @@ function formatGradeForDisplay(grade: string): string {
   if (grade.startsWith("Grade ")) {
     return grade.replace("Grade ", "");
   }
-  if (grade === "Below Grade 1") {
+  if (grade === "Below Grade 1" || grade === "Kinder") {
     return "K";
   }
   return grade; // For "Adult" and "N/A"

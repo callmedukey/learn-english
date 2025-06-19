@@ -47,12 +47,11 @@ const baseSignUpObjectSchema = z.object({
     .max(
       (() => {
         const today = new Date();
-        const currentYear = today.getFullYear();
-        const maxBirthYear = currentYear - 8;
-        return new Date(maxBirthYear, 11, 31, 23, 59, 59, 999);
+        // Allow registration for users born up to today (no age restriction)
+        return today;
       })(),
       {
-        message: "You must be older than 7 years old.",
+        message: "Birthday cannot be in the future",
       },
     ),
   country: z.string({ required_error: "Country is required" }),

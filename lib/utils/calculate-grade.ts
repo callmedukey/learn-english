@@ -6,7 +6,7 @@ const calculateGrade = (birthdayDate: Date | null): string => {
   // Calculate age using only year difference - DO NOT account for whether birthday has passed this year
   const age = today.getFullYear() - birthDate.getFullYear();
 
-  if (age < 7) return "Below Grade 1";
+  if (age < 7) return "Kinder";
   if (age >= 7 && age <= 18) {
     return `Grade ${age - 6}`;
   }
