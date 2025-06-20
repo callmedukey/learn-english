@@ -9,6 +9,7 @@ import { cn } from "@/lib/utils";
 interface InputWithLabelProps extends InputHTMLAttributes<HTMLInputElement> {
   label: string;
   hint?: string;
+  description?: string;
   error?: string;
   inputClassName?: string;
 }
@@ -16,6 +17,7 @@ interface InputWithLabelProps extends InputHTMLAttributes<HTMLInputElement> {
 export default function InputWithLabel({
   label,
   hint,
+  description,
   error,
   inputClassName,
   className,
@@ -43,6 +45,11 @@ export default function InputWithLabel({
         aria-invalid={!!error}
         {...restProps}
       />
+      {description && !error && (
+        <p className="mt-1 text-sm text-muted-foreground">
+          {description}
+        </p>
+      )}
       {error && (
         <p
           className="mt-2 text-xs peer-aria-invalid:text-destructive"

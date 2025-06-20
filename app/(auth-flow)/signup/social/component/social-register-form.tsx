@@ -73,6 +73,7 @@ const SocialRegisterForm = ({ email, countries }: SocialRegisterFormProps) => {
           minLength={3}
           maxLength={8}
           placeholder="Enter your nickname"
+          description="This will be visible to other users. Please choose carefully."
           error={state.errors?.nickname?.[0]}
         />
 
