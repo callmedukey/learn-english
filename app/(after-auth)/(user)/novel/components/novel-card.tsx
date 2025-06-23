@@ -115,7 +115,7 @@ export function NovelCard({ novel, arId, userId }: NovelCardProps) {
           asChild
         >
           <Link href={`/novel/${arId}/${novel.id}`}>
-            {hasProgress ? "Continue Reading" : "Start Reading"}
+            {hasProgress ? "Continue Reading" : "Start Chapter Quiz"}
           </Link>
         </Button>
       </CardContent>

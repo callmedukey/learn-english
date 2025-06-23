@@ -95,7 +95,7 @@ async function ContinueLearningContent({ userId }: { userId: string }) {
                 variant="outline"
                 className="w-full bg-primary text-white hover:bg-primary/90 hover:text-white"
               >
-                <Link href="/novel">Start Reading</Link>
+                <Link href="/novel">Start Chapter Quiz</Link>
               </Button>
             </>
           )}
