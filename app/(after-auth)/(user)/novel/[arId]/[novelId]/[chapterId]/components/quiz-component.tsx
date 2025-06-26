@@ -117,11 +117,15 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   // Reset quiz state when starting
   const handleStartQuiz = () => {
     // Check if this is challenge content and user hasn't joined
-    if (challengeInfo?.isChallengeContent && !challengeInfo.hasJoinedChallenge && !hasCheckedChallenge) {
+    if (
+      challengeInfo?.isChallengeContent &&
+      !challengeInfo.hasJoinedChallenge &&
+      !hasCheckedChallenge
+    ) {
       setShowChallengeDialog(true);
       return;
     }
-    
+
     setCurrentQuestionIndex(0);
     setSelectedAnswer("");
     setIsAnswered(false);
@@ -545,9 +549,14 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
             {chapter.novelQuestionSet.instructions && (
               <div className="border-t pt-4">
                 <h4 className="mb-2 font-medium">Instructions:</h4>
-                <p className="text-sm text-gray-700">
-                  {chapter.novelQuestionSet.instructions}
-                </p>
+                <div
+                  className="text-sm text-gray-700"
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(
+                      chapter.novelQuestionSet.instructions,
+                    ),
+                  }}
+                ></div>
               </div>
             )}
             <div className="flex justify-center gap-4">
@@ -784,7 +793,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
           </div>
         </CardContent>
       </Card>
-      
+
       {/* Challenge Participation Dialog */}
       {challengeInfo && (
         <ChallengeParticipationDialog
@@ -795,12 +804,20 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
           levelName={challengeInfo.challengeDetails?.levelName || ""}
           contentType="novel"
           contentName={chapter.novel.title}
-          currentMonth={challengeInfo.challengeDetails ? 
-            new Date(challengeInfo.challengeDetails.year, challengeInfo.challengeDetails.month - 1).toLocaleString('default', { month: 'long' }) : 
-            ""
+          currentMonth={
+            challengeInfo.challengeDetails
+              ? new Date(
+                  challengeInfo.challengeDetails.year,
+                  challengeInfo.challengeDetails.month - 1,
+                ).toLocaleString("default", { month: "long" })
+              : ""
           }
-          currentYear={challengeInfo.challengeDetails?.year || new Date().getFullYear()}
-          totalChallengeContent={challengeInfo.challengeDetails?.totalContent || 0}
+          currentYear={
+            challengeInfo.challengeDetails?.year || new Date().getFullYear()
+          }
+          totalChallengeContent={
+            challengeInfo.challengeDetails?.totalContent || 0
+          }
           isLockedToDifferentLevel={challengeInfo.isLockedToDifferentLevel}
           currentLockedLevel={challengeInfo.currentLockedLevelId || undefined}
         />

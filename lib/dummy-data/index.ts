@@ -1,3 +1,2 @@
 // Barrel export for all dummy data modules
-
-export * from "./medal-dummy-data";
+// Currently empty - add exports here as new dummy data modules are created

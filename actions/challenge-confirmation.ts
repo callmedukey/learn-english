@@ -1,11 +1,12 @@
 "use server";
 
-import { auth } from "@/auth";
-import { prisma } from "@/prisma/prisma-client";
-import { LevelType } from "@/prisma/generated/prisma";
 import { toZonedTime } from "date-fns-tz";
+
+import { auth } from "@/auth";
 import { APP_TIMEZONE } from "@/lib/constants/timezone";
-import { getUserLevelLock, checkLevelLockPermission } from "@/server-queries/level-locks";
+import { LevelType } from "@/prisma/generated/prisma";
+import { getUserLevelLock } from "@/server-queries/level-locks";
+
 import { createUserLevelLock } from "./level-locks";
 
 /**
@@ -34,7 +35,7 @@ interface ConfirmChallengeResponse {
  */
 export async function confirmChallengeParticipation(
   levelType: "AR" | "RC",
-  levelId: string
+  levelId: string,
 ): Promise<ConfirmChallengeResponse> {
   try {
     // Get current session and validate user is logged in
@@ -87,7 +88,8 @@ export async function confirmChallengeParticipation(
     console.error("Error confirming challenge participation:", error);
     return {
       success: false,
-      message: "An error occurred while confirming your participation. Please try again.",
+      message:
+        "An error occurred while confirming your participation. Please try again.",
       error: "INTERNAL_ERROR",
     };
   }
@@ -108,7 +110,10 @@ export async function getUserLevelLockStatus(levelType: "AR" | "RC") {
     }
 
     const { year, month } = getCurrentKoreaYearMonth();
-    const levelLock = await getUserLevelLock(session.user.id, levelType as LevelType);
+    const levelLock = await getUserLevelLock(
+      session.user.id,
+      levelType as LevelType,
+    );
 
     if (!levelLock) {
       return {

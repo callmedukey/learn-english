@@ -4,8 +4,8 @@ import { toZonedTime } from "date-fns-tz";
 
 import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import calculateGrade from "@/lib/utils/calculate-grade";
-import { prisma } from "@/prisma/prisma-client";
 import { MedalType } from "@/prisma/generated/prisma";
+import { prisma } from "@/prisma/prisma-client";
 
 export interface MonthlyLevelRankingUser {
   id: string;
@@ -31,7 +31,7 @@ function formatGradeForDisplay(grade: string): string {
 export async function getMonthlyLevelRankings(
   levelType: "AR" | "RC",
   levelId: string,
-  limit: number = 5
+  limit: number = 5,
 ): Promise<MonthlyLevelRankingUser[]> {
   const now = new Date();
   const koreaTime = toZonedTime(now, APP_TIMEZONE);
@@ -47,7 +47,7 @@ export async function getMonthlyLevelRankings(
   });
 
   const medalImageMap = new Map(
-    medalImages.map((img) => [img.medalType, img.imageUrl])
+    medalImages.map((img) => [img.medalType, img.imageUrl]),
   );
 
   if (levelType === "AR") {
@@ -79,13 +79,13 @@ export async function getMonthlyLevelRankings(
     return scores.map((score, index) => {
       const rank = index + 1;
       const userGrade = calculateGrade(score.user.birthday);
-      
+
       // Get medal image for top 3
       let medalImageUrl: string | undefined;
       if (rank === 1) medalImageUrl = medalImageMap.get(MedalType.GOLD);
       else if (rank === 2) medalImageUrl = medalImageMap.get(MedalType.SILVER);
       else if (rank === 3) medalImageUrl = medalImageMap.get(MedalType.BRONZE);
-      
+
       return {
         id: score.userId,
         nickname: score.user.nickname || score.user.name || "Anonymous",
@@ -125,13 +125,13 @@ export async function getMonthlyLevelRankings(
     return scores.map((score, index) => {
       const rank = index + 1;
       const userGrade = calculateGrade(score.user.birthday);
-      
+
       // Get medal image for top 3
       let medalImageUrl: string | undefined;
       if (rank === 1) medalImageUrl = medalImageMap.get(MedalType.GOLD);
       else if (rank === 2) medalImageUrl = medalImageMap.get(MedalType.SILVER);
       else if (rank === 3) medalImageUrl = medalImageMap.get(MedalType.BRONZE);
-      
+
       return {
         id: score.userId,
         nickname: score.user.nickname || score.user.name || "Anonymous",

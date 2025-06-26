@@ -1,7 +1,6 @@
 "use client";
 
 import { Medal } from "lucide-react";
-import Image from "next/image";
 
 import { dismissPopup } from "@/actions/popup-dismissal";
 import { Button } from "@/components/ui/button";
