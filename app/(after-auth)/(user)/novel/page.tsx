@@ -99,16 +99,17 @@ async function ARChoices() {
           Choose Your Reading Level
         </h1>
         <p className="text-muted-foreground">
-          Select an AR level to explore novels tailored to your reading ability.
+          Select a Lexile level to explore novels tailored to your reading
+          ability.
         </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {arChoicesWithMedals.map((ar) => (
-          <ARCard 
-            key={ar.id} 
-            ar={ar} 
-            userId={userId} 
+          <ARCard
+            key={ar.id}
+            ar={ar}
+            userId={userId}
             isUserSelectedLevel={userLevelLock?.levelId === ar.id}
           />
         ))}

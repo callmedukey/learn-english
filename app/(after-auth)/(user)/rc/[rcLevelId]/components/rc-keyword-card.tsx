@@ -25,6 +25,7 @@ interface RCKeywordCardProps {
     name: string;
     description: string | null;
     isFree: boolean;
+    comingSoon: boolean;
     RCQuestionSet: {
       id: string;
       title: string;
@@ -87,9 +88,12 @@ export function RCKeywordCard({
     | "locked"
     | "first-try-completed"
     | "second-try-completed"
-    | "no-content" = "no-content";
+    | "no-content"
+    | "coming-soon" = "no-content";
 
-  if (!hasQuestionSet || !isQuestionSetActive || !hasQuestions) {
+  if (keyword.comingSoon) {
+    status = "coming-soon";
+  } else if (!hasQuestionSet || !isQuestionSetActive || !hasQuestions) {
     status = "no-content";
   } else if (!keyword.isFree && !hasPaidSubscription) {
     status = "locked";
@@ -139,9 +143,18 @@ export function RCKeywordCard({
         return (
           <Badge
             variant="secondary"
-            className="border-amber-200 bg-amber-100 text-amber-800"
+            className="border-amber-300 bg-amber-100 text-xs font-semibold text-amber-700"
           >
-            Coming Soon
+            COMING SOON
+          </Badge>
+        );
+      case "coming-soon":
+        return (
+          <Badge
+            variant="secondary"
+            className="border-amber-300 bg-amber-100 text-xs font-semibold text-amber-700"
+          >
+            COMING SOON
           </Badge>
         );
       default:
@@ -166,12 +179,15 @@ export function RCKeywordCard({
         return "Start";
       case "locked":
         return "Premium Required";
+      case "coming-soon":
+        return "✨ Coming Soon!";
       default:
-        return "Coming Soon";
+        return "✨ Coming Soon!";
     }
   };
 
   const isClickable =
+    !keyword.comingSoon &&
     hasQuestionSet &&
     isQuestionSetActive &&
     hasQuestions &&
@@ -180,9 +196,11 @@ export function RCKeywordCard({
   const cardContent = (
     <Card
       className={`flex h-full flex-col border-border bg-card transition-all duration-200 ${
-        isClickable
-          ? "cursor-pointer hover:scale-105 hover:shadow-lg"
-          : "opacity-75"
+        keyword.comingSoon
+          ? "opacity-60"
+          : isClickable
+            ? "cursor-pointer hover:scale-105 hover:shadow-lg"
+            : "opacity-75"
       } ${
         isMonthlyChallenge
           ? "ring-2 ring-amber-400 ring-offset-2 hover:ring-amber-500"
@@ -221,9 +239,15 @@ export function RCKeywordCard({
                 </TooltipTrigger>
                 <TooltipContent>
                   {userJoinedChallenge ? (
-                    <p>You&apos;ve joined this month&apos;s challenge! Points count toward medals.</p>
+                    <p>
+                      You&apos;ve joined this month&apos;s challenge! Points
+                      count toward medals.
+                    </p>
                   ) : (
-                    <p>Monthly challenge content - join the challenge to earn medal points!</p>
+                    <p>
+                      Monthly challenge content - join the challenge to earn
+                      medal points!
+                    </p>
                   )}
                 </TooltipContent>
               </Tooltip>
@@ -254,12 +278,13 @@ export function RCKeywordCard({
           )}
         </div>
 
-        {/* Progress display for performance */}
+        {/* Progress display for performance - hide for coming soon */}
         {userId &&
           hasQuestionSet &&
           isQuestionSetActive &&
           hasQuestions &&
-          firstTryData && (
+          firstTryData &&
+          !keyword.comingSoon && (
             <div className="mt-3 space-y-2">
               <div>
                 <div className="mb-1 flex items-center justify-between text-xs font-bold text-primary">
@@ -280,16 +305,28 @@ export function RCKeywordCard({
               </div>
             </div>
           )}
+
+        {/* Coming soon teaser message */}
+        {keyword.comingSoon && (
+          <div className="mt-3 rounded-lg bg-amber-50 p-3">
+            <p className="text-center text-xs font-medium text-amber-800">
+              🎯 New reading passage incoming! We&apos;re crafting engaging
+              passages to boost your skills.
+            </p>
+          </div>
+        )}
       </CardHeader>
 
       <CardContent className="flex flex-1 flex-col pt-0">
-        <div className="flex-1">
-          {keyword.description && (
-            <CardDescription className="line-clamp-3 text-muted-foreground">
-              {keyword.description}
-            </CardDescription>
-          )}
-        </div>
+        {!keyword.comingSoon && (
+          <div className="flex-1">
+            {keyword.description && (
+              <CardDescription className="line-clamp-3 text-muted-foreground">
+                {keyword.description}
+              </CardDescription>
+            )}
+          </div>
+        )}
 
         {/* Button positioned at bottom */}
         <div className="mt-4">

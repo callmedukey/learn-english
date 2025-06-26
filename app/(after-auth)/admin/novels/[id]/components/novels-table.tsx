@@ -99,7 +99,7 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels }) => {
               </TableHead>
               <TableHead>Title</TableHead>
               <TableHead>Description</TableHead>
-              <TableHead>Hidden</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Chapters</TableHead>
               <TableHead>Free Chapters</TableHead>
               <TableHead>Challenge</TableHead>
@@ -129,17 +129,24 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels }) => {
                     {novel.description || "No description"}
                   </TableCell>
                   <TableCell>
-                    {novel.hidden ? (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                        <EyeOff className="mr-1 h-3 w-3" />
-                        Hidden
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                        <Eye className="mr-1 h-3 w-3" />
-                        Visible
-                      </span>
-                    )}
+                    <div className="flex flex-wrap gap-1">
+                      {novel.hidden ? (
+                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                          <EyeOff className="mr-1 h-3 w-3" />
+                          Hidden
+                        </span>
+                      ) : (
+                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                          <Eye className="mr-1 h-3 w-3" />
+                          Visible
+                        </span>
+                      )}
+                      {novel.comingSoon && (
+                        <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
+                          Coming Soon
+                        </span>
+                      )}
+                    </div>
                   </TableCell>
                   <TableCell>
                     {novel.novelChapters.length > 0 ? (

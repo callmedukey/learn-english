@@ -10,6 +10,8 @@ export const updateKeywordAction = async (formData: FormData) => {
   const description = formData.get("description") as string;
   const rcLevelId = formData.get("rcLevelId") as string;
   const isFree = formData.get("isFree") === "on";
+  const hidden = formData.get("hidden") === "on";
+  const comingSoon = formData.get("comingSoon") === "on";
   const isActive = formData.get("isActive") === "on";
   
   // Challenge update fields
@@ -77,6 +79,8 @@ export const updateKeywordAction = async (formData: FormData) => {
           description: description?.trim() || null,
           rcLevelId,
           isFree,
+          hidden,
+          comingSoon,
         },
       });
 

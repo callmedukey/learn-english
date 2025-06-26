@@ -23,7 +23,9 @@ interface ARTableProps {
 
 const ARTable: React.FC<ARTableProps> = ({ ars }) => {
   if (!ars || ars.length === 0) {
-    return <p className="text-center text-gray-500">No AR records found.</p>;
+    return (
+      <p className="text-center text-gray-500">No Lexile records found.</p>
+    );
   }
 
   return (

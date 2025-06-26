@@ -11,6 +11,8 @@ export const updateNovelAction = async (formData: FormData) => {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const arId = formData.get("arId") as string;
+  const hidden = formData.get("hidden") === "on";
+  const comingSoon = formData.get("comingSoon") === "on";
   
   // Challenge update fields
   const updateChallenge = formData.get("updateChallenge") === "true";
@@ -41,6 +43,8 @@ export const updateNovelAction = async (formData: FormData) => {
           title,
           description: description || null,
           ARId: arId,
+          hidden,
+          comingSoon,
         },
       });
       

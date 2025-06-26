@@ -30,6 +30,8 @@ interface NovelEditFormProps {
     id: string;
     title: string;
     description?: string | null;
+    hidden: boolean;
+    comingSoon: boolean;
     ARId: string | null;
     AR: {
       id: string;
@@ -102,10 +104,14 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
   const [title, setTitle] = useState(novel.title);
   const [description, setDescription] = useState(novel.description || "");
   const [selectedARId, setSelectedARId] = useState(novel.ARId || "");
-  
+  const [hidden, setHidden] = useState(novel.hidden);
+  const [comingSoon, setComingSoon] = useState(novel.comingSoon);
+
   // Challenge state - initialize with props
   const [isInCurrentChallenge, setIsInCurrentChallenge] = useState(
-    currentMonthChallenge ? currentMonthChallenge.novelIds.includes(novel.id) : false
+    currentMonthChallenge
+      ? currentMonthChallenge.novelIds.includes(novel.id)
+      : false,
   );
 
   const handleSave = () => {
@@ -115,7 +121,13 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
       formData.append("title", title);
       formData.append("description", description);
       formData.append("arId", selectedARId);
-      
+      if (hidden) {
+        formData.append("hidden", "on");
+      }
+      if (comingSoon) {
+        formData.append("comingSoon", "on");
+      }
+
       // Add challenge data
       if (currentMonthChallenge) {
         formData.append("updateChallenge", "true");
@@ -215,6 +227,28 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
                 </SelectContent>
               </Select>
             </div>
+
+            <div className="space-y-4">
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="hidden"
+                  checked={hidden}
+                  onCheckedChange={(checked) => setHidden(checked === true)}
+                  disabled={isPending}
+                />
+                <Label htmlFor="hidden">Hidden</Label>
+              </div>
+
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="comingSoon"
+                  checked={comingSoon}
+                  onCheckedChange={(checked) => setComingSoon(checked === true)}
+                  disabled={isPending}
+                />
+                <Label htmlFor="comingSoon">Coming Soon</Label>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -226,50 +260,65 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
           {/* Show current challenge participation */}
           {challenges.length > 0 && (
             <div>
-              <Label className="text-sm font-medium mb-2 block">Challenge History</Label>
+              <Label className="mb-2 block text-sm font-medium">
+                Challenge History
+              </Label>
               <div className="flex flex-wrap gap-2">
-                {challenges.map(challenge => (
+                {challenges.map((challenge) => (
                   <ChallengeBadge key={challenge.id} challenges={[challenge]} />
                 ))}
               </div>
             </div>
           )}
-          
+
           {/* Current month challenge toggle */}
           {currentMonthChallenge && (
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Current Month Challenge</Label>
+              <Label className="text-sm font-medium">
+                Current Month Challenge
+              </Label>
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="includeInChallenge"
                   checked={isInCurrentChallenge}
-                  onCheckedChange={(checked) => setIsInCurrentChallenge(checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    setIsInCurrentChallenge(checked as boolean)
+                  }
                   disabled={isPending}
                 />
-                <Label htmlFor="includeInChallenge" className="text-sm font-normal">
-                  Include in {new Date().toLocaleString('default', { month: 'long' })} {new Date().getFullYear()} challenge
+                <Label
+                  htmlFor="includeInChallenge"
+                  className="text-sm font-normal"
+                >
+                  Include in{" "}
+                  {new Date().toLocaleString("default", { month: "long" })}{" "}
+                  {new Date().getFullYear()} challenge
                 </Label>
               </div>
               {!isInCurrentChallenge && currentMonthChallenge && (
-                <p className="text-xs text-muted-foreground ml-6">
-                  This novel is not currently part of the active monthly challenge
+                <p className="ml-6 text-xs text-muted-foreground">
+                  This novel is not currently part of the active monthly
+                  challenge
                 </p>
               )}
             </div>
           )}
-          
+
           {!currentMonthChallenge && novel.ARId && (
             <p className="text-sm text-muted-foreground">
               No challenge exists for this AR level in the current month.
-              <Link href={`/admin/challenges/challenges?levelType=AR&levelId=${novel.ARId}`} className="text-blue-600 hover:underline ml-1">
+              <Link
+                href={`/admin/challenges/challenges?levelType=AR&levelId=${novel.ARId}`}
+                className="ml-1 text-blue-600 hover:underline"
+              >
                 Create one
               </Link>
             </p>
           )}
-          
+
           {!novel.ARId && (
             <p className="text-sm text-muted-foreground">
-              Select an AR level to manage challenge participation
+              Select a Lexile level to manage challenge participation
             </p>
           )}
         </div>

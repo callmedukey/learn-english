@@ -35,7 +35,7 @@ const NovelsListPage = async ({ params }: PageProps) => {
           <Link href="/admin/novels">
             <Button variant="outline" size="sm">
               <ArrowLeft className="mr-2 h-4 w-4" />
-              Back to AR Levels
+              Back to Lexile Levels
             </Button>
           </Link>
           <div>

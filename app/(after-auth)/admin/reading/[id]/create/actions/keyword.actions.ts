@@ -12,6 +12,7 @@ export const createKeywordAction = async (formData: FormData) => {
   const description = formData.get("description") as string;
   const isFree = formData.get("isFree") === "on";
   const hidden = formData.get("hidden") === "on";
+  const comingSoon = formData.get("comingSoon") === "on";
   const includeInChallenge = formData.get("includeInChallenge") === "true";
 
   if (!rcLevelId || !name) {
@@ -55,6 +56,7 @@ export const createKeywordAction = async (formData: FormData) => {
         rcLevelId,
         isFree,
         hidden,
+        comingSoon,
       },
     });
 

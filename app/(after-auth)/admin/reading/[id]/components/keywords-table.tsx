@@ -103,7 +103,7 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Paid/Free</TableHead>
-              <TableHead>Hidden</TableHead>
+              <TableHead>Status</TableHead>
               <TableHead>Question Set</TableHead>
               <TableHead>Questions</TableHead>
               <TableHead>Challenge</TableHead>
@@ -139,17 +139,24 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                   )}
                 </TableCell>
                 <TableCell>
-                  {keyword.hidden ? (
-                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                      <EyeOff className="mr-1 h-3 w-3" />
-                      Hidden
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                      <Eye className="mr-1 h-3 w-3" />
-                      Visible
-                    </span>
-                  )}
+                  <div className="flex flex-wrap gap-1">
+                    {keyword.hidden ? (
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                        <EyeOff className="mr-1 h-3 w-3" />
+                        Hidden
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                        <Eye className="mr-1 h-3 w-3" />
+                        Visible
+                      </span>
+                    )}
+                    {keyword.comingSoon && (
+                      <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
+                        Coming Soon
+                      </span>
+                    )}
+                  </div>
                 </TableCell>
                 <TableCell>
                   {keyword.RCQuestionSet ? (

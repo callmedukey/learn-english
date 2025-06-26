@@ -81,7 +81,9 @@ export function ARCard({ ar, userId, isUserSelectedLevel }: ARCardProps) {
 
   return (
     <Link href={`/novel/${ar.id}`} className="group">
-      <Card className={`h-full border-border bg-card transition-all duration-200 hover:scale-105 hover:shadow-lg ${isUserSelectedLevel ? 'ring-2 ring-primary ring-offset-2' : ''}`}>
+      <Card
+        className={`h-full border-border bg-card transition-all duration-200 hover:scale-105 hover:shadow-lg ${isUserSelectedLevel ? "ring-2 ring-primary ring-offset-2" : ""}`}
+      >
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
@@ -92,7 +94,7 @@ export function ARCard({ ar, userId, isUserSelectedLevel }: ARCardProps) {
                 <div className="flex items-center gap-1">
                   {["GOLD", "SILVER", "BRONZE"].map((medalType) => {
                     const medal = ar.medalImages?.find(
-                      (m) => m.medalType === medalType
+                      (m) => m.medalType === medalType,
                     );
                     return medal ? (
                       <Image
@@ -122,7 +124,7 @@ export function ARCard({ ar, userId, isUserSelectedLevel }: ARCardProps) {
               variant="outline"
               className="border-primary/30 bg-primary/10 text-primary"
             >
-              AR: {ar.score}
+              {ar.score}
             </Badge>
             {isUserSelectedLevel && (
               <Badge

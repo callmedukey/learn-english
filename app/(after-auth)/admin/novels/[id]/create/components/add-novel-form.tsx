@@ -89,6 +89,11 @@ const AddNovelForm: React.FC<AddNovelFormProps> = ({
         <Label htmlFor="hidden">Hidden</Label>
       </div>
 
+      <div className="flex items-center space-x-2">
+        <Checkbox id="comingSoon" name="comingSoon" />
+        <Label htmlFor="comingSoon">Coming Soon</Label>
+      </div>
+
       <div>
         <NovelKeywordChallengeToggle
           levelId={levelId}

@@ -28,6 +28,7 @@ model RCKeyword {
   rcLevelId String
 
   hidden Boolean @default(false)
+  comingSoon Boolean @default(false)
 
   isFree Boolean @default(false)
 

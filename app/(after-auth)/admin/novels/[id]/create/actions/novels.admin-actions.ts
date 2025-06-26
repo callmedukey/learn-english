@@ -11,6 +11,7 @@ export const createNovel = async (formData: FormData) => {
   const description = formData.get("description") as string;
   const level = formData.get("level") as string;
   const hidden = formData.get("hidden") === "on";
+  const comingSoon = formData.get("comingSoon") === "on";
   const includeInChallenge = formData.get("includeInChallenge") === "true";
 
   if (!title || !level) {
@@ -26,6 +27,7 @@ export const createNovel = async (formData: FormData) => {
           title,
           description,
           hidden,
+          comingSoon,
           AR: {
             connect: {
               id: level,
@@ -92,6 +94,7 @@ export const updateNovel = async (formData: FormData) => {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const hidden = formData.get("hidden") === "on";
+  const comingSoon = formData.get("comingSoon") === "on";
 
   if (!novelId || !title || !description) {
     return {
@@ -111,7 +114,7 @@ export const updateNovel = async (formData: FormData) => {
     const result = await prisma.$transaction(async (tx) => {
       await tx.novel.update({
         where: { id: novelId },
-        data: { title, description, hidden },
+        data: { title, description, hidden, comingSoon },
       });
 
       const finalUpdatedNovel = await tx.novel.findUnique({

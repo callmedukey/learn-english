@@ -9,7 +9,7 @@ const ARTableWrapper = async () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">AR Records</h2>
+        <h2 className="text-xl font-semibold">Lexile Records</h2>
         <span className="text-sm text-gray-500">
           Total: {ars.length} record{ars.length !== 1 ? "s" : ""}
         </span>

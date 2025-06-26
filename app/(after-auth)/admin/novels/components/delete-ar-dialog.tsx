@@ -89,7 +89,7 @@ const DeleteARDialog: React.FC<DeleteARDialogProps> = ({
           />
           {novelCount > 0 && (
             <p className="text-sm text-red-600">
-              Cannot delete AR records with associated novels
+              Cannot delete Lexile records with associated novels
             </p>
           )}
         </div>
@@ -101,7 +101,7 @@ const DeleteARDialog: React.FC<DeleteARDialogProps> = ({
             disabled={isPending || !canDelete}
             className="bg-red-600 hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            {isPending ? "Deleting..." : "Delete AR record"}
+            {isPending ? "Deleting..." : "Delete Lexile record"}
           </AlertDialogAction>
         </AlertDialogFooter>
       </AlertDialogContent>

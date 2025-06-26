@@ -9,8 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
-import { getUserLevelLock, getUserLevelChangeRequests } from "@/server-queries/level-locks";
-import { getActiveChallengeItems, getCurrentKoreaYearMonth } from "@/server-queries/medals";
+import {
+  getUserLevelLock,
+  getUserLevelChangeRequests,
+} from "@/server-queries/level-locks";
+import {
+  getActiveChallengeItems,
+  getCurrentKoreaYearMonth,
+} from "@/server-queries/medals";
 
 import { NovelCard } from "../components/novel-card";
 import { ChallengeConfirmationButton } from "./components/challenge-confirmation-button";
@@ -101,19 +107,33 @@ async function ARNovels({
 
   // Get the challenge novel IDs for this AR level
   const challengeNovelIds = await getActiveChallengeItems("AR", arId);
-  
+
   // Get current month/year for challenge button
   const { year: currentYear, month: currentMonth } = getCurrentKoreaYearMonth();
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   const currentMonthName = monthNames[currentMonth - 1];
-  
+
   // Get user's level lock if they're logged in
   const userLevelLock = userId ? await getUserLevelLock(userId, "AR") : null;
-  const pendingRequests = userId ? await getUserLevelChangeRequests(userId) : [];
-  const pendingRequest = pendingRequests.find(req => req.status === "PENDING");
+  const pendingRequests = userId
+    ? await getUserLevelChangeRequests(userId)
+    : [];
+  const pendingRequest = pendingRequests.find(
+    (req) => req.status === "PENDING",
+  );
   const hasPendingRequest = !!pendingRequest;
 
   // Get novels with free chapters to pin at the top
@@ -158,7 +178,7 @@ async function ARNovels({
     orderBy,
   });
 
-  const pinnedNovelIds = novelsWithFreeChapters.map(n => n.id);
+  const pinnedNovelIds = novelsWithFreeChapters.map((n) => n.id);
 
   // Get the rest of the novels (excluding the ones with free chapters)
   const regularNovels = await prisma.novel.findMany({
@@ -203,7 +223,10 @@ async function ARNovels({
   });
 
   // Combine novels with free chapters at the top with regular novels
-  const allNovels = [...novelsWithFreeChapters.slice(0, perPage), ...regularNovels];
+  const allNovels = [
+    ...novelsWithFreeChapters.slice(0, perPage),
+    ...regularNovels,
+  ];
 
   // Get total count for display (only visible novels)
   const totalNovelsCount = await prisma.novel.count({
@@ -271,7 +294,7 @@ async function ARNovels({
             className="mb-4 text-muted-foreground hover:text-foreground"
           >
             <ArrowLeft className="mr-2 h-4 w-4" />
-            Back to AR Levels
+            Back to Lexile Levels
           </Button>
         </Link>
 
@@ -280,14 +303,19 @@ async function ARNovels({
             <h1 className="text-3xl font-bold text-foreground">{ar.level}</h1>
             <div className="flex items-center gap-1">
               {Array.from({ length: ar.stars }).map((_, i) => (
-                <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
+                <Star
+                  key={i}
+                  className="h-5 w-5 fill-amber-400 text-amber-400"
+                />
               ))}
             </div>
           </div>
           <ChallengeConfirmationButton
             arId={arId}
             arLevel={ar.level}
-            hasActiveChallenge={!!challengeNovelIds && challengeNovelIds.length > 0}
+            hasActiveChallenge={
+              !!challengeNovelIds && challengeNovelIds.length > 0
+            }
             challengeNovelCount={challengeNovelIds?.length || 0}
             currentMonth={currentMonthName}
             currentYear={currentYear}
@@ -302,7 +330,7 @@ async function ARNovels({
             variant="outline"
             className="border-muted-foreground/30 text-muted-foreground"
           >
-            AR: {ar.score}
+            {ar.score}
           </Badge>
           <Badge
             variant="outline"
@@ -343,7 +371,9 @@ async function ARNovels({
               novel={novel}
               arId={arId}
               userId={userId}
-              isMonthlyChallenge={challengeNovelIds?.includes(novel.id) || false}
+              isMonthlyChallenge={
+                challengeNovelIds?.includes(novel.id) || false
+              }
               userJoinedChallenge={userLevelLock?.levelId === arId}
             />
           ))}

@@ -23,6 +23,7 @@ interface NovelCardProps {
     id: string;
     title: string;
     description: string | null;
+    comingSoon: boolean;
     novelChapters: Array<{
       id: string;
       isFree: boolean;
@@ -41,7 +42,13 @@ interface NovelCardProps {
   userJoinedChallenge?: boolean;
 }
 
-export function NovelCard({ novel, arId, userId, isMonthlyChallenge, userJoinedChallenge }: NovelCardProps) {
+export function NovelCard({
+  novel,
+  arId,
+  userId,
+  isMonthlyChallenge,
+  userJoinedChallenge,
+}: NovelCardProps) {
   // Calculate completion progress
   const totalChapters = novel.novelChapters.length;
   const completedChapters = userId
@@ -66,15 +73,29 @@ export function NovelCard({ novel, arId, userId, isMonthlyChallenge, userJoinedC
   const hasProgress = userId && completedChapters > 0;
 
   return (
-    <Card className={`group h-full border-border bg-card transition-all duration-200 hover:scale-105 hover:shadow-lg ${
-      isMonthlyChallenge ? "ring-2 ring-amber-400 ring-offset-2 hover:ring-amber-500" : ""
-    }`}>
-      <CardHeader className="pb-4">
+    <Card
+      className={`group h-full border-border bg-card transition-all duration-200 ${
+        novel.comingSoon ? "opacity-60" : "hover:scale-105 hover:shadow-lg"
+      } ${
+        isMonthlyChallenge
+          ? "ring-2 ring-amber-400 ring-offset-2 hover:ring-amber-500"
+          : ""
+      }`}
+    >
+      <CardHeader className="flex-1 pb-4">
         <CardTitle className="line-clamp-2 text-lg font-semibold text-card-foreground">
           {novel.title}
         </CardTitle>
 
         <div className="flex flex-wrap items-center gap-2">
+          {novel.comingSoon && (
+            <Badge
+              variant="secondary"
+              className="border-amber-300 bg-amber-100 text-xs font-semibold text-amber-700"
+            >
+              COMING SOON
+            </Badge>
+          )}
           <Badge
             variant="outline"
             className="border-muted-foreground/30 text-xs text-muted-foreground"
@@ -113,9 +134,15 @@ export function NovelCard({ novel, arId, userId, isMonthlyChallenge, userJoinedC
                 </TooltipTrigger>
                 <TooltipContent>
                   {userJoinedChallenge ? (
-                    <p>You&apos;ve joined this month&apos;s challenge! Points count toward medals.</p>
+                    <p>
+                      You&apos;ve joined this month&apos;s challenge! Points
+                      count toward medals.
+                    </p>
                   ) : (
-                    <p>Monthly challenge content - join the challenge to earn medal points!</p>
+                    <p>
+                      Monthly challenge content - join the challenge to earn
+                      medal points!
+                    </p>
                   )}
                 </TooltipContent>
               </Tooltip>
@@ -131,8 +158,8 @@ export function NovelCard({ novel, arId, userId, isMonthlyChallenge, userJoinedC
           )}
         </div>
 
-        {/* Progress bar for user progress */}
-        {userId && totalChapters > 0 && (
+        {/* Progress bar for user progress - hide for coming soon */}
+        {userId && totalChapters > 0 && !novel.comingSoon && (
           <div className="mt-3">
             <div className="mb-1 flex items-center justify-between text-xs text-muted-foreground">
               <span>Progress</span>
@@ -141,6 +168,16 @@ export function NovelCard({ novel, arId, userId, isMonthlyChallenge, userJoinedC
               </span>
             </div>
             <Progress value={progressPercentage} className="h-2" />
+          </div>
+        )}
+
+        {/* Coming soon teaser message */}
+        {novel.comingSoon && (
+          <div className="mt-3 rounded-lg bg-amber-50 p-3">
+            <p className="text-center text-xs font-medium text-amber-800">
+              📚 Get ready for an exciting adventure! This story is being
+              prepared just for you.
+            </p>
           </div>
         )}
       </CardHeader>
@@ -154,11 +191,16 @@ export function NovelCard({ novel, arId, userId, isMonthlyChallenge, userJoinedC
 
         <Button
           className="w-full bg-primary text-primary-foreground hover:bg-primary/90"
-          asChild
+          asChild={!novel.comingSoon}
+          disabled={novel.comingSoon}
         >
-          <Link href={`/novel/${arId}/${novel.id}`}>
-            {hasProgress ? "Continue Chapter Quiz" : "Start Chapter Quiz"}
-          </Link>
+          {novel.comingSoon ? (
+            "✨ Coming Soon!"
+          ) : (
+            <Link href={`/novel/${arId}/${novel.id}`}>
+              {hasProgress ? "Continue Chapter Quiz" : "Start Chapter Quiz"}
+            </Link>
+          )}
         </Button>
       </CardContent>
     </Card>

@@ -14,13 +14,15 @@ const page = () => {
         <Button asChild>
           <Link href="/admin/novels/create">
             <Plus className="h-4 w-4" />
-            Create AR
+            Create Lexile
           </Link>
         </Button>
       </div>
 
       <Suspense
-        fallback={<div className="py-8 text-center">Loading AR records...</div>}
+        fallback={
+          <div className="py-8 text-center">Loading Lexile records...</div>
+        }
       >
         <ARTableWrapper />
       </Suspense>

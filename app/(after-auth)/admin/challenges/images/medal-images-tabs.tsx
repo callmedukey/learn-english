@@ -45,7 +45,7 @@ export default function MedalImagesTabs({ levels }: MedalImagesTabsProps) {
   return (
     <Tabs defaultValue="AR" className="w-full">
       <TabsList className="grid w-full max-w-md grid-cols-2">
-        <TabsTrigger value="AR">AR Levels ({arLevels.length})</TabsTrigger>
+        <TabsTrigger value="AR">Novel Levels ({arLevels.length})</TabsTrigger>
         <TabsTrigger value="RC">RC Levels ({rcLevels.length})</TabsTrigger>
       </TabsList>
 

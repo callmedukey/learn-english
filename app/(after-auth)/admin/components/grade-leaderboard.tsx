@@ -104,7 +104,7 @@ export default function GradeLeaderboard({ users }: GradeLeaderboardProps) {
                         {user.totalScore.toLocaleString()}
                       </p>
                       <p className="text-xs text-muted-foreground">
-                        AR: {user.arScores} | RC: {user.rcScores}
+                        Novel: {user.arScores} | RC: {user.rcScores}
                       </p>
                     </div>
                   </div>

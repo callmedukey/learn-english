@@ -47,7 +47,7 @@ export default function MoveNovelDialog({
 
   const handleMove = async () => {
     if (!selectedARId) {
-      return { success: false, error: "Please select an AR level" };
+      return { success: false, error: "Please select a Lexile level" };
     }
 
     const result = await moveNovelToARLevel(novelId, selectedARId);
@@ -79,7 +79,7 @@ export default function MoveNovelDialog({
         <DialogHeader>
           <DialogTitle>Move Novel</DialogTitle>
           <DialogDescription>
-            Move &quot;{novelTitle}&quot; to a different AR level. This will
+            Move &quot;{novelTitle}&quot; to a different Lexile level. This will
             affect where the novel appears in the system.
           </DialogDescription>
         </DialogHeader>
@@ -87,11 +87,11 @@ export default function MoveNovelDialog({
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
               <label htmlFor="ar-level" className="text-sm font-medium">
-                Select New AR Level
+                Select New Lexile Level
               </label>
               <Select value={selectedARId} onValueChange={setSelectedARId}>
                 <SelectTrigger id="ar-level" className="w-full">
-                  <SelectValue placeholder="Choose an AR level" />
+                  <SelectValue placeholder="Choose a Lexile level" />
                 </SelectTrigger>
                 <SelectContent>
                   {availableARLevels.map((ar) => (

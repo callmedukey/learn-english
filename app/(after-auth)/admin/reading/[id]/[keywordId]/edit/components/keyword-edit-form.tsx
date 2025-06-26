@@ -32,6 +32,8 @@ interface KeywordEditFormProps {
     description?: string | null;
     rcLevelId: string;
     isFree: boolean;
+    hidden: boolean;
+    comingSoon: boolean;
     RCLevel: {
       id: string;
       level: string;
@@ -100,6 +102,8 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
   const [description, setDescription] = useState(keyword.description || "");
   const [selectedRCLevelId, setSelectedRCLevelId] = useState(keyword.rcLevelId);
   const [isFree, setIsFree] = useState(keyword.isFree);
+  const [hidden, setHidden] = useState(keyword.hidden);
+  const [comingSoon, setComingSoon] = useState(keyword.comingSoon);
   const [isActive, setIsActive] = useState(
     keyword.RCQuestionSet?.active || false,
   );
@@ -118,6 +122,12 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
       formData.append("rcLevelId", selectedRCLevelId);
       if (isFree) {
         formData.append("isFree", "on");
+      }
+      if (hidden) {
+        formData.append("hidden", "on");
+      }
+      if (comingSoon) {
+        formData.append("comingSoon", "on");
       }
       if (isActive) {
         formData.append("isActive", "on");
@@ -233,6 +243,24 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
                 disabled={isPending}
               />
               <Label htmlFor="isActive">Active</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="hidden"
+                checked={hidden}
+                onCheckedChange={(checked) => setHidden(checked === true)}
+                disabled={isPending}
+              />
+              <Label htmlFor="hidden">Hidden</Label>
+            </div>
+            <div className="flex items-center space-x-2">
+              <Checkbox
+                id="comingSoon"
+                checked={comingSoon}
+                onCheckedChange={(checked) => setComingSoon(checked === true)}
+                disabled={isPending}
+              />
+              <Label htmlFor="comingSoon">Coming Soon</Label>
             </div>
           </div>
           <div>
