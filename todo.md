@@ -1,2 +1,2 @@
--Setup resend with react email for email setup
--dashboard layout
+-Remove medal images, we can just use the icons from the global popup
+-Adjust Monthly Leaderboard, there should be a max height set on the ranking containers like our All-time leaderboard

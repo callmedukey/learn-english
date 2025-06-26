@@ -168,15 +168,6 @@ export function GlobalWinnersPopup({
                       <div key={`${grade}-${index}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors">
                         <Medal className={`h-6 w-6 ${medalColors[medal]}`} />
                         <span className="font-medium w-10">{place}</span>
-                        {scorer.user.image && (
-                          <Image
-                            src={scorer.user.image}
-                            alt=""
-                            width={36}
-                            height={36}
-                            className="rounded-full"
-                          />
-                        )}
                         <span className="flex-1 font-medium">
                           {scorer.user.nickname || "Anonymous"}
                         </span>

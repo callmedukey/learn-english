@@ -21,22 +21,23 @@ interface MonthlyRankingListProps {
 
 export function MonthlyRankingList({ rankings, currentUserId }: MonthlyRankingListProps) {
   return (
-    <div className="space-y-4 p-2">
+    <div className="flex flex-col p-2">
       {/* Header */}
-      <div className="flex items-center gap-4 px-2 text-xs font-semibold text-gray-600">
+      <div className="flex items-center gap-4 px-2 pb-2 text-xs font-semibold text-gray-600">
         <div className="w-6"></div> {/* Rank column */}
         <div className="flex min-w-0 flex-1">NICKNAME</div>
-        <div className="w-8 text-center">GRADE</div>
+        <div className="w-12 text-center">GRADE</div>
         <div className="w-12 text-right">POINT</div>
       </div>
 
-      {/* Rankings */}
-      {rankings.length === 0 ? (
-        <div className="py-8 text-center text-gray-500">
-          No rankings available
-        </div>
-      ) : (
-        <>
+      {/* Rankings with scrollable container */}
+      <div className="max-h-[280px] overflow-y-auto">
+        {rankings.length === 0 ? (
+          <div className="py-8 text-center text-gray-500">
+            No rankings available
+          </div>
+        ) : (
+          <div className="space-y-2">
           {rankings.map((item) => (
             <UserStatsPopover key={item.id} userId={item.id}>
               <div
@@ -46,15 +47,22 @@ export function MonthlyRankingList({ rankings, currentUserId }: MonthlyRankingLi
                     : "hover:bg-gray-50"
                 }`}
               >
-                {/* Rank with Medal Image for Top 3 */}
-                <div className="w-6 text-center">
-                  {item.rank <= 3 && item.medalImageUrl ? (
+                {/* Rank with Medal Image */}
+                <div className="w-6 flex items-center justify-center">
+                  {item.medalImageUrl && item.rank <= 3 ? (
                     <div className="relative h-6 w-6">
                       <Image
                         src={item.medalImageUrl}
-                        alt={`${item.rank === 1 ? "Gold" : item.rank === 2 ? "Silver" : "Bronze"} medal`}
+                        alt={`${item.rank === 1 ? 'Gold' : item.rank === 2 ? 'Silver' : 'Bronze'} medal`}
                         fill
                         className="object-contain"
+                        onError={(e) => {
+                          // Fallback to rank number if image fails
+                          const parent = e.currentTarget.parentElement;
+                          if (parent) {
+                            parent.innerHTML = `<span class="font-bold text-gray-600">${item.rank}</span>`;
+                          }
+                        }}
                       />
                     </div>
                   ) : (
@@ -85,7 +93,7 @@ export function MonthlyRankingList({ rankings, currentUserId }: MonthlyRankingLi
                 </div>
 
                 {/* Grade */}
-                <div className="w-8 text-center font-semibold text-gray-700">
+                <div className="w-12 text-center font-semibold text-gray-700 whitespace-nowrap">
                   {item.grade}
                 </div>
 
@@ -111,12 +119,13 @@ export function MonthlyRankingList({ rankings, currentUserId }: MonthlyRankingLi
                   <div className="h-4 w-6 rounded-sm bg-gray-100" />
                   <div className="text-gray-400">-</div>
                 </div>
-                <div className="w-8 text-center text-gray-400">-</div>
+                <div className="w-12 text-center text-gray-400">-</div>
                 <div className="w-12 text-right text-gray-400">-</div>
               </div>
             ))}
-        </>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

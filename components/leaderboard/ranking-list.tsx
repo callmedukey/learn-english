@@ -20,22 +20,23 @@ interface RankingListProps {
 
 export function RankingList({ rankings, currentUserId }: RankingListProps) {
   return (
-    <div className="space-y-4 p-2">
+    <div className="flex flex-col p-2">
       {/* Header */}
-      <div className="flex items-center gap-4 px-2 text-xs font-semibold text-gray-600">
+      <div className="flex items-center gap-4 px-2 pb-2 text-xs font-semibold text-gray-600">
         <div className="w-6"></div> {/* Rank column */}
         <div className="flex min-w-0 flex-1">NICKNAME</div>
-        <div className="w-8 text-center">GRADE</div>
+        <div className="w-12 text-center">GRADE</div>
         <div className="w-12 text-right">POINT</div>
       </div>
 
-      {/* Rankings */}
-      {rankings.length === 0 ? (
-        <div className="py-8 text-center text-gray-500">
-          No rankings available
-        </div>
-      ) : (
-        <>
+      {/* Rankings with scrollable container */}
+      <div className="max-h-[280px] overflow-y-auto">
+        {rankings.length === 0 ? (
+          <div className="py-8 text-center text-gray-500">
+            No rankings available
+          </div>
+        ) : (
+          <div className="space-y-2">
           {rankings.map((item) => (
             <UserStatsPopover key={item.id} userId={item.id}>
               <div
@@ -73,7 +74,7 @@ export function RankingList({ rankings, currentUserId }: RankingListProps) {
                 </div>
 
                 {/* Grade */}
-                <div className="w-8 text-center font-semibold text-gray-700">
+                <div className="w-12 text-center font-semibold text-gray-700 whitespace-nowrap">
                   {item.grade}
                 </div>
 
@@ -99,12 +100,13 @@ export function RankingList({ rankings, currentUserId }: RankingListProps) {
                   <div className="h-4 w-6 rounded-sm bg-gray-100" />
                   <div className="text-gray-400">-</div>
                 </div>
-                <div className="w-8 text-center text-gray-400">-</div>
+                <div className="w-12 text-center text-gray-400">-</div>
                 <div className="w-12 text-right text-gray-400">-</div>
               </div>
             ))}
-        </>
-      )}
+          </div>
+        )}
+      </div>
     </div>
   );
 }
