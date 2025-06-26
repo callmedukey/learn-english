@@ -1,9 +1,13 @@
 "use server";
 
+import { toZonedTime } from "date-fns-tz";
 import { revalidatePath } from "next/cache";
 
+import { createUserLevelLock } from "@/actions/level-locks";
+import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import { checkAndCreateRankingNotification } from "@/lib/services/notification.service";
 import { prisma } from "@/prisma/prisma-client";
+import { checkLevelLockPermission } from "@/server-queries/level-locks";
 
 export interface QuestionCompletionResult {
   success: boolean;
@@ -186,56 +190,110 @@ export const completeQuestionAction = async (
     // Update user's AR score if points were awarded
     if (pointsAwarded > 0 && question.novelQuestionSet.novelChapter?.novel.AR) {
       const arId = question.novelQuestionSet.novelChapter.novel.AR.id;
+      const novelId = question.novelQuestionSet.novelChapter.novel.id;
 
-      // Find or create AR score record
-      const existingARScore = await prisma.aRScore.findFirst({
-        where: {
-          userId: userId,
-          ARId: arId,
-        },
-      });
+      // Check level lock permission
+      const lockCheck = await checkLevelLockPermission(userId, "AR", arId);
+      if (!lockCheck.allowed) {
+        return {
+          success: false,
+          error: `You are locked to a different level for this month. Please continue with your current level or request a level change.`,
+        };
+      }
 
-      if (existingARScore) {
-        await prisma.aRScore.update({
-          where: { id: existingARScore.id },
-          data: {
-            score: {
-              increment: pointsAwarded,
-            },
-          },
-        });
-      } else {
-        await prisma.aRScore.create({
-          data: {
+      // Use transaction for atomic updates
+      await prisma.$transaction(async (tx) => {
+        // Create level lock if needed
+        if (lockCheck.shouldCreateLock) {
+          await createUserLevelLock(userId, "AR", arId);
+        }
+        // Update cumulative AR score
+        const existingARScore = await tx.aRScore.findFirst({
+          where: {
             userId: userId,
             ARId: arId,
-            score: pointsAwarded,
           },
         });
-      }
 
-      // Update total score
-      const existingTotalScore = await prisma.totalScore.findUnique({
-        where: { userId: userId },
-      });
+        if (existingARScore) {
+          await tx.aRScore.update({
+            where: { id: existingARScore.id },
+            data: {
+              score: {
+                increment: pointsAwarded,
+              },
+            },
+          });
+        } else {
+          await tx.aRScore.create({
+            data: {
+              userId: userId,
+              ARId: arId,
+              score: pointsAwarded,
+            },
+          });
+        }
 
-      if (existingTotalScore) {
-        await prisma.totalScore.update({
+        // Update total score
+        await tx.totalScore.upsert({
           where: { userId: userId },
-          data: {
+          update: {
             score: {
               increment: pointsAwarded,
             },
           },
-        });
-      } else {
-        await prisma.totalScore.create({
-          data: {
+          create: {
             userId: userId,
             score: pointsAwarded,
           },
         });
-      }
+
+        // Check for active monthly challenge and update monthly score
+        const now = new Date();
+        const koreaTime = toZonedTime(now, APP_TIMEZONE);
+        const year = koreaTime.getFullYear();
+        const month = koreaTime.getMonth() + 1;
+
+        const challenge = await tx.monthlyChallenge.findFirst({
+          where: {
+            year,
+            month,
+            levelType: "AR",
+            levelId: arId,
+            active: true,
+            startDate: { lte: now },
+            endDate: { gte: now },
+            novelIds: { has: novelId },
+          },
+        });
+
+        if (challenge) {
+          // Update monthly score for medal tracking
+          await tx.monthlyARScore.upsert({
+            where: {
+              userId_ARId_year_month: {
+                userId: userId,
+                ARId: arId,
+                year: challenge.year,
+                month: challenge.month,
+              },
+            },
+            update: {
+              score: {
+                increment: pointsAwarded,
+              },
+            },
+            create: {
+              userId: userId,
+              ARId: arId,
+              year: challenge.year,
+              month: challenge.month,
+              score: pointsAwarded,
+              challengeId: challenge.id,
+            },
+          });
+        }
+      });
 
       // Check for ranking achievements and create notifications
       try {

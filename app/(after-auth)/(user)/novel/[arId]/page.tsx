@@ -9,9 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
+import { getUserLevelLock, getUserLevelChangeRequests } from "@/server-queries/level-locks";
+import { getActiveChallengeItems, getCurrentKoreaYearMonth } from "@/server-queries/medals";
 
 import { NovelCard } from "../components/novel-card";
+import { ChallengeConfirmationButton } from "./components/challenge-confirmation-button";
 import { NovelFilters } from "./components/novel-filters";
+import { NovelsPagination } from "./components/novels-pagination";
 
 interface PageProps {
   params: Promise<{ arId: string }>;
@@ -20,6 +24,7 @@ interface PageProps {
     sortBy?: string;
     sortOrder?: string;
     status?: string;
+    page?: string;
   }>;
 }
 
@@ -33,6 +38,7 @@ async function ARNovels({
     sortBy?: string;
     sortOrder?: string;
     status?: string;
+    page?: string;
   };
 }) {
   const session = await auth();
@@ -58,11 +64,16 @@ async function ARNovels({
       }
     : {};
 
-  // Build the orderBy clause
-  const sortBy = searchParams.sortBy || "title";
-  const sortOrder = searchParams.sortOrder || "asc";
+  // Pagination setup
+  const page = parseInt(searchParams.page || "1", 10);
+  const perPage = 30;
+  const skip = (page - 1) * perPage;
 
-  let orderBy: any = { title: "asc" };
+  // Build the orderBy clause - default to createdAt desc
+  const sortBy = searchParams.sortBy || "createdAt";
+  const sortOrder = searchParams.sortOrder || "desc";
+
+  let orderBy: any = { createdAt: "desc" };
 
   switch (sortBy) {
     case "title":
@@ -73,69 +84,144 @@ async function ARNovels({
       break;
     case "chapterCount":
       // We'll handle chapter count sorting after fetching the data
-      orderBy = { title: "asc" }; // Default sort for now
+      orderBy = { createdAt: "desc" }; // Default sort for now
       break;
     default:
-      orderBy = { title: "asc" };
+      orderBy = { createdAt: "desc" };
   }
 
+  // First, get the AR info
   const ar = await prisma.aR.findUnique({
     where: { id: arId },
-    include: {
-      novels: {
-        where: {
-          ...searchWhere,
-          hidden: false,
-        },
-        include: {
-          novelChapters: {
-            include: {
-              novelQuestionSet: {
-                include: {
-                  novelQuestions: {
-                    include: {
-                      novelQuestionCompleted: {
-                        where: userId
-                          ? {
-                              userId: userId,
-                            }
-                          : undefined,
-                        select: {
-                          userId: true,
-                        },
-                      },
-                    },
-                  },
-                },
-              },
-            },
-            orderBy: {
-              orderNumber: "asc",
-            },
-          },
-        },
-        orderBy,
-      },
-    },
   });
 
   if (!ar) {
     notFound();
   }
 
+  // Get the challenge novel IDs for this AR level
+  const challengeNovelIds = await getActiveChallengeItems("AR", arId);
+  
+  // Get current month/year for challenge button
+  const { year: currentYear, month: currentMonth } = getCurrentKoreaYearMonth();
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  const currentMonthName = monthNames[currentMonth - 1];
+  
+  // Get user's level lock if they're logged in
+  const userLevelLock = userId ? await getUserLevelLock(userId, "AR") : null;
+  const pendingRequests = userId ? await getUserLevelChangeRequests(userId) : [];
+  const pendingRequest = pendingRequests.find(req => req.status === "PENDING");
+  const hasPendingRequest = !!pendingRequest;
+
+  // Get novels with free chapters to pin at the top
+  const novelsWithFreeChapters = await prisma.novel.findMany({
+    where: {
+      ARId: arId,
+      hidden: false,
+      novelChapters: {
+        some: {
+          isFree: true,
+        },
+      },
+      ...searchWhere,
+    },
+    include: {
+      novelChapters: {
+        include: {
+          novelQuestionSet: {
+            include: {
+              novelQuestions: {
+                include: {
+                  novelQuestionCompleted: {
+                    where: userId
+                      ? {
+                          userId: userId,
+                        }
+                      : undefined,
+                    select: {
+                      userId: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          orderNumber: "asc",
+        },
+      },
+    },
+    orderBy,
+  });
+
+  const pinnedNovelIds = novelsWithFreeChapters.map(n => n.id);
+
+  // Get the rest of the novels (excluding the ones with free chapters)
+  const regularNovels = await prisma.novel.findMany({
+    where: {
+      ARId: arId,
+      hidden: false,
+      id: {
+        notIn: pinnedNovelIds,
+      },
+      ...searchWhere,
+    },
+    include: {
+      novelChapters: {
+        include: {
+          novelQuestionSet: {
+            include: {
+              novelQuestions: {
+                include: {
+                  novelQuestionCompleted: {
+                    where: userId
+                      ? {
+                          userId: userId,
+                        }
+                      : undefined,
+                    select: {
+                      userId: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
+        },
+        orderBy: {
+          orderNumber: "asc",
+        },
+      },
+    },
+    orderBy,
+    skip: Math.max(0, skip - novelsWithFreeChapters.length),
+    take: perPage - Math.min(perPage, novelsWithFreeChapters.length),
+  });
+
+  // Combine novels with free chapters at the top with regular novels
+  const allNovels = [...novelsWithFreeChapters.slice(0, perPage), ...regularNovels];
+
   // Get total count for display (only visible novels)
   const totalNovelsCount = await prisma.novel.count({
     where: {
       ARId: arId,
       hidden: false,
+      ...searchWhere,
     },
   });
 
+  // Calculate total pages
+  const totalPages = Math.ceil(totalNovelsCount / perPage);
+
   // Apply status filter on the server side if needed
-  let filteredNovels = ar.novels;
+  let filteredNovels = allNovels;
 
   if (searchParams.status && searchParams.status !== "all" && userId) {
-    filteredNovels = ar.novels.filter((novel) => {
+    filteredNovels = allNovels.filter((novel) => {
       const totalChapters = novel.novelChapters.length;
       const completedChapters = novel.novelChapters.filter((chapter) => {
         if (!chapter.novelQuestionSet) return false;
@@ -189,13 +275,26 @@ async function ARNovels({
           </Button>
         </Link>
 
-        <div className="mb-4 flex items-center gap-4">
-          <h1 className="text-3xl font-bold text-foreground">{ar.level}</h1>
-          <div className="flex items-center gap-1">
-            {Array.from({ length: ar.stars }).map((_, i) => (
-              <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
-            ))}
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-3xl font-bold text-foreground">{ar.level}</h1>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: ar.stars }).map((_, i) => (
+                <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
+              ))}
+            </div>
           </div>
+          <ChallengeConfirmationButton
+            arId={arId}
+            arLevel={ar.level}
+            hasActiveChallenge={!!challengeNovelIds && challengeNovelIds.length > 0}
+            challengeNovelCount={challengeNovelIds?.length || 0}
+            currentMonth={currentMonthName}
+            currentYear={currentYear}
+            userLevelLock={userLevelLock}
+            hasPendingRequest={hasPendingRequest}
+            pendingRequestId={pendingRequest?.id}
+          />
         </div>
 
         <div className="mb-4 flex items-center gap-3">
@@ -209,8 +308,7 @@ async function ARNovels({
             variant="outline"
             className="border-muted-foreground/30 text-muted-foreground"
           >
-            {filteredNovels.length} of {totalNovelsCount} novel
-            {totalNovelsCount !== 1 ? "s" : ""}
+            {totalNovelsCount} novel{totalNovelsCount !== 1 ? "s" : ""}
           </Badge>
         </div>
 
@@ -245,9 +343,20 @@ async function ARNovels({
               novel={novel}
               arId={arId}
               userId={userId}
+              isMonthlyChallenge={challengeNovelIds?.includes(novel.id) || false}
+              userJoinedChallenge={userLevelLock?.levelId === arId}
             />
           ))}
         </div>
+      )}
+
+      {/* Pagination */}
+      {filteredNovels.length > 0 && (
+        <NovelsPagination
+          currentPage={page}
+          totalPages={totalPages}
+          totalCount={totalNovelsCount}
+        />
       )}
     </div>
   );

@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { NovelKeywordChallengeToggle } from "@/components/admin/challenge-controls";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -23,11 +24,18 @@ const AddKeywordForm: React.FC<AddKeywordFormProps> = ({
   setShowForm,
 }) => {
   const [isPending, startTransition] = useTransition();
+  const [includeInChallenge, setIncludeInChallenge] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     formData.append("rcLevelId", rcLevelId);
+    
+    // Add challenge inclusion flag
+    if (includeInChallenge) {
+      formData.append("includeInChallenge", "true");
+    }
+    
     const form = event.currentTarget;
 
     startTransition(async () => {
@@ -36,6 +44,9 @@ const AddKeywordForm: React.FC<AddKeywordFormProps> = ({
         toast.error(result.error);
       } else if (result.success && result.keyword) {
         toast.success(`Keyword '${result.keyword.name}' created successfully!`);
+        if (includeInChallenge && result.addedToChallenge) {
+          toast.success("Keyword added to current month's challenge!");
+        }
         if (onKeywordCreated) {
           onKeywordCreated(result.keyword.id);
         }
@@ -84,6 +95,14 @@ const AddKeywordForm: React.FC<AddKeywordFormProps> = ({
       <div className="flex items-center space-x-2">
         <Checkbox id="hidden" name="hidden" defaultChecked />
         <Label htmlFor="hidden">Hidden</Label>
+      </div>
+
+      <div>
+        <NovelKeywordChallengeToggle
+          levelId={rcLevelId}
+          levelType="RC"
+          onIncludeInChallenge={setIncludeInChallenge}
+        />
       </div>
 
       <div className="flex space-x-2">

@@ -11,6 +11,11 @@ export const updateKeywordAction = async (formData: FormData) => {
   const rcLevelId = formData.get("rcLevelId") as string;
   const isFree = formData.get("isFree") === "on";
   const isActive = formData.get("isActive") === "on";
+  
+  // Challenge update fields
+  const updateChallenge = formData.get("updateChallenge") === "true";
+  const challengeId = formData.get("challengeId") as string;
+  const includeInChallenge = formData.get("includeInChallenge") === "true";
 
   if (!keywordId || !name || !rcLevelId) {
     return {
@@ -62,31 +67,68 @@ export const updateKeywordAction = async (formData: FormData) => {
       }
     }
 
-    // Update the keyword
-    const updatedKeyword = await prisma.rCKeyword.update({
-      where: { id: keywordId },
-      data: {
-        name: name.trim(),
-        description: description?.trim() || null,
-        rcLevelId,
-        isFree,
-      },
-    });
-
-    // Update the question set's active status if it exists
-    if (existingKeyword.RCQuestionSet) {
-      await prisma.rCQuestionSet.update({
-        where: { id: existingKeyword.RCQuestionSet.id },
+    // Use transaction to update keyword and handle challenge updates
+    const result = await prisma.$transaction(async (tx) => {
+      // Update the keyword
+      const updatedKeyword = await tx.rCKeyword.update({
+        where: { id: keywordId },
         data: {
-          active: isActive,
+          name: name.trim(),
+          description: description?.trim() || null,
+          rcLevelId,
+          isFree,
         },
       });
-    }
+
+      // Update the question set's active status if it exists
+      if (existingKeyword.RCQuestionSet) {
+        await tx.rCQuestionSet.update({
+          where: { id: existingKeyword.RCQuestionSet.id },
+          data: {
+            active: isActive,
+          },
+        });
+      }
+      
+      // Handle challenge updates
+      if (updateChallenge && challengeId) {
+        const challenge = await tx.monthlyChallenge.findUnique({
+          where: { id: challengeId },
+        });
+        
+        if (challenge) {
+          const currentKeywordIds = challenge.keywordIds || [];
+          let updatedKeywordIds: string[];
+          
+          if (includeInChallenge && !currentKeywordIds.includes(keywordId)) {
+            // Add keyword to challenge
+            updatedKeywordIds = [...currentKeywordIds, keywordId];
+          } else if (!includeInChallenge && currentKeywordIds.includes(keywordId)) {
+            // Remove keyword from challenge
+            updatedKeywordIds = currentKeywordIds.filter(id => id !== keywordId);
+          } else {
+            // No change needed
+            updatedKeywordIds = currentKeywordIds;
+          }
+          
+          // Update the challenge with new keyword list
+          await tx.monthlyChallenge.update({
+            where: { id: challengeId },
+            data: {
+              keywordIds: updatedKeywordIds,
+            },
+          });
+        }
+      }
+      
+      return updatedKeyword;
+    });
 
     revalidatePath(`/admin/reading/${rcLevelId}`);
     revalidatePath("/admin/reading");
+    revalidatePath("/admin/challenges");
 
-    return { success: true, keyword: updatedKeyword };
+    return { success: true, keyword: result };
   } catch (error) {
     console.error("Failed to update keyword:", error);
     return {

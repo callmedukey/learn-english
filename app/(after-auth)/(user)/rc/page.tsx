@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
+import { getUserLevelLock } from "@/server-queries/level-locks";
 
 import { RCLevelCard } from "./components/rc-level-card";
 
@@ -70,6 +71,35 @@ async function RCLevels() {
     },
   });
 
+  // Fetch medal images for each RC level
+  const medalImages = await prisma.medalImage.findMany({
+    where: {
+      levelType: "RC",
+      levelId: {
+        in: rcLevels.map((rc) => rc.id),
+      },
+    },
+  });
+
+  // Create a map for easy lookup
+  const medalImageMap = new Map<string, typeof medalImages>();
+  medalImages.forEach((medalImage) => {
+    const key = medalImage.levelId;
+    if (!medalImageMap.has(key)) {
+      medalImageMap.set(key, []);
+    }
+    medalImageMap.get(key)!.push(medalImage);
+  });
+
+  // Add medal images to each RC level
+  const rcLevelsWithMedals = rcLevels.map((rc) => ({
+    ...rc,
+    medalImages: medalImageMap.get(rc.id) || [],
+  }));
+
+  // Get user's level lock for RC if they're logged in
+  const userLevelLock = userId ? await getUserLevelLock(userId, "RC") : null;
+
   return (
     <div className="container mx-auto px-4 py-8">
       <div className="mb-8">
@@ -83,8 +113,13 @@ async function RCLevels() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {rcLevels.map((rcLevel) => (
-          <RCLevelCard key={rcLevel.id} rcLevel={rcLevel} userId={userId} />
+        {rcLevelsWithMedals.map((rcLevel) => (
+          <RCLevelCard 
+            key={rcLevel.id} 
+            rcLevel={rcLevel} 
+            userId={userId}
+            isUserSelectedLevel={userLevelLock?.levelId === rcLevel.id}
+          />
         ))}
       </div>
     </div>

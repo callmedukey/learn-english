@@ -11,6 +11,11 @@ export const updateNovelAction = async (formData: FormData) => {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const arId = formData.get("arId") as string;
+  
+  // Challenge update fields
+  const updateChallenge = formData.get("updateChallenge") === "true";
+  const challengeId = formData.get("challengeId") as string;
+  const includeInChallenge = formData.get("includeInChallenge") === "true";
 
   if (!novelId || !title || !arId) {
     return {
@@ -38,6 +43,37 @@ export const updateNovelAction = async (formData: FormData) => {
           ARId: arId,
         },
       });
+      
+      // Handle challenge updates
+      if (updateChallenge && challengeId) {
+        const challenge = await tx.monthlyChallenge.findUnique({
+          where: { id: challengeId },
+        });
+        
+        if (challenge) {
+          const currentNovelIds = challenge.novelIds || [];
+          let updatedNovelIds: string[];
+          
+          if (includeInChallenge && !currentNovelIds.includes(novelId)) {
+            // Add novel to challenge
+            updatedNovelIds = [...currentNovelIds, novelId];
+          } else if (!includeInChallenge && currentNovelIds.includes(novelId)) {
+            // Remove novel from challenge
+            updatedNovelIds = currentNovelIds.filter(id => id !== novelId);
+          } else {
+            // No change needed
+            updatedNovelIds = currentNovelIds;
+          }
+          
+          // Update the challenge with new novel list
+          await tx.monthlyChallenge.update({
+            where: { id: challengeId },
+            data: {
+              novelIds: updatedNovelIds,
+            },
+          });
+        }
+      }
 
       const finalUpdatedNovel = await tx.novel.findUnique({
         where: { id: novelId },
@@ -49,6 +85,7 @@ export const updateNovelAction = async (formData: FormData) => {
     revalidatePath(`/admin/novels`);
     revalidatePath(`/admin/novels/${arId}`);
     revalidatePath(`/admin/novels/${arId}/${novelId}/edit`);
+    revalidatePath("/admin/challenges");
     return { success: true, novel: result };
   } catch (error) {
     console.error("Failed to update novel:", error);

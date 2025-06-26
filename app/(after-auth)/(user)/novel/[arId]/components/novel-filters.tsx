@@ -33,16 +33,16 @@ export function NovelFilters({ arId }: NovelFiltersProps) {
   const [searchInput, setSearchInput] = useState(
     searchParams.get("search") || "",
   );
-  const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "title");
+  const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "createdAt");
   const [sortOrder, setSortOrder] = useState(
-    searchParams.get("sortOrder") || "asc",
+    searchParams.get("sortOrder") || "desc",
   );
   const [status, setStatus] = useState(searchParams.get("status") || "all");
 
   const hasActiveFilters =
     searchInput.trim() !== "" ||
-    sortBy !== "title" ||
-    sortOrder !== "asc" ||
+    sortBy !== "createdAt" ||
+    sortOrder !== "desc" ||
     status !== "all";
 
   const updateFilters = useCallback(
@@ -56,11 +56,11 @@ export function NovelFilters({ arId }: NovelFiltersProps) {
         params.set("search", searchValue.trim());
       }
 
-      if (sortBy !== "title") {
+      if (sortBy !== "createdAt") {
         params.set("sortBy", sortBy);
       }
 
-      if (sortOrder !== "asc") {
+      if (sortOrder !== "desc") {
         params.set("sortOrder", sortOrder);
       }
 
@@ -88,8 +88,8 @@ export function NovelFilters({ arId }: NovelFiltersProps) {
 
   const clearFilters = () => {
     setSearchInput("");
-    setSortBy("title");
-    setSortOrder("asc");
+    setSortBy("createdAt");
+    setSortOrder("desc");
     setStatus("all");
     router.push(`/novel/${arId}`);
   };

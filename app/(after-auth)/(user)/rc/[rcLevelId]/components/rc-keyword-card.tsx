@@ -1,5 +1,5 @@
 import DOMPurify from "isomorphic-dompurify";
-import { FileText, Lock, Target, Repeat } from "lucide-react";
+import { FileText, Lock, Target, Repeat, Trophy, Info } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -12,6 +12,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface RCKeywordCardProps {
   keyword: {
@@ -46,6 +52,8 @@ interface RCKeywordCardProps {
   rcLevelId: string;
   userId?: string;
   hasPaidSubscription?: boolean;
+  isMonthlyChallenge?: boolean;
+  userJoinedChallenge?: boolean;
 }
 
 export function RCKeywordCard({
@@ -53,6 +61,8 @@ export function RCKeywordCard({
   rcLevelId,
   userId,
   hasPaidSubscription,
+  isMonthlyChallenge = false,
+  userJoinedChallenge = false,
 }: RCKeywordCardProps) {
   // Calculate quiz attempt status
   let totalQuestions = 0;
@@ -173,6 +183,10 @@ export function RCKeywordCard({
         isClickable
           ? "cursor-pointer hover:scale-105 hover:shadow-lg"
           : "opacity-75"
+      } ${
+        isMonthlyChallenge
+          ? "ring-2 ring-amber-400 ring-offset-2 hover:ring-amber-500"
+          : ""
       }`}
     >
       <CardHeader className="pb-4">
@@ -183,29 +197,62 @@ export function RCKeywordCard({
           {getStatusBadge()}
         </div>
 
-        {hasQuestionSet && isQuestionSetActive && hasQuestions && (
-          <div className="flex flex-wrap items-center gap-2">
-            <Badge
-              variant="outline"
-              className="border-muted-foreground/30 text-muted-foreground"
-            >
-              <FileText className="mr-1 h-3 w-3" />
-              {totalQuestions} question{totalQuestions !== 1 ? "s" : ""}
-            </Badge>
-            {keyword.RCQuestionSet && (
+        <div className="flex flex-wrap items-center gap-2">
+          {isMonthlyChallenge && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge
+                    variant="secondary"
+                    className={`${
+                      userJoinedChallenge
+                        ? "border-yellow-300 bg-yellow-100 text-yellow-800"
+                        : "border-amber-300 bg-amber-50 text-amber-700"
+                    }`}
+                  >
+                    <Trophy className="mr-1 h-3 w-3" />
+                    Challenge
+                    {userJoinedChallenge ? (
+                      <span className="ml-1 text-green-600">✓</span>
+                    ) : (
+                      <Info className="ml-1 h-3 w-3" />
+                    )}
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {userJoinedChallenge ? (
+                    <p>You&apos;ve joined this month&apos;s challenge! Points count toward medals.</p>
+                  ) : (
+                    <p>Monthly challenge content - join the challenge to earn medal points!</p>
+                  )}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
+          )}
+          {hasQuestionSet && isQuestionSetActive && hasQuestions && (
+            <>
               <Badge
                 variant="outline"
                 className="border-muted-foreground/30 text-muted-foreground"
               >
-                <span
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(keyword.RCQuestionSet.title),
-                  }}
-                />
+                <FileText className="mr-1 h-3 w-3" />
+                {totalQuestions} question{totalQuestions !== 1 ? "s" : ""}
               </Badge>
-            )}
-          </div>
-        )}
+              {keyword.RCQuestionSet && (
+                <Badge
+                  variant="outline"
+                  className="border-muted-foreground/30 text-muted-foreground"
+                >
+                  <span
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(keyword.RCQuestionSet.title),
+                    }}
+                  />
+                </Badge>
+              )}
+            </>
+          )}
+        </div>
 
         {/* Progress display for performance */}
         {userId &&

@@ -33,7 +33,7 @@ export const getARs = async (): Promise<ARData[]> => {
       },
     },
     orderBy: {
-      level: "asc",
+      stars: "asc",
     },
   });
 
@@ -63,7 +63,7 @@ export const getARLevelsForSelection = async () => {
       stars: true,
     },
     orderBy: {
-      level: "asc",
+      stars: "asc",
     },
   });
 };

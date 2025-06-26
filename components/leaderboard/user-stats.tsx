@@ -1,5 +1,7 @@
+import { MedalDisplayWithDialog } from "@/components/medals/medal-display-with-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { getUserMedalCounts, getUserMedalsForDisplay } from "@/server-queries/user-medals";
 
 import { getUserRanking } from "./queries/user-ranking.query";
 import { getUserStats } from "./queries/user-stats.query";
@@ -10,9 +12,11 @@ interface UserStatsProps {
 }
 
 export async function UserStats({ userId }: UserStatsProps) {
-  const [userStats, userRanking] = await Promise.all([
+  const [userStats, userRanking, medalCounts, userMedals] = await Promise.all([
     getUserStats(userId),
     getUserRanking(userId),
+    getUserMedalCounts(userId),
+    getUserMedalsForDisplay(userId),
   ]);
 
   if (!userStats) {
@@ -92,6 +96,25 @@ export async function UserStats({ userId }: UserStatsProps) {
                   </>
                 )}
               </div>
+            </div>
+
+            {/* Medals Section */}
+            <div className="mt-4 space-y-2">
+              <div className="text-lg font-bold text-primary">
+                MEDALS {userMedals.length > 0 ? `(${medalCounts.totalGold + medalCounts.totalSilver + medalCounts.totalBronze})` : '(0)'}
+              </div>
+              {userMedals.length > 0 ? (
+                <MedalDisplayWithDialog 
+                  medals={userMedals} 
+                  userId={userId}
+                  maxDisplay={6} 
+                />
+              ) : (
+                <div className="text-center">
+                  <p className="text-sm text-gray-500">No medals earned yet</p>
+                  <p className="mt-1 text-xs text-gray-400">Compete in monthly challenges to earn medals!</p>
+                </div>
+              )}
             </div>
           </div>
         </CardContent>

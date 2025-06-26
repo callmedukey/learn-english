@@ -18,7 +18,7 @@ export function Leaderboard({ userId, userGrade }: LeaderboardProps) {
   return (
     <div className="p-4">
       <div className="mb-8 flex items-center gap-3">
-        <h1 className="text-4xl font-bold text-amber-900">Leaderboard</h1>
+        <h1 className="text-4xl font-bold text-amber-900">All-Time Leaderboard</h1>
         <AwardIcon className="h-8 w-8 text-primary" />
       </div>
 

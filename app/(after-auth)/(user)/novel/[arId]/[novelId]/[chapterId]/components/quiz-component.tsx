@@ -11,6 +11,8 @@ import React, {
   useMemo,
 } from "react";
 
+import { confirmChallengeParticipation } from "@/actions/challenge-confirmation";
+import { ChallengeParticipationDialog } from "@/components/challenge-participation-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -33,6 +35,19 @@ interface QuizComponentProps {
   arId: string;
   novelId: string;
   userHasPaidSubscription: boolean;
+  challengeInfo?: {
+    isChallengeContent: boolean;
+    hasJoinedChallenge: boolean;
+    isLockedToDifferentLevel: boolean;
+    currentLockedLevelId: string | null;
+    challengeDetails: {
+      year: number;
+      month: number;
+      totalContent: number;
+      levelName: string;
+      challengeId: string;
+    } | null;
+  };
 }
 
 // interface QuestionData {
@@ -54,6 +69,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   arId,
   novelId,
   userHasPaidSubscription,
+  challengeInfo,
 }) => {
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -71,6 +87,8 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   const [quizStarted, setQuizStarted] = useState(false);
   const lastQuestionIdRef = useRef<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [showChallengeDialog, setShowChallengeDialog] = useState(false);
+  const [hasCheckedChallenge, setHasCheckedChallenge] = useState(false);
 
   // Store the initial status to use throughout the quiz
   const [initialStatus] = useState(status);
@@ -98,6 +116,44 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
 
   // Reset quiz state when starting
   const handleStartQuiz = () => {
+    // Check if this is challenge content and user hasn't joined
+    if (challengeInfo?.isChallengeContent && !challengeInfo.hasJoinedChallenge && !hasCheckedChallenge) {
+      setShowChallengeDialog(true);
+      return;
+    }
+    
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer("");
+    setIsAnswered(false);
+    setShowExplanation(false);
+    setQuizCompleted(false);
+    setTotalPointsEarned(0);
+    setCorrectAnswersCount(0);
+    setQuizStarted(true);
+  };
+
+  // Handle joining the challenge
+  const handleJoinChallenge = async () => {
+    try {
+      await confirmChallengeParticipation("AR", arId);
+      setShowChallengeDialog(false);
+      setHasCheckedChallenge(true);
+      // Refresh the page to update the challenge status
+      router.refresh();
+    } catch (error) {
+      console.error("Failed to join challenge:", error);
+      // Still allow them to continue
+      setShowChallengeDialog(false);
+      setHasCheckedChallenge(true);
+      handleStartQuiz();
+    }
+  };
+
+  // Handle continuing without joining
+  const handleContinueWithoutJoining = () => {
+    setShowChallengeDialog(false);
+    setHasCheckedChallenge(true);
+    // Actually start the quiz
     setCurrentQuestionIndex(0);
     setSelectedAnswer("");
     setIsAnswered(false);
@@ -728,6 +784,28 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
           </div>
         </CardContent>
       </Card>
+      
+      {/* Challenge Participation Dialog */}
+      {challengeInfo && (
+        <ChallengeParticipationDialog
+          isOpen={showChallengeDialog}
+          onClose={() => setShowChallengeDialog(false)}
+          onConfirmJoin={handleJoinChallenge}
+          onContinueWithoutJoining={handleContinueWithoutJoining}
+          levelType="AR"
+          levelName={challengeInfo.challengeDetails?.levelName || ""}
+          contentType="novel"
+          contentName={chapter.novel.title}
+          currentMonth={challengeInfo.challengeDetails ? 
+            new Date(challengeInfo.challengeDetails.year, challengeInfo.challengeDetails.month - 1).toLocaleString('default', { month: 'long' }) : 
+            ""
+          }
+          currentYear={challengeInfo.challengeDetails?.year || new Date().getFullYear()}
+          totalChallengeContent={challengeInfo.challengeDetails?.totalContent || 0}
+          isLockedToDifferentLevel={challengeInfo.isLockedToDifferentLevel}
+          currentLockedLevel={challengeInfo.currentLockedLevelId || undefined}
+        />
+      )}
     </div>
   );
 };

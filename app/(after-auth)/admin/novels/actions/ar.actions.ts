@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import { createMonthlyChallenge } from "@/actions/admin/medals";
+import { LevelType } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export const updateARAction = async (formData: FormData) => {
@@ -132,6 +134,12 @@ export const createARAction = async (formData: FormData) => {
   const relevantGrade = formData.get("relevantGrade") as string;
   const fontSize = formData.get("fontSize") as string;
 
+  // Challenge settings
+  const createChallenge = formData.get("createChallenge") === "true";
+  const challengeYear = parseInt(formData.get("challengeYear") as string);
+  const challengeMonth = parseInt(formData.get("challengeMonth") as string);
+  const challengeScheduledActive = formData.get("challengeScheduledActive") === "true";
+
   if (!level || !score || isNaN(stars)) {
     return {
       error: "All fields are required and stars must be a valid number",
@@ -149,8 +157,8 @@ export const createARAction = async (formData: FormData) => {
 
   try {
     // Create AR record with ARSettings in a transaction
-    await prisma.$transaction(async (tx) => {
-      const ar = await tx.aR.create({
+    const ar = await prisma.$transaction(async (tx) => {
+      const newAR = await tx.aR.create({
         data: {
           level,
           score,
@@ -163,19 +171,66 @@ export const createARAction = async (formData: FormData) => {
       // Create ARSettings for this AR
       await tx.aRSettings.create({
         data: {
-          ARId: ar.id,
+          ARId: newAR.id,
           fontSize: fontSize as "BASE" | "LARGE" | "XLARGE",
         },
       });
 
-      return ar;
+      return newAR;
     });
+
+    let challengeCreated = false;
+
+    // Create monthly challenge if requested
+    if (createChallenge && !isNaN(challengeYear) && !isNaN(challengeMonth)) {
+      try {
+        await createMonthlyChallenge({
+          year: challengeYear,
+          month: challengeMonth,
+          levelType: LevelType.AR,
+          levelId: ar.id,
+          novelIds: [], // Start with empty novels, they'll be added later
+          scheduledActive: challengeScheduledActive,
+        });
+        challengeCreated = true;
+      } catch (error) {
+        console.error("Failed to create monthly challenge:", error);
+        // Don't fail the whole operation if challenge creation fails
+      }
+    }
 
     revalidatePath("/admin/novels");
 
-    return { success: true };
+    return { success: true, challengeCreated, arId: ar.id };
   } catch (error) {
     console.error("Failed to create AR record:", error);
     return { error: "Failed to create AR record. Please try again." };
+  }
+};
+
+export const getARChallenges = async (arId: string) => {
+  try {
+    const challenges = await prisma.monthlyChallenge.findMany({
+      where: {
+        levelType: LevelType.AR,
+        levelId: arId,
+      },
+      orderBy: [
+        { year: "desc" },
+        { month: "desc" },
+      ],
+      include: {
+        _count: {
+          select: {
+            medals: true,
+          },
+        },
+      },
+    });
+
+    return challenges;
+  } catch (error) {
+    console.error("Failed to fetch AR challenges:", error);
+    return [];
   }
 };

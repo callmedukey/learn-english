@@ -239,3 +239,35 @@ async function createNotification(
     },
   });
 }
+
+/**
+ * Create a level change notification
+ */
+export async function createLevelChangeNotification(
+  userId: string,
+  levelType: "AR" | "RC",
+  fromLevel: string,
+  toLevel: string,
+  isApproved: boolean,
+): Promise<void> {
+  try {
+    const title = isApproved
+      ? "Level Change Request Approved"
+      : "Level Change Request Declined";
+    
+    const message = isApproved
+      ? `Your level change request has been approved. You are now at ${levelType} Level ${toLevel}.`
+      : `Your level change request has been declined. You remain at ${levelType} Level ${fromLevel}.`;
+
+    await prisma.notification.create({
+      data: {
+        userId,
+        title,
+        message,
+        type: NotificationType.LEVEL_CHANGE,
+      },
+    });
+  } catch (error) {
+    console.error("Error creating level change notification:", error);
+  }
+}

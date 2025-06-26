@@ -6,7 +6,9 @@ import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { ChallengeBadge } from "@/components/admin/challenge-badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
@@ -67,12 +69,32 @@ interface NovelEditFormProps {
     defaultTimer: number;
     defaultScore: number;
   } | null;
+  challenges: Array<{
+    id: string;
+    year: number;
+    month: number;
+    active: boolean;
+    scheduledActive: boolean;
+    _count?: {
+      medals: number;
+    };
+  }>;
+  currentMonthChallenge: {
+    id: string;
+    year: number;
+    month: number;
+    active: boolean;
+    scheduledActive: boolean;
+    novelIds: string[];
+  } | null;
 }
 
 const NovelEditForm: React.FC<NovelEditFormProps> = ({
   novel,
   arLevels,
   novelSettings,
+  challenges,
+  currentMonthChallenge,
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -80,6 +102,11 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
   const [title, setTitle] = useState(novel.title);
   const [description, setDescription] = useState(novel.description || "");
   const [selectedARId, setSelectedARId] = useState(novel.ARId || "");
+  
+  // Challenge state - initialize with props
+  const [isInCurrentChallenge, setIsInCurrentChallenge] = useState(
+    currentMonthChallenge ? currentMonthChallenge.novelIds.includes(novel.id) : false
+  );
 
   const handleSave = () => {
     startTransition(async () => {
@@ -88,6 +115,13 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
       formData.append("title", title);
       formData.append("description", description);
       formData.append("arId", selectedARId);
+      
+      // Add challenge data
+      if (currentMonthChallenge) {
+        formData.append("updateChallenge", "true");
+        formData.append("challengeId", currentMonthChallenge.id);
+        formData.append("includeInChallenge", isInCurrentChallenge.toString());
+      }
 
       const result = await updateNovelAction(formData);
 
@@ -182,6 +216,62 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
               </Select>
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Challenge Participation */}
+      <div className="rounded-lg border p-6">
+        <h2 className="mb-4 text-xl font-semibold">Challenge Participation</h2>
+        <div className="space-y-4">
+          {/* Show current challenge participation */}
+          {challenges.length > 0 && (
+            <div>
+              <Label className="text-sm font-medium mb-2 block">Challenge History</Label>
+              <div className="flex flex-wrap gap-2">
+                {challenges.map(challenge => (
+                  <ChallengeBadge key={challenge.id} challenges={[challenge]} />
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Current month challenge toggle */}
+          {currentMonthChallenge && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Current Month Challenge</Label>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="includeInChallenge"
+                  checked={isInCurrentChallenge}
+                  onCheckedChange={(checked) => setIsInCurrentChallenge(checked as boolean)}
+                  disabled={isPending}
+                />
+                <Label htmlFor="includeInChallenge" className="text-sm font-normal">
+                  Include in {new Date().toLocaleString('default', { month: 'long' })} {new Date().getFullYear()} challenge
+                </Label>
+              </div>
+              {!isInCurrentChallenge && currentMonthChallenge && (
+                <p className="text-xs text-muted-foreground ml-6">
+                  This novel is not currently part of the active monthly challenge
+                </p>
+              )}
+            </div>
+          )}
+          
+          {!currentMonthChallenge && novel.ARId && (
+            <p className="text-sm text-muted-foreground">
+              No challenge exists for this AR level in the current month.
+              <Link href={`/admin/challenges/challenges?levelType=AR&levelId=${novel.ARId}`} className="text-blue-600 hover:underline ml-1">
+                Create one
+              </Link>
+            </p>
+          )}
+          
+          {!novel.ARId && (
+            <p className="text-sm text-muted-foreground">
+              Select an AR level to manage challenge participation
+            </p>
+          )}
         </div>
       </div>
 

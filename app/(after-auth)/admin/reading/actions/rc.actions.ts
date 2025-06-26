@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 
+import { createMonthlyChallenge } from "@/actions/admin/medals";
+import { LevelType } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export const updateRCLevelAction = async (formData: FormData) => {
@@ -146,6 +148,12 @@ export const createRCLevelAction = async (formData: FormData) => {
   const description = formData.get("description") as string;
   const fontSize = formData.get("fontSize") as string;
 
+  // Challenge settings
+  const createChallenge = formData.get("createChallenge") === "true";
+  const challengeYear = parseInt(formData.get("challengeYear") as string);
+  const challengeMonth = parseInt(formData.get("challengeMonth") as string);
+  const challengeScheduledActive = formData.get("challengeScheduledActive") === "true";
+
   if (!level || !relevantGrade || isNaN(stars) || isNaN(numberOfQuestions)) {
     return {
       error: "All required fields must be provided and numbers must be valid",
@@ -167,8 +175,8 @@ export const createRCLevelAction = async (formData: FormData) => {
 
   try {
     // Create RCLevel with RCLevelSettings in a transaction
-    await prisma.$transaction(async (tx) => {
-      const rcLevel = await tx.rCLevel.create({
+    const rcLevel = await prisma.$transaction(async (tx) => {
+      const newRCLevel = await tx.rCLevel.create({
         data: {
           level,
           relevantGrade,
@@ -181,19 +189,66 @@ export const createRCLevelAction = async (formData: FormData) => {
       // Create RCLevelSettings for this RCLevel
       await tx.rCLevelSettings.create({
         data: {
-          RCLevelId: rcLevel.id,
+          RCLevelId: newRCLevel.id,
           fontSize: fontSize as "BASE" | "LARGE" | "XLARGE",
         },
       });
 
-      return rcLevel;
+      return newRCLevel;
     });
+
+    let challengeCreated = false;
+
+    // Create monthly challenge if requested
+    if (createChallenge && !isNaN(challengeYear) && !isNaN(challengeMonth)) {
+      try {
+        await createMonthlyChallenge({
+          year: challengeYear,
+          month: challengeMonth,
+          levelType: LevelType.RC,
+          levelId: rcLevel.id,
+          keywordIds: [], // Start with empty keywords, they'll be added later
+          scheduledActive: challengeScheduledActive,
+        });
+        challengeCreated = true;
+      } catch (error) {
+        console.error("Failed to create monthly challenge:", error);
+        // Don't fail the whole operation if challenge creation fails
+      }
+    }
 
     revalidatePath("/admin/reading");
 
-    return { success: true };
+    return { success: true, challengeCreated, rcLevelId: rcLevel.id };
   } catch (error) {
     console.error("Failed to create RC level:", error);
     return { error: "Failed to create RC level. Please try again." };
+  }
+};
+
+export const getRCChallenges = async (rcLevelId: string) => {
+  try {
+    const challenges = await prisma.monthlyChallenge.findMany({
+      where: {
+        levelType: LevelType.RC,
+        levelId: rcLevelId,
+      },
+      orderBy: [
+        { year: "desc" },
+        { month: "desc" },
+      ],
+      include: {
+        _count: {
+          select: {
+            medals: true,
+          },
+        },
+      },
+    });
+
+    return challenges;
+  } catch (error) {
+    console.error("Failed to fetch RC challenges:", error);
+    return [];
   }
 };

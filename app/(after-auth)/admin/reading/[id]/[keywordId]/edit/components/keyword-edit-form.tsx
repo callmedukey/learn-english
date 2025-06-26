@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { ChallengeBadge } from "@/components/admin/challenge-badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -64,12 +65,32 @@ interface KeywordEditFormProps {
     defaultTimer: number;
     defaultScore: number;
   } | null;
+  challenges: Array<{
+    id: string;
+    year: number;
+    month: number;
+    active: boolean;
+    scheduledActive: boolean;
+    _count?: {
+      medals: number;
+    };
+  }>;
+  currentMonthChallenge: {
+    id: string;
+    year: number;
+    month: number;
+    active: boolean;
+    scheduledActive: boolean;
+    keywordIds: string[];
+  } | null;
 }
 
 const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
   keyword,
   rcLevels,
   rcSettings,
+  challenges,
+  currentMonthChallenge,
 }) => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -81,6 +102,11 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
   const [isFree, setIsFree] = useState(keyword.isFree);
   const [isActive, setIsActive] = useState(
     keyword.RCQuestionSet?.active || false,
+  );
+  
+  // Challenge state - initialize with props
+  const [isInCurrentChallenge, setIsInCurrentChallenge] = useState(
+    currentMonthChallenge ? currentMonthChallenge.keywordIds.includes(keyword.id) : false
   );
 
   const handleSave = () => {
@@ -95,6 +121,13 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
       }
       if (isActive) {
         formData.append("isActive", "on");
+      }
+      
+      // Add challenge data
+      if (currentMonthChallenge) {
+        formData.append("updateChallenge", "true");
+        formData.append("challengeId", currentMonthChallenge.id);
+        formData.append("includeInChallenge", isInCurrentChallenge.toString());
       }
 
       const result = await updateKeywordAction(formData);
@@ -213,6 +246,56 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
               disabled={isPending}
             />
           </div>
+        </div>
+      </div>
+
+      {/* Challenge Participation */}
+      <div className="rounded-lg border p-6">
+        <h2 className="mb-4 text-xl font-semibold">Challenge Participation</h2>
+        <div className="space-y-4">
+          {/* Show current challenge participation */}
+          {challenges.length > 0 && (
+            <div>
+              <Label className="text-sm font-medium mb-2 block">Challenge History</Label>
+              <div className="flex flex-wrap gap-2">
+                {challenges.map(challenge => (
+                  <ChallengeBadge key={challenge.id} challenges={[challenge]} />
+                ))}
+              </div>
+            </div>
+          )}
+          
+          {/* Current month challenge toggle */}
+          {currentMonthChallenge && (
+            <div className="space-y-2">
+              <Label className="text-sm font-medium">Current Month Challenge</Label>
+              <div className="flex items-center space-x-2">
+                <Checkbox
+                  id="includeInChallenge"
+                  checked={isInCurrentChallenge}
+                  onCheckedChange={(checked) => setIsInCurrentChallenge(checked as boolean)}
+                  disabled={isPending}
+                />
+                <Label htmlFor="includeInChallenge" className="text-sm font-normal">
+                  Include in {new Date().toLocaleString('default', { month: 'long' })} {new Date().getFullYear()} challenge
+                </Label>
+              </div>
+              {!isInCurrentChallenge && currentMonthChallenge && (
+                <p className="text-xs text-muted-foreground ml-6">
+                  This keyword is not currently part of the active monthly challenge
+                </p>
+              )}
+            </div>
+          )}
+          
+          {!currentMonthChallenge && (
+            <p className="text-sm text-muted-foreground">
+              No challenge exists for this RC level in the current month.
+              <Link href={`/admin/challenges/challenges?levelType=RC&levelId=${keyword.rcLevelId}`} className="text-blue-600 hover:underline ml-1">
+                Create one
+              </Link>
+            </p>
+          )}
         </div>
       </div>
 

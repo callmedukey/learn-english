@@ -2,13 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 
+import { LevelType } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
+import { getCurrentKoreaYearMonth } from "@/server-queries/medals";
 
 export const createNovel = async (formData: FormData) => {
   const title = formData.get("title") as string;
   const description = formData.get("description") as string;
   const level = formData.get("level") as string;
   const hidden = formData.get("hidden") === "on";
+  const includeInChallenge = formData.get("includeInChallenge") === "true";
 
   if (!title || !level) {
     return {
@@ -34,9 +37,47 @@ export const createNovel = async (formData: FormData) => {
       return newNovel;
     });
 
+    let addedToChallenge = false;
+
+    // Add to current month's challenge if requested
+    if (includeInChallenge) {
+      try {
+        const { year, month } = getCurrentKoreaYearMonth();
+        
+        // Find the current month's challenge for this AR level
+        const currentChallenge = await prisma.monthlyChallenge.findUnique({
+          where: {
+            year_month_levelType_levelId: {
+              year,
+              month,
+              levelType: LevelType.AR,
+              levelId: level,
+            },
+          },
+        });
+
+        if (currentChallenge) {
+          // Add the novel to the challenge
+          await prisma.monthlyChallenge.update({
+            where: { id: currentChallenge.id },
+            data: {
+              novelIds: {
+                push: result.id,
+              },
+            },
+          });
+          addedToChallenge = true;
+        }
+      } catch (error) {
+        console.error("Failed to add novel to challenge:", error);
+      }
+    }
+
     revalidatePath(`/admin/novels/${level}`);
     revalidatePath(`/admin/novels/${level}/create`);
-    return { success: true, novel: result };
+    revalidatePath("/challenges");
+    
+    return { success: true, novel: result, addedToChallenge };
   } catch (error) {
     console.error("Failed to create novel:", error);
 

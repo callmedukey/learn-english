@@ -26,6 +26,7 @@ const createCouponSchema = z.object({
   flatDiscount: z.number().min(0, "Flat discount cannot be negative"),
   active: z.boolean().optional(),
   oneTimeUse: z.boolean().optional(),
+  deadline: z.date().optional().nullable(),
 });
 
 const updateCouponSchema = z.object({
@@ -50,16 +51,19 @@ const updateCouponSchema = z.object({
     .optional(),
   active: z.boolean().optional(),
   oneTimeUse: z.boolean().optional(),
+  deadline: z.date().optional().nullable(),
 });
 
 export async function createCouponAction(formData: FormData) {
   try {
+    const deadlineStr = formData.get("deadline") as string;
     const data = {
       code: formData.get("code") as string,
       discount: parseInt(formData.get("discount") as string) || 0,
       flatDiscount: parseInt(formData.get("flatDiscount") as string) || 0,
       active: formData.get("active") === "true",
       oneTimeUse: formData.get("oneTimeUse") === "true",
+      deadline: deadlineStr ? new Date(deadlineStr) : null,
     };
 
     const validatedData = createCouponSchema.parse(data);
@@ -122,6 +126,7 @@ export async function createCouponAction(formData: FormData) {
 
 export async function updateCouponAction(formData: FormData) {
   try {
+    const deadlineStr = formData.get("deadline") as string;
     const data = {
       id: formData.get("id") as string,
       code: formData.get("code") as string,
@@ -129,6 +134,7 @@ export async function updateCouponAction(formData: FormData) {
       flatDiscount: parseInt(formData.get("flatDiscount") as string) || 0,
       active: formData.get("active") === "true",
       oneTimeUse: formData.get("oneTimeUse") === "true",
+      deadline: deadlineStr === "" ? null : deadlineStr ? new Date(deadlineStr) : null,
     };
 
     const validatedData = updateCouponSchema.parse(data);
@@ -176,6 +182,7 @@ export async function updateCouponAction(formData: FormData) {
       flatDiscount: validatedData.flatDiscount,
       active: validatedData.active,
       oneTimeUse: validatedData.oneTimeUse,
+      deadline: validatedData.deadline,
     });
 
     revalidatePath("/admin/coupons");

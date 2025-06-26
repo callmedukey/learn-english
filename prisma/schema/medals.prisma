@@ -1,0 +1,280 @@
+enum MedalType {
+  GOLD
+  SILVER
+  BRONZE
+}
+
+enum LevelType {
+  AR
+  RC
+}
+
+enum PopupType {
+  GLOBAL_WINNERS      // Shows all grade winners
+  PERSONAL_ACHIEVEMENT // Shows user's personal rankings
+}
+
+model Medal {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  medalType MedalType
+  levelType LevelType
+  levelId   String    // References AR.id or RCLevel.id
+  
+  year      Int
+  month     Int       // 1-12
+  score     Int       // Score achieved to earn this medal
+  
+  challengeId String?
+  challenge   MonthlyChallenge? @relation(fields: [challengeId], references: [id])
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId])
+  @@index([levelType, levelId])
+  @@index([year, month])
+  @@index([userId, medalType]) // For medal count queries
+  @@index([year, month, levelType, levelId]) // For historical queries
+}
+
+model MedalImage {
+  id        String    @id @default(uuid())
+  
+  levelType LevelType
+  levelId   String    // References AR.id or RCLevel.id
+  medalType MedalType
+  
+  imageUrl  String    // Path to uploaded medal image
+
+  width   Int
+  height  Int
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  @@unique([levelType, levelId, medalType])
+}
+
+model MonthlyChallenge {
+  id        String    @id @default(uuid())
+  
+  year      Int
+  month     Int       // 1-12
+  levelType LevelType
+  levelId   String    // References AR.id or RCLevel.id
+  
+  // For AR challenges
+  novelIds  String[]  // Array of Novel.id
+  
+  // For RC challenges
+  keywordIds String[] // Array of RCKeyword.id
+  
+  active    Boolean   @default(true)
+  scheduledActive Boolean @default(false) // Auto-activate when month arrives
+  startDate DateTime
+  endDate   DateTime
+  
+  medals    Medal[]
+  leaderboard MonthlyLeaderboard?
+  monthlyARScores MonthlyARScore[]
+  monthlyRCScores MonthlyRCScore[]
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  @@unique([year, month, levelType, levelId])
+  @@index([active])
+  @@index([scheduledActive])
+  @@index([year, month, active]) // For active challenge queries
+}
+
+model MonthlyLeaderboard {
+  id        String    @id @default(uuid())
+  
+  year      Int
+  month     Int
+  levelType LevelType
+  levelId   String
+  
+  challengeId    String           @unique
+  challenge      MonthlyChallenge @relation(fields: [challengeId], references: [id])
+  
+  goldUserId     String?
+  goldUser       User?   @relation("GoldMedals", fields: [goldUserId], references: [id])
+  goldScore      Int?
+  
+  silverUserId   String?
+  silverUser     User?   @relation("SilverMedals", fields: [silverUserId], references: [id])
+  silverScore    Int?
+  
+  bronzeUserId   String?
+  bronzeUser     User?   @relation("BronzeMedals", fields: [bronzeUserId], references: [id])
+  bronzeScore    Int?
+  
+  finalized      Boolean @default(false) // Whether medals have been awarded
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  @@index([year, month, finalized]) // For job queries
+}
+
+model MonthlyPopup {
+  id           String    @id @default(uuid())
+  
+  year         Int
+  month        Int
+  type         PopupType @default(GLOBAL_WINNERS)
+  title        String
+  content      String    // Rich text/HTML content
+  
+  active       Boolean   @default(true)
+  displayFrom  DateTime  // When to start showing
+  displayUntil DateTime  // When to stop showing
+  
+  dismissals   UserPopupDismissal[]
+  
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([active, displayFrom, displayUntil])
+  @@index([type, year, month])
+}
+
+model UserPopupDismissal {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  popupId    String
+  popup      MonthlyPopup @relation(fields: [popupId], references: [id], onDelete: Cascade)
+  
+  dismissedForMonth Boolean @default(false) // true = don't show for rest of month, false = just closed
+  
+  createdAt  DateTime @default(now())
+  
+  @@unique([userId, popupId])
+  @@index([userId])
+}
+
+model MonthlyARScore {
+  id        String @id @default(uuid())
+  
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  ARId      String
+  AR        AR     @relation(fields: [ARId], references: [id], onDelete: Cascade)
+  
+  year      Int
+  month     Int
+  score     Int    @default(0)
+  
+  challengeId String?
+  challenge   MonthlyChallenge? @relation(fields: [challengeId], references: [id])
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([userId, ARId, year, month])
+  @@index([ARId, year, month])
+  @@index([userId, year, month])
+  @@index([ARId, year, month, score]) // For leaderboard queries with score sorting
+}
+
+model MonthlyRCScore {
+  id        String @id @default(uuid())
+  
+  userId    String
+  user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  RCLevelId String
+  RCLevel   RCLevel @relation(fields: [RCLevelId], references: [id], onDelete: Cascade)
+  
+  year      Int
+  month     Int
+  score     Int    @default(0)
+  
+  challengeId String?
+  challenge   MonthlyChallenge? @relation(fields: [challengeId], references: [id])
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  
+  @@unique([userId, RCLevelId, year, month])
+  @@index([RCLevelId, year, month])
+  @@index([userId, year, month])
+  @@index([RCLevelId, year, month, score]) // For leaderboard queries with score sorting
+}
+
+enum ChangeRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+  AUTO_APPROVED
+}
+
+model UserLevelLock {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  levelType LevelType // AR or RC
+  levelId   String    // References AR.id or RCLevel.id
+  
+  year      Int
+  month     Int       // 1-12
+  
+  lockedAt  DateTime  @default(now())
+  changesUsed Int     @default(0)
+  lastChangeAt DateTime?
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  
+  @@unique([userId, levelType, year, month])
+  @@index([userId, year, month])
+  @@index([levelType, levelId])
+}
+
+model LevelChangeRequest {
+  id        String    @id @default(uuid())
+  userId    String
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  
+  levelType LevelType
+  fromLevelId String
+  toLevelId   String
+  
+  year      Int
+  month     Int
+  
+  reason    String?
+  status    ChangeRequestStatus @default(PENDING)
+  
+  reviewedBy   String?
+  reviewer     User?    @relation("ReviewedRequests", fields: [reviewedBy], references: [id])
+  reviewedAt   DateTime?
+  reviewNote  String?
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@index([userId, year, month])
+  @@index([status])
+}
+
+model SystemConfig {
+  id        String    @id @default(uuid())
+  key       String    @unique
+  value     String    // JSON stringified value
+  
+  description String?
+  updatedBy   String?
+  
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}

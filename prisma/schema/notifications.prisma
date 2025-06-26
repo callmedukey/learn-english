@@ -2,6 +2,7 @@ enum NotificationType {
   NOVEL
   RC
   ANNOUNCEMENT
+  LEVEL_CHANGE
   // Add other notification types here if needed
 }
 

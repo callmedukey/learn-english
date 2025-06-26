@@ -1,10 +1,14 @@
 "use server";
 
+import { toZonedTime } from "date-fns-tz";
 import { revalidatePath } from "next/cache";
 
+import { createUserLevelLock } from "@/actions/level-locks";
 import { auth } from "@/auth";
+import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import { checkAndCreateRankingNotification } from "@/lib/services/notification.service";
 import { prisma } from "@/prisma/prisma-client";
+import { checkLevelLockPermission } from "@/server-queries/level-locks";
 
 export interface RCQuestionCompletionResult {
   success: boolean;
@@ -272,55 +276,108 @@ export async function submitRCAnswer(
 
     // Only update scores if points were awarded (not retry and correct answer)
     if (pointsAwarded > 0) {
-      // Update or create RC score for this level
-      const existingRCScore = await prisma.rCScore.findFirst({
-        where: {
-          userId: session.user.id,
-          RCLevelId: rcLevelId,
-        },
-      });
+      // Check level lock permission
+      const lockCheck = await checkLevelLockPermission(session.user.id, "RC", rcLevelId);
+      if (!lockCheck.allowed) {
+        return {
+          success: false,
+          error: `You are locked to a different level for this month. Please continue with your current level or request a level change.`,
+        };
+      }
 
-      if (existingRCScore) {
-        await prisma.rCScore.update({
-          where: { id: existingRCScore.id },
-          data: {
-            score: {
-              increment: pointsAwarded,
-            },
-          },
-        });
-      } else {
-        await prisma.rCScore.create({
-          data: {
+      // Use transaction for atomic updates
+      await prisma.$transaction(async (tx) => {
+        // Create level lock if needed
+        if (lockCheck.shouldCreateLock) {
+          await createUserLevelLock(session.user.id, "RC", rcLevelId);
+        }
+        // Update cumulative RC score
+        const existingRCScore = await tx.rCScore.findFirst({
+          where: {
             userId: session.user.id,
             RCLevelId: rcLevelId,
-            score: pointsAwarded,
           },
         });
-      }
 
-      // Update total score
-      const existingTotalScore = await prisma.totalScore.findUnique({
-        where: { userId: session.user.id },
-      });
+        if (existingRCScore) {
+          await tx.rCScore.update({
+            where: { id: existingRCScore.id },
+            data: {
+              score: {
+                increment: pointsAwarded,
+              },
+            },
+          });
+        } else {
+          await tx.rCScore.create({
+            data: {
+              userId: session.user.id,
+              RCLevelId: rcLevelId,
+              score: pointsAwarded,
+            },
+          });
+        }
 
-      if (existingTotalScore) {
-        await prisma.totalScore.update({
+        // Update total score
+        await tx.totalScore.upsert({
           where: { userId: session.user.id },
-          data: {
+          update: {
             score: {
               increment: pointsAwarded,
             },
           },
-        });
-      } else {
-        await prisma.totalScore.create({
-          data: {
+          create: {
             userId: session.user.id,
             score: pointsAwarded,
           },
         });
-      }
+
+        // Check for active monthly challenge and update monthly score
+        const now = new Date();
+        const koreaTime = toZonedTime(now, APP_TIMEZONE);
+        const year = koreaTime.getFullYear();
+        const month = koreaTime.getMonth() + 1;
+
+        const challenge = await tx.monthlyChallenge.findFirst({
+          where: {
+            year,
+            month,
+            levelType: "RC",
+            levelId: rcLevelId,
+            active: true,
+            startDate: { lte: now },
+            endDate: { gte: now },
+            keywordIds: { has: keywordId },
+          },
+        });
+
+        if (challenge) {
+          // Update monthly score for medal tracking
+          await tx.monthlyRCScore.upsert({
+            where: {
+              userId_RCLevelId_year_month: {
+                userId: session.user.id,
+                RCLevelId: rcLevelId,
+                year: challenge.year,
+                month: challenge.month,
+              },
+            },
+            update: {
+              score: {
+                increment: pointsAwarded,
+              },
+            },
+            create: {
+              userId: session.user.id,
+              RCLevelId: rcLevelId,
+              year: challenge.year,
+              month: challenge.month,
+              score: pointsAwarded,
+              challengeId: challenge.id,
+            },
+          });
+        }
+      });
 
       // Check for ranking achievements and create notifications
       try {

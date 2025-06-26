@@ -4,6 +4,7 @@ import { Edit } from "lucide-react";
 import { useState, useTransition, useEffect } from "react";
 import { toast } from "sonner";
 
+import DayPicker from "@/components/custom-ui/day-picker";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -32,6 +33,9 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
   >(null);
   const [isActive, setIsActive] = useState(coupon.active);
   const [isOneTimeUse, setIsOneTimeUse] = useState(coupon.oneTimeUse);
+  const [deadline, setDeadline] = useState<Date | undefined>(
+    coupon.deadline ? new Date(coupon.deadline) : undefined
+  );
 
   // Set initial discount type based on coupon data
   useEffect(() => {
@@ -43,6 +47,13 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
   }, [coupon]);
 
   const handleSubmit = async (formData: FormData) => {
+    // Add deadline to formData
+    if (deadline) {
+      formData.append("deadline", deadline.toISOString());
+    } else {
+      formData.append("deadline", "");
+    }
+    
     startTransition(async () => {
       const result = await updateCouponAction(formData);
 
@@ -164,6 +175,13 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
               </div>
             </div>
           </div>
+
+          <DayPicker
+            label="Expiration Date (Optional)"
+            date={deadline}
+            setDate={setDeadline}
+            placeholder="Select expiration date"
+          />
 
           <div className="flex items-center space-x-2">
             <Switch

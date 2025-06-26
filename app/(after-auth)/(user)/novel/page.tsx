@@ -4,6 +4,7 @@ import { auth } from "@/auth";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
+import { getUserLevelLock } from "@/server-queries/level-locks";
 
 import { ARCard } from "./components/ar-card";
 
@@ -58,9 +59,38 @@ async function ARChoices() {
       },
     },
     orderBy: {
-      level: "asc",
+      stars: "asc",
     },
   });
+
+  // Fetch medal images for each AR level
+  const medalImages = await prisma.medalImage.findMany({
+    where: {
+      levelType: "AR",
+      levelId: {
+        in: arChoices.map((ar) => ar.id),
+      },
+    },
+  });
+
+  // Create a map for easy lookup
+  const medalImageMap = new Map<string, typeof medalImages>();
+  medalImages.forEach((medalImage) => {
+    const key = medalImage.levelId;
+    if (!medalImageMap.has(key)) {
+      medalImageMap.set(key, []);
+    }
+    medalImageMap.get(key)!.push(medalImage);
+  });
+
+  // Add medal images to each AR choice
+  const arChoicesWithMedals = arChoices.map((ar) => ({
+    ...ar,
+    medalImages: medalImageMap.get(ar.id) || [],
+  }));
+
+  // Get user's level lock for AR if they're logged in
+  const userLevelLock = userId ? await getUserLevelLock(userId, "AR") : null;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -74,8 +104,13 @@ async function ARChoices() {
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {arChoices.map((ar) => (
-          <ARCard key={ar.id} ar={ar} userId={userId} />
+        {arChoicesWithMedals.map((ar) => (
+          <ARCard 
+            key={ar.id} 
+            ar={ar} 
+            userId={userId} 
+            isUserSelectedLevel={userLevelLock?.levelId === ar.id}
+          />
         ))}
       </div>
     </div>

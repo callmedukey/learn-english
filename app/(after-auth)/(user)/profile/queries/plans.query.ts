@@ -49,12 +49,23 @@ export async function validateCoupon(
     return null;
   }
 
-  return prisma.discountCoupon.findFirst({
+  const coupon = await prisma.discountCoupon.findFirst({
     where: {
       code: code.toUpperCase(),
       active: true,
     },
   });
+
+  if (!coupon) {
+    return null;
+  }
+
+  // Check if coupon has expired
+  if (coupon.deadline && new Date(coupon.deadline) < new Date()) {
+    return null;
+  }
+
+  return coupon;
 }
 
 export async function calculateDiscountedPrice(

@@ -53,6 +53,24 @@ model User {
   RCQuestionSecondTry    RCQuestionSecondTry[]
   NovelQuestionFirstTry  NovelQuestionFirstTry[]
   NovelQuestionSecondTry NovelQuestionSecondTry[]
+
+  // Medal relations
+  medals Medal[]
+  monthlyARScores MonthlyARScore[]
+  monthlyRCScores MonthlyRCScore[]
+  
+  // Leaderboard relations
+  goldMedals   MonthlyLeaderboard[] @relation("GoldMedals")
+  silverMedals MonthlyLeaderboard[] @relation("SilverMedals")
+  bronzeMedals MonthlyLeaderboard[] @relation("BronzeMedals")
+
+  // Level lock relations
+  levelLocks UserLevelLock[]
+  levelChangeRequests LevelChangeRequest[]
+  reviewedChangeRequests LevelChangeRequest[] @relation("ReviewedRequests")
+  
+  // Popup dismissals
+  popupDismissals UserPopupDismissal[]
 }
 
 model Account {

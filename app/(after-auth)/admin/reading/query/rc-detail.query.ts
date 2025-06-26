@@ -2,6 +2,7 @@
 
 import { RCKeyword } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
+import { getKeywordChallenges } from "@/server-queries/admin/content-challenges";
 
 export interface RCKeywordData extends RCKeyword {
   RCQuestionSet: {
@@ -14,6 +15,16 @@ export interface RCKeywordData extends RCKeyword {
       orderNumber: number;
     }[];
   } | null;
+  challenges?: {
+    id: string;
+    year: number;
+    month: number;
+    active: boolean;
+    scheduledActive: boolean;
+    _count?: {
+      medals: number;
+    };
+  }[];
 }
 
 export const getRCKeywordsByLevel = async (
@@ -43,7 +54,18 @@ export const getRCKeywordsByLevel = async (
       createdAt: "desc",
     },
   });
-  return keywords;
+
+  // Get challenges for all keywords
+  const keywordIds = keywords.map(k => k.id);
+  const challengeMap = await getKeywordChallenges(keywordIds);
+
+  // Add challenge data to each keyword
+  const keywordsWithChallenges = keywords.map(keyword => ({
+    ...keyword,
+    challenges: challengeMap.get(keyword.id) || [],
+  }));
+
+  return keywordsWithChallenges;
 };
 
 export const getRCLevelById = async (id: string) => {

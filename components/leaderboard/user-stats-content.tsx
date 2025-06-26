@@ -2,6 +2,7 @@
 
 import { use } from "react";
 
+import { MedalLevelDisplayWithDialog } from "@/components/medals/medal-level-display-with-dialog";
 import { Badge } from "@/components/ui/badge";
 
 interface UserStatsContentProps {
@@ -34,6 +35,35 @@ interface UserStatsData {
   totalArScore: number;
   totalRcScore: number;
   ranking?: UserRankingData | null;
+  medals?: {
+    totalGold: number;
+    totalSilver: number;
+    totalBronze: number;
+    images: {
+      gold: { imageUrl: string | null; width: number; height: number };
+      silver: { imageUrl: string | null; width: number; height: number };
+      bronze: { imageUrl: string | null; width: number; height: number };
+    };
+    medalsByLevel?: Array<{
+      levelType: string;
+      levelId: string;
+      levelName: string;
+      medals: {
+        gold: { count: number; imageUrl: string };
+        silver: { count: number; imageUrl: string };
+        bronze: { count: number; imageUrl: string };
+      };
+    }>;
+    recent?: Array<{
+      id: string;
+      medalType: string;
+      levelType: string;
+      levelName: string;
+      year: number;
+      month: number;
+      score: number;
+    }>;
+  };
 }
 
 // Cache promises to prevent multiple requests for the same userId
@@ -144,6 +174,50 @@ export function UserStatsContent({ userId }: UserStatsContentProps) {
               ).toLocaleString()}
             </span>
           </div>
+        </div>
+
+        {/* Medals Section */}
+        <div className="border-t pt-2">
+          <div className="mb-2 text-xs font-semibold text-amber-900">
+            MEDALS {userStats.medals ? `(${userStats.medals.totalGold + userStats.medals.totalSilver + userStats.medals.totalBronze} total)` : ''}
+          </div>
+          {userStats.medals && userStats.medals.medalsByLevel && (userStats.medals.totalGold > 0 || userStats.medals.totalSilver > 0 || userStats.medals.totalBronze > 0) ? (
+            <>
+              {/* Medal display by level */}
+              <div className="space-y-2">
+                {userStats.medals.medalsByLevel.map((level) => (
+                  <MedalLevelDisplayWithDialog
+                    key={`${level.levelType}-${level.levelId}`}
+                    levelName={level.levelName}
+                    medals={level.medals}
+                    userId={userId}
+                  />
+                ))}
+              </div>
+              
+              {/* Recent Medals */}
+              {userStats.medals && userStats.medals.recent && userStats.medals.recent.length > 0 && (
+                <div className="mt-3 space-y-0.5 border-t pt-2">
+                  <div className="text-xs text-gray-600">Recent:</div>
+                  {userStats.medals.recent.slice(0, 3).map((medal) => (
+                    <div key={medal.id} className="flex justify-between text-xs">
+                      <span className="text-gray-700">
+                        {medal.levelName} ({medal.year}/{medal.month})
+                      </span>
+                      <span className="font-medium capitalize text-gray-900">
+                        {medal.medalType.toLowerCase()}
+                      </span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <div className="text-center">
+              <p className="text-xs text-gray-500">No medals earned yet</p>
+              <p className="mt-1 text-xs text-gray-400">Compete in monthly challenges to earn medals!</p>
+            </div>
+          )}
         </div>
       </div>
     </div>

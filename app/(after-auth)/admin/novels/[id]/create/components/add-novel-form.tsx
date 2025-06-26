@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { NovelKeywordChallengeToggle } from "@/components/admin/challenge-controls";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
@@ -23,11 +24,18 @@ const AddNovelForm: React.FC<AddNovelFormProps> = ({
   setShowForm,
 }) => {
   const [isPending, startTransition] = useTransition();
+  const [includeInChallenge, setIncludeInChallenge] = useState(false);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     formData.append("level", levelId);
+    
+    // Add challenge inclusion flag
+    if (includeInChallenge) {
+      formData.append("includeInChallenge", "true");
+    }
+    
     const form = event.currentTarget;
 
     startTransition(async () => {
@@ -36,6 +44,9 @@ const AddNovelForm: React.FC<AddNovelFormProps> = ({
         toast.error(result.error);
       } else if (result.success && result.novel) {
         toast.success(`Novel '${result.novel.title}' created successfully!`);
+        if (includeInChallenge && result.addedToChallenge) {
+          toast.success("Novel added to current month's challenge!");
+        }
         if (onNovelCreated) {
           onNovelCreated(result.novel.id);
         }
@@ -76,6 +87,14 @@ const AddNovelForm: React.FC<AddNovelFormProps> = ({
       <div className="flex items-center space-x-2">
         <Checkbox id="hidden" name="hidden" defaultChecked />
         <Label htmlFor="hidden">Hidden</Label>
+      </div>
+
+      <div>
+        <NovelKeywordChallengeToggle
+          levelId={levelId}
+          levelType="AR"
+          onIncludeInChallenge={setIncludeInChallenge}
+        />
       </div>
 
       <div className="flex space-x-2">

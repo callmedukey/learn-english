@@ -1,9 +1,10 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import React, { useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { ChallengeControls } from "@/components/admin/challenge-controls";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -21,10 +22,24 @@ import { createRCLevelAction } from "../../actions/rc.actions";
 const CreateRCForm = () => {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
+  const [challengeSettings, setChallengeSettings] = useState({
+    createChallenge: false,
+    year: new Date().getFullYear(),
+    month: new Date().getMonth() + 1,
+    scheduledActive: false,
+  });
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
+
+    // Add challenge settings to formData
+    if (challengeSettings.createChallenge) {
+      formData.append("createChallenge", "true");
+      formData.append("challengeYear", challengeSettings.year.toString());
+      formData.append("challengeMonth", challengeSettings.month.toString());
+      formData.append("challengeScheduledActive", challengeSettings.scheduledActive.toString());
+    }
 
     startTransition(async () => {
       const result = await createRCLevelAction(formData);
@@ -32,6 +47,9 @@ const CreateRCForm = () => {
         toast.error(result.error);
       } else if (result.success) {
         toast.success("RC level created successfully!");
+        if (challengeSettings.createChallenge && result.challengeCreated) {
+          toast.success("Monthly challenge created successfully!");
+        }
         router.push("/admin/reading");
       } else {
         toast.error("An unexpected error occurred");
@@ -140,6 +158,16 @@ const CreateRCForm = () => {
           <p className="mt-1 text-sm text-gray-500">
             Optional description of this RC level
           </p>
+        </div>
+
+        <div>
+          <Label className="text-base font-semibold">Monthly Challenge Settings</Label>
+          <p className="mb-3 text-sm text-gray-500">
+            Optionally create a monthly challenge for this RC level
+          </p>
+          <ChallengeControls
+            onChallengeSettingsChange={setChallengeSettings}
+          />
         </div>
 
         <div className="flex justify-end space-x-4">

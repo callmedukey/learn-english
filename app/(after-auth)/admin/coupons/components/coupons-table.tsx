@@ -109,6 +109,9 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
                 Usage
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                Expires
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                 Created
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
@@ -171,17 +174,36 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
                       </span>
                     </div>
                   </td>
+                  <td className="px-6 py-4 text-sm whitespace-nowrap">
+                    {coupon.deadline ? (
+                      <div>
+                        <div
+                          className={
+                            new Date(coupon.deadline) < new Date()
+                              ? "text-red-600 font-medium"
+                              : "text-gray-900"
+                          }
+                        >
+                          {format(coupon.deadline, "MMM dd, yyyy")}
+                        </div>
+                        {new Date(coupon.deadline) < new Date() && (
+                          <Badge className="mt-1 bg-red-100 text-xs text-red-800">
+                            Expired
+                          </Badge>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400">No expiry</span>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                    <div>{format(coupon.createdAt, "MMM dd, yyyy")}</div>
-                    <div className="text-xs text-gray-400">
-                      {format(coupon.createdAt, "HH:mm")}
-                    </div>
+                    {format(coupon.createdAt, "MMM dd, yyyy")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center space-x-2">
                       <EditCouponDialog
                         coupon={coupon}
-                        key={`${coupon.id}-${coupon.active}-${coupon?.discount}-${coupon?.flatDiscount}-${coupon?.code}-${coupon?.oneTimeUse}`}
+                        key={`${coupon.id}-${coupon.active}-${coupon?.discount}-${coupon?.flatDiscount}-${coupon?.code}-${coupon?.oneTimeUse}-${coupon?.deadline}`}
                       />
 
                       <AlertDialog>

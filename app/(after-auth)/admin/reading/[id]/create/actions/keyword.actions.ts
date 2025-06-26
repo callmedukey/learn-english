@@ -2,7 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 
+import { LevelType } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
+import { getCurrentKoreaYearMonth } from "@/server-queries/medals";
 
 export const createKeywordAction = async (formData: FormData) => {
   const rcLevelId = formData.get("rcLevelId") as string;
@@ -10,6 +12,7 @@ export const createKeywordAction = async (formData: FormData) => {
   const description = formData.get("description") as string;
   const isFree = formData.get("isFree") === "on";
   const hidden = formData.get("hidden") === "on";
+  const includeInChallenge = formData.get("includeInChallenge") === "true";
 
   if (!rcLevelId || !name) {
     return {
@@ -55,10 +58,47 @@ export const createKeywordAction = async (formData: FormData) => {
       },
     });
 
+    let addedToChallenge = false;
+
+    // Add to current month's challenge if requested
+    if (includeInChallenge) {
+      try {
+        const { year, month } = getCurrentKoreaYearMonth();
+        
+        // Find the current month's challenge for this RC level
+        const currentChallenge = await prisma.monthlyChallenge.findUnique({
+          where: {
+            year_month_levelType_levelId: {
+              year,
+              month,
+              levelType: LevelType.RC,
+              levelId: rcLevelId,
+            },
+          },
+        });
+
+        if (currentChallenge) {
+          // Add the keyword to the challenge
+          await prisma.monthlyChallenge.update({
+            where: { id: currentChallenge.id },
+            data: {
+              keywordIds: {
+                push: keyword.id,
+              },
+            },
+          });
+          addedToChallenge = true;
+        }
+      } catch (error) {
+        console.error("Failed to add keyword to challenge:", error);
+      }
+    }
+
     revalidatePath(`/admin/reading/${rcLevelId}`);
     revalidatePath("/admin/reading");
+    revalidatePath("/challenges");
 
-    return { success: true, keyword };
+    return { success: true, keyword, addedToChallenge };
   } catch (error) {
     console.error("Failed to create keyword:", error);
     return {

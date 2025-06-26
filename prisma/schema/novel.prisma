@@ -10,6 +10,7 @@ model AR {
   novels Novel[]
 
   ARScore ARScore[]
+  monthlyARScores MonthlyARScore[]
 
   ARSettings ARSettings?
 

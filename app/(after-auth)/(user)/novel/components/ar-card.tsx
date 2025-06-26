@@ -1,4 +1,5 @@
-import { Star } from "lucide-react";
+import { Star, CheckCircle } from "lucide-react";
+import Image from "next/image";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -35,11 +36,21 @@ interface ARCardProps {
         } | null;
       }>;
     }>;
+    medalImages?: Array<{
+      id: string;
+      levelType: string;
+      levelId: string;
+      medalType: "GOLD" | "SILVER" | "BRONZE";
+      imageUrl: string;
+      width: number;
+      height: number;
+    }>;
   };
   userId?: string;
+  isUserSelectedLevel?: boolean;
 }
 
-export function ARCard({ ar, userId }: ARCardProps) {
+export function ARCard({ ar, userId, isUserSelectedLevel }: ARCardProps) {
   // Calculate first try statistics across all novels and chapters
   let totalChaptersAttempted = 0;
   let firstTryCorrect = 0;
@@ -70,12 +81,33 @@ export function ARCard({ ar, userId }: ARCardProps) {
 
   return (
     <Link href={`/novel/${ar.id}`} className="group">
-      <Card className="h-full border-border bg-card transition-all duration-200 hover:scale-105 hover:shadow-lg">
+      <Card className={`h-full border-border bg-card transition-all duration-200 hover:scale-105 hover:shadow-lg ${isUserSelectedLevel ? 'ring-2 ring-primary ring-offset-2' : ''}`}>
         <CardHeader className="pb-4">
           <div className="flex items-center justify-between">
-            <CardTitle className="text-xl font-semibold text-card-foreground">
-              {ar.level}
-            </CardTitle>
+            <div className="flex items-center gap-2">
+              <CardTitle className="text-xl font-semibold text-card-foreground">
+                {ar.level}
+              </CardTitle>
+              {ar.medalImages && ar.medalImages.length > 0 && (
+                <div className="flex items-center gap-1">
+                  {["GOLD", "SILVER", "BRONZE"].map((medalType) => {
+                    const medal = ar.medalImages?.find(
+                      (m) => m.medalType === medalType
+                    );
+                    return medal ? (
+                      <Image
+                        key={medal.id}
+                        src={medal.imageUrl}
+                        alt={`${medalType} medal`}
+                        width={24}
+                        height={24}
+                        className="h-6 w-6 object-contain"
+                      />
+                    ) : null;
+                  })}
+                </div>
+              )}
+            </div>
             <div className="flex items-center gap-1">
               {Array.from({ length: ar.stars }).map((_, i) => (
                 <Star
@@ -92,6 +124,15 @@ export function ARCard({ ar, userId }: ARCardProps) {
             >
               AR: {ar.score}
             </Badge>
+            {isUserSelectedLevel && (
+              <Badge
+                variant="secondary"
+                className="border-primary/30 bg-primary/10 text-primary"
+              >
+                <CheckCircle className="mr-1 h-3 w-3" />
+                Your Selected Level
+              </Badge>
+            )}
           </div>
 
           {/* Progress bar for performance */}

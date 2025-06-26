@@ -8,6 +8,7 @@ model DiscountCoupon {
   active       Boolean @default(true)
 
   oneTimeUse Boolean @default(false)
+  deadline   DateTime? // Optional expiration date for the coupon
 
   // Relations
   payments Payment[]

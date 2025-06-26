@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useTransition } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { ExistingChallenges } from "@/components/admin/challenge-controls";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { updateRCLevelAction } from "../actions/rc.actions";
+import { getRCChallenges, updateRCLevelAction } from "../actions/rc.actions";
 import { RCLevelData } from "../query/rc.query";
 
 interface EditRCFormProps {
@@ -25,6 +27,17 @@ interface EditRCFormProps {
 
 const EditRCForm: React.FC<EditRCFormProps> = ({ rcLevel, onRCUpdated }) => {
   const [isPending, startTransition] = useTransition();
+  const [challenges, setChallenges] = useState<any[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Fetch existing challenges for this RC level
+    async function fetchChallenges() {
+      const rcChallenges = await getRCChallenges(rcLevel.id);
+      setChallenges(rcChallenges);
+    }
+    fetchChallenges();
+  }, [rcLevel.id]);
 
   const handleSubmit = async (formData: FormData) => {
     startTransition(async () => {
@@ -36,6 +49,10 @@ const EditRCForm: React.FC<EditRCFormProps> = ({ rcLevel, onRCUpdated }) => {
         onRCUpdated();
       }
     });
+  };
+
+  const handleEditChallenge = (challengeId: string) => {
+    router.push(`/admin/challenges/challenges/${challengeId}`);
   };
 
   return (
@@ -128,6 +145,24 @@ const EditRCForm: React.FC<EditRCFormProps> = ({ rcLevel, onRCUpdated }) => {
           rows={3}
           disabled={isPending}
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-base font-semibold">Monthly Challenges</Label>
+        <ExistingChallenges 
+          challenges={challenges}
+          onEditChallenge={handleEditChallenge}
+        />
+        <div className="flex justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(`/admin/challenges/challenges?levelType=RC&levelId=${rcLevel.id}`)}
+          >
+            Create New Challenge
+          </Button>
+        </div>
       </div>
 
       <div className="flex justify-end space-x-2">

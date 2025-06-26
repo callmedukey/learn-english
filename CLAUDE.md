@@ -6,6 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Reading Camp - A Next.js 15 application for English learning with reading comprehension features, novels, user authentication, and payment processing.
 
+## Important Development Guidelines
+
+### Data Fetching in Next.js
+- **NEVER use fetch() inside useEffect in client components** - this is an anti-pattern
+- **ALWAYS prefer passing data from server components as props** (highest priority)
+- If async data is needed in client components, use React's `use()` hook as a secondary option
+- Server components should fetch all necessary data and pass it down to client components
+- This approach prevents hydration mismatches and improves performance
+
 ## Essential Commands
 
 ### Development
@@ -83,3 +92,4 @@ After modifying schemas, run `npm run db:generate` to update the Prisma client.
 - UI components in `/components/ui` are managed by shadcn/ui CLI
 - Server actions go in `/actions` directory with proper error handling
 - Use TypeScript strict mode - avoid `any` types where possible
+- IMPORTANT: Run `npx tsc --noEmit` and `npm run lint` after every work to catch errors early

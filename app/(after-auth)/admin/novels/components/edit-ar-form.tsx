@@ -1,8 +1,10 @@
 "use client";
 
-import React, { useTransition } from "react";
+import { useRouter } from "next/navigation";
+import React, { useEffect, useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import { ExistingChallenges } from "@/components/admin/challenge-controls";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -15,7 +17,7 @@ import {
 } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 
-import { updateARAction } from "../actions/ar.actions";
+import { getARChallenges, updateARAction } from "../actions/ar.actions";
 import { ARData } from "../query/ar.query";
 
 interface EditARFormProps {
@@ -25,6 +27,17 @@ interface EditARFormProps {
 
 const EditARForm: React.FC<EditARFormProps> = ({ ar, onARUpdated }) => {
   const [isPending, startTransition] = useTransition();
+  const [challenges, setChallenges] = useState<any[]>([]);
+  const router = useRouter();
+
+  useEffect(() => {
+    // Fetch existing challenges for this AR level
+    async function fetchChallenges() {
+      const arChallenges = await getARChallenges(ar.id);
+      setChallenges(arChallenges);
+    }
+    fetchChallenges();
+  }, [ar.id]);
 
   const handleSubmit = async (formData: FormData) => {
     startTransition(async () => {
@@ -36,6 +49,10 @@ const EditARForm: React.FC<EditARFormProps> = ({ ar, onARUpdated }) => {
         onARUpdated();
       }
     });
+  };
+
+  const handleEditChallenge = (challengeId: string) => {
+    router.push(`/admin/challenges/challenges/${challengeId}`);
   };
 
   return (
@@ -126,6 +143,24 @@ const EditARForm: React.FC<EditARFormProps> = ({ ar, onARUpdated }) => {
           required
           disabled={isPending}
         />
+      </div>
+
+      <div className="space-y-2">
+        <Label className="text-base font-semibold">Monthly Challenges</Label>
+        <ExistingChallenges 
+          challenges={challenges}
+          onEditChallenge={handleEditChallenge}
+        />
+        <div className="flex justify-end">
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => router.push(`/admin/challenges/challenges?levelType=AR&levelId=${ar.id}`)}
+          >
+            Create New Challenge
+          </Button>
+        </div>
       </div>
 
       <div className="flex justify-end space-x-2">

@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense } from "react";
+import { Suspense, useState, useRef } from "react";
 
 import {
   Popover,
@@ -17,9 +17,40 @@ interface UserStatsPopoverProps {
   children: React.ReactNode;
 }
 
+// Global flag to prevent popover from opening during dialog interactions
+let isDialogInteracting = false;
+
+export function setDialogInteracting(value: boolean) {
+  isDialogInteracting = value;
+}
+
 export function UserStatsPopover({ userId, children }: UserStatsPopoverProps) {
+  const [open, setOpen] = useState(false);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | undefined>(undefined);
+
+  const handleOpenChange = (newOpen: boolean) => {
+    // Clear any pending timeout
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+    }
+
+    if (newOpen && isDialogInteracting) {
+      // Don't open if we're interacting with a dialog
+      return;
+    }
+
+    if (!newOpen) {
+      // Add a small delay when closing to prevent immediate re-opening
+      closeTimeoutRef.current = setTimeout(() => {
+        setOpen(false);
+      }, 50);
+    } else {
+      setOpen(true);
+    }
+  };
+
   return (
-    <Popover>
+    <Popover open={open} onOpenChange={handleOpenChange}>
       <PopoverTrigger asChild>
         <div className="cursor-pointer">{children}</div>
       </PopoverTrigger>

@@ -5,6 +5,7 @@ import { Edit, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 
+import { ChallengeBadge } from "@/components/admin/challenge-badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -105,6 +106,7 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
               <TableHead>Hidden</TableHead>
               <TableHead>Question Set</TableHead>
               <TableHead>Questions</TableHead>
+              <TableHead>Challenge</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -170,6 +172,9 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                       No questions
                     </span>
                   )}
+                </TableCell>
+                <TableCell>
+                  <ChallengeBadge challenges={keyword.challenges || []} />
                 </TableCell>
                 <TableCell className="text-sm text-gray-500">
                   {format(new Date(keyword.createdAt), "yyyy/MM/dd")}

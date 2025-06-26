@@ -4,6 +4,7 @@ import { Plus } from "lucide-react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import DayPicker from "@/components/custom-ui/day-picker";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -27,8 +28,14 @@ export default function CreateCouponDialog() {
   >(null);
   const [isActive, setIsActive] = useState(true);
   const [isOneTimeUse, setIsOneTimeUse] = useState(true);
+  const [deadline, setDeadline] = useState<Date | undefined>(undefined);
 
   const handleSubmit = async (formData: FormData) => {
+    // Add deadline to formData if it exists
+    if (deadline) {
+      formData.append("deadline", deadline.toISOString());
+    }
+    
     startTransition(async () => {
       const result = await createCouponAction(formData);
 
@@ -38,6 +45,7 @@ export default function CreateCouponDialog() {
         setDiscountType(null);
         setIsActive(true);
         setIsOneTimeUse(false);
+        setDeadline(undefined);
       } else {
         toast.error(result.error);
       }
@@ -155,6 +163,13 @@ export default function CreateCouponDialog() {
             </div>
           </div>
 
+          <DayPicker
+            label="Expiration Date (Optional)"
+            date={deadline}
+            setDate={setDeadline}
+            placeholder="Select expiration date"
+          />
+
           <div className="flex items-center space-x-2">
             <Switch
               id="active"
@@ -194,6 +209,7 @@ export default function CreateCouponDialog() {
                 setDiscountType(null);
                 setIsActive(true);
                 setIsOneTimeUse(false);
+                setDeadline(undefined);
               }}
               disabled={isPending}
             >

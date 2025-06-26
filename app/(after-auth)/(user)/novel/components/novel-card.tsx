@@ -1,3 +1,4 @@
+import { Trophy, Info } from "lucide-react";
 import Link from "next/link";
 
 import { Badge } from "@/components/ui/badge";
@@ -10,6 +11,12 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 interface NovelCardProps {
   novel: {
@@ -30,9 +37,11 @@ interface NovelCardProps {
   };
   arId: string;
   userId?: string;
+  isMonthlyChallenge?: boolean;
+  userJoinedChallenge?: boolean;
 }
 
-export function NovelCard({ novel, arId, userId }: NovelCardProps) {
+export function NovelCard({ novel, arId, userId, isMonthlyChallenge, userJoinedChallenge }: NovelCardProps) {
   // Calculate completion progress
   const totalChapters = novel.novelChapters.length;
   const completedChapters = userId
@@ -57,7 +66,9 @@ export function NovelCard({ novel, arId, userId }: NovelCardProps) {
   const hasProgress = userId && completedChapters > 0;
 
   return (
-    <Card className="group h-full border-border bg-card transition-all duration-200 hover:scale-105 hover:shadow-lg">
+    <Card className={`group h-full border-border bg-card transition-all duration-200 hover:scale-105 hover:shadow-lg ${
+      isMonthlyChallenge ? "ring-2 ring-amber-400 ring-offset-2 hover:ring-amber-500" : ""
+    }`}>
       <CardHeader className="pb-4">
         <CardTitle className="line-clamp-2 text-lg font-semibold text-card-foreground">
           {novel.title}
@@ -78,6 +89,37 @@ export function NovelCard({ novel, arId, userId }: NovelCardProps) {
             >
               Free chapters
             </Badge>
+          )}
+          {isMonthlyChallenge && (
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger asChild>
+                  <Badge
+                    variant="secondary"
+                    className={`text-xs ${
+                      userJoinedChallenge
+                        ? "border-yellow-300 bg-yellow-100 text-yellow-800"
+                        : "border-amber-300 bg-amber-50 text-amber-700"
+                    }`}
+                  >
+                    <Trophy className="mr-1 h-3 w-3" />
+                    Challenge
+                    {userJoinedChallenge ? (
+                      <span className="ml-1 text-green-600">✓</span>
+                    ) : (
+                      <Info className="ml-1 h-3 w-3" />
+                    )}
+                  </Badge>
+                </TooltipTrigger>
+                <TooltipContent>
+                  {userJoinedChallenge ? (
+                    <p>You&apos;ve joined this month&apos;s challenge! Points count toward medals.</p>
+                  ) : (
+                    <p>Monthly challenge content - join the challenge to earn medal points!</p>
+                  )}
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           )}
           {hasProgress && (
             <Badge

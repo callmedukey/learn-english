@@ -5,6 +5,7 @@ import { Edit, Eye, EyeOff } from "lucide-react";
 import Link from "next/link";
 import React, { useState } from "react";
 
+import { ChallengeBadge } from "@/components/admin/challenge-badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
 import {
@@ -101,6 +102,7 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels }) => {
               <TableHead>Hidden</TableHead>
               <TableHead>Chapters</TableHead>
               <TableHead>Free Chapters</TableHead>
+              <TableHead>Challenge</TableHead>
               <TableHead>Created At</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
@@ -160,6 +162,9 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels }) => {
                         None
                       </span>
                     )}
+                  </TableCell>
+                  <TableCell>
+                    <ChallengeBadge challenges={novel.challenges || []} />
                   </TableCell>
                   <TableCell className="text-sm text-gray-500">
                     {format(new Date(novel.createdAt), "yyyy/MM/dd")}

@@ -9,9 +9,13 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
+import { getUserLevelLock, getUserLevelChangeRequests } from "@/server-queries/level-locks";
+import { getActiveChallengeItems, getCurrentKoreaYearMonth } from "@/server-queries/medals";
 
+import { RCChallengeConfirmationButton } from "./components/rc-challenge-confirmation-button";
 import { RCKeywordCard } from "./components/rc-keyword-card";
 import { RCKeywordFilters } from "./components/rc-keyword-filters";
+import { RCKeywordsPagination } from "./components/rc-keywords-pagination";
 
 interface PageProps {
   params: Promise<{ rcLevelId: string }>;
@@ -20,6 +24,7 @@ interface PageProps {
     sortBy?: string;
     sortOrder?: string;
     status?: string;
+    page?: string;
   }>;
 }
 
@@ -33,6 +38,7 @@ async function RCKeywords({
     sortBy?: string;
     sortOrder?: string;
     status?: string;
+    page?: string;
   };
 }) {
   const session = await auth();
@@ -67,11 +73,16 @@ async function RCKeywords({
       }
     : {};
 
-  // Build the orderBy clause
-  const sortBy = searchParams.sortBy || "name";
-  const sortOrder = searchParams.sortOrder || "asc";
+  // Pagination setup
+  const page = parseInt(searchParams.page || "1", 10);
+  const perPage = 30;
+  const skip = (page - 1) * perPage;
 
-  let orderBy: any = { name: "asc" };
+  // Build the orderBy clause - default to createdAt desc
+  const sortBy = searchParams.sortBy || "createdAt";
+  const sortOrder = searchParams.sortOrder || "desc";
+
+  let orderBy: any = { createdAt: "desc" };
 
   switch (sortBy) {
     case "name":
@@ -81,88 +92,182 @@ async function RCKeywords({
       orderBy = { createdAt: sortOrder };
       break;
     default:
-      orderBy = { name: "asc" };
+      orderBy = { createdAt: "desc" };
   }
 
+  // First, get the RC Level info
   const rcLevel = await prisma.rCLevel.findUnique({
     where: { id: rcLevelId },
-    include: {
-      RCKeyword: {
-        where: {
-          ...searchWhere,
-          hidden: false,
-        },
-        include: {
-          RCQuestionSet: {
-            include: {
-              RCQuestion: {
-                include: {
-                  RCQuestionCompleted: {
-                    where: userId
-                      ? {
-                          userId: userId,
-                        }
-                      : undefined,
-                    select: {
-                      userId: true,
-                    },
-                  },
-                },
-                orderBy: {
-                  orderNumber: "asc",
-                },
-              },
-              RCQuestionFirstTry: userId
-                ? {
-                    where: {
-                      userId: userId,
-                    },
-                    select: {
-                      id: true,
-                      totalQuestions: true,
-                      correctAnswers: true,
-                      createdAt: true,
-                    },
-                  }
-                : false,
-              RCQuestionSecondTry: userId
-                ? {
-                    where: {
-                      userId: userId,
-                    },
-                    select: {
-                      id: true,
-                      totalQuestions: true,
-                      correctAnswers: true,
-                      createdAt: true,
-                    },
-                  }
-                : false,
-            },
-          },
-        },
-        orderBy,
-      },
-    },
   });
 
   if (!rcLevel) {
     notFound();
   }
 
+  // Get challenge keyword IDs for this RC level
+  const challengeKeywordIds = await getActiveChallengeItems("RC", rcLevelId);
+  
+  // Get current month/year for challenge button
+  const { year: currentYear, month: currentMonth } = getCurrentKoreaYearMonth();
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  const currentMonthName = monthNames[currentMonth - 1];
+  
+  // Get user's level lock if they're logged in
+  const userLevelLock = userId ? await getUserLevelLock(userId, "RC") : null;
+  const pendingRequests = userId ? await getUserLevelChangeRequests(userId) : [];
+  const pendingRequest = pendingRequests.find(req => req.status === "PENDING");
+  const hasPendingRequest = !!pendingRequest;
+
+  // Get 5 FREE keywords to pin at the top
+  const freeKeywords = await prisma.rCKeyword.findMany({
+    where: {
+      rcLevelId: rcLevelId,
+      hidden: false,
+      isFree: true,
+      ...searchWhere,
+    },
+    include: {
+      RCQuestionSet: {
+        include: {
+          RCQuestion: {
+            include: {
+              RCQuestionCompleted: {
+                where: userId
+                  ? {
+                      userId: userId,
+                    }
+                  : undefined,
+                select: {
+                  userId: true,
+                },
+              },
+            },
+            orderBy: {
+              orderNumber: "asc",
+            },
+          },
+          RCQuestionFirstTry: userId
+            ? {
+                where: {
+                  userId: userId,
+                },
+                select: {
+                  id: true,
+                  totalQuestions: true,
+                  correctAnswers: true,
+                  createdAt: true,
+                },
+              }
+            : false,
+          RCQuestionSecondTry: userId
+            ? {
+                where: {
+                  userId: userId,
+                },
+                select: {
+                  id: true,
+                  totalQuestions: true,
+                  correctAnswers: true,
+                  createdAt: true,
+                },
+              }
+            : false,
+        },
+      },
+    },
+    orderBy,
+    take: 5,
+  });
+
+  const freeKeywordIds = freeKeywords.map(k => k.id);
+
+  // Get the rest of the keywords (excluding the free ones we already have)
+  const regularKeywords = await prisma.rCKeyword.findMany({
+    where: {
+      rcLevelId: rcLevelId,
+      hidden: false,
+      id: {
+        notIn: freeKeywordIds,
+      },
+      ...searchWhere,
+    },
+    include: {
+      RCQuestionSet: {
+        include: {
+          RCQuestion: {
+            include: {
+              RCQuestionCompleted: {
+                where: userId
+                  ? {
+                      userId: userId,
+                    }
+                  : undefined,
+                select: {
+                  userId: true,
+                },
+              },
+            },
+            orderBy: {
+              orderNumber: "asc",
+            },
+          },
+          RCQuestionFirstTry: userId
+            ? {
+                where: {
+                  userId: userId,
+                },
+                select: {
+                  id: true,
+                  totalQuestions: true,
+                  correctAnswers: true,
+                  createdAt: true,
+                },
+              }
+            : false,
+          RCQuestionSecondTry: userId
+            ? {
+                where: {
+                  userId: userId,
+                },
+                select: {
+                  id: true,
+                  totalQuestions: true,
+                  correctAnswers: true,
+                  createdAt: true,
+                },
+              }
+            : false,
+        },
+      },
+    },
+    orderBy,
+    skip: Math.max(0, skip - freeKeywords.length),
+    take: perPage - freeKeywords.length,
+  });
+
+  // Combine free keywords at the top with regular keywords
+  const allKeywords = [...freeKeywords, ...regularKeywords];
+
   // Get total count for display (only visible keywords)
   const totalKeywordsCount = await prisma.rCKeyword.count({
     where: {
       rcLevelId: rcLevelId,
       hidden: false,
+      ...searchWhere,
     },
   });
 
+  // Calculate total pages
+  const totalPages = Math.ceil(totalKeywordsCount / perPage);
+
   // Apply status filter on the server side if needed
-  let filteredKeywords = rcLevel.RCKeyword;
+  let filteredKeywords = allKeywords;
 
   if (searchParams.status && searchParams.status !== "all" && userId) {
-    filteredKeywords = rcLevel.RCKeyword.filter((keyword) => {
+    filteredKeywords = allKeywords.filter((keyword) => {
       if (!keyword.RCQuestionSet) return searchParams.status === "notStarted";
 
       const firstTryData = keyword.RCQuestionSet.RCQuestionFirstTry[0] || null;
@@ -199,15 +304,28 @@ async function RCKeywords({
           </Button>
         </Link>
 
-        <div className="mb-4 flex items-center gap-4">
-          <h1 className="text-3xl font-bold text-foreground">
-            RC Level {rcLevel.level}
-          </h1>
-          <div className="flex items-center gap-1">
-            {Array.from({ length: rcLevel.stars }).map((_, i) => (
-              <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
-            ))}
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <h1 className="text-3xl font-bold text-foreground">
+              RC Level {rcLevel.level}
+            </h1>
+            <div className="flex items-center gap-1">
+              {Array.from({ length: rcLevel.stars }).map((_, i) => (
+                <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
+              ))}
+            </div>
           </div>
+          <RCChallengeConfirmationButton
+            rcLevelId={rcLevelId}
+            rcLevel={`RC Level ${rcLevel.level}`}
+            hasActiveChallenge={!!challengeKeywordIds && challengeKeywordIds.length > 0}
+            challengeKeywordCount={challengeKeywordIds?.length || 0}
+            currentMonth={currentMonthName}
+            currentYear={currentYear}
+            userLevelLock={userLevelLock}
+            hasPendingRequest={hasPendingRequest}
+            pendingRequestId={pendingRequest?.id}
+          />
         </div>
 
         <div className="mb-4 flex items-center gap-3">
@@ -227,8 +345,7 @@ async function RCKeywords({
             variant="outline"
             className="border-muted-foreground/30 text-muted-foreground"
           >
-            {filteredKeywords.length} of {totalKeywordsCount} topic
-            {totalKeywordsCount !== 1 ? "s" : ""}
+            {totalKeywordsCount} topic{totalKeywordsCount !== 1 ? "s" : ""}
           </Badge>
         </div>
 
@@ -264,9 +381,20 @@ async function RCKeywords({
               rcLevelId={rcLevelId}
               userId={userId}
               hasPaidSubscription={hasPaidSubscription}
+              isMonthlyChallenge={challengeKeywordIds?.includes(keyword.id) || false}
+              userJoinedChallenge={userLevelLock?.levelId === rcLevelId}
             />
           ))}
         </div>
+      )}
+
+      {/* Pagination */}
+      {filteredKeywords.length > 0 && (
+        <RCKeywordsPagination
+          currentPage={page}
+          totalPages={totalPages}
+          totalCount={totalKeywordsCount}
+        />
       )}
     </div>
   );

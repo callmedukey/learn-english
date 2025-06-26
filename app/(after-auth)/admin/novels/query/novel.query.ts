@@ -2,6 +2,7 @@
 
 import { Novel } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
+import { getNovelChallenges } from "@/server-queries/admin/content-challenges";
 
 export interface NovelData extends Novel {
   AR: {
@@ -14,6 +15,16 @@ export interface NovelData extends Novel {
     description?: string | null;
     orderNumber: number;
     isFree: boolean;
+  }[];
+  challenges?: {
+    id: string;
+    year: number;
+    month: number;
+    active: boolean;
+    scheduledActive: boolean;
+    _count?: {
+      medals: number;
+    };
   }[];
 }
 
@@ -48,7 +59,18 @@ export const getNovelsByARLevel = async (id: string): Promise<NovelData[]> => {
       createdAt: "desc",
     },
   });
-  return novels;
+
+  // Get challenges for all novels
+  const novelIds = novels.map(n => n.id);
+  const challengeMap = await getNovelChallenges(novelIds);
+
+  // Add challenge data to each novel
+  const novelsWithChallenges = novels.map(novel => ({
+    ...novel,
+    challenges: challengeMap.get(novel.id) || [],
+  }));
+
+  return novelsWithChallenges;
 };
 
 export const getARByLevel = async (id: string) => {
