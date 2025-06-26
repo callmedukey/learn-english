@@ -22,8 +22,8 @@ module.exports = {
     {
       name: "medal-cron",
       script: "npx",
-      args: "tsx scripts/medal-cron.ts",
-      cron_restart: "0 0 * * *", // Daily at midnight
+      args: "tsx scripts/cron-wrapper.ts",
+      cron_restart: "0 * * * *", // Every hour - wrapper checks if it's midnight KST
       autorestart: false, // Don't restart after it completes
       instances: 1,
       exec_mode: "fork",
