@@ -9,6 +9,8 @@ module.exports = {
       autorestart: true,
       watch: false,
       max_memory_restart: "2G",
+      min_uptime: "10s",
+      max_restarts: 10,
       env: {
         NODE_ENV: "production",
       },
@@ -23,6 +25,8 @@ module.exports = {
       args: "tsx scripts/medal-cron.ts",
       cron_restart: "0 0 * * *", // Daily at midnight
       autorestart: false, // Don't restart after it completes
+      instances: 1,
+      exec_mode: "fork",
       watch: false,
       cwd: "/home/champ/learn-english", // Set working directory explicitly
       env: {

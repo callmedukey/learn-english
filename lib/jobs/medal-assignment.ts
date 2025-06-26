@@ -4,6 +4,7 @@ import { toZonedTime } from "date-fns-tz";
 import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import { PopupType } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
+
 import { getCurrentKoreaYearMonth } from "./medal-queries-standalone";
 
 /**
@@ -13,7 +14,7 @@ import { getCurrentKoreaYearMonth } from "./medal-queries-standalone";
 export async function runMedalAssignmentJob() {
   console.log("=== Starting Medal Assignment Job ===");
   console.log(`Job started at: ${new Date().toISOString()}`);
-  
+
   try {
     // 1. Finalize medals for challenges that ended
     const medalResults = await finalizeEndedChallenges();
@@ -22,7 +23,9 @@ export async function runMedalAssignmentJob() {
     // 2. Create winner popups for last month if medals were assigned
     if (medalResults.length > 0) {
       const popupResults = await createMonthlyWinnerPopups();
-      console.log(`Created ${popupResults.globalPopups} global and ${popupResults.personalPopups} personal popups`);
+      console.log(
+        `Created ${popupResults.globalPopups} global and ${popupResults.personalPopups} personal popups`,
+      );
     }
 
     // 3. Activate scheduled challenges for current month
@@ -46,30 +49,31 @@ export async function runMedalAssignmentJob() {
  */
 async function finalizeEndedChallenges() {
   const now = new Date();
-  
+
   // Find challenges from previous months that haven't been finalized
   const unfinishedChallenges = await prisma.monthlyChallenge.findMany({
     where: {
       active: true,
       endDate: { lt: now },
-      OR: [
-        { leaderboard: { finalized: false } },
-        { leaderboard: null }
-      ]
+      OR: [{ leaderboard: { finalized: false } }, { leaderboard: null }],
     },
     include: {
-      leaderboard: true
-    }
+      leaderboard: true,
+    },
   });
 
-  console.log(`Found ${unfinishedChallenges.length} unfinished challenges to process`);
+  console.log(
+    `Found ${unfinishedChallenges.length} unfinished challenges to process`,
+  );
 
   const results = [];
 
   for (const challenge of unfinishedChallenges) {
     try {
-      console.log(`Processing challenge for ${challenge.levelType} ${challenge.levelId} (${challenge.year}-${challenge.month})`);
-      
+      console.log(
+        `Processing challenge for ${challenge.levelType} ${challenge.levelId} (${challenge.year}-${challenge.month})`,
+      );
+
       // Get top 3 scorers
       let topScorers;
       if (challenge.levelType === "AR") {
@@ -79,15 +83,15 @@ async function finalizeEndedChallenges() {
             year: challenge.year,
             month: challenge.month,
             challengeId: challenge.id,
-            score: { gt: 0 } // Only consider users with scores
+            score: { gt: 0 }, // Only consider users with scores
           },
           orderBy: { score: "desc" },
           take: 3,
           include: {
             user: {
-              select: { id: true, nickname: true }
-            }
-          }
+              select: { id: true, nickname: true },
+            },
+          },
         });
       } else {
         topScorers = await prisma.monthlyRCScore.findMany({
@@ -96,15 +100,15 @@ async function finalizeEndedChallenges() {
             year: challenge.year,
             month: challenge.month,
             challengeId: challenge.id,
-            score: { gt: 0 } // Only consider users with scores
+            score: { gt: 0 }, // Only consider users with scores
           },
           orderBy: { score: "desc" },
           take: 3,
           include: {
             user: {
-              select: { id: true, nickname: true }
-            }
-          }
+              select: { id: true, nickname: true },
+            },
+          },
         });
       }
 
@@ -125,7 +129,7 @@ async function finalizeEndedChallenges() {
             silverScore: topScorers[1]?.score,
             bronzeUserId: topScorers[2]?.userId,
             bronzeScore: topScorers[2]?.score,
-            finalized: true
+            finalized: true,
           },
           create: {
             challengeId: challenge.id,
@@ -139,13 +143,13 @@ async function finalizeEndedChallenges() {
             silverScore: topScorers[1]?.score,
             bronzeUserId: topScorers[2]?.userId,
             bronzeScore: topScorers[2]?.score,
-            finalized: true
-          }
+            finalized: true,
+          },
         });
 
         // Create medal records
         const medals = [];
-        
+
         // Gold medal
         if (topScorers[0]) {
           medals.push(
@@ -158,9 +162,9 @@ async function finalizeEndedChallenges() {
                 year: challenge.year,
                 month: challenge.month,
                 score: topScorers[0].score,
-                challengeId: challenge.id
-              }
-            })
+                challengeId: challenge.id,
+              },
+            }),
           );
           console.log(`Awarded GOLD medal to ${topScorers[0].user.nickname}`);
         }
@@ -177,9 +181,9 @@ async function finalizeEndedChallenges() {
                 year: challenge.year,
                 month: challenge.month,
                 score: topScorers[1].score,
-                challengeId: challenge.id
-              }
-            })
+                challengeId: challenge.id,
+              },
+            }),
           );
           console.log(`Awarded SILVER medal to ${topScorers[1].user.nickname}`);
         }
@@ -196,9 +200,9 @@ async function finalizeEndedChallenges() {
                 year: challenge.year,
                 month: challenge.month,
                 score: topScorers[2].score,
-                challengeId: challenge.id
-              }
-            })
+                challengeId: challenge.id,
+              },
+            }),
           );
           console.log(`Awarded BRONZE medal to ${topScorers[2].user.nickname}`);
         }
@@ -222,20 +226,20 @@ async function finalizeEndedChallenges() {
 async function createMonthlyWinnerPopups() {
   const now = new Date();
   const koreaTime = toZonedTime(now, APP_TIMEZONE);
-  
+
   // Calculate last month
   const lastMonthDate = addMonths(koreaTime, -1);
   const lastMonth = lastMonthDate.getMonth() + 1;
   const lastMonthYear = lastMonthDate.getFullYear();
-  
+
   console.log(`Creating popups for ${lastMonthYear}-${lastMonth}`);
 
   // Check if popups already exist for last month
   const existingPopups = await prisma.monthlyPopup.findMany({
     where: {
       year: lastMonthYear,
-      month: lastMonth
-    }
+      month: lastMonth,
+    },
   });
 
   if (existingPopups.length > 0) {
@@ -245,7 +249,7 @@ async function createMonthlyWinnerPopups() {
 
   // Get the start of current month in Korea time
   const displayFromDate = startOfMonth(koreaTime);
-  
+
   // Display for 7 days
   const displayUntilDate = new Date(displayFromDate);
   displayUntilDate.setDate(displayUntilDate.getDate() + 7);
@@ -264,8 +268,8 @@ async function createMonthlyWinnerPopups() {
         content: "전체 등급별 우승자가 발표되었습니다!",
         displayFrom: displayFromDate,
         displayUntil: displayUntilDate,
-        active: true
-      }
+        active: true,
+      },
     });
     globalPopupsCreated++;
     console.log(`Created global winners popup: ${globalPopup.id}`);
@@ -280,19 +284,18 @@ async function createMonthlyWinnerPopups() {
         content: "월간 챌린지에서의 당신의 성과를 확인하세요!",
         displayFrom: displayFromDate,
         displayUntil: displayUntilDate,
-        active: true
-      }
+        active: true,
+      },
     });
     personalPopupsCreated++;
     console.log(`Created personal achievement popup: ${personalPopup.id}`);
-
   } catch (error) {
     console.error("Failed to create winner popups:", error);
   }
 
   return {
     globalPopups: globalPopupsCreated,
-    personalPopups: personalPopupsCreated
+    personalPopups: personalPopupsCreated,
   };
 }
 
@@ -301,19 +304,19 @@ async function createMonthlyWinnerPopups() {
  */
 async function activateScheduledChallenges() {
   const { year, month } = getCurrentKoreaYearMonth();
-  
+
   console.log(`Checking for scheduled challenges for ${year}-${month}`);
-  
+
   // Find scheduled challenges for current month that are not yet active
   const toActivate = await prisma.monthlyChallenge.findMany({
     where: {
       year,
       month,
       scheduledActive: true,
-      active: false
-    }
+      active: false,
+    },
   });
-  
+
   if (toActivate.length === 0) {
     console.log("No scheduled challenges to activate");
     return 0;
@@ -321,20 +324,22 @@ async function activateScheduledChallenges() {
 
   // Activate them
   const result = await prisma.monthlyChallenge.updateMany({
-    where: { 
-      id: { in: toActivate.map(c => c.id) } 
+    where: {
+      id: { in: toActivate.map((c) => c.id) },
     },
-    data: { 
-      active: true 
-    }
+    data: {
+      active: true,
+    },
   });
-  
+
   console.log(`Activated ${result.count} scheduled challenges`);
-  
+
   // Log details of activated challenges
   for (const challenge of toActivate) {
-    console.log(`- Activated ${challenge.levelType} ${challenge.levelId} challenge`);
+    console.log(
+      `- Activated ${challenge.levelType} ${challenge.levelId} challenge`,
+    );
   }
-  
+
   return result.count;
 }
