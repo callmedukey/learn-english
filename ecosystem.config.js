@@ -19,11 +19,12 @@ module.exports = {
     },
     {
       name: "medal-cron",
-      script: "./scripts/medal-cron.ts",
-      interpreter: "tsx",
+      script: "npx",
+      args: "tsx scripts/medal-cron.ts",
       cron_restart: "0 0 * * *", // Daily at midnight
       autorestart: false, // Don't restart after it completes
       watch: false,
+      cwd: "/home/champ/learn-english", // Set working directory explicitly
       env: {
         NODE_ENV: "production",
       },
