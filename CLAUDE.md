@@ -15,6 +15,14 @@ Reading Camp - A Next.js 15 application for English learning with reading compre
 - Server components should fetch all necessary data and pass it down to client components
 - This approach prevents hydration mismatches and improves performance
 
+### Next.js 15 Important Changes
+- **params and searchParams are now Promises** - In Next.js 15, both `params` and `searchParams` in server components (pages, layouts, route handlers) are Promises that must be awaited
+- Example: `const { id } = await params;` instead of `const { id } = params;`
+- This applies to:
+  - Page components: `export default async function Page({ params }: { params: Promise<{ id: string }> })`
+  - Route handlers: `export async function GET(request: Request, { params }: { params: Promise<{ id: string }> })`
+  - Layout components: Similar pattern with Promise types
+
 ## Essential Commands
 
 ### Development
