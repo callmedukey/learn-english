@@ -4,7 +4,7 @@ import { toZonedTime } from "date-fns-tz";
 import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import { PopupType } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
-import { getCurrentKoreaYearMonth } from "@/server-queries/medals";
+import { getCurrentKoreaYearMonth } from "./medal-queries-standalone";
 
 /**
  * Main job function that orchestrates all medal-related tasks
