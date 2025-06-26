@@ -1,0 +1,28 @@
+2025-06-26T12:15:10: node:internal/modules/cjs/loader:1401
+2025-06-26T12:15:10:   const err = new Error(message);
+2025-06-26T12:15:10:               ^
+2025-06-26T12:15:10: 
+2025-06-26T12:15:10: Error: Cannot find module 'server-only'
+2025-06-26T12:15:10: Require stack:
+2025-06-26T12:15:10: - /Users/duke/Documents/GitHub/learn-english/server-queries/medals.ts
+2025-06-26T12:15:10: - /Users/duke/Documents/GitHub/learn-english/lib/jobs/medal-assignment.ts
+2025-06-26T12:15:10: - /Users/duke/Documents/GitHub/learn-english/scripts/medal-cron.ts
+2025-06-26T12:15:10:     at node:internal/modules/cjs/loader:1401:15
+2025-06-26T12:15:10:     at nextResolveSimple (/Users/duke/Documents/GitHub/learn-english/node_modules/tsx/dist/register-D2KMMyKp.cjs:3:942)
+2025-06-26T12:15:10:     at /Users/duke/Documents/GitHub/learn-english/node_modules/tsx/dist/register-D2KMMyKp.cjs:2:2550
+2025-06-26T12:15:10:     at /Users/duke/Documents/GitHub/learn-english/node_modules/tsx/dist/register-D2KMMyKp.cjs:2:1624
+2025-06-26T12:15:10:     at resolveTsPaths (/Users/duke/Documents/GitHub/learn-english/node_modules/tsx/dist/register-D2KMMyKp.cjs:3:760)
+2025-06-26T12:15:10:     at /Users/duke/Documents/GitHub/learn-english/node_modules/tsx/dist/register-D2KMMyKp.cjs:3:1038
+2025-06-26T12:15:10:     at m._resolveFilename (file:///Users/duke/Documents/GitHub/learn-english/node_modules/tsx/dist/register-hc1YoAqe.mjs:1:789)
+2025-06-26T12:15:10:     at defaultResolveImpl (node:internal/modules/cjs/loader:1057:19)
+2025-06-26T12:15:10:     at resolveForCJSWithHooks (node:internal/modules/cjs/loader:1062:22)
+2025-06-26T12:15:10:     at Function._load (node:internal/modules/cjs/loader:1211:37) {
+2025-06-26T12:15:10:   code: 'MODULE_NOT_FOUND',
+2025-06-26T12:15:10:   requireStack: [
+2025-06-26T12:15:10:     '/Users/duke/Documents/GitHub/learn-english/server-queries/medals.ts',
+2025-06-26T12:15:10:     '/Users/duke/Documents/GitHub/learn-english/lib/jobs/medal-assignment.ts',
+2025-06-26T12:15:10:     '/Users/duke/Documents/GitHub/learn-english/scripts/medal-cron.ts'
+2025-06-26T12:15:10:   ]
+2025-06-26T12:15:10: }
+2025-06-26T12:15:10: 
+2025-06-26T12:15:10: Node.js v22.15.0

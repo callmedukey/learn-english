@@ -1,0 +1,2210 @@
+2025-06-26T12:13:22: 
+2025-06-26T12:13:22: > reading-camp@0.1.0 start
+2025-06-26T12:13:22: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:22: 
+2025-06-26T12:13:22: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:22: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:22: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:22: 
+2025-06-26T12:13:22: > reading-camp@0.1.0 start
+2025-06-26T12:13:22: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:22: 
+2025-06-26T12:13:23: 
+2025-06-26T12:13:23: > reading-camp@0.1.0 start
+2025-06-26T12:13:23: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:23: 
+2025-06-26T12:13:23: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:23: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:23: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:23: 
+2025-06-26T12:13:23: > reading-camp@0.1.0 start
+2025-06-26T12:13:23: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:23: 
+2025-06-26T12:13:23: 
+2025-06-26T12:13:23: > reading-camp@0.1.0 start
+2025-06-26T12:13:23: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:23: 
+2025-06-26T12:13:23: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:23: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:23: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:24: 
+2025-06-26T12:13:24: > reading-camp@0.1.0 start
+2025-06-26T12:13:24: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:24: 
+2025-06-26T12:13:24: 
+2025-06-26T12:13:24: > reading-camp@0.1.0 start
+2025-06-26T12:13:24: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:24: 
+2025-06-26T12:13:24: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:24: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:24: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:24: 
+2025-06-26T12:13:24: > reading-camp@0.1.0 start
+2025-06-26T12:13:24: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:24: 
+2025-06-26T12:13:24: 
+2025-06-26T12:13:24: > reading-camp@0.1.0 start
+2025-06-26T12:13:24: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:24: 
+2025-06-26T12:13:25: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:25: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:25: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:25: 
+2025-06-26T12:13:25: > reading-camp@0.1.0 start
+2025-06-26T12:13:25: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:25: 
+2025-06-26T12:13:25: 
+2025-06-26T12:13:25: > reading-camp@0.1.0 start
+2025-06-26T12:13:25: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:25: 
+2025-06-26T12:13:25: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:25: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:25: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:25: 
+2025-06-26T12:13:25: > reading-camp@0.1.0 start
+2025-06-26T12:13:25: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:25: 
+2025-06-26T12:13:26: 
+2025-06-26T12:13:26: > reading-camp@0.1.0 start
+2025-06-26T12:13:26: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:26: 
+2025-06-26T12:13:26: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:26: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:26: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:26: 
+2025-06-26T12:13:26: > reading-camp@0.1.0 start
+2025-06-26T12:13:26: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:26: 
+2025-06-26T12:13:26: 
+2025-06-26T12:13:26: > reading-camp@0.1.0 start
+2025-06-26T12:13:26: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:26: 
+2025-06-26T12:13:26: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:26: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:26: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:27: 
+2025-06-26T12:13:27: > reading-camp@0.1.0 start
+2025-06-26T12:13:27: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:27: 
+2025-06-26T12:13:27: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:27: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:27: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:27: 
+2025-06-26T12:13:27: > reading-camp@0.1.0 start
+2025-06-26T12:13:27: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:27: 
+2025-06-26T12:13:27: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:27: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:27: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:27: 
+2025-06-26T12:13:27: > reading-camp@0.1.0 start
+2025-06-26T12:13:27: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:27: 
+2025-06-26T12:13:27: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:27: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:27: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:28: 
+2025-06-26T12:13:28: > reading-camp@0.1.0 start
+2025-06-26T12:13:28: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:28: 
+2025-06-26T12:13:28: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:28: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:28: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:28: 
+2025-06-26T12:13:28: > reading-camp@0.1.0 start
+2025-06-26T12:13:28: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:28: 
+2025-06-26T12:13:28: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:28: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:28: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:28: 
+2025-06-26T12:13:28: > reading-camp@0.1.0 start
+2025-06-26T12:13:28: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:28: 
+2025-06-26T12:13:28: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:28: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:28: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:29: 
+2025-06-26T12:13:29: > reading-camp@0.1.0 start
+2025-06-26T12:13:29: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:29: 
+2025-06-26T12:13:29: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:29: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:29: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:29: 
+2025-06-26T12:13:29: > reading-camp@0.1.0 start
+2025-06-26T12:13:29: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:29: 
+2025-06-26T12:13:29: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:29: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:29: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:29: 
+2025-06-26T12:13:29: > reading-camp@0.1.0 start
+2025-06-26T12:13:29: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:29: 
+2025-06-26T12:13:29: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:29: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:29: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:30: 
+2025-06-26T12:13:30: > reading-camp@0.1.0 start
+2025-06-26T12:13:30: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:30: 
+2025-06-26T12:13:30: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:30: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:30: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:30: 
+2025-06-26T12:13:30: > reading-camp@0.1.0 start
+2025-06-26T12:13:30: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:30: 
+2025-06-26T12:13:30: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:30: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:30: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:30: 
+2025-06-26T12:13:30: > reading-camp@0.1.0 start
+2025-06-26T12:13:30: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:30: 
+2025-06-26T12:13:30: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:30: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:30: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:31: 
+2025-06-26T12:13:31: > reading-camp@0.1.0 start
+2025-06-26T12:13:31: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:31: 
+2025-06-26T12:13:31: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:31: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:31: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:31: 
+2025-06-26T12:13:31: > reading-camp@0.1.0 start
+2025-06-26T12:13:31: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:31: 
+2025-06-26T12:13:31: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:31: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:31: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:31: 
+2025-06-26T12:13:31: > reading-camp@0.1.0 start
+2025-06-26T12:13:31: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:31: 
+2025-06-26T12:13:31: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:31: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:31: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:32: 
+2025-06-26T12:13:32: > reading-camp@0.1.0 start
+2025-06-26T12:13:32: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:32: 
+2025-06-26T12:13:32: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:32: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:32: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:32: 
+2025-06-26T12:13:32: > reading-camp@0.1.0 start
+2025-06-26T12:13:32: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:32: 
+2025-06-26T12:13:32: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:32: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:32: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:32: 
+2025-06-26T12:13:32: > reading-camp@0.1.0 start
+2025-06-26T12:13:32: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:32: 
+2025-06-26T12:13:32: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:32: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:32: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:33: 
+2025-06-26T12:13:33: > reading-camp@0.1.0 start
+2025-06-26T12:13:33: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:33: 
+2025-06-26T12:13:33: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:33: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:33: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:33: 
+2025-06-26T12:13:33: > reading-camp@0.1.0 start
+2025-06-26T12:13:33: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:33: 
+2025-06-26T12:13:33: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:33: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:33: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:33: 
+2025-06-26T12:13:33: > reading-camp@0.1.0 start
+2025-06-26T12:13:33: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:33: 
+2025-06-26T12:13:33: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:34: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:34: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:34: 
+2025-06-26T12:13:34: > reading-camp@0.1.0 start
+2025-06-26T12:13:34: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:34: 
+2025-06-26T12:13:34: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:34: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:34: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:34: 
+2025-06-26T12:13:34: > reading-camp@0.1.0 start
+2025-06-26T12:13:34: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:34: 
+2025-06-26T12:13:34: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:34: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:34: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:34: 
+2025-06-26T12:13:34: > reading-camp@0.1.0 start
+2025-06-26T12:13:34: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:34: 
+2025-06-26T12:13:35: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:35: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:35: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:35: 
+2025-06-26T12:13:35: > reading-camp@0.1.0 start
+2025-06-26T12:13:35: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:35: 
+2025-06-26T12:13:35: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:35: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:35: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:35: 
+2025-06-26T12:13:35: > reading-camp@0.1.0 start
+2025-06-26T12:13:35: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:35: 
+2025-06-26T12:13:35: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:35: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:35: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:35: 
+2025-06-26T12:13:35: > reading-camp@0.1.0 start
+2025-06-26T12:13:35: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:35: 
+2025-06-26T12:13:36: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:36: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:36: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:36: 
+2025-06-26T12:13:36: > reading-camp@0.1.0 start
+2025-06-26T12:13:36: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:36: 
+2025-06-26T12:13:36: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:36: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:36: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:36: 
+2025-06-26T12:13:36: > reading-camp@0.1.0 start
+2025-06-26T12:13:36: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:36: 
+2025-06-26T12:13:36: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:36: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:36: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:36: 
+2025-06-26T12:13:36: > reading-camp@0.1.0 start
+2025-06-26T12:13:36: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:36: 
+2025-06-26T12:13:37: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:37: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:37: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:37: 
+2025-06-26T12:13:37: > reading-camp@0.1.0 start
+2025-06-26T12:13:37: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:37: 
+2025-06-26T12:13:37: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:37: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:37: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:37: 
+2025-06-26T12:13:37: > reading-camp@0.1.0 start
+2025-06-26T12:13:37: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:37: 
+2025-06-26T12:13:37: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:37: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:37: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:37: 
+2025-06-26T12:13:37: > reading-camp@0.1.0 start
+2025-06-26T12:13:37: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:37: 
+2025-06-26T12:13:38: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:38: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:38: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:38: 
+2025-06-26T12:13:38: > reading-camp@0.1.0 start
+2025-06-26T12:13:38: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:38: 
+2025-06-26T12:13:38: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:38: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:38: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:38: 
+2025-06-26T12:13:38: > reading-camp@0.1.0 start
+2025-06-26T12:13:38: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:38: 
+2025-06-26T12:13:38: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:38: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:38: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:39: 
+2025-06-26T12:13:39: > reading-camp@0.1.0 start
+2025-06-26T12:13:39: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:39: 
+2025-06-26T12:13:39: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:39: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:39: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:39: 
+2025-06-26T12:13:39: > reading-camp@0.1.0 start
+2025-06-26T12:13:39: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:39: 
+2025-06-26T12:13:39: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:39: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:39: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:39: 
+2025-06-26T12:13:39: > reading-camp@0.1.0 start
+2025-06-26T12:13:39: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:39: 
+2025-06-26T12:13:39: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:39: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:39: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:40: 
+2025-06-26T12:13:40: > reading-camp@0.1.0 start
+2025-06-26T12:13:40: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:40: 
+2025-06-26T12:13:40: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:40: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:40: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:40: 
+2025-06-26T12:13:40: > reading-camp@0.1.0 start
+2025-06-26T12:13:40: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:40: 
+2025-06-26T12:13:40: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:40: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:40: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:40: 
+2025-06-26T12:13:40: > reading-camp@0.1.0 start
+2025-06-26T12:13:40: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:40: 
+2025-06-26T12:13:40: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:40: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:40: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:41: 
+2025-06-26T12:13:41: > reading-camp@0.1.0 start
+2025-06-26T12:13:41: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:41: 
+2025-06-26T12:13:41: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:41: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:41: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:41: 
+2025-06-26T12:13:41: > reading-camp@0.1.0 start
+2025-06-26T12:13:41: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:41: 
+2025-06-26T12:13:41: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:41: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:41: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:41: 
+2025-06-26T12:13:41: > reading-camp@0.1.0 start
+2025-06-26T12:13:41: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:41: 
+2025-06-26T12:13:41: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:41: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:41: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:42: 
+2025-06-26T12:13:42: > reading-camp@0.1.0 start
+2025-06-26T12:13:42: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:42: 
+2025-06-26T12:13:42: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:42: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:42: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:42: 
+2025-06-26T12:13:42: > reading-camp@0.1.0 start
+2025-06-26T12:13:42: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:42: 
+2025-06-26T12:13:42: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:42: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:42: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:42: 
+2025-06-26T12:13:42: > reading-camp@0.1.0 start
+2025-06-26T12:13:42: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:42: 
+2025-06-26T12:13:42: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:42: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:42: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:43: 
+2025-06-26T12:13:43: > reading-camp@0.1.0 start
+2025-06-26T12:13:43: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:43: 
+2025-06-26T12:13:43: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:43: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:43: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:43: 
+2025-06-26T12:13:43: > reading-camp@0.1.0 start
+2025-06-26T12:13:43: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:43: 
+2025-06-26T12:13:43: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:43: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:43: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:43: 
+2025-06-26T12:13:43: > reading-camp@0.1.0 start
+2025-06-26T12:13:43: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:43: 
+2025-06-26T12:13:43: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:43: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:43: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:44: 
+2025-06-26T12:13:44: > reading-camp@0.1.0 start
+2025-06-26T12:13:44: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:44: 
+2025-06-26T12:13:44: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:44: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:44: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:44: 
+2025-06-26T12:13:44: > reading-camp@0.1.0 start
+2025-06-26T12:13:44: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:44: 
+2025-06-26T12:13:44: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:44: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:44: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:44: 
+2025-06-26T12:13:44: > reading-camp@0.1.0 start
+2025-06-26T12:13:44: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:44: 
+2025-06-26T12:13:44: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:44: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:44: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:45: 
+2025-06-26T12:13:45: > reading-camp@0.1.0 start
+2025-06-26T12:13:45: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:45: 
+2025-06-26T12:13:45: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:45: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:45: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:45: 
+2025-06-26T12:13:45: > reading-camp@0.1.0 start
+2025-06-26T12:13:45: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:45: 
+2025-06-26T12:13:45: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:45: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:45: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:45: 
+2025-06-26T12:13:45: > reading-camp@0.1.0 start
+2025-06-26T12:13:45: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:45: 
+2025-06-26T12:13:45: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:45: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:45: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:46: 
+2025-06-26T12:13:46: > reading-camp@0.1.0 start
+2025-06-26T12:13:46: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:46: 
+2025-06-26T12:13:46: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:46: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:46: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:46: 
+2025-06-26T12:13:46: > reading-camp@0.1.0 start
+2025-06-26T12:13:46: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:46: 
+2025-06-26T12:13:46: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:46: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:46: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:46: 
+2025-06-26T12:13:46: > reading-camp@0.1.0 start
+2025-06-26T12:13:46: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:46: 
+2025-06-26T12:13:46: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:47: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:47: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:47: 
+2025-06-26T12:13:47: > reading-camp@0.1.0 start
+2025-06-26T12:13:47: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:47: 
+2025-06-26T12:13:47: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:47: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:47: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:47: 
+2025-06-26T12:13:47: > reading-camp@0.1.0 start
+2025-06-26T12:13:47: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:47: 
+2025-06-26T12:13:47: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:47: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:47: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:47: 
+2025-06-26T12:13:47: > reading-camp@0.1.0 start
+2025-06-26T12:13:47: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:47: 
+2025-06-26T12:13:48: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:48: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:48: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:48: 
+2025-06-26T12:13:48: > reading-camp@0.1.0 start
+2025-06-26T12:13:48: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:48: 
+2025-06-26T12:13:48: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:48: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:48: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:48: 
+2025-06-26T12:13:48: > reading-camp@0.1.0 start
+2025-06-26T12:13:48: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:48: 
+2025-06-26T12:13:48: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:48: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:48: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:48: 
+2025-06-26T12:13:48: > reading-camp@0.1.0 start
+2025-06-26T12:13:48: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:48: 
+2025-06-26T12:13:49: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:49: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:49: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:49: 
+2025-06-26T12:13:49: > reading-camp@0.1.0 start
+2025-06-26T12:13:49: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:49: 
+2025-06-26T12:13:49: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:49: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:49: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:49: 
+2025-06-26T12:13:49: > reading-camp@0.1.0 start
+2025-06-26T12:13:49: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:49: 
+2025-06-26T12:13:49: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:49: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:49: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:50: 
+2025-06-26T12:13:50: > reading-camp@0.1.0 start
+2025-06-26T12:13:50: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:50: 
+2025-06-26T12:13:50: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:50: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:50: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:50: 
+2025-06-26T12:13:50: > reading-camp@0.1.0 start
+2025-06-26T12:13:50: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:50: 
+2025-06-26T12:13:50: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:50: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:50: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:50: 
+2025-06-26T12:13:50: > reading-camp@0.1.0 start
+2025-06-26T12:13:50: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:50: 
+2025-06-26T12:13:50: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:50: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:50: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:51: 
+2025-06-26T12:13:51: > reading-camp@0.1.0 start
+2025-06-26T12:13:51: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:51: 
+2025-06-26T12:13:51: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:51: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:51: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:51: 
+2025-06-26T12:13:51: > reading-camp@0.1.0 start
+2025-06-26T12:13:51: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:51: 
+2025-06-26T12:13:51: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:51: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:51: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:51: 
+2025-06-26T12:13:51: > reading-camp@0.1.0 start
+2025-06-26T12:13:51: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:51: 
+2025-06-26T12:13:51: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:51: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:51: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:52: 
+2025-06-26T12:13:52: > reading-camp@0.1.0 start
+2025-06-26T12:13:52: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:52: 
+2025-06-26T12:13:52: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:52: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:52: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:52: 
+2025-06-26T12:13:52: > reading-camp@0.1.0 start
+2025-06-26T12:13:52: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:52: 
+2025-06-26T12:13:52: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:52: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:52: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:52: 
+2025-06-26T12:13:52: > reading-camp@0.1.0 start
+2025-06-26T12:13:52: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:52: 
+2025-06-26T12:13:52: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:52: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:52: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:53: 
+2025-06-26T12:13:53: > reading-camp@0.1.0 start
+2025-06-26T12:13:53: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:53: 
+2025-06-26T12:13:53: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:53: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:53: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:53: 
+2025-06-26T12:13:53: > reading-camp@0.1.0 start
+2025-06-26T12:13:53: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:53: 
+2025-06-26T12:13:53: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:53: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:53: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:53: 
+2025-06-26T12:13:53: > reading-camp@0.1.0 start
+2025-06-26T12:13:53: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:53: 
+2025-06-26T12:13:53: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:53: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:53: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:54: 
+2025-06-26T12:13:54: > reading-camp@0.1.0 start
+2025-06-26T12:13:54: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:54: 
+2025-06-26T12:13:54: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:54: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:54: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:54: 
+2025-06-26T12:13:54: > reading-camp@0.1.0 start
+2025-06-26T12:13:54: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:54: 
+2025-06-26T12:13:54: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:54: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:54: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:54: 
+2025-06-26T12:13:54: > reading-camp@0.1.0 start
+2025-06-26T12:13:54: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:54: 
+2025-06-26T12:13:54: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:54: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:54: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:55: 
+2025-06-26T12:13:55: > reading-camp@0.1.0 start
+2025-06-26T12:13:55: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:55: 
+2025-06-26T12:13:55: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:55: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:55: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:55: 
+2025-06-26T12:13:55: > reading-camp@0.1.0 start
+2025-06-26T12:13:55: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:55: 
+2025-06-26T12:13:55: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:55: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:55: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:55: 
+2025-06-26T12:13:55: > reading-camp@0.1.0 start
+2025-06-26T12:13:55: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:55: 
+2025-06-26T12:13:55: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:55: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:55: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:56: 
+2025-06-26T12:13:56: > reading-camp@0.1.0 start
+2025-06-26T12:13:56: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:56: 
+2025-06-26T12:13:56: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:56: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:56: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:56: 
+2025-06-26T12:13:56: > reading-camp@0.1.0 start
+2025-06-26T12:13:56: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:56: 
+2025-06-26T12:13:56: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:56: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:56: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:56: 
+2025-06-26T12:13:56: > reading-camp@0.1.0 start
+2025-06-26T12:13:56: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:56: 
+2025-06-26T12:13:56: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:56: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:56: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:57: 
+2025-06-26T12:13:57: > reading-camp@0.1.0 start
+2025-06-26T12:13:57: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:57: 
+2025-06-26T12:13:57: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:57: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:57: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:57: 
+2025-06-26T12:13:57: > reading-camp@0.1.0 start
+2025-06-26T12:13:57: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:57: 
+2025-06-26T12:13:57: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:57: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:57: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:57: 
+2025-06-26T12:13:57: > reading-camp@0.1.0 start
+2025-06-26T12:13:57: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:57: 
+2025-06-26T12:13:57: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:57: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:57: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:58: 
+2025-06-26T12:13:58: > reading-camp@0.1.0 start
+2025-06-26T12:13:58: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:58: 
+2025-06-26T12:13:58: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:58: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:58: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:58: 
+2025-06-26T12:13:58: > reading-camp@0.1.0 start
+2025-06-26T12:13:58: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:58: 
+2025-06-26T12:13:58: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:58: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:58: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:58: 
+2025-06-26T12:13:58: > reading-camp@0.1.0 start
+2025-06-26T12:13:58: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:58: 
+2025-06-26T12:13:59: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:59: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:59: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:59: 
+2025-06-26T12:13:59: > reading-camp@0.1.0 start
+2025-06-26T12:13:59: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:59: 
+2025-06-26T12:13:59: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:59: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:59: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:13:59: 
+2025-06-26T12:13:59: > reading-camp@0.1.0 start
+2025-06-26T12:13:59: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:13:59: 
+2025-06-26T12:13:59: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:13:59: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:13:59: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:00: 
+2025-06-26T12:14:00: > reading-camp@0.1.0 start
+2025-06-26T12:14:00: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:00: 
+2025-06-26T12:14:00: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:00: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:00: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:00: 
+2025-06-26T12:14:00: > reading-camp@0.1.0 start
+2025-06-26T12:14:00: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:00: 
+2025-06-26T12:14:00: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:00: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:00: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:00: 
+2025-06-26T12:14:00: > reading-camp@0.1.0 start
+2025-06-26T12:14:00: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:00: 
+2025-06-26T12:14:00: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:00: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:00: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:01: 
+2025-06-26T12:14:01: > reading-camp@0.1.0 start
+2025-06-26T12:14:01: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:01: 
+2025-06-26T12:14:01: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:01: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:01: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:01: 
+2025-06-26T12:14:01: > reading-camp@0.1.0 start
+2025-06-26T12:14:01: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:01: 
+2025-06-26T12:14:01: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:01: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:01: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:01: 
+2025-06-26T12:14:01: > reading-camp@0.1.0 start
+2025-06-26T12:14:01: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:01: 
+2025-06-26T12:14:01: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:01: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:01: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:02: 
+2025-06-26T12:14:02: > reading-camp@0.1.0 start
+2025-06-26T12:14:02: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:02: 
+2025-06-26T12:14:02: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:02: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:02: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:02: 
+2025-06-26T12:14:02: > reading-camp@0.1.0 start
+2025-06-26T12:14:02: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:02: 
+2025-06-26T12:14:02: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:02: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:02: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:02: 
+2025-06-26T12:14:02: > reading-camp@0.1.0 start
+2025-06-26T12:14:02: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:02: 
+2025-06-26T12:14:02: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:02: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:02: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:03: 
+2025-06-26T12:14:03: > reading-camp@0.1.0 start
+2025-06-26T12:14:03: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:03: 
+2025-06-26T12:14:03: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:03: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:03: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:03: 
+2025-06-26T12:14:03: > reading-camp@0.1.0 start
+2025-06-26T12:14:03: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:03: 
+2025-06-26T12:14:03: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:03: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:03: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:03: 
+2025-06-26T12:14:03: > reading-camp@0.1.0 start
+2025-06-26T12:14:03: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:03: 
+2025-06-26T12:14:03: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:03: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:03: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:04: 
+2025-06-26T12:14:04: > reading-camp@0.1.0 start
+2025-06-26T12:14:04: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:04: 
+2025-06-26T12:14:04: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:04: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:04: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:04: 
+2025-06-26T12:14:04: > reading-camp@0.1.0 start
+2025-06-26T12:14:04: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:04: 
+2025-06-26T12:14:04: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:04: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:04: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:04: 
+2025-06-26T12:14:04: > reading-camp@0.1.0 start
+2025-06-26T12:14:04: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:04: 
+2025-06-26T12:14:04: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:04: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:04: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:05: 
+2025-06-26T12:14:05: > reading-camp@0.1.0 start
+2025-06-26T12:14:05: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:05: 
+2025-06-26T12:14:05: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:05: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:05: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:05: 
+2025-06-26T12:14:05: > reading-camp@0.1.0 start
+2025-06-26T12:14:05: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:05: 
+2025-06-26T12:14:05: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:05: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:05: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:05: 
+2025-06-26T12:14:05: > reading-camp@0.1.0 start
+2025-06-26T12:14:05: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:05: 
+2025-06-26T12:14:05: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:05: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:05: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:06: 
+2025-06-26T12:14:06: > reading-camp@0.1.0 start
+2025-06-26T12:14:06: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:06: 
+2025-06-26T12:14:06: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:06: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:06: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:06: 
+2025-06-26T12:14:06: > reading-camp@0.1.0 start
+2025-06-26T12:14:06: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:06: 
+2025-06-26T12:14:06: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:06: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:06: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:06: 
+2025-06-26T12:14:06: > reading-camp@0.1.0 start
+2025-06-26T12:14:06: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:06: 
+2025-06-26T12:14:06: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:07: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:07: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:07: 
+2025-06-26T12:14:07: > reading-camp@0.1.0 start
+2025-06-26T12:14:07: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:07: 
+2025-06-26T12:14:07: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:07: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:07: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:07: 
+2025-06-26T12:14:07: > reading-camp@0.1.0 start
+2025-06-26T12:14:07: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:07: 
+2025-06-26T12:14:07: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:07: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:07: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:07: 
+2025-06-26T12:14:07: > reading-camp@0.1.0 start
+2025-06-26T12:14:07: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:07: 
+2025-06-26T12:14:08: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:08: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:08: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:08: 
+2025-06-26T12:14:08: > reading-camp@0.1.0 start
+2025-06-26T12:14:08: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:08: 
+2025-06-26T12:14:08: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:08: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:08: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:08: 
+2025-06-26T12:14:08: > reading-camp@0.1.0 start
+2025-06-26T12:14:08: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:08: 
+2025-06-26T12:14:08: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:08: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:08: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:08: 
+2025-06-26T12:14:08: > reading-camp@0.1.0 start
+2025-06-26T12:14:08: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:08: 
+2025-06-26T12:14:09: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:09: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:09: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:09: 
+2025-06-26T12:14:09: > reading-camp@0.1.0 start
+2025-06-26T12:14:09: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:09: 
+2025-06-26T12:14:09: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:09: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:09: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:09: 
+2025-06-26T12:14:09: > reading-camp@0.1.0 start
+2025-06-26T12:14:09: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:09: 
+2025-06-26T12:14:09: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:09: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:09: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:10: 
+2025-06-26T12:14:10: > reading-camp@0.1.0 start
+2025-06-26T12:14:10: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:10: 
+2025-06-26T12:14:10: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:10: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:10: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:10: 
+2025-06-26T12:14:10: > reading-camp@0.1.0 start
+2025-06-26T12:14:10: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:10: 
+2025-06-26T12:14:10: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:10: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:10: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:10: 
+2025-06-26T12:14:10: > reading-camp@0.1.0 start
+2025-06-26T12:14:10: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:10: 
+2025-06-26T12:14:10: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:10: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:10: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:11: 
+2025-06-26T12:14:11: > reading-camp@0.1.0 start
+2025-06-26T12:14:11: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:11: 
+2025-06-26T12:14:11: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:11: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:11: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:11: 
+2025-06-26T12:14:11: > reading-camp@0.1.0 start
+2025-06-26T12:14:11: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:11: 
+2025-06-26T12:14:11: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:11: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:11: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:11: 
+2025-06-26T12:14:11: > reading-camp@0.1.0 start
+2025-06-26T12:14:11: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:11: 
+2025-06-26T12:14:11: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:11: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:11: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:12: 
+2025-06-26T12:14:12: > reading-camp@0.1.0 start
+2025-06-26T12:14:12: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:12: 
+2025-06-26T12:14:12: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:12: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:12: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:12: 
+2025-06-26T12:14:12: > reading-camp@0.1.0 start
+2025-06-26T12:14:12: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:12: 
+2025-06-26T12:14:12: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:12: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:12: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:12: 
+2025-06-26T12:14:12: > reading-camp@0.1.0 start
+2025-06-26T12:14:12: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:12: 
+2025-06-26T12:14:12: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:12: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:12: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:13: 
+2025-06-26T12:14:13: > reading-camp@0.1.0 start
+2025-06-26T12:14:13: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:13: 
+2025-06-26T12:14:13: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:13: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:13: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:13: 
+2025-06-26T12:14:13: > reading-camp@0.1.0 start
+2025-06-26T12:14:13: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:13: 
+2025-06-26T12:14:13: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:13: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:13: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:13: 
+2025-06-26T12:14:13: > reading-camp@0.1.0 start
+2025-06-26T12:14:13: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:13: 
+2025-06-26T12:14:13: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:13: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:13: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:14: 
+2025-06-26T12:14:14: > reading-camp@0.1.0 start
+2025-06-26T12:14:14: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:14: 
+2025-06-26T12:14:14: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:14: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:14: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:14: 
+2025-06-26T12:14:14: > reading-camp@0.1.0 start
+2025-06-26T12:14:14: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:14: 
+2025-06-26T12:14:14: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:14: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:14: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:14: 
+2025-06-26T12:14:14: > reading-camp@0.1.0 start
+2025-06-26T12:14:14: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:14: 
+2025-06-26T12:14:14: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:15: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:15: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:15: 
+2025-06-26T12:14:15: > reading-camp@0.1.0 start
+2025-06-26T12:14:15: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:15: 
+2025-06-26T12:14:15: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:15: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:15: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:15: 
+2025-06-26T12:14:15: > reading-camp@0.1.0 start
+2025-06-26T12:14:15: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:15: 
+2025-06-26T12:14:15: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:15: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:15: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:15: 
+2025-06-26T12:14:15: > reading-camp@0.1.0 start
+2025-06-26T12:14:15: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:15: 
+2025-06-26T12:14:16: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:16: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:16: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:16: 
+2025-06-26T12:14:16: > reading-camp@0.1.0 start
+2025-06-26T12:14:16: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:16: 
+2025-06-26T12:14:16: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:16: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:16: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:16: 
+2025-06-26T12:14:16: > reading-camp@0.1.0 start
+2025-06-26T12:14:16: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:16: 
+2025-06-26T12:14:16: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:16: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:16: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:17: 
+2025-06-26T12:14:17: > reading-camp@0.1.0 start
+2025-06-26T12:14:17: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:17: 
+2025-06-26T12:14:17: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:17: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:17: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:17: 
+2025-06-26T12:14:17: > reading-camp@0.1.0 start
+2025-06-26T12:14:17: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:17: 
+2025-06-26T12:14:17: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:17: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:17: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:17: 
+2025-06-26T12:14:17: > reading-camp@0.1.0 start
+2025-06-26T12:14:17: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:17: 
+2025-06-26T12:14:17: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:17: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:17: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:18: 
+2025-06-26T12:14:18: > reading-camp@0.1.0 start
+2025-06-26T12:14:18: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:18: 
+2025-06-26T12:14:18: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:18: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:18: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:18: 
+2025-06-26T12:14:18: > reading-camp@0.1.0 start
+2025-06-26T12:14:18: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:18: 
+2025-06-26T12:14:18: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:18: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:18: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:18: 
+2025-06-26T12:14:18: > reading-camp@0.1.0 start
+2025-06-26T12:14:18: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:18: 
+2025-06-26T12:14:18: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:18: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:18: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:19: 
+2025-06-26T12:14:19: > reading-camp@0.1.0 start
+2025-06-26T12:14:19: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:19: 
+2025-06-26T12:14:19: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:19: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:19: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:19: 
+2025-06-26T12:14:19: > reading-camp@0.1.0 start
+2025-06-26T12:14:19: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:19: 
+2025-06-26T12:14:19: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:19: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:19: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:19: 
+2025-06-26T12:14:19: > reading-camp@0.1.0 start
+2025-06-26T12:14:19: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:19: 
+2025-06-26T12:14:19: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:20: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:20: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:20: 
+2025-06-26T12:14:20: > reading-camp@0.1.0 start
+2025-06-26T12:14:20: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:20: 
+2025-06-26T12:14:20: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:20: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:20: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:20: 
+2025-06-26T12:14:20: > reading-camp@0.1.0 start
+2025-06-26T12:14:20: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:20: 
+2025-06-26T12:14:20: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:20: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:20: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:20: 
+2025-06-26T12:14:20: > reading-camp@0.1.0 start
+2025-06-26T12:14:20: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:20: 
+2025-06-26T12:14:21: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:21: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:21: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:21: 
+2025-06-26T12:14:21: > reading-camp@0.1.0 start
+2025-06-26T12:14:21: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:21: 
+2025-06-26T12:14:21: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:21: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:21: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:21: 
+2025-06-26T12:14:21: > reading-camp@0.1.0 start
+2025-06-26T12:14:21: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:21: 
+2025-06-26T12:14:21: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:21: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:21: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:21: 
+2025-06-26T12:14:21: > reading-camp@0.1.0 start
+2025-06-26T12:14:21: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:21: 
+2025-06-26T12:14:22: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:22: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:22: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:22: 
+2025-06-26T12:14:22: > reading-camp@0.1.0 start
+2025-06-26T12:14:22: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:22: 
+2025-06-26T12:14:22: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:22: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:22: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:22: 
+2025-06-26T12:14:22: > reading-camp@0.1.0 start
+2025-06-26T12:14:22: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:22: 
+2025-06-26T12:14:22: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:22: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:22: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:23: 
+2025-06-26T12:14:23: > reading-camp@0.1.0 start
+2025-06-26T12:14:23: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:23: 
+2025-06-26T12:14:23: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:23: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:23: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:23: 
+2025-06-26T12:14:23: > reading-camp@0.1.0 start
+2025-06-26T12:14:23: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:23: 
+2025-06-26T12:14:23: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:23: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:23: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:23: 
+2025-06-26T12:14:23: > reading-camp@0.1.0 start
+2025-06-26T12:14:23: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:23: 
+2025-06-26T12:14:23: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:23: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:23: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:24: 
+2025-06-26T12:14:24: > reading-camp@0.1.0 start
+2025-06-26T12:14:24: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:24: 
+2025-06-26T12:14:24: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:24: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:24: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:24: 
+2025-06-26T12:14:24: > reading-camp@0.1.0 start
+2025-06-26T12:14:24: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:24: 
+2025-06-26T12:14:24: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:24: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:24: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:24: 
+2025-06-26T12:14:24: > reading-camp@0.1.0 start
+2025-06-26T12:14:24: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:24: 
+2025-06-26T12:14:24: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:24: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:24: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:25: 
+2025-06-26T12:14:25: > reading-camp@0.1.0 start
+2025-06-26T12:14:25: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:25: 
+2025-06-26T12:14:25: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:25: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:25: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:25: 
+2025-06-26T12:14:25: > reading-camp@0.1.0 start
+2025-06-26T12:14:25: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:25: 
+2025-06-26T12:14:25: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:25: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:25: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:25: 
+2025-06-26T12:14:25: > reading-camp@0.1.0 start
+2025-06-26T12:14:25: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:25: 
+2025-06-26T12:14:25: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:25: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:25: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:26: 
+2025-06-26T12:14:26: > reading-camp@0.1.0 start
+2025-06-26T12:14:26: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:26: 
+2025-06-26T12:14:26: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:26: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:26: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:26: 
+2025-06-26T12:14:26: > reading-camp@0.1.0 start
+2025-06-26T12:14:26: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:26: 
+2025-06-26T12:14:26: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:26: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:26: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:26: 
+2025-06-26T12:14:26: > reading-camp@0.1.0 start
+2025-06-26T12:14:26: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:26: 
+2025-06-26T12:14:26: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:26: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:26: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:27: 
+2025-06-26T12:14:27: > reading-camp@0.1.0 start
+2025-06-26T12:14:27: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:27: 
+2025-06-26T12:14:27: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:27: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:27: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:27: 
+2025-06-26T12:14:27: > reading-camp@0.1.0 start
+2025-06-26T12:14:27: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:27: 
+2025-06-26T12:14:27: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:27: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:27: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:27: 
+2025-06-26T12:14:27: > reading-camp@0.1.0 start
+2025-06-26T12:14:27: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:27: 
+2025-06-26T12:14:28: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:28: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:28: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:28: 
+2025-06-26T12:14:28: > reading-camp@0.1.0 start
+2025-06-26T12:14:28: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:28: 
+2025-06-26T12:14:28: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:28: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:28: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:28: 
+2025-06-26T12:14:28: > reading-camp@0.1.0 start
+2025-06-26T12:14:28: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:28: 
+2025-06-26T12:14:28: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:28: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:28: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:29: 
+2025-06-26T12:14:29: > reading-camp@0.1.0 start
+2025-06-26T12:14:29: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:29: 
+2025-06-26T12:14:29: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:29: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:29: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:29: 
+2025-06-26T12:14:29: > reading-camp@0.1.0 start
+2025-06-26T12:14:29: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:29: 
+2025-06-26T12:14:29: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:29: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:29: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:29: 
+2025-06-26T12:14:29: > reading-camp@0.1.0 start
+2025-06-26T12:14:29: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:29: 
+2025-06-26T12:14:29: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:29: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:29: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:30: 
+2025-06-26T12:14:30: > reading-camp@0.1.0 start
+2025-06-26T12:14:30: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:30: 
+2025-06-26T12:14:30: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:30: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:30: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:30: 
+2025-06-26T12:14:30: > reading-camp@0.1.0 start
+2025-06-26T12:14:30: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:30: 
+2025-06-26T12:14:30: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:30: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:30: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:30: 
+2025-06-26T12:14:30: > reading-camp@0.1.0 start
+2025-06-26T12:14:30: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:30: 
+2025-06-26T12:14:30: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:30: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:30: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:31: 
+2025-06-26T12:14:31: > reading-camp@0.1.0 start
+2025-06-26T12:14:31: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:31: 
+2025-06-26T12:14:31: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:31: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:31: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:31: 
+2025-06-26T12:14:31: > reading-camp@0.1.0 start
+2025-06-26T12:14:31: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:31: 
+2025-06-26T12:14:31: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:31: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:31: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:31: 
+2025-06-26T12:14:31: > reading-camp@0.1.0 start
+2025-06-26T12:14:31: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:31: 
+2025-06-26T12:14:31: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:31: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:31: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:32: 
+2025-06-26T12:14:32: > reading-camp@0.1.0 start
+2025-06-26T12:14:32: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:32: 
+2025-06-26T12:14:32: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:32: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:32: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:32: 
+2025-06-26T12:14:32: > reading-camp@0.1.0 start
+2025-06-26T12:14:32: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:32: 
+2025-06-26T12:14:32: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:32: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:32: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:32: 
+2025-06-26T12:14:32: > reading-camp@0.1.0 start
+2025-06-26T12:14:32: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:32: 
+2025-06-26T12:14:33: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:33: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:33: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:33: 
+2025-06-26T12:14:33: > reading-camp@0.1.0 start
+2025-06-26T12:14:33: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:33: 
+2025-06-26T12:14:33: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:33: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:33: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:33: 
+2025-06-26T12:14:33: > reading-camp@0.1.0 start
+2025-06-26T12:14:33: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:33: 
+2025-06-26T12:14:33: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:33: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:33: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:34: 
+2025-06-26T12:14:34: > reading-camp@0.1.0 start
+2025-06-26T12:14:34: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:34: 
+2025-06-26T12:14:34: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:34: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:34: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:34: 
+2025-06-26T12:14:34: > reading-camp@0.1.0 start
+2025-06-26T12:14:34: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:34: 
+2025-06-26T12:14:34: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:34: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:34: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:34: 
+2025-06-26T12:14:34: > reading-camp@0.1.0 start
+2025-06-26T12:14:34: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:34: 
+2025-06-26T12:14:34: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:34: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:34: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:35: 
+2025-06-26T12:14:35: > reading-camp@0.1.0 start
+2025-06-26T12:14:35: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:35: 
+2025-06-26T12:14:35: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:35: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:35: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:35: 
+2025-06-26T12:14:35: > reading-camp@0.1.0 start
+2025-06-26T12:14:35: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:35: 
+2025-06-26T12:14:35: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:35: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:35: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:35: 
+2025-06-26T12:14:35: > reading-camp@0.1.0 start
+2025-06-26T12:14:35: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:35: 
+2025-06-26T12:14:35: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:35: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:35: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:36: 
+2025-06-26T12:14:36: > reading-camp@0.1.0 start
+2025-06-26T12:14:36: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:36: 
+2025-06-26T12:14:36: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:36: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:36: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:36: 
+2025-06-26T12:14:36: > reading-camp@0.1.0 start
+2025-06-26T12:14:36: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:36: 
+2025-06-26T12:14:36: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:36: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:36: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:36: 
+2025-06-26T12:14:36: > reading-camp@0.1.0 start
+2025-06-26T12:14:36: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:36: 
+2025-06-26T12:14:36: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:36: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:36: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:37: 
+2025-06-26T12:14:37: > reading-camp@0.1.0 start
+2025-06-26T12:14:37: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:37: 
+2025-06-26T12:14:37: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:37: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:37: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:37: 
+2025-06-26T12:14:37: > reading-camp@0.1.0 start
+2025-06-26T12:14:37: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:37: 
+2025-06-26T12:14:37: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:37: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:37: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:37: 
+2025-06-26T12:14:37: > reading-camp@0.1.0 start
+2025-06-26T12:14:37: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:37: 
+2025-06-26T12:14:37: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:38: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:38: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:38: 
+2025-06-26T12:14:38: > reading-camp@0.1.0 start
+2025-06-26T12:14:38: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:38: 
+2025-06-26T12:14:38: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:38: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:38: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:38: 
+2025-06-26T12:14:38: > reading-camp@0.1.0 start
+2025-06-26T12:14:38: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:38: 
+2025-06-26T12:14:38: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:38: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:38: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:38: 
+2025-06-26T12:14:38: > reading-camp@0.1.0 start
+2025-06-26T12:14:38: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:38: 
+2025-06-26T12:14:39: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:39: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:39: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:39: 
+2025-06-26T12:14:39: > reading-camp@0.1.0 start
+2025-06-26T12:14:39: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:39: 
+2025-06-26T12:14:39: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:39: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:39: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:39: 
+2025-06-26T12:14:39: > reading-camp@0.1.0 start
+2025-06-26T12:14:39: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:39: 
+2025-06-26T12:14:39: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:39: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:39: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:40: 
+2025-06-26T12:14:40: > reading-camp@0.1.0 start
+2025-06-26T12:14:40: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:40: 
+2025-06-26T12:14:40: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:40: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:40: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:40: 
+2025-06-26T12:14:40: > reading-camp@0.1.0 start
+2025-06-26T12:14:40: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:40: 
+2025-06-26T12:14:40: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:40: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:40: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:40: 
+2025-06-26T12:14:40: > reading-camp@0.1.0 start
+2025-06-26T12:14:40: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:40: 
+2025-06-26T12:14:40: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:40: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:40: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:41: 
+2025-06-26T12:14:41: > reading-camp@0.1.0 start
+2025-06-26T12:14:41: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:41: 
+2025-06-26T12:14:41: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:41: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:41: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:41: 
+2025-06-26T12:14:41: > reading-camp@0.1.0 start
+2025-06-26T12:14:41: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:41: 
+2025-06-26T12:14:41: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:41: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:41: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:41: 
+2025-06-26T12:14:41: > reading-camp@0.1.0 start
+2025-06-26T12:14:41: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:41: 
+2025-06-26T12:14:41: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:41: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:41: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:42: 
+2025-06-26T12:14:42: > reading-camp@0.1.0 start
+2025-06-26T12:14:42: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:42: 
+2025-06-26T12:14:42: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:42: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:42: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:42: 
+2025-06-26T12:14:42: > reading-camp@0.1.0 start
+2025-06-26T12:14:42: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:42: 
+2025-06-26T12:14:42: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:42: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:42: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:42: 
+2025-06-26T12:14:42: > reading-camp@0.1.0 start
+2025-06-26T12:14:42: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:42: 
+2025-06-26T12:14:42: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:42: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:42: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:43: 
+2025-06-26T12:14:43: > reading-camp@0.1.0 start
+2025-06-26T12:14:43: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:43: 
+2025-06-26T12:14:43: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:43: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:43: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:43: 
+2025-06-26T12:14:43: > reading-camp@0.1.0 start
+2025-06-26T12:14:43: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:43: 
+2025-06-26T12:14:43: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:43: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:43: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:43: 
+2025-06-26T12:14:43: > reading-camp@0.1.0 start
+2025-06-26T12:14:43: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:43: 
+2025-06-26T12:14:43: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:43: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:43: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:44: 
+2025-06-26T12:14:44: > reading-camp@0.1.0 start
+2025-06-26T12:14:44: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:44: 
+2025-06-26T12:14:44: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:44: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:44: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:44: 
+2025-06-26T12:14:44: > reading-camp@0.1.0 start
+2025-06-26T12:14:44: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:44: 
+2025-06-26T12:14:44: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:44: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:44: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:44: 
+2025-06-26T12:14:44: > reading-camp@0.1.0 start
+2025-06-26T12:14:44: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:44: 
+2025-06-26T12:14:45: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:45: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:45: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:45: 
+2025-06-26T12:14:45: > reading-camp@0.1.0 start
+2025-06-26T12:14:45: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:45: 
+2025-06-26T12:14:45: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:45: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:45: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:45: 
+2025-06-26T12:14:45: > reading-camp@0.1.0 start
+2025-06-26T12:14:45: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:45: 
+2025-06-26T12:14:45: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:45: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:45: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:45: 
+2025-06-26T12:14:45: > reading-camp@0.1.0 start
+2025-06-26T12:14:45: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:45: 
+2025-06-26T12:14:46: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:46: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:46: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:46: 
+2025-06-26T12:14:46: > reading-camp@0.1.0 start
+2025-06-26T12:14:46: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:46: 
+2025-06-26T12:14:46: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:46: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:46: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:46: 
+2025-06-26T12:14:46: > reading-camp@0.1.0 start
+2025-06-26T12:14:46: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:46: 
+2025-06-26T12:14:46: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:46: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:46: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:47: 
+2025-06-26T12:14:47: > reading-camp@0.1.0 start
+2025-06-26T12:14:47: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:47: 
+2025-06-26T12:14:47: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:47: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:47: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:47: 
+2025-06-26T12:14:47: > reading-camp@0.1.0 start
+2025-06-26T12:14:47: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:47: 
+2025-06-26T12:14:47: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:47: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:47: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:47: 
+2025-06-26T12:14:47: > reading-camp@0.1.0 start
+2025-06-26T12:14:47: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:47: 
+2025-06-26T12:14:47: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:47: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:47: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:48: 
+2025-06-26T12:14:48: > reading-camp@0.1.0 start
+2025-06-26T12:14:48: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:48: 
+2025-06-26T12:14:48: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:48: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:48: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:48: 
+2025-06-26T12:14:48: > reading-camp@0.1.0 start
+2025-06-26T12:14:48: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:48: 
+2025-06-26T12:14:48: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:48: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:48: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:48: 
+2025-06-26T12:14:48: > reading-camp@0.1.0 start
+2025-06-26T12:14:48: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:48: 
+2025-06-26T12:14:48: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:48: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:48: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:49: 
+2025-06-26T12:14:49: > reading-camp@0.1.0 start
+2025-06-26T12:14:49: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:49: 
+2025-06-26T12:14:49: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:49: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:49: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:49: 
+2025-06-26T12:14:49: > reading-camp@0.1.0 start
+2025-06-26T12:14:49: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:49: 
+2025-06-26T12:14:49: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:49: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:49: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:49: 
+2025-06-26T12:14:49: > reading-camp@0.1.0 start
+2025-06-26T12:14:49: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:49: 
+2025-06-26T12:14:49: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:49: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:49: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:50: 
+2025-06-26T12:14:50: > reading-camp@0.1.0 start
+2025-06-26T12:14:50: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:50: 
+2025-06-26T12:14:50: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:50: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:50: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:50: 
+2025-06-26T12:14:50: > reading-camp@0.1.0 start
+2025-06-26T12:14:50: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:50: 
+2025-06-26T12:14:50: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:50: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:50: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:50: 
+2025-06-26T12:14:50: > reading-camp@0.1.0 start
+2025-06-26T12:14:50: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:50: 
+2025-06-26T12:14:50: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:50: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:50: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:51: 
+2025-06-26T12:14:51: > reading-camp@0.1.0 start
+2025-06-26T12:14:51: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:51: 
+2025-06-26T12:14:51: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:51: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:51: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:51: 
+2025-06-26T12:14:51: > reading-camp@0.1.0 start
+2025-06-26T12:14:51: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:51: 
+2025-06-26T12:14:51: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:51: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:51: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:51: 
+2025-06-26T12:14:51: > reading-camp@0.1.0 start
+2025-06-26T12:14:51: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:51: 
+2025-06-26T12:14:51: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:52: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:52: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:52: 
+2025-06-26T12:14:52: > reading-camp@0.1.0 start
+2025-06-26T12:14:52: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:52: 
+2025-06-26T12:14:52: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:52: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:52: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:52: 
+2025-06-26T12:14:52: > reading-camp@0.1.0 start
+2025-06-26T12:14:52: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:52: 
+2025-06-26T12:14:52: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:52: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:52: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:52: 
+2025-06-26T12:14:52: > reading-camp@0.1.0 start
+2025-06-26T12:14:52: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:52: 
+2025-06-26T12:14:53: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:53: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:53: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:53: 
+2025-06-26T12:14:53: > reading-camp@0.1.0 start
+2025-06-26T12:14:53: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:53: 
+2025-06-26T12:14:53: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:53: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:53: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:53: 
+2025-06-26T12:14:53: > reading-camp@0.1.0 start
+2025-06-26T12:14:53: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:53: 
+2025-06-26T12:14:53: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:53: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:53: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:53: 
+2025-06-26T12:14:53: > reading-camp@0.1.0 start
+2025-06-26T12:14:53: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:53: 
+2025-06-26T12:14:54: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:54: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:54: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:54: 
+2025-06-26T12:14:54: > reading-camp@0.1.0 start
+2025-06-26T12:14:54: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:54: 
+2025-06-26T12:14:54: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:54: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:54: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:54: 
+2025-06-26T12:14:54: > reading-camp@0.1.0 start
+2025-06-26T12:14:54: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:54: 
+2025-06-26T12:14:54: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:54: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:54: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:55: 
+2025-06-26T12:14:55: > reading-camp@0.1.0 start
+2025-06-26T12:14:55: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:55: 
+2025-06-26T12:14:55: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:55: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:55: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:55: 
+2025-06-26T12:14:55: > reading-camp@0.1.0 start
+2025-06-26T12:14:55: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:55: 
+2025-06-26T12:14:55: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:55: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:55: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:55: 
+2025-06-26T12:14:55: > reading-camp@0.1.0 start
+2025-06-26T12:14:55: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:55: 
+2025-06-26T12:14:55: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:55: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:55: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:56: 
+2025-06-26T12:14:56: > reading-camp@0.1.0 start
+2025-06-26T12:14:56: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:56: 
+2025-06-26T12:14:56: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:56: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:56: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:56: 
+2025-06-26T12:14:56: > reading-camp@0.1.0 start
+2025-06-26T12:14:56: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:56: 
+2025-06-26T12:14:56: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:56: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:56: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:56: 
+2025-06-26T12:14:56: > reading-camp@0.1.0 start
+2025-06-26T12:14:56: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:56: 
+2025-06-26T12:14:56: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:56: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:56: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:57: 
+2025-06-26T12:14:57: > reading-camp@0.1.0 start
+2025-06-26T12:14:57: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:57: 
+2025-06-26T12:14:57: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:57: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:57: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:57: 
+2025-06-26T12:14:57: > reading-camp@0.1.0 start
+2025-06-26T12:14:57: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:57: 
+2025-06-26T12:14:57: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:57: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:57: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:57: 
+2025-06-26T12:14:57: > reading-camp@0.1.0 start
+2025-06-26T12:14:57: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:57: 
+2025-06-26T12:14:57: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:57: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:57: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:58: 
+2025-06-26T12:14:58: > reading-camp@0.1.0 start
+2025-06-26T12:14:58: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:58: 
+2025-06-26T12:14:58: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:58: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:58: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:58: 
+2025-06-26T12:14:58: > reading-camp@0.1.0 start
+2025-06-26T12:14:58: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:58: 
+2025-06-26T12:14:58: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:58: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:58: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:58: 
+2025-06-26T12:14:58: > reading-camp@0.1.0 start
+2025-06-26T12:14:58: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:58: 
+2025-06-26T12:14:59: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:59: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:59: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:59: 
+2025-06-26T12:14:59: > reading-camp@0.1.0 start
+2025-06-26T12:14:59: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:59: 
+2025-06-26T12:14:59: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:59: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:59: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:14:59: 
+2025-06-26T12:14:59: > reading-camp@0.1.0 start
+2025-06-26T12:14:59: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:14:59: 
+2025-06-26T12:14:59: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:14:59: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:14:59: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:00: 
+2025-06-26T12:15:00: > reading-camp@0.1.0 start
+2025-06-26T12:15:00: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:00: 
+2025-06-26T12:15:00: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:00: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:00: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:00: 
+2025-06-26T12:15:00: > reading-camp@0.1.0 start
+2025-06-26T12:15:00: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:00: 
+2025-06-26T12:15:00: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:00: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:00: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:00: 
+2025-06-26T12:15:00: > reading-camp@0.1.0 start
+2025-06-26T12:15:00: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:00: 
+2025-06-26T12:15:00: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:00: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:00: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:01: 
+2025-06-26T12:15:01: > reading-camp@0.1.0 start
+2025-06-26T12:15:01: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:01: 
+2025-06-26T12:15:01: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:01: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:01: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:01: 
+2025-06-26T12:15:01: > reading-camp@0.1.0 start
+2025-06-26T12:15:01: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:01: 
+2025-06-26T12:15:01: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:01: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:01: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:01: 
+2025-06-26T12:15:01: > reading-camp@0.1.0 start
+2025-06-26T12:15:01: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:01: 
+2025-06-26T12:15:01: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:01: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:01: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:02: 
+2025-06-26T12:15:02: > reading-camp@0.1.0 start
+2025-06-26T12:15:02: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:02: 
+2025-06-26T12:15:02: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:02: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:02: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:02: 
+2025-06-26T12:15:02: > reading-camp@0.1.0 start
+2025-06-26T12:15:02: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:02: 
+2025-06-26T12:15:02: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:02: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:02: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:02: 
+2025-06-26T12:15:02: > reading-camp@0.1.0 start
+2025-06-26T12:15:02: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:02: 
+2025-06-26T12:15:02: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:02: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:02: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:03: 
+2025-06-26T12:15:03: > reading-camp@0.1.0 start
+2025-06-26T12:15:03: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:03: 
+2025-06-26T12:15:03: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:03: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:03: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:03: 
+2025-06-26T12:15:03: > reading-camp@0.1.0 start
+2025-06-26T12:15:03: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:03: 
+2025-06-26T12:15:03: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:03: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:03: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:03: 
+2025-06-26T12:15:03: > reading-camp@0.1.0 start
+2025-06-26T12:15:03: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:03: 
+2025-06-26T12:15:03: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:03: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:03: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:04: 
+2025-06-26T12:15:04: > reading-camp@0.1.0 start
+2025-06-26T12:15:04: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:04: 
+2025-06-26T12:15:04: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:04: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:04: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:04: 
+2025-06-26T12:15:04: > reading-camp@0.1.0 start
+2025-06-26T12:15:04: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:04: 
+2025-06-26T12:15:04: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:04: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:04: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:04: 
+2025-06-26T12:15:04: > reading-camp@0.1.0 start
+2025-06-26T12:15:04: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:04: 
+2025-06-26T12:15:04: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:05: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:05: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:05: 
+2025-06-26T12:15:05: > reading-camp@0.1.0 start
+2025-06-26T12:15:05: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:05: 
+2025-06-26T12:15:05: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:05: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:05: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:05: 
+2025-06-26T12:15:05: > reading-camp@0.1.0 start
+2025-06-26T12:15:05: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:05: 
+2025-06-26T12:15:05: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:05: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:05: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:05: 
+2025-06-26T12:15:05: > reading-camp@0.1.0 start
+2025-06-26T12:15:05: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:05: 
+2025-06-26T12:15:06: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:06: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:06: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:06: 
+2025-06-26T12:15:06: > reading-camp@0.1.0 start
+2025-06-26T12:15:06: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:06: 
+2025-06-26T12:15:06: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:06: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:06: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:06: 
+2025-06-26T12:15:06: > reading-camp@0.1.0 start
+2025-06-26T12:15:06: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:06: 
+2025-06-26T12:15:06: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:06: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:06: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:07: 
+2025-06-26T12:15:07: > reading-camp@0.1.0 start
+2025-06-26T12:15:07: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:07: 
+2025-06-26T12:15:07: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:07: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:07: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:07: 
+2025-06-26T12:15:07: > reading-camp@0.1.0 start
+2025-06-26T12:15:07: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:07: 
+2025-06-26T12:15:07: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:07: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:07: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:07: 
+2025-06-26T12:15:07: > reading-camp@0.1.0 start
+2025-06-26T12:15:07: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:07: 
+2025-06-26T12:15:07: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:07: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:07: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:08: 
+2025-06-26T12:15:08: > reading-camp@0.1.0 start
+2025-06-26T12:15:08: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:08: 
+2025-06-26T12:15:08: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:08: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:08: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:08: 
+2025-06-26T12:15:08: > reading-camp@0.1.0 start
+2025-06-26T12:15:08: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:08: 
+2025-06-26T12:15:08: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:08: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:08: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:08: 
+2025-06-26T12:15:08: > reading-camp@0.1.0 start
+2025-06-26T12:15:08: > pm2 start ecosystem.config.js 8443
+2025-06-26T12:15:08: 
+2025-06-26T12:15:08: [PM2] cron restart at 0 0 * * *
+2025-06-26T12:15:08: [PM2] Applying action restartProcessId on app [medal-cron](ids: [ 1 ])
+2025-06-26T12:15:08: [PM2] Applying action restartProcessId on app [reading-champ](ids: [ 2 ])
+2025-06-26T12:15:09: 
+2025-06-26T12:15:09: > reading-camp@0.1.0 start
+2025-06-26T12:15:09: > next start -p 8443 8443
+2025-06-26T12:15:09: 
+2025-06-26T12:15:09: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:09: 
+2025-06-26T12:15:09: > reading-camp@0.1.0 start
+2025-06-26T12:15:09: > next start -p 8443 8443
+2025-06-26T12:15:09: 
+2025-06-26T12:15:09: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:09: 
+2025-06-26T12:15:09: > reading-camp@0.1.0 start
+2025-06-26T12:15:09: > next start -p 8443 8443
+2025-06-26T12:15:09: 
+2025-06-26T12:15:09: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:09: 
+2025-06-26T12:15:09: > reading-camp@0.1.0 start
+2025-06-26T12:15:09: > next start -p 8443 8443
+2025-06-26T12:15:09: 
+2025-06-26T12:15:09: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:10: 
+2025-06-26T12:15:10: > reading-camp@0.1.0 start
+2025-06-26T12:15:10: > next start -p 8443 8443
+2025-06-26T12:15:10: 
+2025-06-26T12:15:10: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:10: 
+2025-06-26T12:15:10: > reading-camp@0.1.0 start
+2025-06-26T12:15:10: > next start -p 8443 8443
+2025-06-26T12:15:10: 
+2025-06-26T12:15:10: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:10: 
+2025-06-26T12:15:10: > reading-camp@0.1.0 start
+2025-06-26T12:15:10: > next start -p 8443 8443
+2025-06-26T12:15:10: 
+2025-06-26T12:15:10: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:10: 
+2025-06-26T12:15:10: > reading-camp@0.1.0 start
+2025-06-26T12:15:10: > next start -p 8443 8443
+2025-06-26T12:15:10: 
+2025-06-26T12:15:10: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:10: 
+2025-06-26T12:15:10: > reading-camp@0.1.0 start
+2025-06-26T12:15:10: > next start -p 8443 8443
+2025-06-26T12:15:10: 
+2025-06-26T12:15:11: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:11: 
+2025-06-26T12:15:11: > reading-camp@0.1.0 start
+2025-06-26T12:15:11: > next start -p 8443 8443
+2025-06-26T12:15:11: 
+2025-06-26T12:15:11: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:11: 
+2025-06-26T12:15:11: > reading-camp@0.1.0 start
+2025-06-26T12:15:11: > next start -p 8443 8443
+2025-06-26T12:15:11: 
+2025-06-26T12:15:11: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:11: 
+2025-06-26T12:15:11: > reading-camp@0.1.0 start
+2025-06-26T12:15:11: > next start -p 8443 8443
+2025-06-26T12:15:11: 
+2025-06-26T12:15:11: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:11: 
+2025-06-26T12:15:11: > reading-camp@0.1.0 start
+2025-06-26T12:15:11: > next start -p 8443 8443
+2025-06-26T12:15:11: 
+2025-06-26T12:15:11: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:12: 
+2025-06-26T12:15:12: > reading-camp@0.1.0 start
+2025-06-26T12:15:12: > next start -p 8443 8443
+2025-06-26T12:15:12: 
+2025-06-26T12:15:12: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
+2025-06-26T12:15:12: 
+2025-06-26T12:15:12: > reading-camp@0.1.0 start
+2025-06-26T12:15:12: > next start -p 8443 8443
+2025-06-26T12:15:12: 
+2025-06-26T12:15:12: Invalid project directory provided, no such directory: /Users/duke/Documents/GitHub/learn-english/8443
