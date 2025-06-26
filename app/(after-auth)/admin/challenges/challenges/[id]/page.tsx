@@ -70,9 +70,10 @@ async function getChallenge(id: string) {
 export default async function EditChallengePage({
   params,
 }: {
-  params: { id: string };
+  params: Promise<{ id: string }>;
 }) {
-  const challenge = await getChallenge(params.id);
+  const { id } = await params;
+  const challenge = await getChallenge(id);
 
   return (
     <div className="container mx-auto py-8">

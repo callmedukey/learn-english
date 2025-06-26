@@ -144,11 +144,15 @@ export function RCQuizComponent({
   // New function to handle starting reading phase
   const handleStartReading = () => {
     // Check if this is challenge content and user hasn't joined
-    if (challengeInfo?.isChallengeContent && !challengeInfo.hasJoinedChallenge && !hasCheckedChallenge) {
+    if (
+      challengeInfo?.isChallengeContent &&
+      !challengeInfo.hasJoinedChallenge &&
+      !hasCheckedChallenge
+    ) {
       setShowChallengeDialog(true);
       return;
     }
-    
+
     setIsReadingPhase(true);
     setHasStartedReading(true);
     setReadingTimeLeft(questionSet.timeLimit || 60); // Default to 60 seconds if not set
@@ -514,7 +518,7 @@ export function RCQuizComponent({
           fontSizeClasses={fontSizeClasses}
         />
       </div>
-      
+
       {/* Challenge Participation Dialog */}
       {challengeInfo && (
         <ChallengeParticipationDialog
@@ -522,16 +526,23 @@ export function RCQuizComponent({
           onClose={() => setShowChallengeDialog(false)}
           onConfirmJoin={handleJoinChallenge}
           onContinueWithoutJoining={handleContinueWithoutJoining}
-          levelType="RC"
           levelName={challengeInfo.challengeDetails?.levelName || ""}
           contentType="keyword"
           contentName={keywordName}
-          currentMonth={challengeInfo.challengeDetails ? 
-            new Date(challengeInfo.challengeDetails.year, challengeInfo.challengeDetails.month - 1).toLocaleString('default', { month: 'long' }) : 
-            ""
+          currentMonth={
+            challengeInfo.challengeDetails
+              ? new Date(
+                  challengeInfo.challengeDetails.year,
+                  challengeInfo.challengeDetails.month - 1,
+                ).toLocaleString("default", { month: "long" })
+              : ""
           }
-          currentYear={challengeInfo.challengeDetails?.year || new Date().getFullYear()}
-          totalChallengeContent={challengeInfo.challengeDetails?.totalContent || 0}
+          currentYear={
+            challengeInfo.challengeDetails?.year || new Date().getFullYear()
+          }
+          totalChallengeContent={
+            challengeInfo.challengeDetails?.totalContent || 0
+          }
           isLockedToDifferentLevel={challengeInfo.isLockedToDifferentLevel}
           currentLockedLevel={challengeInfo.currentLockedLevelId || undefined}
         />

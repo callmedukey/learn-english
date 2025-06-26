@@ -792,7 +792,6 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
           onClose={() => setShowChallengeDialog(false)}
           onConfirmJoin={handleJoinChallenge}
           onContinueWithoutJoining={handleContinueWithoutJoining}
-          levelType="AR"
           levelName={challengeInfo.challengeDetails?.levelName || ""}
           contentType="novel"
           contentName={chapter.novel.title}

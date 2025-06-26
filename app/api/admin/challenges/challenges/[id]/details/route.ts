@@ -5,22 +5,19 @@ import { prisma } from "@/prisma/prisma-client";
 
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> },
 ) {
   try {
     const session = await auth();
     if (!session?.user || session.user.role !== "ADMIN") {
-      return NextResponse.json(
-        { error: "Unauthorized" },
-        { status: 401 }
-      );
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    const challengeId = params.id;
+    const { id } = await params;
 
     // Fetch the challenge with all related data
     const challenge = await prisma.monthlyChallenge.findUnique({
-      where: { id: challengeId },
+      where: { id },
       include: {
         leaderboard: {
           include: {
@@ -48,7 +45,7 @@ export async function GET(
     if (!challenge) {
       return NextResponse.json(
         { error: "Challenge not found" },
-        { status: 404 }
+        { status: 404 },
       );
     }
 
@@ -138,13 +135,16 @@ export async function GET(
     }
 
     // Group medals by type
-    const medalsByType = challenge.medals.reduce((acc, medal) => {
-      if (!acc[medal.medalType]) {
-        acc[medal.medalType] = [];
-      }
-      acc[medal.medalType].push(medal);
-      return acc;
-    }, {} as Record<string, typeof challenge.medals>);
+    const medalsByType = challenge.medals.reduce(
+      (acc, medal) => {
+        if (!acc[medal.medalType]) {
+          acc[medal.medalType] = [];
+        }
+        acc[medal.medalType].push(medal);
+        return acc;
+      },
+      {} as Record<string, typeof challenge.medals>,
+    );
 
     return NextResponse.json({
       challenge,
@@ -158,7 +158,7 @@ export async function GET(
     console.error("Failed to fetch challenge details:", error);
     return NextResponse.json(
       { error: "Failed to fetch challenge details" },
-      { status: 500 }
+      { status: 500 },
     );
   }
 }
