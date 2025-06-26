@@ -3,7 +3,7 @@ module.exports = {
     {
       name: "reading-champ",
       script: "node_modules/.bin/next",
-      args: "start -p 8443",
+      args: "start",
       instances: 1,
       exec_mode: "fork",
       autorestart: true,
