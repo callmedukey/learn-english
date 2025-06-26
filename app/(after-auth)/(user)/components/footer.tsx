@@ -67,7 +67,7 @@ const Footer = () => {
             <h3 className="mb-4 text-lg font-semibold">Follow Us</h3>
             <div className="flex space-x-4">
               <a
-                href="https://www.instagram.com/readingchamp25"
+                href="https://www.instagram.com/readingchamp_official"
                 className="rounded-full bg-gray-200 p-2 transition-colors duration-200 hover:bg-primary hover:text-white"
                 aria-label="Follow us on Instagram"
               >
