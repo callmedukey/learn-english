@@ -13,6 +13,7 @@
     "status": "pm2 status",
     "medal-job": "tsx scripts/medal-cron.ts",
     "medal-wrapper-test": "tsx scripts/cron-wrapper.ts",
+    "fix": "tsx prisma/scripts/fix-referrals.ts",
     "lint": "next lint",
     "db:generate": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev",
