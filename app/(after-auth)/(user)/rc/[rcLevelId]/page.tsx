@@ -9,8 +9,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
-import { getUserLevelLock, getUserLevelChangeRequests } from "@/server-queries/level-locks";
-import { getActiveChallengeItems, getCurrentKoreaYearMonth } from "@/server-queries/medals";
+import {
+  getUserLevelLock,
+  getUserLevelChangeRequests,
+} from "@/server-queries/level-locks";
+import {
+  getActiveChallengeItems,
+  getCurrentKoreaYearMonth,
+} from "@/server-queries/medals";
 
 import { RCChallengeConfirmationButton } from "./components/rc-challenge-confirmation-button";
 import { RCKeywordCard } from "./components/rc-keyword-card";
@@ -106,19 +112,33 @@ async function RCKeywords({
 
   // Get challenge keyword IDs for this RC level
   const challengeKeywordIds = await getActiveChallengeItems("RC", rcLevelId);
-  
+
   // Get current month/year for challenge button
   const { year: currentYear, month: currentMonth } = getCurrentKoreaYearMonth();
   const monthNames = [
-    "January", "February", "March", "April", "May", "June",
-    "July", "August", "September", "October", "November", "December"
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
   ];
   const currentMonthName = monthNames[currentMonth - 1];
-  
+
   // Get user's level lock if they're logged in
   const userLevelLock = userId ? await getUserLevelLock(userId, "RC") : null;
-  const pendingRequests = userId ? await getUserLevelChangeRequests(userId) : [];
-  const pendingRequest = pendingRequests.find(req => req.status === "PENDING");
+  const pendingRequests = userId
+    ? await getUserLevelChangeRequests(userId)
+    : [];
+  const pendingRequest = pendingRequests.find(
+    (req) => req.status === "PENDING",
+  );
   const hasPendingRequest = !!pendingRequest;
 
   // Get 5 FREE keywords to pin at the top
@@ -182,7 +202,7 @@ async function RCKeywords({
     take: 5,
   });
 
-  const freeKeywordIds = freeKeywords.map(k => k.id);
+  const freeKeywordIds = freeKeywords.map((k) => k.id);
 
   // Get the rest of the keywords (excluding the free ones we already have)
   const regularKeywords = await prisma.rCKeyword.findMany({
@@ -311,14 +331,19 @@ async function RCKeywords({
             </h1>
             <div className="flex items-center gap-1">
               {Array.from({ length: rcLevel.stars }).map((_, i) => (
-                <Star key={i} className="h-5 w-5 fill-amber-400 text-amber-400" />
+                <Star
+                  key={i}
+                  className="h-5 w-5 fill-amber-400 text-amber-400"
+                />
               ))}
             </div>
           </div>
           <RCChallengeConfirmationButton
             rcLevelId={rcLevelId}
             rcLevel={`RC Level ${rcLevel.level}`}
-            hasActiveChallenge={!!challengeKeywordIds && challengeKeywordIds.length > 0}
+            hasActiveChallenge={
+              !!challengeKeywordIds && challengeKeywordIds.length > 0
+            }
             challengeKeywordCount={challengeKeywordIds?.length || 0}
             currentMonth={currentMonthName}
             currentYear={currentYear}
@@ -368,7 +393,7 @@ async function RCKeywords({
           </h3>
           <p className="text-muted-foreground">
             {totalKeywordsCount === 0
-              ? "Topics for this RC level are coming soon."
+              ? "Topics for this RC level are coming next month."
               : "Try adjusting your search criteria or clearing the filters."}
           </p>
         </div>
@@ -381,7 +406,9 @@ async function RCKeywords({
               rcLevelId={rcLevelId}
               userId={userId}
               hasPaidSubscription={hasPaidSubscription}
-              isMonthlyChallenge={challengeKeywordIds?.includes(keyword.id) || false}
+              isMonthlyChallenge={
+                challengeKeywordIds?.includes(keyword.id) || false
+              }
               userJoinedChallenge={userLevelLock?.levelId === rcLevelId}
             />
           ))}

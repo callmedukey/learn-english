@@ -107,10 +107,12 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
   const [isActive, setIsActive] = useState(
     keyword.RCQuestionSet?.active || false,
   );
-  
+
   // Challenge state - initialize with props
   const [isInCurrentChallenge, setIsInCurrentChallenge] = useState(
-    currentMonthChallenge ? currentMonthChallenge.keywordIds.includes(keyword.id) : false
+    currentMonthChallenge
+      ? currentMonthChallenge.keywordIds.includes(keyword.id)
+      : false,
   );
 
   const handleSave = () => {
@@ -132,7 +134,7 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
       if (isActive) {
         formData.append("isActive", "on");
       }
-      
+
       // Add challenge data
       if (currentMonthChallenge) {
         formData.append("updateChallenge", "true");
@@ -260,7 +262,7 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
                 onCheckedChange={(checked) => setComingSoon(checked === true)}
                 disabled={isPending}
               />
-              <Label htmlFor="comingSoon">Coming Soon</Label>
+              <Label htmlFor="comingSoon">Coming Next Month</Label>
             </div>
           </div>
           <div>
@@ -284,42 +286,57 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
           {/* Show current challenge participation */}
           {challenges.length > 0 && (
             <div>
-              <Label className="text-sm font-medium mb-2 block">Challenge History</Label>
+              <Label className="mb-2 block text-sm font-medium">
+                Challenge History
+              </Label>
               <div className="flex flex-wrap gap-2">
-                {challenges.map(challenge => (
+                {challenges.map((challenge) => (
                   <ChallengeBadge key={challenge.id} challenges={[challenge]} />
                 ))}
               </div>
             </div>
           )}
-          
+
           {/* Current month challenge toggle */}
           {currentMonthChallenge && (
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Current Month Challenge</Label>
+              <Label className="text-sm font-medium">
+                Current Month Challenge
+              </Label>
               <div className="flex items-center space-x-2">
                 <Checkbox
                   id="includeInChallenge"
                   checked={isInCurrentChallenge}
-                  onCheckedChange={(checked) => setIsInCurrentChallenge(checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    setIsInCurrentChallenge(checked as boolean)
+                  }
                   disabled={isPending}
                 />
-                <Label htmlFor="includeInChallenge" className="text-sm font-normal">
-                  Include in {new Date().toLocaleString('default', { month: 'long' })} {new Date().getFullYear()} challenge
+                <Label
+                  htmlFor="includeInChallenge"
+                  className="text-sm font-normal"
+                >
+                  Include in{" "}
+                  {new Date().toLocaleString("default", { month: "long" })}{" "}
+                  {new Date().getFullYear()} challenge
                 </Label>
               </div>
               {!isInCurrentChallenge && currentMonthChallenge && (
-                <p className="text-xs text-muted-foreground ml-6">
-                  This keyword is not currently part of the active monthly challenge
+                <p className="ml-6 text-xs text-muted-foreground">
+                  This keyword is not currently part of the active monthly
+                  challenge
                 </p>
               )}
             </div>
           )}
-          
+
           {!currentMonthChallenge && (
             <p className="text-sm text-muted-foreground">
               No challenge exists for this RC level in the current month.
-              <Link href={`/admin/challenges/challenges?levelType=RC&levelId=${keyword.rcLevelId}`} className="text-blue-600 hover:underline ml-1">
+              <Link
+                href={`/admin/challenges/challenges?levelType=RC&levelId=${keyword.rcLevelId}`}
+                className="ml-1 text-blue-600 hover:underline"
+              >
                 Create one
               </Link>
             </p>

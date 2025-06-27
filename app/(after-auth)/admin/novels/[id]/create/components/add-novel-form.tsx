@@ -30,12 +30,12 @@ const AddNovelForm: React.FC<AddNovelFormProps> = ({
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     formData.append("level", levelId);
-    
+
     // Add challenge inclusion flag
     if (includeInChallenge) {
       formData.append("includeInChallenge", "true");
     }
-    
+
     const form = event.currentTarget;
 
     startTransition(async () => {
@@ -91,7 +91,7 @@ const AddNovelForm: React.FC<AddNovelFormProps> = ({
 
       <div className="flex items-center space-x-2">
         <Checkbox id="comingSoon" name="comingSoon" />
-        <Label htmlFor="comingSoon">Coming Soon</Label>
+        <Label htmlFor="comingSoon">Coming Next Month</Label>
       </div>
 
       <div>

@@ -17,6 +17,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import { BulkToggleComingSoonDialog } from "./bulk-toggle-coming-soon-dialog";
 import { BulkToggleHiddenDialog } from "./bulk-toggle-hidden-dialog";
 import DeleteKeywordAlert from "./delete-keyword-alert";
 import MoveKeywordDialog from "./move-keyword-dialog";
@@ -78,6 +79,10 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
           </p>
           <div className="flex items-center space-x-2">
             <BulkToggleHiddenDialog
+              selectedKeywordIds={selectedKeywords}
+              onSuccess={() => setSelectedKeywords([])}
+            />
+            <BulkToggleComingSoonDialog
               selectedKeywordIds={selectedKeywords}
               onSuccess={() => setSelectedKeywords([])}
             />
@@ -153,7 +158,7 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                     )}
                     {keyword.comingSoon && (
                       <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
-                        Coming Soon
+                        Coming Next Month
                       </span>
                     )}
                   </div>

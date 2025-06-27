@@ -185,6 +185,7 @@ export async function signUpAction(
         password: hashedPassword,
         countryId: country,
         referrerId: foundReferrer?.id,
+        isReferred: !!foundReferrer,
       },
     });
 
@@ -265,6 +266,7 @@ export async function socialSignUpAction(
         birthday,
         countryId: country,
         referrerId: foundReferrer?.id,
+        isReferred: !!foundReferrer,
         emailVerified: new Date(), // Mark email as verified for social sign-ups
       },
     });
@@ -273,7 +275,6 @@ export async function socialSignUpAction(
       await prisma.user.update({
         where: { id: foundReferrer.id },
         data: {
-          referrerId: user.id,
           referrerCount: { increment: 1 },
         },
       });

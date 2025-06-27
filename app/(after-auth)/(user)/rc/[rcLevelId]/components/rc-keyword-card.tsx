@@ -180,9 +180,9 @@ export function RCKeywordCard({
       case "locked":
         return "Premium Required";
       case "coming-soon":
-        return "✨ Coming Soon!";
+        return "✨ Coming Next Month!";
       default:
-        return "✨ Coming Soon!";
+        return "✨ Coming Next Month!";
     }
   };
 

@@ -49,6 +49,9 @@ export const metadata: Metadata = {
       type: "image/png",
     },
   ],
+  other: {
+    "naver-site-verification": "554c0f6e27a2de88f5e3ccbd7c564d5c502f5e63",
+  },
 };
 
 export default function RootLayout({

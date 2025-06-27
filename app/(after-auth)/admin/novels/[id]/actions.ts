@@ -37,3 +37,37 @@ export async function toggleNovelsHiddenStatus(
     };
   }
 }
+
+export async function toggleNovelsComingSoonStatus(
+  novelIds: string[],
+  setComingSoon: boolean,
+) {
+  try {
+    await prisma.novel.updateMany({
+      where: {
+        id: {
+          in: novelIds,
+        },
+      },
+      data: {
+        comingSoon: setComingSoon,
+      },
+    });
+
+    // Revalidate the page
+    revalidatePath("/admin/novels");
+
+    return {
+      success: true,
+      message: `Successfully ${setComingSoon ? "marked" : "unmarked"} ${
+        novelIds.length
+      } novel${novelIds.length !== 1 ? "s" : ""} as coming soon`,
+    };
+  } catch (error) {
+    console.error("Error updating novels:", error);
+    return {
+      success: false,
+      message: "Failed to update novels",
+    };
+  }
+}

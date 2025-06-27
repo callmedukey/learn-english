@@ -246,7 +246,7 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
                   onCheckedChange={(checked) => setComingSoon(checked === true)}
                   disabled={isPending}
                 />
-                <Label htmlFor="comingSoon">Coming Soon</Label>
+                <Label htmlFor="comingSoon">Coming Next Month</Label>
               </div>
             </div>
           </div>

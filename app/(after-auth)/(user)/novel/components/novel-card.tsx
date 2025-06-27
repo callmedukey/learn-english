@@ -195,7 +195,7 @@ export function NovelCard({
           disabled={novel.comingSoon}
         >
           {novel.comingSoon ? (
-            "✨ Coming Soon!"
+            "✨ Coming Next Month!"
           ) : (
             <Link href={`/novel/${arId}/${novel.id}`}>
               {hasProgress ? "Continue Chapter Quiz" : "Start Chapter Quiz"}

@@ -30,12 +30,12 @@ const AddKeywordForm: React.FC<AddKeywordFormProps> = ({
     event.preventDefault();
     const formData = new FormData(event.currentTarget);
     formData.append("rcLevelId", rcLevelId);
-    
+
     // Add challenge inclusion flag
     if (includeInChallenge) {
       formData.append("includeInChallenge", "true");
     }
-    
+
     const form = event.currentTarget;
 
     startTransition(async () => {
@@ -99,7 +99,7 @@ const AddKeywordForm: React.FC<AddKeywordFormProps> = ({
 
       <div className="flex items-center space-x-2">
         <Checkbox id="comingSoon" name="comingSoon" />
-        <Label htmlFor="comingSoon">Coming Soon</Label>
+        <Label htmlFor="comingSoon">Coming Next Month</Label>
       </div>
 
       <div>

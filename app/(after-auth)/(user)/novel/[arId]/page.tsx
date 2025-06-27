@@ -359,7 +359,7 @@ async function ARNovels({
           </h3>
           <p className="text-muted-foreground">
             {totalNovelsCount === 0
-              ? "Novels for this AR level are coming soon."
+              ? "Novels for this Lexile level are coming next month."
               : "Try adjusting your search criteria or clearing the filters."}
           </p>
         </div>
