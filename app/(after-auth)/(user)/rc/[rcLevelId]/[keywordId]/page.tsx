@@ -9,7 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
-import { checkChallengeParticipation } from "@/server-queries/challenge-participation";
 
 import { RCQuizComponent } from "./components/rc-quiz-component";
 
@@ -288,13 +287,6 @@ async function RCKeywordContent({
     status = "retry";
   }
 
-  // Check challenge participation
-  const challengeInfo = await checkChallengeParticipation(
-    userId,
-    "RC",
-    rcLevelId,
-    keywordId
-  );
 
   return (
     <div className={`container mx-auto px-4 py-8 ${fontSizeClasses}`}>
@@ -362,11 +354,8 @@ async function RCKeywordContent({
         userId={session.user.id}
         keywordId={keywordId}
         rcLevelId={rcLevelId}
-        userHasPaidSubscription={session.user.hasPaidSubscription}
         status={status}
         fontSizeClasses={fontSizeClasses}
-        challengeInfo={challengeInfo}
-        keywordName={keyword.name}
       />
     </div>
   );

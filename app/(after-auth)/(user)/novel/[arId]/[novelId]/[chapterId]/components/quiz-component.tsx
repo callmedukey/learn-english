@@ -11,8 +11,6 @@ import React, {
   useMemo,
 } from "react";
 
-import { confirmChallengeParticipation } from "@/actions/challenge-confirmation";
-import { ChallengeParticipationDialog } from "@/components/challenge-participation-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -35,19 +33,6 @@ interface QuizComponentProps {
   arId: string;
   novelId: string;
   userHasPaidSubscription: boolean;
-  challengeInfo?: {
-    isChallengeContent: boolean;
-    hasJoinedChallenge: boolean;
-    isLockedToDifferentLevel: boolean;
-    currentLockedLevelId: string | null;
-    challengeDetails: {
-      year: number;
-      month: number;
-      totalContent: number;
-      levelName: string;
-      challengeId: string;
-    } | null;
-  };
 }
 
 // interface QuestionData {
@@ -69,7 +54,6 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   arId,
   novelId,
   userHasPaidSubscription,
-  challengeInfo,
 }) => {
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -87,8 +71,6 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   const [quizStarted, setQuizStarted] = useState(false);
   const lastQuestionIdRef = useRef<string | null>(null);
   const [isTransitioning, setIsTransitioning] = useState(false);
-  const [showChallengeDialog, setShowChallengeDialog] = useState(false);
-  const [hasCheckedChallenge, setHasCheckedChallenge] = useState(false);
 
   // Store the initial status to use throughout the quiz
   const [initialStatus] = useState(status);
@@ -126,44 +108,8 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     setQuizStarted(true);
   };
 
-  // Handle quiz start with challenge check
+  // Handle quiz start - just start immediately
   const handleStartQuiz = () => {
-    // Check if this is challenge content and user hasn't joined
-    if (
-      challengeInfo?.isChallengeContent &&
-      !challengeInfo.hasJoinedChallenge &&
-      !hasCheckedChallenge
-    ) {
-      setShowChallengeDialog(true);
-      return;
-    }
-
-    // If no challenge dialog needed, start quiz immediately
-    startQuizImmediately();
-  };
-
-  // Handle joining the challenge
-  const handleJoinChallenge = async () => {
-    try {
-      await confirmChallengeParticipation("AR", arId);
-      setShowChallengeDialog(false);
-      setHasCheckedChallenge(true);
-      // Start the quiz after successfully joining
-      startQuizImmediately();
-    } catch (error) {
-      console.error("Failed to join challenge:", error);
-      // Still allow them to continue
-      setShowChallengeDialog(false);
-      setHasCheckedChallenge(true);
-      startQuizImmediately();
-    }
-  };
-
-  // Handle continuing without joining
-  const handleContinueWithoutJoining = () => {
-    setShowChallengeDialog(false);
-    setHasCheckedChallenge(true);
-    // Start the quiz
     startQuizImmediately();
   };
 
@@ -520,60 +466,63 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     );
   }
 
-  if (!currentQuestion) return null;
-
   // Show start quiz screen if quiz hasn't started
   if (!quizStarted) {
     return (
-      <Card className="mx-auto max-w-4xl">
-        <CardContent className="py-12 text-center">
-          <div className="space-y-6">
-            <div className="text-6xl">🚀</div>
-            <div>
-              <h3 className="mb-2 text-xl font-semibold">Ready to Start?</h3>
-              <p className="text-gray-600">
-                Once you click start, the timer will begin for each question.
-              </p>
-            </div>
-            <div className="mx-auto max-w-md space-y-2 text-left text-sm text-gray-600">
-              <p>• {questions.length} questions total</p>
-              <p>• Each question has a time limit</p>
-              <p>• You&apos;ll see explanations after each answer</p>
-              {initialStatus === "retry" && (
-                <p className="font-medium text-amber-600">
-                  • No points will be awarded for retry attempts
+      <>
+        <Card className="mx-auto max-w-4xl">
+          <CardContent className="py-12 text-center">
+            <div className="space-y-6">
+              <div className="text-6xl">🚀</div>
+              <div>
+                <h3 className="mb-2 text-xl font-semibold">Ready to Start?</h3>
+                <p className="text-gray-600">
+                  Once you click start, the timer will begin for each question.
                 </p>
-              )}
-            </div>
-            {chapter.novelQuestionSet.instructions && (
-              <div className="border-t pt-4">
-                <h4 className="mb-2 font-medium">Instructions:</h4>
-                <div
-                  className="text-sm text-gray-700"
-                  dangerouslySetInnerHTML={{
-                    __html: DOMPurify.sanitize(
-                      chapter.novelQuestionSet.instructions,
-                    ),
-                  }}
-                ></div>
               </div>
-            )}
-            <div className="flex justify-center gap-4">
-              <Button
-                variant="outline"
-                onClick={() => router.push(`/novel/${arId}/${novelId}`)}
-              >
-                Cancel
-              </Button>
-              <Button onClick={handleStartQuiz} size="lg">
-                Start Quiz
-              </Button>
+              <div className="mx-auto max-w-md space-y-2 text-left text-sm text-gray-600">
+                <p>• {questions.length} questions total</p>
+                <p>• Each question has a time limit</p>
+                <p>• You&apos;ll see explanations after each answer</p>
+                {initialStatus === "retry" && (
+                  <p className="font-medium text-amber-600">
+                    • No points will be awarded for retry attempts
+                  </p>
+                )}
+              </div>
+              {chapter.novelQuestionSet.instructions && (
+                <div className="border-t pt-4">
+                  <h4 className="mb-2 font-medium">Instructions:</h4>
+                  <div
+                    className="text-sm text-gray-700"
+                    dangerouslySetInnerHTML={{
+                      __html: DOMPurify.sanitize(
+                        chapter.novelQuestionSet.instructions,
+                      ),
+                    }}
+                  ></div>
+                </div>
+              )}
+              <div className="flex justify-center gap-4">
+                <Button
+                  variant="outline"
+                  onClick={() => router.push(`/novel/${arId}/${novelId}`)}
+                >
+                  Cancel
+                </Button>
+                <Button onClick={handleStartQuiz} size="lg">
+                  Start Quiz
+                </Button>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </>
     );
   }
+
+  // Only check for currentQuestion after quiz has started
+  if (!currentQuestion) return null;
 
   const progressPercentage =
     ((currentQuestionIndex + 1) / questions.length) * 100;
@@ -792,35 +741,6 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
           </div>
         </CardContent>
       </Card>
-
-      {/* Challenge Participation Dialog */}
-      {challengeInfo && (
-        <ChallengeParticipationDialog
-          isOpen={showChallengeDialog}
-          onClose={() => setShowChallengeDialog(false)}
-          onConfirmJoin={handleJoinChallenge}
-          onContinueWithoutJoining={handleContinueWithoutJoining}
-          levelName={challengeInfo.challengeDetails?.levelName || ""}
-          contentType="novel"
-          contentName={chapter.novel.title}
-          currentMonth={
-            challengeInfo.challengeDetails
-              ? new Date(
-                  challengeInfo.challengeDetails.year,
-                  challengeInfo.challengeDetails.month - 1,
-                ).toLocaleString("default", { month: "long" })
-              : ""
-          }
-          currentYear={
-            challengeInfo.challengeDetails?.year || new Date().getFullYear()
-          }
-          totalChallengeContent={
-            challengeInfo.challengeDetails?.totalContent || 0
-          }
-          isLockedToDifferentLevel={challengeInfo.isLockedToDifferentLevel}
-          currentLockedLevel={challengeInfo.currentLockedLevelId || undefined}
-        />
-      )}
     </div>
   );
 };

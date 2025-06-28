@@ -3,8 +3,6 @@
 import { useRouter } from "next/navigation";
 import React, { useCallback, useEffect, useState, useMemo } from "react";
 
-import { confirmChallengeParticipation } from "@/actions/challenge-confirmation";
-import { ChallengeParticipationDialog } from "@/components/challenge-participation-dialog";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { useRCPageVisibility } from "@/hooks/use-rc-page-visibility";
@@ -47,23 +45,8 @@ interface RCQuizComponentProps {
   userId: string;
   keywordId: string;
   rcLevelId: string;
-  userHasPaidSubscription: boolean;
   status: "start" | "continue" | "retry";
   fontSizeClasses: string;
-  challengeInfo?: {
-    isChallengeContent: boolean;
-    hasJoinedChallenge: boolean;
-    isLockedToDifferentLevel: boolean;
-    currentLockedLevelId: string | null;
-    challengeDetails: {
-      year: number;
-      month: number;
-      totalContent: number;
-      levelName: string;
-      challengeId: string;
-    } | null;
-  };
-  keywordName?: string;
 }
 
 export function RCQuizComponent({
@@ -73,13 +56,9 @@ export function RCQuizComponent({
   rcLevelId,
   status,
   fontSizeClasses,
-  challengeInfo,
-  keywordName = "Keyword",
 }: RCQuizComponentProps) {
   const router = useRouter();
   const [initialStatus] = useState(status);
-  const [showChallengeDialog, setShowChallengeDialog] = useState(false);
-  const [hasCheckedChallenge, setHasCheckedChallenge] = useState(false);
 
   // Use our custom hook for state management
   const {
@@ -148,46 +127,11 @@ export function RCQuizComponent({
     setReadingTimeLeft(questionSet.timeLimit || 60); // Default to 60 seconds if not set
   };
 
-  // Handle starting reading phase with challenge check
+  // Handle starting reading phase - just start immediately
   const handleStartReading = () => {
-    // Check if this is challenge content and user hasn't joined
-    if (
-      challengeInfo?.isChallengeContent &&
-      !challengeInfo.hasJoinedChallenge &&
-      !hasCheckedChallenge
-    ) {
-      setShowChallengeDialog(true);
-      return;
-    }
-
-    // If no challenge dialog needed, start reading immediately
     startReadingImmediately();
   };
 
-  // Handle joining the challenge
-  const handleJoinChallenge = async () => {
-    try {
-      await confirmChallengeParticipation("RC", rcLevelId);
-      setShowChallengeDialog(false);
-      setHasCheckedChallenge(true);
-      // Start the reading phase after successfully joining
-      startReadingImmediately();
-    } catch (error) {
-      console.error("Failed to join challenge:", error);
-      // Still allow them to continue
-      setShowChallengeDialog(false);
-      setHasCheckedChallenge(true);
-      startReadingImmediately();
-    }
-  };
-
-  // Handle continuing without joining
-  const handleContinueWithoutJoining = () => {
-    setShowChallengeDialog(false);
-    setHasCheckedChallenge(true);
-    // Start the reading phase
-    startReadingImmediately();
-  };
 
   // New function to handle finishing reading and starting quiz
   const handleFinishReading = () => {
@@ -523,34 +467,6 @@ export function RCQuizComponent({
         />
       </div>
 
-      {/* Challenge Participation Dialog */}
-      {challengeInfo && (
-        <ChallengeParticipationDialog
-          isOpen={showChallengeDialog}
-          onClose={() => setShowChallengeDialog(false)}
-          onConfirmJoin={handleJoinChallenge}
-          onContinueWithoutJoining={handleContinueWithoutJoining}
-          levelName={challengeInfo.challengeDetails?.levelName || ""}
-          contentType="keyword"
-          contentName={keywordName}
-          currentMonth={
-            challengeInfo.challengeDetails
-              ? new Date(
-                  challengeInfo.challengeDetails.year,
-                  challengeInfo.challengeDetails.month - 1,
-                ).toLocaleString("default", { month: "long" })
-              : ""
-          }
-          currentYear={
-            challengeInfo.challengeDetails?.year || new Date().getFullYear()
-          }
-          totalChallengeContent={
-            challengeInfo.challengeDetails?.totalContent || 0
-          }
-          isLockedToDifferentLevel={challengeInfo.isLockedToDifferentLevel}
-          currentLockedLevel={challengeInfo.currentLockedLevelId || undefined}
-        />
-      )}
     </div>
   );
 }

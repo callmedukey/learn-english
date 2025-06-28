@@ -7,7 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { checkChallengeParticipation } from "@/server-queries/challenge-participation";
 
 import QuizComponent from "./components/quiz-component";
 import {
@@ -243,13 +242,6 @@ async function ChapterContent({
     status = "retry";
   }
 
-  // Check challenge participation
-  const challengeInfo = await checkChallengeParticipation(
-    session.user.id,
-    "AR",
-    arId,
-    novelId
-  );
 
   return (
     <div className={`container mx-auto px-4 py-8 ${fontSizeClasses}`}>
@@ -308,7 +300,6 @@ async function ChapterContent({
         arId={arId}
         novelId={novelId}
         userHasPaidSubscription={session.user.hasPaidSubscription}
-        challengeInfo={challengeInfo}
       />
     </div>
   );
