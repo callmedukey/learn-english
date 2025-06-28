@@ -164,8 +164,8 @@ export function RCQuizComponent({
       await confirmChallengeParticipation("RC", rcLevelId);
       setShowChallengeDialog(false);
       setHasCheckedChallenge(true);
-      // Refresh the page to update the challenge status
-      router.refresh();
+      // Start the reading phase after successfully joining
+      handleStartReading();
     } catch (error) {
       console.error("Failed to join challenge:", error);
       // Still allow them to continue
@@ -179,10 +179,8 @@ export function RCQuizComponent({
   const handleContinueWithoutJoining = () => {
     setShowChallengeDialog(false);
     setHasCheckedChallenge(true);
-    // Actually start the reading phase
-    setIsReadingPhase(true);
-    setHasStartedReading(true);
-    setReadingTimeLeft(questionSet.timeLimit || 60);
+    // Start the reading phase
+    handleStartReading();
   };
 
   // New function to handle finishing reading and starting quiz

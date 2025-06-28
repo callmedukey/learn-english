@@ -142,8 +142,8 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       await confirmChallengeParticipation("AR", arId);
       setShowChallengeDialog(false);
       setHasCheckedChallenge(true);
-      // Refresh the page to update the challenge status
-      router.refresh();
+      // Start the quiz after successfully joining
+      handleStartQuiz();
     } catch (error) {
       console.error("Failed to join challenge:", error);
       // Still allow them to continue
@@ -157,15 +157,8 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   const handleContinueWithoutJoining = () => {
     setShowChallengeDialog(false);
     setHasCheckedChallenge(true);
-    // Actually start the quiz
-    setCurrentQuestionIndex(0);
-    setSelectedAnswer("");
-    setIsAnswered(false);
-    setShowExplanation(false);
-    setQuizCompleted(false);
-    setTotalPointsEarned(0);
-    setCorrectAnswersCount(0);
-    setQuizStarted(true);
+    // Start the quiz
+    handleStartQuiz();
   };
 
   // Shuffle choices when question changes
