@@ -114,7 +114,19 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   // const questionsToShow = getQuestionsToShow(); // Now directly use 'questions' as it's always the full list.
   const currentQuestion = questions[currentQuestionIndex];
 
-  // Reset quiz state when starting
+  // Actually start the quiz
+  const startQuizImmediately = () => {
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer("");
+    setIsAnswered(false);
+    setShowExplanation(false);
+    setQuizCompleted(false);
+    setTotalPointsEarned(0);
+    setCorrectAnswersCount(0);
+    setQuizStarted(true);
+  };
+
+  // Handle quiz start with challenge check
   const handleStartQuiz = () => {
     // Check if this is challenge content and user hasn't joined
     if (
@@ -126,14 +138,8 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       return;
     }
 
-    setCurrentQuestionIndex(0);
-    setSelectedAnswer("");
-    setIsAnswered(false);
-    setShowExplanation(false);
-    setQuizCompleted(false);
-    setTotalPointsEarned(0);
-    setCorrectAnswersCount(0);
-    setQuizStarted(true);
+    // If no challenge dialog needed, start quiz immediately
+    startQuizImmediately();
   };
 
   // Handle joining the challenge
@@ -143,13 +149,13 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       setShowChallengeDialog(false);
       setHasCheckedChallenge(true);
       // Start the quiz after successfully joining
-      handleStartQuiz();
+      startQuizImmediately();
     } catch (error) {
       console.error("Failed to join challenge:", error);
       // Still allow them to continue
       setShowChallengeDialog(false);
       setHasCheckedChallenge(true);
-      handleStartQuiz();
+      startQuizImmediately();
     }
   };
 
@@ -158,7 +164,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     setShowChallengeDialog(false);
     setHasCheckedChallenge(true);
     // Start the quiz
-    handleStartQuiz();
+    startQuizImmediately();
   };
 
   // Shuffle choices when question changes

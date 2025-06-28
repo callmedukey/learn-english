@@ -141,7 +141,14 @@ export function RCQuizComponent({
     resetQuiz();
   };
 
-  // New function to handle starting reading phase
+  // Actually start the reading phase
+  const startReadingImmediately = () => {
+    setIsReadingPhase(true);
+    setHasStartedReading(true);
+    setReadingTimeLeft(questionSet.timeLimit || 60); // Default to 60 seconds if not set
+  };
+
+  // Handle starting reading phase with challenge check
   const handleStartReading = () => {
     // Check if this is challenge content and user hasn't joined
     if (
@@ -153,9 +160,8 @@ export function RCQuizComponent({
       return;
     }
 
-    setIsReadingPhase(true);
-    setHasStartedReading(true);
-    setReadingTimeLeft(questionSet.timeLimit || 60); // Default to 60 seconds if not set
+    // If no challenge dialog needed, start reading immediately
+    startReadingImmediately();
   };
 
   // Handle joining the challenge
@@ -165,13 +171,13 @@ export function RCQuizComponent({
       setShowChallengeDialog(false);
       setHasCheckedChallenge(true);
       // Start the reading phase after successfully joining
-      handleStartReading();
+      startReadingImmediately();
     } catch (error) {
       console.error("Failed to join challenge:", error);
       // Still allow them to continue
       setShowChallengeDialog(false);
       setHasCheckedChallenge(true);
-      handleStartReading();
+      startReadingImmediately();
     }
   };
 
@@ -180,7 +186,7 @@ export function RCQuizComponent({
     setShowChallengeDialog(false);
     setHasCheckedChallenge(true);
     // Start the reading phase
-    handleStartReading();
+    startReadingImmediately();
   };
 
   // New function to handle finishing reading and starting quiz
