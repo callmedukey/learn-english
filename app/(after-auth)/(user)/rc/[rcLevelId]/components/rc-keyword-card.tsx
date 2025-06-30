@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { ChallengeRequiredDialog } from "@/components/dialogs/challenge-required-dialog";
+import { LevelChangeRequestDialog } from "@/components/dialogs/level-change-request-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,6 +61,12 @@ interface RCKeywordCardProps {
   hasPaidSubscription?: boolean;
   isMonthlyChallenge?: boolean;
   userJoinedChallenge?: boolean;
+  userLevelLock?: {
+    levelId: string;
+    levelType: string;
+  } | null;
+  userCurrentLevelName?: string;
+  hasPendingRequest?: boolean;
 }
 
 export function RCKeywordCard({
@@ -70,8 +77,12 @@ export function RCKeywordCard({
   hasPaidSubscription,
   isMonthlyChallenge = false,
   userJoinedChallenge = false,
+  userLevelLock,
+  userCurrentLevelName = "",
+  hasPendingRequest = false,
 }: RCKeywordCardProps) {
   const [challengeDialogOpen, setChallengeDialogOpen] = useState(false);
+  const [levelChangeDialogOpen, setLevelChangeDialogOpen] = useState(false);
   // Calculate quiz attempt status
   let totalQuestions = 0;
   let firstTryData: { totalQuestions: number; correctAnswers: number } | null =
@@ -363,7 +374,12 @@ export function RCKeywordCard({
             onClick={(e) => {
               if (challengeBlocked) {
                 e.preventDefault();
-                setChallengeDialogOpen(true);
+                // Check if user has a level lock for a different level
+                if (userLevelLock && userLevelLock.levelId !== rcLevelId) {
+                  setLevelChangeDialogOpen(true);
+                } else {
+                  setChallengeDialogOpen(true);
+                }
               }
             }}
           >
@@ -377,7 +393,12 @@ export function RCKeywordCard({
   const handleCardClick = (e: React.MouseEvent) => {
     if (challengeBlocked) {
       e.preventDefault();
-      setChallengeDialogOpen(true);
+      // Check if user has a level lock for a different level
+      if (userLevelLock && userLevelLock.levelId !== rcLevelId) {
+        setLevelChangeDialogOpen(true);
+      } else {
+        setChallengeDialogOpen(true);
+      }
     }
   };
 
@@ -404,6 +425,21 @@ export function RCKeywordCard({
         contentName={keyword.name}
         contentType="keyword"
       />
+      
+      {userLevelLock && userLevelLock.levelId !== rcLevelId && (
+        <LevelChangeRequestDialog
+          open={levelChangeDialogOpen}
+          onOpenChange={setLevelChangeDialogOpen}
+          levelType="RC"
+          currentLevelId={userLevelLock.levelId}
+          currentLevelName={userCurrentLevelName}
+          targetLevelId={rcLevelId}
+          targetLevelName={rcLevelName}
+          contentName={keyword.name}
+          contentType="keyword"
+          hasPendingRequest={hasPendingRequest}
+        />
+      )}
     </>
   );
 }
