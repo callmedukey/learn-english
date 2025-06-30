@@ -153,8 +153,29 @@ export const completeQuestionAction = async (
       return { success: false, error: "Question not found" };
     }
 
+    // Debug logging to identify the issue
+    console.log('Answer comparison debug:', {
+      selectedAnswer,
+      questionAnswer: question.answer,
+      areEqual: selectedAnswer === question.answer,
+      selectedLength: selectedAnswer.length,
+      answerLength: question.answer.length,
+      choices: question.choices,
+      isSelectedInChoices: question.choices.includes(selectedAnswer),
+      isTimedOut,
+      isRetry,
+      questionId: question.id,
+    });
+
     const isCorrect = selectedAnswer === question.answer && !isTimedOut;
     const pointsAwarded = isCorrect && !isRetry ? question.score : 0;
+    
+    console.log('Score calculation:', {
+      isCorrect,
+      pointsAwarded,
+      questionScore: question.score,
+      isRetry,
+    });
 
     // Check if user already has a completion record (should always exist now)
     const existingCompletion = await prisma.novelQuestionCompleted.findFirst({
@@ -192,15 +213,16 @@ export const completeQuestionAction = async (
       const arId = question.novelQuestionSet.novelChapter.novel.AR.id;
       const novelId = question.novelQuestionSet.novelChapter.novel.id;
 
-      // Check level lock permission
+      // Check level lock permission for monthly scores only
       const lockCheck = await checkLevelLockPermission(userId, "AR", arId);
-      if (!lockCheck.allowed) {
-        return {
-          success: false,
-          error: `You are locked to a different level for this month. Please continue with your current level or request a level change.`,
-        };
-      }
-
+      
+      console.log('Level lock check:', {
+        allowed: lockCheck.allowed,
+        shouldCreateLock: lockCheck.shouldCreateLock,
+        currentLevel: lockCheck.currentLevel,
+        arId,
+      });
+      
       // Use transaction for atomic updates
       await prisma.$transaction(async (tx) => {
         // Create level lock if needed
@@ -267,7 +289,8 @@ export const completeQuestionAction = async (
           },
         });
 
-        if (challenge) {
+        // Only update monthly score if user is locked to this level
+        if (challenge && lockCheck.allowed) {
           // Update monthly score for medal tracking
           await tx.monthlyARScore.upsert({
             where: {

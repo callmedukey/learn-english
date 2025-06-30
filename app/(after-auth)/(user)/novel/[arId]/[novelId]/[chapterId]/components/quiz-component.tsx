@@ -272,6 +272,17 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
 
     setIsSubmitting(true);
 
+    // Debug logging to understand what's being sent
+    console.log('Client submitting answer:', {
+      selectedAnswer,
+      questionAnswer: currentQuestion.answer,
+      areEqual: selectedAnswer === currentQuestion.answer,
+      choices: currentQuestion.choices,
+      isSelectedInChoices: currentQuestion.choices.includes(selectedAnswer),
+      questionId: currentQuestion.id,
+      initialStatus,
+    });
+
     // Determine if points should be disallowed
     // Points are disallowed if status is retry, OR if status is continue and the question was already completed.
     const disallowPoints =
