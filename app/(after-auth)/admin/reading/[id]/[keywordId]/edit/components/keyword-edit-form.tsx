@@ -307,9 +307,10 @@ const KeywordEditForm: React.FC<KeywordEditFormProps> = ({
                 <Checkbox
                   id="includeInChallenge"
                   checked={isInCurrentChallenge}
-                  onCheckedChange={(checked) =>
-                    setIsInCurrentChallenge(checked as boolean)
-                  }
+                  onCheckedChange={(checked) => {
+                    console.log("RC Challenge checkbox changed:", checked);
+                    setIsInCurrentChallenge(checked === true);
+                  }}
                   disabled={isPending}
                 />
                 <Label

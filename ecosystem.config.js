@@ -37,5 +37,23 @@ module.exports = {
       log_file: "logs/cron-combined.log",
       time: true,
     },
+    {
+      name: "subscription-cron",
+      script: "npx",
+      args: "tsx scripts/subscription-cron-wrapper.ts",
+      cron_restart: "30 * * * *", // Every hour at 30 minutes - wrapper checks if it's 00:30 KST
+      autorestart: false, // Don't restart after it completes
+      instances: 1,
+      exec_mode: "fork",
+      watch: false,
+      cwd: "/home/champ/learn-english", // Set working directory explicitly
+      env: {
+        NODE_ENV: "production",
+      },
+      error_file: "logs/subscription-cron-error.log",
+      out_file: "logs/subscription-cron-out.log",
+      log_file: "logs/subscription-cron-combined.log",
+      time: true,
+    },
   ],
 };

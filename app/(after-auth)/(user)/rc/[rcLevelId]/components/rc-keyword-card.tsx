@@ -1,7 +1,11 @@
+"use client";
+
 import DOMPurify from "isomorphic-dompurify";
 import { FileText, Lock, Target, Repeat, Trophy, Info } from "lucide-react";
 import Link from "next/link";
+import { useState } from "react";
 
+import { ChallengeRequiredDialog } from "@/components/dialogs/challenge-required-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -51,6 +55,7 @@ interface RCKeywordCardProps {
     } | null;
   };
   rcLevelId: string;
+  rcLevelName?: string;
   userId?: string;
   hasPaidSubscription?: boolean;
   isMonthlyChallenge?: boolean;
@@ -60,11 +65,13 @@ interface RCKeywordCardProps {
 export function RCKeywordCard({
   keyword,
   rcLevelId,
+  rcLevelName = "",
   userId,
   hasPaidSubscription,
   isMonthlyChallenge = false,
   userJoinedChallenge = false,
 }: RCKeywordCardProps) {
+  const [challengeDialogOpen, setChallengeDialogOpen] = useState(false);
   // Calculate quiz attempt status
   let totalQuestions = 0;
   let firstTryData: { totalQuestions: number; correctAnswers: number } | null =
@@ -82,10 +89,14 @@ export function RCKeywordCard({
   const isQuestionSetActive = keyword.RCQuestionSet?.active === true;
   const hasQuestions = totalQuestions > 0;
 
+  // Check challenge access
+  const challengeBlocked = isMonthlyChallenge && !userJoinedChallenge;
+
   // Determine status based on first/second try completion
   let status:
     | "available"
     | "locked"
+    | "challenge-locked"
     | "first-try-completed"
     | "second-try-completed"
     | "no-content"
@@ -97,6 +108,8 @@ export function RCKeywordCard({
     status = "no-content";
   } else if (!keyword.isFree && !hasPaidSubscription) {
     status = "locked";
+  } else if (challengeBlocked) {
+    status = "challenge-locked";
   } else if (secondTryData) {
     status = "second-try-completed";
   } else if (firstTryData) {
@@ -139,6 +152,16 @@ export function RCKeywordCard({
             Premium
           </Badge>
         );
+      case "challenge-locked":
+        return (
+          <Badge
+            variant="secondary"
+            className="border-amber-200 bg-amber-100 text-amber-800"
+          >
+            <Trophy className="mr-1 h-3 w-3" />
+            Challenge Required
+          </Badge>
+        );
       case "no-content":
         return (
           <Badge
@@ -179,6 +202,8 @@ export function RCKeywordCard({
         return "Start";
       case "locked":
         return "Premium Required";
+      case "challenge-locked":
+        return "Join Challenge to Start";
       case "coming-soon":
         return "✨ Coming Next Month!";
       default:
@@ -191,7 +216,8 @@ export function RCKeywordCard({
     hasQuestionSet &&
     isQuestionSetActive &&
     hasQuestions &&
-    (keyword.isFree || hasPaidSubscription);
+    (keyword.isFree || hasPaidSubscription) &&
+    !challengeBlocked;
 
   const cardContent = (
     <Card
@@ -330,30 +356,54 @@ export function RCKeywordCard({
 
         {/* Button positioned at bottom */}
         <div className="mt-4">
-          {isClickable ? (
-            <Button
-              className="w-full"
-              variant={status === "available" ? "outline" : "default"}
-            >
-              {getButtonText()}
-            </Button>
-          ) : (
-            <Button className="w-full" variant="outline" disabled>
-              {getButtonText()}
-            </Button>
-          )}
+          <Button
+            className="w-full"
+            variant={status === "available" ? "outline" : "default"}
+            disabled={status === "locked" || status === "no-content" || status === "coming-soon"}
+            onClick={(e) => {
+              if (challengeBlocked) {
+                e.preventDefault();
+                setChallengeDialogOpen(true);
+              }
+            }}
+          >
+            {getButtonText()}
+          </Button>
         </div>
       </CardContent>
     </Card>
   );
 
-  if (isClickable) {
-    return (
-      <Link href={`/rc/${rcLevelId}/${keyword.id}`} className="group">
-        {cardContent}
-      </Link>
-    );
-  }
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (challengeBlocked) {
+      e.preventDefault();
+      setChallengeDialogOpen(true);
+    }
+  };
 
-  return cardContent;
+  return (
+    <>
+      {isClickable ? (
+        <Link href={`/rc/${rcLevelId}/${keyword.id}`} className="group">
+          {cardContent}
+        </Link>
+      ) : challengeBlocked && (keyword.isFree || hasPaidSubscription) ? (
+        <div className="group cursor-pointer" onClick={handleCardClick}>
+          {cardContent}
+        </div>
+      ) : (
+        cardContent
+      )}
+      
+      <ChallengeRequiredDialog
+        open={challengeDialogOpen}
+        onOpenChange={setChallengeDialogOpen}
+        levelType="RC"
+        levelId={rcLevelId}
+        levelName={rcLevelName}
+        contentName={keyword.name}
+        contentType="keyword"
+      />
+    </>
+  );
 }

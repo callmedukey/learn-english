@@ -290,7 +290,7 @@ export const completeQuestionAction = async (
         });
 
         // Only update monthly score if user is locked to this level
-        if (challenge && lockCheck.allowed) {
+        if (challenge && lockCheck.allowed && !lockCheck.shouldCreateLock) {
           // Update monthly score for medal tracking
           await tx.monthlyARScore.upsert({
             where: {

@@ -276,14 +276,8 @@ export async function submitRCAnswer(
 
     // Only update scores if points were awarded (not retry and correct answer)
     if (pointsAwarded > 0) {
-      // Check level lock permission
+      // Check level lock permission for monthly scores only
       const lockCheck = await checkLevelLockPermission(session.user.id, "RC", rcLevelId);
-      if (!lockCheck.allowed) {
-        return {
-          success: false,
-          error: `You are locked to a different level for this month. Please continue with your current level or request a level change.`,
-        };
-      }
 
       // Use transaction for atomic updates
       await prisma.$transaction(async (tx) => {
@@ -351,7 +345,8 @@ export async function submitRCAnswer(
           },
         });
 
-        if (challenge) {
+        // Only update monthly score if user is locked to this level
+        if (challenge && lockCheck.allowed && !lockCheck.shouldCreateLock) {
           // Update monthly score for medal tracking
           await tx.monthlyRCScore.upsert({
             where: {

@@ -281,9 +281,10 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
                 <Checkbox
                   id="includeInChallenge"
                   checked={isInCurrentChallenge}
-                  onCheckedChange={(checked) =>
-                    setIsInCurrentChallenge(checked as boolean)
-                  }
+                  onCheckedChange={(checked) => {
+                    console.log("Challenge checkbox changed:", checked);
+                    setIsInCurrentChallenge(checked === true);
+                  }}
                   disabled={isPending}
                 />
                 <Label

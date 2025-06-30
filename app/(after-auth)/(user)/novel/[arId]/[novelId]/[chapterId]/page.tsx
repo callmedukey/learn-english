@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getUserLevelLock } from "@/server-queries/level-locks";
+import { getActiveChallengeItems } from "@/server-queries/medals";
 
 import QuizComponent from "./components/quiz-component";
 import {
@@ -67,9 +69,24 @@ async function ChapterContent({
     chapter.novel.AR?.ARSettings?.fontSize,
   );
 
-  const canAccess = chapter.isFree || session.user.hasPaidSubscription;
+  // Check premium access
+  const hasPremiumAccess = chapter.isFree || session.user.hasPaidSubscription;
 
-  if (!canAccess) {
+  // Check if this novel is part of a monthly challenge
+  const challengeNovelIds = chapter.novel.AR ? await getActiveChallengeItems("AR", chapter.novel.AR.id) : [];
+  const isMonthlyChallenge = challengeNovelIds?.includes(novelId) || false;
+  
+  // Check user's level lock status
+  const userLevelLock = await getUserLevelLock(session.user.id, "AR");
+  const userJoinedChallenge = userLevelLock?.levelId === chapter.novel.AR?.id;
+  
+  // Check challenge access
+  const challengeBlocked = isMonthlyChallenge && !userJoinedChallenge;
+  
+  // Can access quiz if they have premium access AND (not a challenge novel OR they've joined the challenge)
+  // const canAccess = hasPremiumAccess && !challengeBlocked;
+
+  if (!hasPremiumAccess) {
     return (
       <div
         className={`container mx-auto max-w-4xl px-4 py-8 ${fontSizeClasses}`}
@@ -101,6 +118,47 @@ async function ChapterContent({
               </div>
               <Button asChild>
                 <Link href="/profile">Upgrade to Premium</Link>
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  // Check for challenge access after premium check
+  if (challengeBlocked) {
+    return (
+      <div
+        className={`container mx-auto max-w-4xl px-4 py-8 ${fontSizeClasses}`}
+      >
+        <div className="mb-6">
+          <Button variant="outline" asChild>
+            <Link href={`/novel/${arId}/${novelId}`}>← Back to Novel</Link>
+          </Button>
+        </div>
+
+        <Card className="mx-auto max-w-2xl">
+          <CardContent className="py-12 text-center">
+            <div className="text-gray-500">
+              <div className="mb-4 text-4xl">🏆</div>
+              <h3 className="mb-2 text-lg font-medium">Monthly Challenge Content</h3>
+              <p className="mb-4">
+                This chapter is part of the monthly challenge. You need to join the challenge to access this quiz.
+              </p>
+              <div className="mb-6 space-y-2 text-sm text-gray-600">
+                <p>
+                  <strong>Chapter:</strong> {chapter.title}
+                </p>
+                <p>
+                  <strong>Novel:</strong> {chapter.novel.title}
+                </p>
+                <p>
+                  <strong>Level:</strong> {chapter.novel.AR?.level}
+                </p>
+              </div>
+              <Button asChild>
+                <Link href={`/novel/${arId}`}>Go to Level Page</Link>
               </Button>
             </div>
           </CardContent>

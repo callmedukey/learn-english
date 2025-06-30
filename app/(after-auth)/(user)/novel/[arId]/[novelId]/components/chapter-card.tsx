@@ -1,7 +1,10 @@
-import { Target, Repeat, Lock } from "lucide-react";
-import Link from "next/link";
-import React from "react";
+"use client";
 
+import { Target, Repeat, Lock, Trophy } from "lucide-react";
+import Link from "next/link";
+import React, { useState } from "react";
+
+import { ChallengeRequiredDialog } from "@/components/dialogs/challenge-required-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -41,16 +44,33 @@ interface ChapterCardProps {
   };
   arId: string;
   novelId: string;
+  novelTitle: string;
+  arLevel: string;
   userHasPaidSubscription?: boolean;
+  isMonthlyChallenge?: boolean;
+  userJoinedChallenge?: boolean;
 }
 
 const ChapterCard: React.FC<ChapterCardProps> = ({
   chapter,
   arId,
   novelId,
+  novelTitle,
+  arLevel,
   userHasPaidSubscription = false,
+  isMonthlyChallenge = false,
+  userJoinedChallenge = false,
 }) => {
-  const canAccess = chapter.isFree || userHasPaidSubscription;
+  const [challengeDialogOpen, setChallengeDialogOpen] = useState(false);
+  
+  // Check premium access first
+  const hasPremiumAccess = chapter.isFree || userHasPaidSubscription;
+  
+  // Check challenge access - if it's a challenge novel and user hasn't joined, they can't access quiz
+  const challengeBlocked = isMonthlyChallenge && !userJoinedChallenge;
+  
+  // Can access quiz if they have premium access AND (not a challenge novel OR they've joined the challenge)
+  const canAccessQuiz = hasPremiumAccess && !challengeBlocked;
 
   // Determine chapter status based on try data
   const getTryStatus = () => {
@@ -120,13 +140,19 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
               Free
             </Badge>
           )}
-          {!canAccess && (
+          {!hasPremiumAccess && (
             <Badge variant="destructive" className="bg-gray-100 text-gray-600">
               <Lock className="mr-1 h-3 w-3" />
               Premium
             </Badge>
           )}
-          {canAccess && getTryBadge()}
+          {challengeBlocked && hasPremiumAccess && (
+            <Badge variant="secondary" className="bg-amber-100 text-amber-800">
+              <Trophy className="mr-1 h-3 w-3" />
+              Challenge Required
+            </Badge>
+          )}
+          {canAccessQuiz && getTryBadge()}
         </div>
 
         {/* Progress bars below badges */}
@@ -179,9 +205,15 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
               </div>
             )}
 
-          {!canAccess && (
+          {!hasPremiumAccess && (
             <div className="text-sm text-gray-500 italic">
               Upgrade to premium to access this chapter
+            </div>
+          )}
+          
+          {challengeBlocked && hasPremiumAccess && (
+            <div className="text-sm text-amber-600 italic">
+              Join the monthly challenge to start this quiz
             </div>
           )}
         </div>
@@ -191,30 +223,66 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
           <Button
             className="w-full"
             variant={tryStatus === "available" ? "outline" : "default"}
-            disabled={!canAccess}
+            disabled={!hasPremiumAccess}
+            onClick={(e) => {
+              if (challengeBlocked) {
+                e.preventDefault();
+                setChallengeDialogOpen(true);
+              }
+            }}
           >
-            {canAccess
-              ? tryStatus === "first-try-completed"
-                ? "Second Try"
-                : tryStatus === "second-try-completed"
-                  ? "Retry"
-                  : "Start Quiz"
-              : "Premium Required"}
+            {!hasPremiumAccess
+              ? "Premium Required"
+              : challengeBlocked
+              ? "Join Challenge to Start"
+              : tryStatus === "first-try-completed"
+              ? "Second Try"
+              : tryStatus === "second-try-completed"
+              ? "Retry"
+              : "Start Quiz"}
           </Button>
         </div>
       </CardContent>
     </Card>
   );
 
-  return canAccess ? (
-    <Link
-      href={`/novel/${arId}/${novelId}/${chapter.id}`}
-      className="block transition-transform hover:scale-105"
-    >
-      {cardContent}
-    </Link>
-  ) : (
-    <div className="cursor-not-allowed opacity-60">{cardContent}</div>
+  const handleCardClick = (e: React.MouseEvent) => {
+    if (challengeBlocked) {
+      e.preventDefault();
+      setChallengeDialogOpen(true);
+    }
+  };
+
+  return (
+    <>
+      {canAccessQuiz ? (
+        <Link
+          href={`/novel/${arId}/${novelId}/${chapter.id}`}
+          className="block transition-transform hover:scale-105"
+        >
+          {cardContent}
+        </Link>
+      ) : hasPremiumAccess && challengeBlocked ? (
+        <div 
+          className="block cursor-pointer transition-transform hover:scale-105"
+          onClick={handleCardClick}
+        >
+          {cardContent}
+        </div>
+      ) : (
+        <div className="cursor-not-allowed opacity-60">{cardContent}</div>
+      )}
+      
+      <ChallengeRequiredDialog
+        open={challengeDialogOpen}
+        onOpenChange={setChallengeDialogOpen}
+        levelType="AR"
+        levelId={arId}
+        levelName={arLevel}
+        contentName={novelTitle}
+        contentType="novel"
+      />
+    </>
   );
 };
 

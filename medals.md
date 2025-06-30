@@ -617,6 +617,7 @@ function getCurrentYearMonth() {
   - [x] `finalizeEndedChallenges()` - Award medals for ended challenges
   - [x] `createMonthlyWinnerPopups()` - Create winner announcement popups
   - [x] `activateScheduledChallenges()` - Activate challenges for new month
+  - [x] `unlockPreviousMonthLevels()` - Clear user level locks from previous month
   - [x] Comprehensive logging and error handling
 - [x] Create PM2 ecosystem configuration for running app + cron together
   - [x] `ecosystem.config.js` - PM2 configuration file
@@ -653,6 +654,7 @@ npm run stop
 1. Finalize any ended challenges and award medals
 2. Create winner popups for the previous month
 3. Activate any scheduled challenges for the current month
+4. Unlock all user level locks from the previous month
 
 ### Phase 8: Integration & Testing ✅ **COMPLETED**
 - [x] Update user profile to display medal counts (integrated in user stats)
@@ -676,6 +678,17 @@ npm run stop
 - [ ] Create admin guide for medal management
 - [ ] Add medal-related environment variables if needed
 - [ ] Deploy and monitor initial rollout
+
+### Phase 11: Bug Fixes & Improvements ✅ **COMPLETED**
+- [x] **Fixed Monthly Score Tracking** - Only award monthly scores to users who have locked in
+  - [x] Updated `completeQuestionAction` in Novel quiz to check `!lockCheck.shouldCreateLock`
+  - [x] Updated `submitRCAnswer` in RC quiz to check `!lockCheck.shouldCreateLock`
+  - [x] Ensures users must click "Join Monthly Challenge" before earning monthly points
+- [x] **Added Monthly Level Lock Reset** - Unlock all user levels at month transition
+  - [x] Created `getPreviousKoreaYearMonth()` helper function
+  - [x] Added `unlockPreviousMonthLevels()` to medal assignment job
+  - [x] Automatically clears previous month's locks when new month begins
+  - [x] Allows users to select new levels for new month's challenges
 
 ## Architecture Guidelines
 

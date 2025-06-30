@@ -3,6 +3,8 @@ enum NotificationType {
   RC
   ANNOUNCEMENT
   LEVEL_CHANGE
+  SUBSCRIPTION_EXPIRED
+  SUBSCRIPTION_EXPIRING
   // Add other notification types here if needed
 }
 
@@ -17,8 +19,13 @@ model Notification {
   title   String
   message String
 
+  actionUrl String? // URL to redirect when notification is clicked
+
   isRead Boolean @default(false)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+  
+  @@index([userId, isRead])
+  @@index([userId, type])
 }

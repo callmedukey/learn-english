@@ -404,6 +404,7 @@ async function RCKeywords({
               key={keyword.id}
               keyword={keyword}
               rcLevelId={rcLevelId}
+              rcLevelName={rcLevel.level}
               userId={userId}
               hasPaidSubscription={hasPaidSubscription}
               isMonthlyChallenge={

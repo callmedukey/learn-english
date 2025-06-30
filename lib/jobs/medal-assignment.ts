@@ -5,7 +5,7 @@ import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import { PopupType } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
-import { getCurrentKoreaYearMonth } from "./medal-queries-standalone";
+import { getCurrentKoreaYearMonth, getPreviousKoreaYearMonth } from "./medal-queries-standalone";
 
 /**
  * Main job function that orchestrates all medal-related tasks
@@ -32,11 +32,16 @@ export async function runMedalAssignmentJob() {
     const activatedCount = await activateScheduledChallenges();
     console.log(`Activated ${activatedCount} scheduled challenges`);
 
+    // 4. Unlock previous month's level locks
+    const unlockedCount = await unlockPreviousMonthLevels();
+    console.log(`Unlocked ${unlockedCount} user level locks`);
+
     console.log("=== Medal Assignment Job Completed Successfully ===");
     return {
       success: true,
       medalizedChallenges: medalResults.length,
       activatedChallenges: activatedCount,
+      unlockedLevels: unlockedCount,
     };
   } catch (error) {
     console.error("Medal Assignment Job failed:", error);
@@ -340,6 +345,28 @@ async function activateScheduledChallenges() {
       `- Activated ${challenge.levelType} ${challenge.levelId} challenge`,
     );
   }
+
+  return result.count;
+}
+
+/**
+ * Unlock user level locks from the previous month
+ * This allows users to select new levels for the new month's challenges
+ */
+async function unlockPreviousMonthLevels() {
+  const { year, month } = getPreviousKoreaYearMonth();
+
+  console.log(`Unlocking user levels from ${year}-${month}`);
+
+  // Delete all level locks from the previous month
+  const result = await prisma.userLevelLock.deleteMany({
+    where: {
+      year,
+      month,
+    },
+  });
+
+  console.log(`Unlocked ${result.count} user level locks from ${year}-${month}`);
 
   return result.count;
 }

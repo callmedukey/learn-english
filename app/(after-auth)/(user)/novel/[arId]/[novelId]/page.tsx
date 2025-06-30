@@ -7,6 +7,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { getUserLevelLock } from "@/server-queries/level-locks";
+import { getActiveChallengeItems } from "@/server-queries/medals";
 
 import ChapterCard from "./components/chapter-card";
 import { getNovelDetails } from "./query/novel-details.query";
@@ -36,6 +38,14 @@ async function NovelContent({
   if (!novel) {
     notFound();
   }
+
+  // Check if this novel is part of a monthly challenge
+  const challengeNovelIds = novel.AR ? await getActiveChallengeItems("AR", novel.AR.id) : [];
+  const isMonthlyChallenge = challengeNovelIds?.includes(novelId) || false;
+  
+  // Check user's level lock status
+  const userLevelLock = await getUserLevelLock(session.user.id, "AR");
+  const userJoinedChallenge = userLevelLock?.levelId === novel.AR?.id;
 
   const totalChapters = novel.novelChapters.length;
   const completedChapters = novel.novelChapters.filter(
@@ -154,7 +164,11 @@ async function NovelContent({
                 chapter={chapter}
                 arId={arId}
                 novelId={novelId}
+                novelTitle={novel.title}
+                arLevel={novel.AR?.level || ""}
                 userHasPaidSubscription={session.user.hasPaidSubscription}
+                isMonthlyChallenge={isMonthlyChallenge}
+                userJoinedChallenge={userJoinedChallenge}
               />
             ))}
           </div>

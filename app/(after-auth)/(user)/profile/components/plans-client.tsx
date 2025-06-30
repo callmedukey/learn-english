@@ -1,6 +1,7 @@
 "use client";
 
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
+import { useRouter } from "next/navigation";
 import { useState, useEffect, useTransition } from "react";
 import { toast } from "sonner";
 
@@ -14,6 +15,7 @@ import { calculatePriceWithCouponAction } from "../actions/coupon.actions";
 import {
   createPaymentAction,
   deletePaymentAction,
+  createFreeSubscriptionAction,
 } from "../actions/payment.actions";
 
 interface PlansClientProps {
@@ -33,6 +35,7 @@ export default function PlansClient({
   userName,
 }: PlansClientProps) {
   console.log(userId, userEmail, userName);
+  const router = useRouter();
   const [selectedPlanId, setSelectedPlanId] = useState<string | null>(null);
   const [appliedCoupon, setAppliedCoupon] = useState<DiscountCoupon | null>(
     null,
@@ -91,13 +94,45 @@ export default function PlansClient({
   };
 
   const handleConfirmPayment = async () => {
-    if (!selectedPlan || !tossPayments) {
+    if (!selectedPlan) {
       toast.error("Please select a plan and try again");
       return;
     }
 
     startTransition(async () => {
       try {
+        // Check if this is a free subscription (full discount)
+        if (priceCalculation.finalPrice === 0) {
+          if (!appliedCoupon) {
+            toast.error("A coupon is required for free subscriptions");
+            return;
+          }
+
+          // Handle free subscription flow
+          const freeSubResult = await createFreeSubscriptionAction({
+            userId,
+            planId: selectedPlan.id,
+            couponCode: appliedCoupon.code,
+            customerEmail: userEmail,
+            customerName: userName,
+          });
+
+          if (!freeSubResult.success) {
+            toast.error(freeSubResult.error || "Failed to create free subscription");
+            return;
+          }
+
+          // Redirect to free success page
+          router.push(`/profile/free-success?orderId=${freeSubResult.payment!.orderId}`);
+          return;
+        }
+
+        // Regular payment flow (amount > 0)
+        if (!tossPayments) {
+          toast.error("Payment system not initialized. Please refresh and try again.");
+          return;
+        }
+
         // Create payment record
         const paymentResult = await createPaymentAction({
           userId,
