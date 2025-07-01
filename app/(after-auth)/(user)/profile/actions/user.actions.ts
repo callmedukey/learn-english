@@ -26,6 +26,20 @@ const updateGenderSchema = z.object({
 
 export type UpdateGenderType = z.infer<typeof updateGenderSchema>;
 
+const updateBirthdaySchema = z.object({
+  birthday: z.date().refine(
+    (date) => {
+      const age = new Date().getFullYear() - date.getFullYear();
+      return age >= 13;
+    },
+    {
+      message: "You must be at least 13 years old",
+    }
+  ),
+});
+
+export type UpdateBirthdayType = z.infer<typeof updateBirthdaySchema>;
+
 export async function changePassword(userId: string, data: ChangePasswordType) {
   try {
     // Validate the input
@@ -132,6 +146,61 @@ export async function updateGender(userId: string, data: UpdateGenderType) {
     };
   } catch (error) {
     console.error("Error updating gender:", error);
+    return {
+      success: false,
+      error: "An unexpected error occurred",
+    };
+  }
+}
+
+export async function updateBirthday(userId: string, data: UpdateBirthdayType) {
+  try {
+    // Validate the input
+    const parsed = updateBirthdaySchema.safeParse(data);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: "Invalid birthday value",
+        fieldErrors: parsed.error.flatten().fieldErrors,
+      };
+    }
+
+    // Get the current user to check if they can update birthday
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { birthdayChangedAt: true },
+    });
+
+    if (!user) {
+      return {
+        success: false,
+        error: "User not found",
+      };
+    }
+
+    // Check if user has already changed their birthday
+    if (user.birthdayChangedAt !== null) {
+      return {
+        success: false,
+        error: "Birthday can only be changed once",
+      };
+    }
+
+    // Update the birthday and mark it as changed
+    await prisma.user.update({
+      where: { id: userId },
+      data: { 
+        birthday: parsed.data.birthday,
+        birthdayChangedAt: new Date(),
+      },
+    });
+
+    return {
+      success: true,
+      message: "Birthday updated successfully",
+    };
+  } catch (error) {
+    console.error("Error updating birthday:", error);
     return {
       success: false,
       error: "An unexpected error occurred",

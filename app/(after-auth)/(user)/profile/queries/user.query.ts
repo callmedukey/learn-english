@@ -9,6 +9,8 @@ export async function getUserSettings(userId: string) {
       nickname: true,
       email: true,
       gender: true,
+      birthday: true,
+      birthdayChangedAt: true,
       accounts: {
         select: {
           provider: true,
@@ -27,11 +29,16 @@ export async function getUserSettings(userId: string) {
   // Check if gender can be edited (null or "Other")
   const canEditGender = user.gender === null || user.gender === "Other";
 
+  // Check if birthday can be edited (never changed before)
+  const canEditBirthday = user.birthdayChangedAt === null;
+
   return {
     nickname: user.nickname,
     email: user.email,
     gender: user.gender,
+    birthday: user.birthday,
     isCredentialsUser: !hasOAuthAccounts,
     canEditGender,
+    canEditBirthday,
   };
 }

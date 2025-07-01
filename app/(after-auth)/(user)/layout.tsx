@@ -13,7 +13,6 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
   if (!session) {
     redirect("/login");
   }
-
   // Check if user profile is complete
   if (!session.user.profileComplete) {
     redirect(getIncompleteProfileRedirect(session.user.email));

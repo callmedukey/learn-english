@@ -17,6 +17,7 @@ model User {
   email     String    @unique
   gender    Gender?
   birthday  DateTime?
+  birthdayChangedAt DateTime?
   password  String?
   countryId String?
   country   Country?  @relation(fields: [countryId], references: [id], onDelete: SetNull)
