@@ -41,9 +41,9 @@ import {
 import { cn } from "@/lib/utils";
 import { Gender } from "@/prisma/generated/prisma";
 
+import PasswordChangeForm from "./password-change-form";
 import { updateBirthday, updateGender } from "../../actions/user.actions";
 import { getUserSettings } from "../../queries/user.query";
-import PasswordChangeForm from "./password-change-form";
 
 interface UserSettings {
   nickname: string | null;
@@ -69,12 +69,14 @@ export default function SettingsContentWrapper({
     userSettings.gender,
   );
   const [isUpdatingGender, setIsUpdatingGender] = useState(false);
-  
+
   const [selectedBirthday, setSelectedBirthday] = useState<Date | undefined>(
     userSettings.birthday ? new Date(userSettings.birthday) : undefined,
   );
-  const [showBirthdayConfirmDialog, setShowBirthdayConfirmDialog] = useState(false);
-  const [showBirthdaySuccessDialog, setShowBirthdaySuccessDialog] = useState(false);
+  const [showBirthdayConfirmDialog, setShowBirthdayConfirmDialog] =
+    useState(false);
+  const [showBirthdaySuccessDialog, setShowBirthdaySuccessDialog] =
+    useState(false);
   const [isUpdatingBirthday, setIsUpdatingBirthday] = useState(false);
 
   const handleGenderUpdate = async () => {
@@ -111,7 +113,9 @@ export default function SettingsContentWrapper({
     setShowBirthdayConfirmDialog(false);
 
     try {
-      const result = await updateBirthday(userId, { birthday: selectedBirthday });
+      const result = await updateBirthday(userId, {
+        birthday: selectedBirthday,
+      });
 
       if (result.success) {
         // Refresh user settings
@@ -130,8 +134,11 @@ export default function SettingsContentWrapper({
     }
   };
 
-  const hasBirthdayChanged = selectedBirthday?.toDateString() !== 
-    (userSettings.birthday ? new Date(userSettings.birthday).toDateString() : undefined);
+  const hasBirthdayChanged =
+    selectedBirthday?.toDateString() !==
+    (userSettings.birthday
+      ? new Date(userSettings.birthday).toDateString()
+      : undefined);
 
   const handleCalendarChange = (
     _value: string | number,
@@ -242,11 +249,13 @@ export default function SettingsContentWrapper({
                       variant="outline"
                       className={cn(
                         "flex-1 justify-start text-left font-normal",
-                        !selectedBirthday && "text-muted-foreground"
+                        !selectedBirthday && "text-muted-foreground",
                       )}
                     >
                       <CalendarIcon className="mr-2 h-4 w-4" />
-                      {selectedBirthday ? format(selectedBirthday, "PPP") : "Select your birthday"}
+                      {selectedBirthday
+                        ? format(selectedBirthday, "PPP")
+                        : "Select your birthday"}
                     </Button>
                   </PopoverTrigger>
                   <PopoverContent className="w-auto p-0" align="start">
@@ -304,7 +313,9 @@ export default function SettingsContentWrapper({
                 <Button
                   onClick={() => setShowBirthdayConfirmDialog(true)}
                   disabled={
-                    isUpdatingBirthday || !selectedBirthday || !hasBirthdayChanged
+                    isUpdatingBirthday ||
+                    !selectedBirthday ||
+                    !hasBirthdayChanged
                   }
                   size="sm"
                   className="px-4"
@@ -315,7 +326,11 @@ export default function SettingsContentWrapper({
             ) : (
               <Input
                 id="birthday"
-                value={userSettings.birthday ? format(new Date(userSettings.birthday), "PPP") : "Not specified"}
+                value={
+                  userSettings.birthday
+                    ? format(new Date(userSettings.birthday), "PPP")
+                    : "Not specified"
+                }
                 readOnly
                 disabled
                 className="mt-1 bg-gray-50"
@@ -333,19 +348,24 @@ export default function SettingsContentWrapper({
       )}
 
       {/* Birthday Confirmation Dialog */}
-      <AlertDialog open={showBirthdayConfirmDialog} onOpenChange={setShowBirthdayConfirmDialog}>
+      <AlertDialog
+        open={showBirthdayConfirmDialog}
+        onOpenChange={setShowBirthdayConfirmDialog}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Confirm Birthday Change</AlertDialogTitle>
             <AlertDialogDescription asChild>
               <div className="space-y-2">
                 <p className="font-medium text-amber-600">
-                  ⚠️ Important: You can only change your birthday once. This action cannot be undone.
+                  ⚠️ Important: You can only change your birthday once. This
+                  action cannot be undone.
                 </p>
                 <p>
                   You are about to set your birthday to:{" "}
                   <span className="font-medium">
-                    {selectedBirthday && format(selectedBirthday, "MMMM d, yyyy")}
+                    {selectedBirthday &&
+                      format(selectedBirthday, "MMMM d, yyyy")}
                   </span>
                 </p>
                 <p>Please make sure this is correct before confirming.</p>
@@ -365,12 +385,16 @@ export default function SettingsContentWrapper({
       </AlertDialog>
 
       {/* Birthday Success Dialog */}
-      <AlertDialog open={showBirthdaySuccessDialog} onOpenChange={setShowBirthdaySuccessDialog}>
+      <AlertDialog
+        open={showBirthdaySuccessDialog}
+        onOpenChange={setShowBirthdaySuccessDialog}
+      >
         <AlertDialogContent>
           <AlertDialogHeader>
             <AlertDialogTitle>Birthday Updated Successfully</AlertDialogTitle>
             <AlertDialogDescription>
-              Your birthday has been updated. Remember, this was a one-time change and cannot be modified again.
+              Your birthday has been updated. Remember, this was a one-time
+              change and cannot be modified again.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
