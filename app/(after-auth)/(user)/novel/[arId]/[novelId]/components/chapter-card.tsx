@@ -5,7 +5,6 @@ import Link from "next/link";
 import React, { useState } from "react";
 
 import { ChallengeRequiredDialog } from "@/components/dialogs/challenge-required-dialog";
-import { LevelChangeRequestDialog } from "@/components/dialogs/level-change-request-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -49,13 +48,10 @@ interface ChapterCardProps {
   arLevel: string;
   userHasPaidSubscription?: boolean;
   isMonthlyChallenge?: boolean;
-  userJoinedChallenge?: boolean;
   userLevelLock?: {
     levelId: string;
     levelType: string;
   } | null;
-  userCurrentLevelName?: string;
-  hasPendingRequest?: boolean;
 }
 
 const ChapterCard: React.FC<ChapterCardProps> = ({
@@ -66,21 +62,18 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
   arLevel,
   userHasPaidSubscription = false,
   isMonthlyChallenge = false,
-  userJoinedChallenge = false,
   userLevelLock,
-  userCurrentLevelName = "",
-  hasPendingRequest = false,
 }) => {
   const [challengeDialogOpen, setChallengeDialogOpen] = useState(false);
-  const [levelChangeDialogOpen, setLevelChangeDialogOpen] = useState(false);
   
   // Check premium access first
   const hasPremiumAccess = chapter.isFree || userHasPaidSubscription;
   
-  // Check challenge access - if it's a challenge novel and user hasn't joined, they can't access quiz
-  const challengeBlocked = isMonthlyChallenge && !userJoinedChallenge;
+  // Check challenge access - if it's a challenge novel and user hasn't joined ANY challenge, show dialog
+  // Otherwise, allow access regardless of level
+  const challengeBlocked = isMonthlyChallenge && !userLevelLock;
   
-  // Can access quiz if they have premium access AND (not a challenge novel OR they've joined the challenge)
+  // Can access quiz if they have premium access AND (not a challenge novel OR they have joined some challenge)
   const canAccessQuiz = hasPremiumAccess && !challengeBlocked;
 
   // Determine chapter status based on try data
@@ -238,12 +231,7 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
             onClick={(e) => {
               if (challengeBlocked) {
                 e.preventDefault();
-                // Check if user has a level lock for a different level
-                if (userLevelLock && userLevelLock.levelId !== arId) {
-                  setLevelChangeDialogOpen(true);
-                } else {
-                  setChallengeDialogOpen(true);
-                }
+                setChallengeDialogOpen(true);
               }
             }}
           >
@@ -265,12 +253,7 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
   const handleCardClick = (e: React.MouseEvent) => {
     if (challengeBlocked) {
       e.preventDefault();
-      // Check if user has a level lock for a different level
-      if (userLevelLock && userLevelLock.levelId !== arId) {
-        setLevelChangeDialogOpen(true);
-      } else {
-        setChallengeDialogOpen(true);
-      }
+      setChallengeDialogOpen(true);
     }
   };
 
@@ -303,21 +286,6 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
         contentName={novelTitle}
         contentType="novel"
       />
-      
-      {userLevelLock && userLevelLock.levelId !== arId && (
-        <LevelChangeRequestDialog
-          open={levelChangeDialogOpen}
-          onOpenChange={setLevelChangeDialogOpen}
-          levelType="AR"
-          currentLevelId={userLevelLock.levelId}
-          currentLevelName={userCurrentLevelName}
-          targetLevelId={arId}
-          targetLevelName={arLevel}
-          contentName={novelTitle}
-          contentType="novel"
-          hasPendingRequest={hasPendingRequest}
-        />
-      )}
     </>
   );
 };

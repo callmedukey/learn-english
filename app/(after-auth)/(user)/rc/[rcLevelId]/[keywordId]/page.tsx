@@ -120,10 +120,9 @@ async function RCKeywordContent({
   
   // Check user's level lock status
   const userLevelLock = await getUserLevelLock(session.user.id, "RC");
-  const userJoinedChallenge = userLevelLock?.levelId === rcLevelId;
   
-  // Check challenge access
-  const challengeBlocked = isMonthlyChallenge && !userJoinedChallenge;
+  // Check challenge access - only block if it's a challenge keyword AND user hasn't joined ANY level
+  const challengeBlocked = isMonthlyChallenge && !userLevelLock;
   
   // Can access quiz if they have premium access AND (not a challenge keyword OR they've joined the challenge)
   // const canAccess = hasPremiumAccess && !challengeBlocked;

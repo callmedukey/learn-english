@@ -18,8 +18,8 @@ const CreateARPage = () => {
             </Button>
           </Link>
           <div>
-            <h1 className="text-2xl font-bold">Create AR Level</h1>
-            <p className="text-sm text-gray-600">Add a new AR Level</p>
+            <h1 className="text-2xl font-bold">Create Lexile Level</h1>
+            <p className="text-sm text-gray-600">Add a new Lexile Level</p>
           </div>
         </div>
       </div>

@@ -9,10 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
-import {
-  getUserLevelLock,
-  getUserLevelChangeRequests,
-} from "@/server-queries/level-locks";
+import { getUserLevelLock } from "@/server-queries/level-locks";
 import {
   getActiveChallengeItems,
   getCurrentKoreaYearMonth,
@@ -84,11 +81,11 @@ async function RCKeywords({
   const perPage = 30;
   const skip = (page - 1) * perPage;
 
-  // Build the orderBy clause - default to createdAt desc
-  const sortBy = searchParams.sortBy || "createdAt";
-  const sortOrder = searchParams.sortOrder || "desc";
+  // Build the orderBy clause - default to name asc
+  const sortBy = searchParams.sortBy || "name";
+  const sortOrder = searchParams.sortOrder || "asc";
 
-  let orderBy: any = { createdAt: "desc" };
+  let orderBy: any = { name: "asc" };
 
   switch (sortBy) {
     case "name":
@@ -98,7 +95,7 @@ async function RCKeywords({
       orderBy = { createdAt: sortOrder };
       break;
     default:
-      orderBy = { createdAt: "desc" };
+      orderBy = { name: "asc" };
   }
 
   // First, get the RC Level info
@@ -133,23 +130,7 @@ async function RCKeywords({
 
   // Get user's level lock if they're logged in
   const userLevelLock = userId ? await getUserLevelLock(userId, "RC") : null;
-  const pendingRequests = userId
-    ? await getUserLevelChangeRequests(userId)
-    : [];
-  const pendingRequest = pendingRequests.find(
-    (req) => req.status === "PENDING",
-  );
-  const hasPendingRequest = !!pendingRequest;
   
-  // Get user's current level name if they have a level lock
-  let userCurrentLevelName = "";
-  if (userLevelLock && userLevelLock.levelId !== rcLevelId) {
-    const userCurrentLevel = await prisma.rCLevel.findUnique({
-      where: { id: userLevelLock.levelId },
-      select: { level: true },
-    });
-    userCurrentLevelName = userCurrentLevel ? `RC Level ${userCurrentLevel.level}` : "";
-  }
 
   // Get 5 FREE keywords to pin at the top
   const freeKeywords = await prisma.rCKeyword.findMany({
@@ -358,8 +339,6 @@ async function RCKeywords({
             currentMonth={currentMonthName}
             currentYear={currentYear}
             userLevelLock={userLevelLock}
-            hasPendingRequest={hasPendingRequest}
-            pendingRequestId={pendingRequest?.id}
           />
         </div>
 
@@ -420,10 +399,7 @@ async function RCKeywords({
               isMonthlyChallenge={
                 challengeKeywordIds?.includes(keyword.id) || false
               }
-              userJoinedChallenge={userLevelLock?.levelId === rcLevelId}
               userLevelLock={userLevelLock}
-              userCurrentLevelName={userCurrentLevelName}
-              hasPendingRequest={hasPendingRequest}
             />
           ))}
         </div>

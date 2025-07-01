@@ -35,9 +35,9 @@ export function RCKeywordFilters({ rcLevelId }: RCKeywordFiltersProps) {
   const [searchInput, setSearchInput] = useState(
     searchParams.get("search") || "",
   );
-  const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "createdAt");
+  const [sortBy, setSortBy] = useState(searchParams.get("sortBy") || "name");
   const [sortOrder, setSortOrder] = useState(
-    searchParams.get("sortOrder") || "desc",
+    searchParams.get("sortOrder") || "asc",
   );
   const [status, setStatus] = useState(searchParams.get("status") || "all");
 
@@ -49,8 +49,8 @@ export function RCKeywordFilters({ rcLevelId }: RCKeywordFiltersProps) {
 
   const hasActiveFilters =
     searchInput.trim() !== "" ||
-    sortBy !== "createdAt" ||
-    sortOrder !== "desc" ||
+    sortBy !== "name" ||
+    sortOrder !== "asc" ||
     status !== "all";
 
   const updateFilters = useCallback(
@@ -64,11 +64,11 @@ export function RCKeywordFilters({ rcLevelId }: RCKeywordFiltersProps) {
         params.set("search", searchValue.trim());
       }
 
-      if (sortBy !== "createdAt") {
+      if (sortBy !== "name") {
         params.set("sortBy", sortBy);
       }
 
-      if (sortOrder !== "desc") {
+      if (sortOrder !== "asc") {
         params.set("sortOrder", sortOrder);
       }
 
@@ -101,8 +101,8 @@ export function RCKeywordFilters({ rcLevelId }: RCKeywordFiltersProps) {
 
   const clearFilters = () => {
     setSearchInput("");
-    setSortBy("createdAt");
-    setSortOrder("desc");
+    setSortBy("name");
+    setSortOrder("asc");
     setStatus("all");
     router.push(`/rc/${rcLevelId}`);
   };

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getUserLevelLock, getUserLevelChangeRequests } from "@/server-queries/level-locks";
+import { getUserLevelLock } from "@/server-queries/level-locks";
 import { getActiveChallengeItems } from "@/server-queries/medals";
 
 import ChapterCard from "./components/chapter-card";
@@ -45,22 +45,6 @@ async function NovelContent({
   
   // Check user's level lock status
   const userLevelLock = await getUserLevelLock(session.user.id, "AR");
-  const userJoinedChallenge = userLevelLock?.levelId === novel.AR?.id;
-  
-  // Get user's current level name if they have a level lock for a different level
-  let userCurrentLevelName = "";
-  if (userLevelLock && userLevelLock.levelId !== novel.AR?.id) {
-    const { prisma } = await import("@/prisma/prisma-client");
-    const userCurrentLevel = await prisma.aR.findUnique({
-      where: { id: userLevelLock.levelId },
-      select: { level: true },
-    });
-    userCurrentLevelName = userCurrentLevel ? `AR Level ${userCurrentLevel.level}` : "";
-  }
-  
-  // Check for pending level change requests
-  const pendingRequests = await getUserLevelChangeRequests(session.user.id);
-  const hasPendingRequest = pendingRequests.some(req => req.status === "PENDING");
 
   const totalChapters = novel.novelChapters.length;
   const completedChapters = novel.novelChapters.filter(
@@ -183,10 +167,7 @@ async function NovelContent({
                 arLevel={novel.AR?.level || ""}
                 userHasPaidSubscription={session.user.hasPaidSubscription}
                 isMonthlyChallenge={isMonthlyChallenge}
-                userJoinedChallenge={userJoinedChallenge}
                 userLevelLock={userLevelLock}
-                userCurrentLevelName={userCurrentLevelName}
-                hasPendingRequest={hasPendingRequest}
               />
             ))}
           </div>

@@ -3,12 +3,7 @@ import { toZonedTime } from "date-fns-tz";
 import { CheckCircle, XCircle, Clock, RefreshCw } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -26,13 +21,13 @@ import ActionButtons from "./action-buttons";
 
 async function getLevelInfo(levelType: string, levelId: string) {
   const { prisma } = await import("@/prisma/prisma-client");
-  
+
   if (levelType === "AR") {
     const ar = await prisma.aR.findUnique({
       where: { id: levelId },
       select: { level: true, score: true },
     });
-    return ar ? `AR ${ar.level} (${ar.score}점)` : "Unknown";
+    return ar ? `Lexile ${ar.level} (${ar.score}점)` : "Unknown";
   } else {
     const rcLevel = await prisma.rCLevel.findUnique({
       where: { id: levelId },
@@ -47,7 +42,7 @@ async function RequestsTable({ status }: { status?: ChangeRequestStatus }) {
 
   if (requests.length === 0) {
     return (
-      <div className="text-center py-8 text-muted-foreground">
+      <div className="py-8 text-center text-muted-foreground">
         No {status ? status.toLowerCase() : ""} requests found.
       </div>
     );
@@ -72,11 +67,11 @@ async function RequestsTable({ status }: { status?: ChangeRequestStatus }) {
           requests.map(async (request) => {
             const fromLevel = await getLevelInfo(
               request.levelType,
-              request.fromLevelId
+              request.fromLevelId,
             );
             const toLevel = await getLevelInfo(
               request.levelType,
-              request.toLevelId
+              request.toLevelId,
             );
 
             return (
@@ -94,11 +89,13 @@ async function RequestsTable({ status }: { status?: ChangeRequestStatus }) {
                 <TableCell>
                   {format(
                     toZonedTime(request.createdAt, APP_TIMEZONE),
-                    "yyyy-MM-dd HH:mm"
+                    "yyyy-MM-dd HH:mm",
                   )}
                 </TableCell>
                 <TableCell>
-                  <Badge variant="outline">{request.levelType}</Badge>
+                  <Badge variant="outline">
+                    {request.levelType === "AR" ? "Lexile" : "RC"}
+                  </Badge>
                 </TableCell>
                 <TableCell>{fromLevel}</TableCell>
                 <TableCell className="font-medium">{toLevel}</TableCell>
@@ -108,19 +105,19 @@ async function RequestsTable({ status }: { status?: ChangeRequestStatus }) {
                 <TableCell>
                   {request.status === "PENDING" && (
                     <Badge variant="default" className="bg-yellow-500">
-                      <Clock className="h-3 w-3 mr-1" />
+                      <Clock className="mr-1 h-3 w-3" />
                       Pending
                     </Badge>
                   )}
                   {request.status === "APPROVED" && (
                     <Badge variant="default" className="bg-green-600">
-                      <CheckCircle className="h-3 w-3 mr-1" />
+                      <CheckCircle className="mr-1 h-3 w-3" />
                       Approved
                     </Badge>
                   )}
                   {request.status === "REJECTED" && (
                     <Badge variant="destructive">
-                      <XCircle className="h-3 w-3 mr-1" />
+                      <XCircle className="mr-1 h-3 w-3" />
                       Rejected
                     </Badge>
                   )}
@@ -134,7 +131,7 @@ async function RequestsTable({ status }: { status?: ChangeRequestStatus }) {
                         <div>
                           {format(
                             toZonedTime(request.reviewedAt, APP_TIMEZONE),
-                            "MM/dd HH:mm"
+                            "MM/dd HH:mm",
                           )}
                         </div>
                       )}
@@ -146,7 +143,7 @@ async function RequestsTable({ status }: { status?: ChangeRequestStatus }) {
                 </TableCell>
               </TableRow>
             );
-          })
+          }),
         )}
       </TableBody>
     </Table>
@@ -155,15 +152,19 @@ async function RequestsTable({ status }: { status?: ChangeRequestStatus }) {
 
 export default async function LevelChangesPage() {
   const allRequests = await getLevelChangeRequests();
-  
-  const pendingCount = allRequests.filter(r => r.status === "PENDING").length;
-  const approvedCount = allRequests.filter(r => r.status === "APPROVED").length;
-  const rejectedCount = allRequests.filter(r => r.status === "REJECTED").length;
+
+  const pendingCount = allRequests.filter((r) => r.status === "PENDING").length;
+  const approvedCount = allRequests.filter(
+    (r) => r.status === "APPROVED",
+  ).length;
+  const rejectedCount = allRequests.filter(
+    (r) => r.status === "REJECTED",
+  ).length;
 
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight flex items-center gap-2">
+        <h1 className="flex items-center gap-2 text-3xl font-bold tracking-tight">
           <RefreshCw className="h-8 w-8" />
           Level Change Requests
         </h1>
@@ -172,7 +173,7 @@ export default async function LevelChangesPage() {
         </p>
       </div>
 
-      <div className="grid gap-4 md:grid-cols-3 mb-8">
+      <div className="mb-8 grid gap-4 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -182,9 +183,7 @@ export default async function LevelChangesPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{pendingCount}</div>
-            <p className="text-xs text-muted-foreground">
-              Awaiting review
-            </p>
+            <p className="text-xs text-muted-foreground">Awaiting review</p>
           </CardContent>
         </Card>
         <Card>
@@ -230,9 +229,7 @@ export default async function LevelChangesPage() {
               <TabsTrigger value="rejected">
                 Rejected ({rejectedCount})
               </TabsTrigger>
-              <TabsTrigger value="all">
-                All ({allRequests.length})
-              </TabsTrigger>
+              <TabsTrigger value="all">All ({allRequests.length})</TabsTrigger>
             </TabsList>
             <TabsContent value="pending" className="mt-6">
               <RequestsTable status="PENDING" />

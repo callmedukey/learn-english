@@ -281,7 +281,7 @@ export async function submitRCAnswer(
 
       // Use transaction for atomic updates
       await prisma.$transaction(async (tx) => {
-        // Create level lock if needed
+        // Create level lock if needed (only on first score in any level)
         if (lockCheck.shouldCreateLock) {
           await createUserLevelLock(session.user.id, "RC", rcLevelId);
         }
@@ -345,8 +345,9 @@ export async function submitRCAnswer(
           },
         });
 
-        // Only update monthly score if user is locked to this level
-        if (challenge && lockCheck.allowed && !lockCheck.shouldCreateLock) {
+        // Only update monthly score if user is locked to this exact level
+        // This means: user has a lock AND it's for the same level as the quiz
+        if (challenge && lockCheck.currentLevel === rcLevelId) {
           // Update monthly score for medal tracking
           await tx.monthlyRCScore.upsert({
             where: {

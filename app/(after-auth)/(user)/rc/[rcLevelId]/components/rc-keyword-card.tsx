@@ -6,7 +6,6 @@ import Link from "next/link";
 import { useState } from "react";
 
 import { ChallengeRequiredDialog } from "@/components/dialogs/challenge-required-dialog";
-import { LevelChangeRequestDialog } from "@/components/dialogs/level-change-request-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -60,13 +59,10 @@ interface RCKeywordCardProps {
   userId?: string;
   hasPaidSubscription?: boolean;
   isMonthlyChallenge?: boolean;
-  userJoinedChallenge?: boolean;
   userLevelLock?: {
     levelId: string;
     levelType: string;
   } | null;
-  userCurrentLevelName?: string;
-  hasPendingRequest?: boolean;
 }
 
 export function RCKeywordCard({
@@ -76,13 +72,9 @@ export function RCKeywordCard({
   userId,
   hasPaidSubscription,
   isMonthlyChallenge = false,
-  userJoinedChallenge = false,
   userLevelLock,
-  userCurrentLevelName = "",
-  hasPendingRequest = false,
 }: RCKeywordCardProps) {
   const [challengeDialogOpen, setChallengeDialogOpen] = useState(false);
-  const [levelChangeDialogOpen, setLevelChangeDialogOpen] = useState(false);
   // Calculate quiz attempt status
   let totalQuestions = 0;
   let firstTryData: { totalQuestions: number; correctAnswers: number } | null =
@@ -100,8 +92,9 @@ export function RCKeywordCard({
   const isQuestionSetActive = keyword.RCQuestionSet?.active === true;
   const hasQuestions = totalQuestions > 0;
 
-  // Check challenge access
-  const challengeBlocked = isMonthlyChallenge && !userJoinedChallenge;
+  // Check challenge access - if it's a challenge keyword and user hasn't joined ANY challenge, show dialog
+  // Otherwise, allow access regardless of level
+  const challengeBlocked = isMonthlyChallenge && !userLevelLock;
 
   // Determine status based on first/second try completion
   let status:
@@ -260,14 +253,14 @@ export function RCKeywordCard({
                   <Badge
                     variant="secondary"
                     className={`${
-                      userJoinedChallenge
+                      userLevelLock
                         ? "border-yellow-300 bg-yellow-100 text-yellow-800"
                         : "border-amber-300 bg-amber-50 text-amber-700"
                     }`}
                   >
                     <Trophy className="mr-1 h-3 w-3" />
                     Challenge
-                    {userJoinedChallenge ? (
+                    {userLevelLock ? (
                       <span className="ml-1 text-green-600">✓</span>
                     ) : (
                       <Info className="ml-1 h-3 w-3" />
@@ -275,10 +268,10 @@ export function RCKeywordCard({
                   </Badge>
                 </TooltipTrigger>
                 <TooltipContent>
-                  {userJoinedChallenge ? (
+                  {userLevelLock ? (
                     <p>
                       You&apos;ve joined this month&apos;s challenge! Points
-                      count toward medals.
+                      count toward medals{userLevelLock.levelId === rcLevelId ? '' : ' (only for your locked level)'}.
                     </p>
                   ) : (
                     <p>
@@ -374,12 +367,7 @@ export function RCKeywordCard({
             onClick={(e) => {
               if (challengeBlocked) {
                 e.preventDefault();
-                // Check if user has a level lock for a different level
-                if (userLevelLock && userLevelLock.levelId !== rcLevelId) {
-                  setLevelChangeDialogOpen(true);
-                } else {
-                  setChallengeDialogOpen(true);
-                }
+                setChallengeDialogOpen(true);
               }
             }}
           >
@@ -393,12 +381,7 @@ export function RCKeywordCard({
   const handleCardClick = (e: React.MouseEvent) => {
     if (challengeBlocked) {
       e.preventDefault();
-      // Check if user has a level lock for a different level
-      if (userLevelLock && userLevelLock.levelId !== rcLevelId) {
-        setLevelChangeDialogOpen(true);
-      } else {
-        setChallengeDialogOpen(true);
-      }
+      setChallengeDialogOpen(true);
     }
   };
 
@@ -425,21 +408,6 @@ export function RCKeywordCard({
         contentName={keyword.name}
         contentType="keyword"
       />
-      
-      {userLevelLock && userLevelLock.levelId !== rcLevelId && (
-        <LevelChangeRequestDialog
-          open={levelChangeDialogOpen}
-          onOpenChange={setLevelChangeDialogOpen}
-          levelType="RC"
-          currentLevelId={userLevelLock.levelId}
-          currentLevelName={userCurrentLevelName}
-          targetLevelId={rcLevelId}
-          targetLevelName={rcLevelName}
-          contentName={keyword.name}
-          contentType="keyword"
-          hasPendingRequest={hasPendingRequest}
-        />
-      )}
     </>
   );
 }

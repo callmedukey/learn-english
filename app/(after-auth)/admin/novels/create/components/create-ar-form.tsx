@@ -38,7 +38,10 @@ const CreateARForm = () => {
       formData.append("createChallenge", "true");
       formData.append("challengeYear", challengeSettings.year.toString());
       formData.append("challengeMonth", challengeSettings.month.toString());
-      formData.append("challengeScheduledActive", challengeSettings.scheduledActive.toString());
+      formData.append(
+        "challengeScheduledActive",
+        challengeSettings.scheduledActive.toString(),
+      );
     }
 
     startTransition(async () => {
@@ -62,22 +65,22 @@ const CreateARForm = () => {
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
-            <Label htmlFor="level">AR Level</Label>
+            <Label htmlFor="level">Lexile Level</Label>
             <Input
               id="level"
               name="level"
               type="text"
-              placeholder="AR Level 9"
+              placeholder="Lexile Level 9"
               required
               disabled={isPending}
             />
             <p className="mt-1 text-sm text-gray-500">
-              The reading level (e.g., AR Level 9)
+              The reading level (e.g., Lexile Level 9)
             </p>
           </div>
 
           <div>
-            <Label htmlFor="score">AR Score</Label>
+            <Label htmlFor="score">Lexile Score</Label>
             <Input
               id="score"
               name="score"
@@ -86,7 +89,7 @@ const CreateARForm = () => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">AR Score Range</p>
+            <p className="mt-1 text-sm text-gray-500">Lexile Score Range</p>
           </div>
         </div>
 
@@ -102,7 +105,7 @@ const CreateARForm = () => {
               disabled={isPending}
             />
             <p className="mt-1 text-sm text-gray-500">
-              Target grades for this AR level
+              Target grades for this Lexile level
             </p>
           </div>
 
@@ -138,7 +141,7 @@ const CreateARForm = () => {
               </SelectContent>
             </Select>
             <p className="mt-1 text-sm text-gray-500">
-              Default font size for this AR level
+              Default font size for this Lexile level
             </p>
           </div>
         </div>
@@ -148,23 +151,23 @@ const CreateARForm = () => {
           <Textarea
             id="description"
             name="description"
-            placeholder="Describe this AR level and what types of books it includes..."
+            placeholder="Describe this Lexile level and what types of books it includes..."
             rows={4}
             disabled={isPending}
           />
           <p className="mt-1 text-sm text-gray-500">
-            Optional description of this AR level
+            Optional description of this Lexile level
           </p>
         </div>
 
         <div>
-          <Label className="text-base font-semibold">Monthly Challenge Settings</Label>
+          <Label className="text-base font-semibold">
+            Monthly Challenge Settings
+          </Label>
           <p className="mb-3 text-sm text-gray-500">
-            Optionally create a monthly challenge for this AR level
+            Optionally create a monthly challenge for this Lexile level
           </p>
-          <ChallengeControls
-            onChallengeSettingsChange={setChallengeSettings}
-          />
+          <ChallengeControls onChallengeSettingsChange={setChallengeSettings} />
         </div>
 
         <div className="flex justify-end space-x-4">
@@ -177,7 +180,7 @@ const CreateARForm = () => {
             Cancel
           </Button>
           <Button type="submit" disabled={isPending}>
-            {isPending ? "Creating..." : "Create AR Record"}
+            {isPending ? "Creating..." : "Create Lexile Record"}
           </Button>
         </div>
       </form>

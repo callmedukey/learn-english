@@ -75,7 +75,7 @@ function UserStatsPopoverSkeleton() {
       <div className="space-y-3">
         <div>
           <div className="mb-1 text-xs font-semibold text-amber-900">
-            NOVEL (AR)
+            NOVEL (Lexile)
           </div>
           <div className="space-y-1">
             {[1, 2].map((i) => (

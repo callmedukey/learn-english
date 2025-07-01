@@ -75,11 +75,11 @@ async function ARNovels({
   const perPage = 30;
   const skip = (page - 1) * perPage;
 
-  // Build the orderBy clause - default to createdAt desc
-  const sortBy = searchParams.sortBy || "createdAt";
-  const sortOrder = searchParams.sortOrder || "desc";
+  // Build the orderBy clause - default to title asc
+  const sortBy = searchParams.sortBy || "title";
+  const sortOrder = searchParams.sortOrder || "asc";
 
-  let orderBy: any = { createdAt: "desc" };
+  let orderBy: any = { title: "asc" };
 
   switch (sortBy) {
     case "title":
@@ -93,7 +93,7 @@ async function ARNovels({
       orderBy = { createdAt: "desc" }; // Default sort for now
       break;
     default:
-      orderBy = { createdAt: "desc" };
+      orderBy = { title: "asc" };
   }
 
   // First, get the AR info
