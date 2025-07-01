@@ -37,11 +37,12 @@ const page = async ({ searchParams }: PageProps) => {
       select: {
         id: true,
         nickname: true,
+        birthday: true,
       },
     }),
   ]);
 
-  if (!user || user.nickname) {
+  if (!user || (user.nickname && user.birthday)) {
     redirect("/login");
   }
 

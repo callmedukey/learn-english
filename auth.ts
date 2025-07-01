@@ -8,6 +8,7 @@ import Kakao, { Gender } from "next-auth/providers/kakao";
 import Naver from "next-auth/providers/naver";
 
 import { signInSchema } from "./lib/schemas/auth.schema";
+import { getIncompleteProfileRedirect, isProfileComplete } from "./lib/utils/profile-validation";
 import { Role, SubscriptionStatus } from "./prisma/generated/prisma";
 import { prisma } from "./prisma/prisma-client";
 
@@ -24,6 +25,7 @@ declare module "next-auth" {
       country: string;
       role: Role;
       hasPaidSubscription: boolean;
+      profileComplete: boolean;
     } & DefaultSession["user"];
   }
 
@@ -38,6 +40,7 @@ declare module "next-auth" {
     birthday?: Date | null;
     country?: string | null;
     hasPaidSubscription?: boolean;
+    profileComplete?: boolean;
   }
 }
 
@@ -129,6 +132,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.birthday = token.birthday as Date;
       session.user.country = token.country as string;
       session.user.hasPaidSubscription = token.hasPaidSubscription as boolean;
+      session.user.profileComplete = token.profileComplete as boolean;
       return session;
     },
     async jwt({ token }) {
@@ -163,6 +167,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       const hasPaidSubscription = activeSubscriptions.length > 0;
       token.hasPaidSubscription = hasPaidSubscription;
+      
+      // Check if profile is complete
+      token.profileComplete = isProfileComplete(foundUser);
 
       return token;
     },
@@ -190,9 +197,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             type: account.type,
           },
         });
-        return "/signup/social?email=" + encodeURIComponent(user.email);
+        return getIncompleteProfileRedirect(user.email);
       } else if (!foundUser) {
         return "/signup";
+      }
+
+      // Check if existing user has complete profile
+      if (!isProfileComplete(foundUser)) {
+        return getIncompleteProfileRedirect(user.email);
       }
 
       return true;

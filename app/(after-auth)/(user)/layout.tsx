@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import React from "react";
 
 import { auth } from "@/auth";
+import { getIncompleteProfileRedirect } from "@/lib/utils/profile-validation";
 import { Role } from "@/prisma/generated/prisma";
 
 import Footer from "./components/footer";
@@ -11,6 +12,11 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
 
   if (!session) {
     redirect("/login");
+  }
+
+  // Check if user profile is complete
+  if (!session.user.profileComplete) {
+    redirect(getIncompleteProfileRedirect(session.user.email));
   }
 
   if (session.user.role === Role.ADMIN) {
