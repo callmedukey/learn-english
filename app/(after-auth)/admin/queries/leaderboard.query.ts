@@ -96,3 +96,75 @@ export async function getCountries(): Promise<CountryOption[]> {
 
   return countries;
 }
+
+export async function getMonthlyLeaderboardData(
+  countryId?: string,
+  year?: number,
+  month?: number,
+): Promise<LeaderboardUser[]> {
+  // Use current month/year if not provided
+  const now = new Date();
+  const targetYear = year || now.getFullYear();
+  const targetMonth = month || now.getMonth() + 1; // getMonth() returns 0-11
+
+  // Get users with their monthly scores
+  const users = await prisma.user.findMany({
+    where: countryId ? { countryId } : {},
+    include: {
+      country: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      monthlyARScores: {
+        where: {
+          year: targetYear,
+          month: targetMonth,
+        },
+      },
+      monthlyRCScores: {
+        where: {
+          year: targetYear,
+          month: targetMonth,
+        },
+      },
+    },
+  });
+
+  // Map and calculate monthly scores
+  const mappedUsers = users
+    .map((user) => {
+      const arScores = user.monthlyARScores.reduce((sum, score) => sum + score.score, 0);
+      const rcScores = user.monthlyRCScores.reduce((sum, score) => sum + score.score, 0);
+      const totalScore = arScores + rcScores;
+      const grade = calculateGrade(user.birthday);
+
+      return {
+        id: user.id,
+        nickname: user.nickname,
+        name: user.name,
+        email: user.email,
+        birthday: user.birthday,
+        grade,
+        country: user.country,
+        totalScore,
+        arScores,
+        rcScores,
+      };
+    })
+    .filter(user => user.totalScore > 0); // Only include users with scores this month
+
+  // Sort by total score (highest first), then by AR scores, then by RC scores, and take top 10
+  return mappedUsers
+    .sort((a, b) => {
+      if (b.totalScore !== a.totalScore) {
+        return b.totalScore - a.totalScore;
+      }
+      if (b.arScores !== a.arScores) {
+        return b.arScores - a.arScores;
+      }
+      return b.rcScores - a.rcScores;
+    })
+    .slice(0, 10);
+}

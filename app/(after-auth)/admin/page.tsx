@@ -2,18 +2,23 @@ import React, { Suspense } from "react";
 
 import LeaderboardClient from "./components/leaderboard-client";
 import LeaderboardStats from "./components/leaderboard-stats";
-import { getCountries, getLeaderboardData } from "./queries/leaderboard.query";
+import { getCountries, getLeaderboardData, getMonthlyLeaderboardData } from "./queries/leaderboard.query";
 
 async function LeaderboardData() {
-  const [users, countries] = await Promise.all([
+  const [users, monthlyUsers, countries] = await Promise.all([
     getLeaderboardData(),
+    getMonthlyLeaderboardData(),
     getCountries(),
   ]);
 
   return (
     <div className="space-y-8">
       <LeaderboardStats users={users} />
-      <LeaderboardClient initialUsers={users} countries={countries} />
+      <LeaderboardClient 
+        initialUsers={users} 
+        monthlyUsers={monthlyUsers}
+        countries={countries} 
+      />
     </div>
   );
 }

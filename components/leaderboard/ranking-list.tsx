@@ -47,17 +47,9 @@ export function RankingList({ rankings, currentUserId }: RankingListProps) {
                     : "hover:bg-gray-50"
                 }`}
               >
-                {/* Rank with Medal Icon */}
+                {/* Rank */}
                 <div className="w-6 flex items-center justify-center">
-                  {item.rank === 1 ? (
-                    <Medal className="h-5 w-5 text-yellow-500" />
-                  ) : item.rank === 2 ? (
-                    <Medal className="h-5 w-5 text-gray-400" />
-                  ) : item.rank === 3 ? (
-                    <Medal className="h-5 w-5 text-amber-600" />
-                  ) : (
-                    <span className="font-bold text-gray-600">{item.rank}</span>
-                  )}
+                  <span className="font-bold text-gray-600">{item.rank}</span>
                 </div>
 
                 {/* User Info */}

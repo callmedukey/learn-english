@@ -7,6 +7,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 import { MonthlyGradeRanking } from "./monthly-grade-ranking";
 import { MonthlyOverallRanking } from "./monthly-overall-ranking";
+import { MonthlyTotalGradeRanking } from "./monthly-total-grade-ranking";
+import { MonthlyTotalOverallRanking } from "./monthly-total-overall-ranking";
 import { MonthlyUserStats } from "./monthly-user-stats";
 
 interface MonthlyLeaderboardProps {
@@ -32,8 +34,14 @@ export function MonthlyLeaderboard({ userId, userGrade }: MonthlyLeaderboardProp
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <Tabs defaultValue="novel" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 rounded-none bg-gray-200">
+              <Tabs defaultValue="total" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 rounded-none bg-gray-200">
+                  <TabsTrigger
+                    value="total"
+                    className="font-semibold data-[state=active]:bg-white data-[state=active]:text-primary"
+                  >
+                    TOTAL
+                  </TabsTrigger>
                   <TabsTrigger
                     value="novel"
                     className="font-semibold data-[state=active]:bg-white data-[state=active]:text-primary"
@@ -47,6 +55,11 @@ export function MonthlyLeaderboard({ userId, userGrade }: MonthlyLeaderboardProp
                     R.C
                   </TabsTrigger>
                 </TabsList>
+                <TabsContent value="total" className="mt-0">
+                  <Suspense fallback={<MonthlyLeaderboardSkeleton />}>
+                    <MonthlyTotalOverallRanking userId={userId} />
+                  </Suspense>
+                </TabsContent>
                 <TabsContent value="novel" className="mt-0">
                   <Suspense fallback={<MonthlyLeaderboardSkeleton />}>
                     <MonthlyOverallRanking type="novel" userId={userId} />
@@ -71,8 +84,14 @@ export function MonthlyLeaderboard({ userId, userGrade }: MonthlyLeaderboardProp
               </CardTitle>
             </CardHeader>
             <CardContent className="p-0">
-              <Tabs defaultValue="novel" className="w-full">
-                <TabsList className="grid w-full grid-cols-2 rounded-none bg-gray-200">
+              <Tabs defaultValue="total" className="w-full">
+                <TabsList className="grid w-full grid-cols-3 rounded-none bg-gray-200">
+                  <TabsTrigger
+                    value="total"
+                    className="font-semibold data-[state=active]:bg-white data-[state=active]:text-amber-900"
+                  >
+                    TOTAL
+                  </TabsTrigger>
                   <TabsTrigger
                     value="novel"
                     className="font-semibold data-[state=active]:bg-white data-[state=active]:text-amber-900"
@@ -86,6 +105,14 @@ export function MonthlyLeaderboard({ userId, userGrade }: MonthlyLeaderboardProp
                     R.C
                   </TabsTrigger>
                 </TabsList>
+                <TabsContent value="total" className="mt-0">
+                  <Suspense fallback={<MonthlyLeaderboardSkeleton />}>
+                    <MonthlyTotalGradeRanking
+                      userId={userId}
+                      userGrade={userGrade}
+                    />
+                  </Suspense>
+                </TabsContent>
                 <TabsContent value="novel" className="mt-0">
                   <Suspense fallback={<MonthlyLeaderboardSkeleton />}>
                     <MonthlyGradeRanking

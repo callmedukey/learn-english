@@ -137,3 +137,87 @@ export async function getMonthlyOverallRankings(
     });
   }
 }
+
+export async function getTotalMonthlyOverallRankings(): Promise<MonthlyOverallRankingUser[]> {
+  const now = new Date();
+  const koreaTime = toZonedTime(now, APP_TIMEZONE);
+  const year = koreaTime.getFullYear();
+  const month = koreaTime.getMonth() + 1;
+
+  // Get all users with either monthly AR or RC scores
+  const [arScores, rcScores] = await Promise.all([
+    prisma.monthlyARScore.groupBy({
+      by: ["userId"],
+      where: {
+        year,
+        month,
+      },
+      _sum: {
+        score: true,
+      },
+    }),
+    prisma.monthlyRCScore.groupBy({
+      by: ["userId"],
+      where: {
+        year,
+        month,
+      },
+      _sum: {
+        score: true,
+      },
+    }),
+  ]);
+
+  // Create maps for quick lookup
+  const arScoreMap = new Map(arScores.map((s) => [s.userId, s._sum.score || 0]));
+  const rcScoreMap = new Map(rcScores.map((s) => [s.userId, s._sum.score || 0]));
+  
+  // Get all unique user IDs
+  const allUserIds = Array.from(new Set([
+    ...arScores.map((s) => s.userId),
+    ...rcScores.map((s) => s.userId),
+  ]));
+
+  // Calculate combined scores
+  const combinedScores = allUserIds.map((userId) => ({
+    userId,
+    totalScore: (arScoreMap.get(userId) || 0) + (rcScoreMap.get(userId) || 0),
+  }));
+
+  // Sort and get top 5
+  const topScores = combinedScores
+    .sort((a, b) => b.totalScore - a.totalScore)
+    .slice(0, 5);
+
+  // Get user details for these top scorers
+  const userIds = topScores.map((s) => s.userId);
+  const users = await prisma.user.findMany({
+    where: {
+      id: { in: userIds },
+    },
+    include: {
+      country: {
+        include: {
+          countryIcon: true,
+        },
+      },
+    },
+  });
+
+  const userMap = new Map(users.map((u) => [u.id, u]));
+
+  return topScores.map((score, index) => {
+    const user = userMap.get(score.userId);
+    const userGrade = user ? calculateGrade(user.birthday) : "N/A";
+    
+    return {
+      id: score.userId,
+      nickname: user?.nickname || user?.name || "Anonymous",
+      grade: formatGradeForDisplay(userGrade),
+      score: score.totalScore,
+      countryIcon: user?.country?.countryIcon?.iconUrl,
+      rank: index + 1,
+      medalImageUrl: undefined, // Placeholder
+    };
+  });
+}

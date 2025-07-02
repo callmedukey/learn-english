@@ -140,3 +140,89 @@ export async function getGradeRankings(
       }));
   }
 }
+
+export async function getTotalGradeRankings(
+  userId: string,
+  userGrade?: string,
+): Promise<GradeRankingUser[]> {
+  // If no user grade is provided, calculate it from the user's birthday
+  let targetGrade = userGrade;
+
+  if (!targetGrade) {
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        birthday: true,
+      },
+    });
+
+    if (user) {
+      targetGrade = calculateGrade(user.birthday);
+    }
+  }
+
+  if (!targetGrade || targetGrade === "N/A") {
+    return [];
+  }
+
+  // Get all users with either AR or RC scores
+  const users = await prisma.user.findMany({
+    include: {
+      ARScore: true,
+      RCScore: true,
+      country: {
+        include: {
+          countryIcon: true,
+        },
+      },
+    },
+    where: {
+      OR: [
+        {
+          ARScore: {
+            some: {},
+          },
+        },
+        {
+          RCScore: {
+            some: {},
+          },
+        },
+      ],
+    },
+  });
+
+  // Filter users by the same grade and calculate their combined scores
+  const userScores = users
+    .filter((user) => calculateGrade(user.birthday) === targetGrade)
+    .map((user) => {
+      const userGradeCalculated = calculateGrade(user.birthday);
+      const arScore = user.ARScore.reduce(
+        (sum, score) => sum + score.score,
+        0,
+      );
+      const rcScore = user.RCScore.reduce(
+        (sum, score) => sum + score.score,
+        0,
+      );
+      const totalScore = arScore + rcScore;
+
+      return {
+        id: user.id,
+        nickname: user.nickname || user.name || "Anonymous",
+        grade: formatGradeForDisplay(userGradeCalculated),
+        score: totalScore,
+        countryIcon: user.country?.countryIcon?.iconUrl,
+      };
+    })
+    .filter((user) => user.score > 0); // Only include users with scores
+
+  // Sort by total score and return top 5
+  return userScores
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+    .map((user, index) => ({
+      ...user,
+      rank: index + 1,
+    }));
+}

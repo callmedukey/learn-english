@@ -122,3 +122,72 @@ export async function getOverallRankings(
       }));
   }
 }
+
+export async function getTotalOverallRankings(): Promise<OverallRankingUser[]> {
+  // Get all users with either AR or RC scores
+  const users = await prisma.user.findMany({
+    include: {
+      ARScore: {
+        include: {
+          AR: true,
+        },
+      },
+      RCScore: {
+        include: {
+          RCLevel: true,
+        },
+      },
+      country: {
+        include: {
+          countryIcon: true,
+        },
+      },
+    },
+    where: {
+      OR: [
+        {
+          ARScore: {
+            some: {},
+          },
+        },
+        {
+          RCScore: {
+            some: {},
+          },
+        },
+      ],
+    },
+  });
+
+  // Calculate combined scores for each user
+  const userScores = users.map((user) => {
+    const arScore = user.ARScore.reduce(
+      (sum, score) => sum + score.score,
+      0,
+    );
+    const rcScore = user.RCScore.reduce(
+      (sum, score) => sum + score.score,
+      0,
+    );
+    const totalScore = arScore + rcScore;
+    const grade = calculateGrade(user.birthday);
+
+    return {
+      id: user.id,
+      nickname: user.nickname || user.name || "Anonymous",
+      grade: formatGradeForDisplay(grade),
+      score: totalScore,
+      countryIcon: user.country?.countryIcon?.iconUrl,
+    };
+  });
+
+  // Sort by total score and return top 5
+  return userScores
+    .filter((user) => user.score > 0) // Only include users with scores
+    .sort((a, b) => b.score - a.score)
+    .slice(0, 5)
+    .map((user, index) => ({
+      ...user,
+      rank: index + 1,
+    }));
+}

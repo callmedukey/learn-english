@@ -11,11 +11,13 @@ import { CountryOption, LeaderboardUser } from "../queries/leaderboard.query";
 
 interface LeaderboardClientProps {
   initialUsers: LeaderboardUser[];
+  monthlyUsers: LeaderboardUser[];
   countries: CountryOption[];
 }
 
 export default function LeaderboardClient({
   initialUsers,
+  monthlyUsers,
   countries,
 }: LeaderboardClientProps) {
   const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
@@ -24,6 +26,10 @@ export default function LeaderboardClient({
   const filteredUsers = selectedCountry
     ? initialUsers.filter((user) => user.country?.id === selectedCountry)
     : initialUsers;
+    
+  const filteredMonthlyUsers = selectedCountry
+    ? monthlyUsers.filter((user) => user.country?.id === selectedCountry)
+    : monthlyUsers;
 
   return (
     <div className="space-y-6">
@@ -50,12 +56,18 @@ export default function LeaderboardClient({
       </div>
 
       <Tabs defaultValue="global" className="w-full">
-        <TabsList className="grid h-auto w-full grid-cols-2 rounded-none border-b border-gray-200 bg-transparent p-0">
+        <TabsList className="grid h-auto w-full grid-cols-3 rounded-none border-b border-gray-200 bg-transparent p-0">
           <TabsTrigger
             value="global"
             className="rounded-none border-b-2 border-transparent py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent"
           >
-            Leaderboard
+            All Time
+          </TabsTrigger>
+          <TabsTrigger
+            value="monthly"
+            className="rounded-none border-b-2 border-transparent py-3 data-[state=active]:border-primary data-[state=active]:bg-transparent"
+          >
+            Monthly
           </TabsTrigger>
           <TabsTrigger
             value="grades"
@@ -67,6 +79,15 @@ export default function LeaderboardClient({
 
         <TabsContent value="global" className="mt-6">
           <LeaderboardTable users={filteredUsers} />
+        </TabsContent>
+
+        <TabsContent value="monthly" className="mt-6">
+          <div className="mb-4">
+            <p className="text-sm text-gray-600">
+              Showing rankings for {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
+            </p>
+          </div>
+          <LeaderboardTable users={filteredMonthlyUsers} />
         </TabsContent>
 
         <TabsContent value="grades" className="mt-6">
