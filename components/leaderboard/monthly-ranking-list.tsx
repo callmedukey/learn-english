@@ -1,5 +1,6 @@
 "use client";
 
+import { Medal } from "lucide-react";
 import Image from "next/image";
 
 import { UserStatsPopover } from "./user-stats-popover";
@@ -86,9 +87,20 @@ export function MonthlyRankingList({ rankings, currentUserId }: MonthlyRankingLi
                     <div className="h-4 w-6 flex-shrink-0 rounded-sm bg-gray-200" />
                   )}
 
-                  {/* Nickname */}
-                  <div className="truncate font-medium text-gray-900">
-                    {item.nickname}
+                  {/* Nickname with Medal */}
+                  <div className="flex items-center gap-1 min-w-0">
+                    <span className="truncate font-medium text-gray-900">
+                      {item.nickname}
+                    </span>
+                    {item.rank === 1 && !item.medalImageUrl && (
+                      <Medal className="h-4 w-4 text-yellow-500 flex-shrink-0" />
+                    )}
+                    {item.rank === 2 && !item.medalImageUrl && (
+                      <Medal className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                    )}
+                    {item.rank === 3 && !item.medalImageUrl && (
+                      <Medal className="h-4 w-4 text-amber-600 flex-shrink-0" />
+                    )}
                   </div>
                 </div>
 
