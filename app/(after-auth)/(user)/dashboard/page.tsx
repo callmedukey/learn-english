@@ -15,6 +15,8 @@ import {
   getUserMonthlyRankings,
 } from "@/server-queries/medals";
 
+export const dynamic = "force-dynamic";
+
 const page = async () => {
   const session = await auth();
 
@@ -52,28 +54,30 @@ const page = async () => {
 
   // Fetch popup data
   const popups = await getActivePopups(session.user.id);
-  
+
   // For each popup, fetch the necessary data
   let leaderboardData = undefined;
   let personalRankings = undefined;
-  
+
   if (popups.length > 0) {
     // Check if we need global winners data
-    const globalWinnersPopup = popups.find(p => p.type === "GLOBAL_WINNERS");
+    const globalWinnersPopup = popups.find((p) => p.type === "GLOBAL_WINNERS");
     if (globalWinnersPopup) {
       leaderboardData = await getGlobalWinnersData(
         globalWinnersPopup.year,
-        globalWinnersPopup.month
+        globalWinnersPopup.month,
       );
     }
-    
+
     // Check if we need personal rankings
-    const personalAchievementPopup = popups.find(p => p.type === "PERSONAL_ACHIEVEMENT");
+    const personalAchievementPopup = popups.find(
+      (p) => p.type === "PERSONAL_ACHIEVEMENT",
+    );
     if (personalAchievementPopup) {
       personalRankings = await getUserMonthlyRankings(
         session.user.id,
         personalAchievementPopup.year,
-        personalAchievementPopup.month
+        personalAchievementPopup.month,
       );
     }
   }

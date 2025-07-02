@@ -1,6 +1,7 @@
 "use server";
 
 import { compare, hash } from "bcryptjs";
+import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { passwordSchema } from "@/lib/schemas/auth.schema";
@@ -27,9 +28,17 @@ const updateGenderSchema = z.object({
 export type UpdateGenderType = z.infer<typeof updateGenderSchema>;
 
 const updateBirthdaySchema = z.object({
-  birthday: z.date().refine(
+  birthday: z.coerce.date().refine(
     (date) => {
-      const age = new Date().getFullYear() - date.getFullYear();
+      const today = new Date();
+      const birthDate = new Date(date);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
+      
       return age >= 13;
     },
     {
@@ -158,9 +167,11 @@ export async function updateBirthday(userId: string, data: UpdateBirthdayType) {
     // Validate the input
     const parsed = updateBirthdaySchema.safeParse(data);
     if (!parsed.success) {
+      console.error("Birthday validation failed:", parsed.error.errors);
+      const birthdayError = parsed.error.errors.find(e => e.path.includes("birthday"));
       return {
         success: false,
-        error: "Invalid birthday value",
+        error: birthdayError?.message || "Invalid birthday value",
         fieldErrors: parsed.error.flatten().fieldErrors,
       };
     }
@@ -194,6 +205,9 @@ export async function updateBirthday(userId: string, data: UpdateBirthdayType) {
         birthdayChangedAt: new Date(),
       },
     });
+
+    // Revalidate the dashboard page to update the leaderboard with new grade
+    revalidatePath("/dashboard");
 
     return {
       success: true,
