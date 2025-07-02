@@ -1,6 +1,5 @@
 "use client";
 
-import { Medal } from "lucide-react";
 import Image from "next/image";
 
 import { UserStatsPopover } from "./user-stats-popover";
@@ -74,13 +73,13 @@ export function RankingList({ rankings, currentUserId }: RankingListProps) {
                       {item.nickname}
                     </span>
                     {item.rank === 1 && (
-                      <Medal className="h-4 w-4 text-yellow-500 flex-shrink-0" />
+                      <span className="text-base flex-shrink-0">🥇</span>
                     )}
                     {item.rank === 2 && (
-                      <Medal className="h-4 w-4 text-gray-400 flex-shrink-0" />
+                      <span className="text-base flex-shrink-0">🥈</span>
                     )}
                     {item.rank === 3 && (
-                      <Medal className="h-4 w-4 text-amber-600 flex-shrink-0" />
+                      <span className="text-base flex-shrink-0">🥉</span>
                     )}
                   </div>
                 </div>

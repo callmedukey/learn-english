@@ -48,7 +48,7 @@ export default function LeaderboardTable({ users }: LeaderboardTableProps) {
                 <TableCell className="font-medium">
                   <div className="flex items-center">
                     {index + 1 <= 3 && (
-                      <span className="mr-2">
+                      <span className="mr-2 text-base">
                         {index + 1 === 1 && "🥇"}
                         {index + 1 === 2 && "🥈"}
                         {index + 1 === 3 && "🥉"}
