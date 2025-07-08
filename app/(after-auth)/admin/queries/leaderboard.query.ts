@@ -80,7 +80,7 @@ export async function getLeaderboardData(
       }
       return b.rcScores - a.rcScores;
     })
-    .slice(0, 10);
+    .slice(0, 100);
 }
 
 export async function getCountries(): Promise<CountryOption[]> {
@@ -166,5 +166,5 @@ export async function getMonthlyLeaderboardData(
       }
       return b.rcScores - a.rcScores;
     })
-    .slice(0, 10);
+    .slice(0, 100);
 }

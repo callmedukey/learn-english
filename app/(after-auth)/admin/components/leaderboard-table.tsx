@@ -38,7 +38,7 @@ export default function LeaderboardTable({ users }: LeaderboardTableProps) {
               <TableHead>Grade</TableHead>
               <TableHead>Country</TableHead>
               <TableHead>Total Score</TableHead>
-              <TableHead>AR Score</TableHead>
+              <TableHead>Lexile Score</TableHead>
               <TableHead>RC Score</TableHead>
             </TableRow>
           </TableHeader>

@@ -1,5 +1,6 @@
 "server only";
 
+import calculateBirthYearRangeForGrade from "@/lib/utils/calculate-birth-year-range";
 import calculateGrade from "@/lib/utils/calculate-grade";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -49,7 +50,22 @@ export async function getGradeRankings(
   }
 
   if (type === "novel") {
-    // Get all users with AR scores
+    // Calculate birth year range for the target grade
+    const birthYearRange = calculateBirthYearRangeForGrade(targetGrade);
+    const whereClause: any = {
+      ARScore: {
+        some: {},
+      },
+    };
+    
+    if (birthYearRange) {
+      whereClause.birthday = {
+        gte: new Date(`${birthYearRange.minYear}-01-01`),
+        lte: new Date(`${birthYearRange.maxYear}-12-31`),
+      };
+    }
+
+    // Get users with AR scores filtered by grade at database level
     const users = await prisma.user.findMany({
       include: {
         ARScore: true,
@@ -59,17 +75,11 @@ export async function getGradeRankings(
           },
         },
       },
-      where: {
-        ARScore: {
-          some: {},
-        },
-      },
+      where: whereClause,
     });
 
-    // Filter users by the same grade and calculate their scores
-    const userScores = users
-      .filter((user) => calculateGrade(user.birthday) === targetGrade)
-      .map((user) => {
+    // Calculate scores for users (already filtered by grade)
+    const userScores = users.map((user) => {
         const userGradeCalculated = calculateGrade(user.birthday);
         const totalScore = user.ARScore.reduce(
           (sum, score) => sum + score.score,
@@ -94,7 +104,22 @@ export async function getGradeRankings(
         rank: index + 1,
       }));
   } else {
-    // Get all users with RC scores
+    // Calculate birth year range for the target grade
+    const birthYearRange = calculateBirthYearRangeForGrade(targetGrade);
+    const whereClause: any = {
+      RCScore: {
+        some: {},
+      },
+    };
+    
+    if (birthYearRange) {
+      whereClause.birthday = {
+        gte: new Date(`${birthYearRange.minYear}-01-01`),
+        lte: new Date(`${birthYearRange.maxYear}-12-31`),
+      };
+    }
+
+    // Get users with RC scores filtered by grade at database level
     const users = await prisma.user.findMany({
       include: {
         RCScore: true,
@@ -104,17 +129,11 @@ export async function getGradeRankings(
           },
         },
       },
-      where: {
-        RCScore: {
-          some: {},
-        },
-      },
+      where: whereClause,
     });
 
-    // Filter users by the same grade and calculate their scores
-    const userScores = users
-      .filter((user) => calculateGrade(user.birthday) === targetGrade)
-      .map((user) => {
+    // Calculate scores for users (already filtered by grade)
+    const userScores = users.map((user) => {
         const userGradeCalculated = calculateGrade(user.birthday);
         const totalScore = user.RCScore.reduce(
           (sum, score) => sum + score.score,
@@ -165,7 +184,31 @@ export async function getTotalGradeRankings(
     return [];
   }
 
-  // Get all users with either AR or RC scores
+  // Calculate birth year range for the target grade
+  const birthYearRange = calculateBirthYearRangeForGrade(targetGrade);
+  const whereClause: any = {
+    OR: [
+      {
+        ARScore: {
+          some: {},
+        },
+      },
+      {
+        RCScore: {
+          some: {},
+        },
+      },
+    ],
+  };
+  
+  if (birthYearRange) {
+    whereClause.birthday = {
+      gte: new Date(`${birthYearRange.minYear}-01-01`),
+      lte: new Date(`${birthYearRange.maxYear}-12-31`),
+    };
+  }
+
+  // Get users with either AR or RC scores filtered by grade at database level
   const users = await prisma.user.findMany({
     include: {
       ARScore: true,
@@ -176,26 +219,11 @@ export async function getTotalGradeRankings(
         },
       },
     },
-    where: {
-      OR: [
-        {
-          ARScore: {
-            some: {},
-          },
-        },
-        {
-          RCScore: {
-            some: {},
-          },
-        },
-      ],
-    },
+    where: whereClause,
   });
 
-  // Filter users by the same grade and calculate their combined scores
-  const userScores = users
-    .filter((user) => calculateGrade(user.birthday) === targetGrade)
-    .map((user) => {
+  // Calculate combined scores for users (already filtered by grade)
+  const userScores = users.map((user) => {
       const userGradeCalculated = calculateGrade(user.birthday);
       const arScore = user.ARScore.reduce(
         (sum, score) => sum + score.score,

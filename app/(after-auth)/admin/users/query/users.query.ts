@@ -1,5 +1,6 @@
 "server only";
 
+import calculateBirthYearRangeForGrade from "@/lib/utils/calculate-birth-year-range";
 import calculateGrade from "@/lib/utils/calculate-grade";
 import {
   User as PrismaUser,
@@ -106,6 +107,17 @@ export const getUsers = async ({
 
   whereClause.role = Role.USER;
 
+  // Add birthday filter for grade
+  if (gradeFilter) {
+    const birthYearRange = calculateBirthYearRangeForGrade(gradeFilter);
+    if (birthYearRange) {
+      whereClause.birthday = {
+        gte: new Date(`${birthYearRange.minYear}-01-01`),
+        lte: new Date(`${birthYearRange.maxYear}-12-31`),
+      };
+    }
+  }
+
   const skip = (page - 1) * limit;
 
   const usersFromDb: UserWithReferrerAndCountryAndSubscription[] =
@@ -140,6 +152,8 @@ export const getUsers = async ({
       orderBy: {
         createdAt: "desc",
       },
+      skip: gradeFilter ? undefined : skip,
+      take: gradeFilter ? undefined : limit,
     })) as UserWithReferrerAndCountryAndSubscription[];
 
   const usersWithGradeAndDetails: UserData[] = usersFromDb.map((user) => {
@@ -183,39 +197,22 @@ export const getUsers = async ({
     };
   });
 
-  let filteredUsers = usersWithGradeAndDetails;
+  // Since we're now filtering at database level, we need to handle pagination properly
+  let paginatedUsers = usersWithGradeAndDetails;
+  let totalUsers = usersWithGradeAndDetails.length;
+
   if (gradeFilter) {
-    filteredUsers = usersWithGradeAndDetails.filter((user) => {
-      const gradeToMatch = gradeFilter.toLowerCase();
-      const userGrade = user.grade.toLowerCase();
-
-      if (gradeToMatch === "adult") return userGrade === "adult";
-      if (gradeToMatch === "below grade 1")
-        return userGrade === "below grade 1";
-
-      const gradeNumMatch = gradeToMatch.match(/^grade\\s*(\\d+)$/);
-      if (gradeNumMatch && gradeNumMatch[1]) {
-        const gradeNum = parseInt(gradeNumMatch[1], 10);
-        const userGradeNumMatch = userGrade.match(/^grade\\s*(\\d+)$/);
-        if (userGradeNumMatch && userGradeNumMatch[1]) {
-          return parseInt(userGradeNumMatch[1], 10) === gradeNum;
-        }
-      }
-      return false;
-    });
-  }
-
-  const totalFilteredUsers = filteredUsers.length;
-  const paginatedUsers = filteredUsers.slice(skip, skip + limit);
-
-  let countForPagination = totalFilteredUsers;
-  if (!gradeFilter) {
-    countForPagination = await prisma.user.count({ where: whereClause });
+    // When filtering by grade, we need to paginate the already filtered results
+    totalUsers = usersWithGradeAndDetails.length;
+    paginatedUsers = usersWithGradeAndDetails.slice(skip, skip + limit);
+  } else {
+    // When not filtering by grade, the results are already paginated by the database
+    totalUsers = await prisma.user.count({ where: whereClause });
   }
 
   return {
     users: paginatedUsers,
-    totalUsers: countForPagination,
-    totalPages: Math.ceil(countForPagination / limit),
+    totalUsers: totalUsers,
+    totalPages: Math.ceil(totalUsers / limit),
   };
 };
