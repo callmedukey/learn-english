@@ -187,7 +187,7 @@ export async function getTotalMonthlyOverallRankings(): Promise<MonthlyOverallRa
   // Sort and get top 5
   const topScores = combinedScores
     .sort((a, b) => b.totalScore - a.totalScore)
-    .slice(0, 5);
+    .slice(0, 10);
 
   // Get user details for these top scorers
   const userIds = topScores.map((s) => s.userId);

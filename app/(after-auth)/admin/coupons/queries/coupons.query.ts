@@ -1,11 +1,12 @@
 "server only";
 
-import { DiscountCoupon, Prisma } from "@/prisma/generated/prisma";
+import { DiscountCoupon, Prisma, CouponRecurringType } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface CouponWithStats extends DiscountCoupon {
   _count: {
     payments: number;
+    couponApplications: number;
   };
 }
 
@@ -48,6 +49,7 @@ export async function getCoupons({
         _count: {
           select: {
             payments: true,
+            couponApplications: true,
           },
         },
       },
@@ -99,18 +101,26 @@ export async function createCoupon(data: {
   code: string;
   discount: number;
   flatDiscount: number;
+  flatDiscountUSD?: number;
   active?: boolean;
   oneTimeUse?: boolean;
   deadline?: Date | null;
+  recurringType?: CouponRecurringType;
+  recurringMonths?: number | null;
+  maxRecurringUses?: number | null;
 }) {
   return prisma.discountCoupon.create({
     data: {
       code: data.code.toUpperCase(),
       discount: data.discount,
       flatDiscount: data.flatDiscount,
+      flatDiscountUSD: data.flatDiscountUSD || null,
       active: data.active ?? true,
       oneTimeUse: data.oneTimeUse ?? false,
       deadline: data.deadline,
+      recurringType: data.recurringType || CouponRecurringType.ONE_TIME,
+      recurringMonths: data.recurringMonths || null,
+      maxRecurringUses: data.maxRecurringUses || null,
     },
   });
 }
@@ -121,9 +131,13 @@ export async function updateCoupon(
     code?: string;
     discount?: number;
     flatDiscount?: number;
+    flatDiscountUSD?: number;
     active?: boolean;
     oneTimeUse?: boolean;
     deadline?: Date | null;
+    recurringType?: CouponRecurringType;
+    recurringMonths?: number | null;
+    maxRecurringUses?: number | null;
   },
 ) {
   return prisma.discountCoupon.update({
@@ -134,9 +148,15 @@ export async function updateCoupon(
       ...(data.flatDiscount !== undefined && {
         flatDiscount: data.flatDiscount,
       }),
+      ...(data.flatDiscountUSD !== undefined && {
+        flatDiscountUSD: data.flatDiscountUSD,
+      }),
       ...(data.active !== undefined && { active: data.active }),
       ...(data.oneTimeUse !== undefined && { oneTimeUse: data.oneTimeUse }),
       ...(data.deadline !== undefined && { deadline: data.deadline }),
+      ...(data.recurringType !== undefined && { recurringType: data.recurringType }),
+      ...(data.recurringMonths !== undefined && { recurringMonths: data.recurringMonths }),
+      ...(data.maxRecurringUses !== undefined && { maxRecurringUses: data.maxRecurringUses }),
     },
   });
 }
@@ -154,6 +174,7 @@ export async function getCouponById(id: string) {
       _count: {
         select: {
           payments: true,
+          couponApplications: true,
         },
       },
     },

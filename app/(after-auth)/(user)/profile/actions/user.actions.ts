@@ -33,6 +33,15 @@ const updateBirthdaySchema = z.object({
 
 export type UpdateBirthdayType = z.infer<typeof updateBirthdaySchema>;
 
+const updateNicknameSchema = z.object({
+  nickname: z.string()
+    .min(3, "Nickname must be at least 3 characters")
+    .max(8, "Nickname must be at most 8 characters")
+    .regex(/^[a-zA-Z0-9_]+$/, "Nickname can only contain letters, numbers, and underscores"),
+});
+
+export type UpdateNicknameType = z.infer<typeof updateNicknameSchema>;
+
 export async function changePassword(userId: string, data: ChangePasswordType) {
   try {
     // Validate the input
@@ -197,6 +206,56 @@ export async function updateBirthday(userId: string, data: UpdateBirthdayType) {
     };
   } catch (error) {
     console.error("Error updating birthday:", error);
+    return {
+      success: false,
+      error: "An unexpected error occurred",
+    };
+  }
+}
+
+export async function updateNickname(userId: string, data: UpdateNicknameType) {
+  try {
+    // Validate the input
+    const parsed = updateNicknameSchema.safeParse(data);
+    if (!parsed.success) {
+      return {
+        success: false,
+        error: "Invalid nickname",
+        fieldErrors: parsed.error.flatten().fieldErrors,
+      };
+    }
+
+    // Check if nickname is already taken
+    const existingUser = await prisma.user.findFirst({
+      where: {
+        nickname: parsed.data.nickname,
+        NOT: { id: userId },
+      },
+    });
+
+    if (existingUser) {
+      return {
+        success: false,
+        error: "This nickname is already taken",
+        fieldErrors: { nickname: ["This nickname is already taken"] },
+      };
+    }
+
+    // Update the nickname
+    await prisma.user.update({
+      where: { id: userId },
+      data: { nickname: parsed.data.nickname },
+    });
+
+    // Revalidate the settings page
+    revalidatePath("/profile/settings");
+
+    return {
+      success: true,
+      message: "Nickname updated successfully",
+    };
+  } catch (error) {
+    console.error("Error updating nickname:", error);
     return {
       success: false,
       error: "An unexpected error occurred",

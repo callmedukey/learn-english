@@ -3,6 +3,7 @@ import React, { Suspense } from "react";
 
 import { auth } from "@/auth";
 import { Skeleton } from "@/components/ui/skeleton";
+import { prisma } from "@/prisma/prisma-client";
 
 import PaymentFilters from "./components/payment-filters";
 import PaymentTable from "./components/payment-table";
@@ -23,19 +24,34 @@ interface PaymentsPageProps {
 async function PaymentsContent({
   userId,
   filters,
+  userCountry,
 }: {
   userId: string;
   filters: UserPaymentFilters;
+  userCountry: string | null;
 }) {
   const [payments, plans] = await Promise.all([
     getUserPayments(userId, filters),
     getPlansForUserFilter(),
   ]);
 
+  const isKoreanUser = userCountry === "South Korea";
+
   return (
     <>
       <PaymentFilters plans={plans} />
-      <PaymentTable payments={payments} />
+      <PaymentTable payments={payments} userCountry={userCountry} />
+      
+      {/* International user notice */}
+      {!isKoreanUser && (
+        <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
+          <h3 className="font-medium text-amber-900">Note for International Users</h3>
+          <p className="mt-1 text-sm text-amber-700">
+            International cards require manual renewal. We&apos;ll send you a reminder email before your subscription expires.
+            Korean users can enjoy automatic renewal with domestic cards.
+          </p>
+        </div>
+      )}
     </>
   );
 }
@@ -85,6 +101,16 @@ export default async function PaymentsPage({
     redirect("/auth/signin");
   }
 
+  // Get user with country information
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    include: { country: true },
+  });
+
+  if (!user) {
+    redirect("/auth/signin");
+  }
+
   const resolvedSearchParams = await searchParams;
 
   const filters: UserPaymentFilters = {
@@ -106,7 +132,11 @@ export default async function PaymentsPage({
         </div>
 
         <Suspense fallback={<PaymentsLoading />}>
-          <PaymentsContent userId={session.user.id} filters={filters} />
+          <PaymentsContent 
+            userId={session.user.id} 
+            filters={filters} 
+            userCountry={user.country?.name || null}
+          />
         </Suspense>
       </div>
     </div>

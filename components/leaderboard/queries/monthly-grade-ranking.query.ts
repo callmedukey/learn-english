@@ -106,7 +106,7 @@ export async function getMonthlyGradeRankings(
     // Sort by score and get top 5
     const rankings = userScores
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
+      .slice(0, 10)
       .map((user, index) => ({
         ...user,
         rank: index + 1,
@@ -171,7 +171,7 @@ export async function getMonthlyGradeRankings(
     // Sort by score and get top 5
     const rankings = userScores
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
+      .slice(0, 10)
       .map((user, index) => ({
         ...user,
         rank: index + 1,
@@ -291,7 +291,7 @@ export async function getTotalMonthlyGradeRankings(
   // Sort by total score and get top 5
   const rankings = userScores
     .sort((a, b) => b.score - a.score)
-    .slice(0, 5)
+    .slice(0, 10)
     .map((user, index) => ({
       ...user,
       rank: index + 1,

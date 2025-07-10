@@ -148,8 +148,15 @@ export default function PlansTable({ plans }: PlansTableProps) {
                   )}
                 </div>
               </TableCell>
-              <TableCell className="font-medium">
-                {formatCurrency(plan.price)}
+              <TableCell>
+                <div className="space-y-1">
+                  <div className="font-medium">{formatCurrency(plan.price)}</div>
+                  {plan.priceUSD && (
+                    <div className="text-sm text-gray-500">
+                      ${plan.priceUSD.toFixed(2)} USD
+                    </div>
+                  )}
+                </div>
               </TableCell>
               <TableCell>{formatDuration(plan.duration)}</TableCell>
               <TableCell>

@@ -68,7 +68,7 @@ export async function getOverallRankings(
     // Sort by score and return top 5
     return userScores
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
+      .slice(0, 10)
       .map((user, index) => ({
         ...user,
         rank: index + 1,
@@ -115,7 +115,7 @@ export async function getOverallRankings(
     // Sort by score and return top 5
     return userScores
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
+      .slice(0, 10)
       .map((user, index) => ({
         ...user,
         rank: index + 1,
@@ -185,7 +185,7 @@ export async function getTotalOverallRankings(): Promise<OverallRankingUser[]> {
   return userScores
     .filter((user) => user.score > 0) // Only include users with scores
     .sort((a, b) => b.score - a.score)
-    .slice(0, 5)
+    .slice(0, 10)
     .map((user, index) => ({
       ...user,
       rank: index + 1,

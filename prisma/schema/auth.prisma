@@ -38,6 +38,13 @@ model User {
   createdAt     DateTime  @default(now())
   updatedAt     DateTime  @updatedAt
 
+  // Billing key information (Korean users only)
+  billingKey         String?
+  billingAuthKey     String?   @db.Text // Temporary during auth flow
+  billingKeyIssuedAt DateTime?
+  billingMethod      String?   // "CARD" for domestic cards
+  cardInfo           Json?     // Encrypted card details
+
   novelQuestionCompleted NovelQuestionCompleted[]
   RCQuestionCompleted    RCQuestionCompleted[]
 
@@ -49,6 +56,7 @@ model User {
   payments      Payment[]
   subscriptions UserSubscription[]
   notifications Notification[]
+  billingHistory BillingHistory[]
 
   RCQuestionFirstTry     RCQuestionFirstTry[]
   RCQuestionSecondTry    RCQuestionSecondTry[]

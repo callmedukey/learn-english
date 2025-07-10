@@ -10,6 +10,7 @@ interface PlanCardProps {
   isSelected: boolean;
   onSelect: (planId: string) => void;
   isPopular?: boolean;
+  isKoreanUser?: boolean;
 }
 
 export default function PlanCard({
@@ -17,7 +18,11 @@ export default function PlanCard({
   isSelected,
   onSelect,
   isPopular = false,
+  isKoreanUser = true,
 }: PlanCardProps) {
+  const displayPrice = isKoreanUser 
+    ? `₩${plan.price.toLocaleString("ko-KR")}`
+    : `$${plan.priceUSD?.toFixed(2) || (plan.price / 1300).toFixed(2)} USD`;
   return (
     <Card
       className={`relative cursor-pointer transition-all duration-200 ${
@@ -39,6 +44,10 @@ export default function PlanCard({
         <CardTitle className="text-xl font-bold text-gray-900">
           {plan.name}
         </CardTitle>
+        <div className="mt-4">
+          <span className="text-3xl font-bold text-gray-900">{displayPrice}</span>
+          <span className="text-sm text-gray-600 ml-1">/ {plan.duration} days</span>
+        </div>
         {plan.description && (
           <p className="mt-2 text-sm text-gray-600">{plan.description}</p>
         )}

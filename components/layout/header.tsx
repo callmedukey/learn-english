@@ -6,7 +6,7 @@ import React from "react";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Role } from "@/prisma/generated/prisma";
-import logo from "@/public/logo/small-logo.png";
+import logo from "@/public/logo.svg";
 
 import MobileMenu from "./mobile-menu";
 import { getUserNotifications } from "../notifications/actions/notification.actions";
@@ -31,7 +31,13 @@ const Header = async () => {
     <header className="relative flex h-24 items-center justify-center border-b px-4">
       {/* Logo */}
       <div className="absolute left-4 flex items-center space-x-4">
-        <Image src={logo} alt="Reading Champ" quality={100} priority />
+        <Image
+          src={logo}
+          alt="Reading Champ"
+          className="size-16"
+          quality={100}
+          priority
+        />
         <p className="text-xl font-bold tracking-tight text-primary">
           READING CHAMP
         </p>

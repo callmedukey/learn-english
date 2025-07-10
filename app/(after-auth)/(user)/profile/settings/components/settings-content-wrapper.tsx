@@ -42,7 +42,7 @@ import { cn } from "@/lib/utils";
 import { Gender } from "@/prisma/generated/prisma";
 
 import PasswordChangeForm from "./password-change-form";
-import { updateBirthday, updateGender } from "../../actions/user.actions";
+import { updateBirthday, updateGender, updateNickname } from "../../actions/user.actions";
 import { getUserSettings } from "../../queries/user.query";
 
 interface UserSettings {
@@ -78,6 +78,11 @@ export default function SettingsContentWrapper({
   const [showBirthdaySuccessDialog, setShowBirthdaySuccessDialog] =
     useState(false);
   const [isUpdatingBirthday, setIsUpdatingBirthday] = useState(false);
+
+  const [nickname, setNickname] = useState(userSettings.nickname || "");
+  const [isEditingNickname, setIsEditingNickname] = useState(false);
+  const [isUpdatingNickname, setIsUpdatingNickname] = useState(false);
+  const [nicknameError, setNicknameError] = useState<string | null>(null);
 
   const handleGenderUpdate = async () => {
     if (!selectedGender) return;
@@ -152,6 +157,43 @@ export default function SettingsContentWrapper({
     _e(_event);
   };
 
+  const handleNicknameUpdate = async () => {
+    setNicknameError(null);
+    setIsUpdatingNickname(true);
+
+    try {
+      const result = await updateNickname(userId, { nickname });
+
+      if (result.success) {
+        toast.success(result.message);
+        // Refresh user settings
+        const updatedSettings = await getUserSettings(userId);
+        setUserSettings(updatedSettings);
+        setNickname(updatedSettings.nickname || "");
+        setIsEditingNickname(false);
+      } else {
+        if (result.fieldErrors?.nickname) {
+          setNicknameError(result.fieldErrors.nickname[0]);
+        } else {
+          toast.error(result.error);
+        }
+      }
+    } catch (error) {
+      console.error("Error updating nickname:", error);
+      toast.error("An unexpected error occurred");
+    } finally {
+      setIsUpdatingNickname(false);
+    }
+  };
+
+  const handleNicknameCancel = () => {
+    setNickname(userSettings.nickname || "");
+    setIsEditingNickname(false);
+    setNicknameError(null);
+  };
+
+  const hasNicknameChanged = nickname !== (userSettings.nickname || "");
+
   return (
     <div className="space-y-8">
       {/* User Information Section */}
@@ -168,13 +210,63 @@ export default function SettingsContentWrapper({
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div>
             <Label htmlFor="nickname">Nickname</Label>
-            <Input
-              id="nickname"
-              value={userSettings.nickname || ""}
-              readOnly
-              disabled
-              className="mt-1 bg-gray-50"
-            />
+            {isEditingNickname ? (
+              <div className="mt-1 space-y-2">
+                <div className="flex gap-2">
+                  <Input
+                    id="nickname"
+                    value={nickname}
+                    onChange={(e) => {
+                      setNickname(e.target.value);
+                      setNicknameError(null);
+                    }}
+                    placeholder="Enter nickname"
+                    minLength={3}
+                    maxLength={8}
+                    className={nicknameError ? "border-red-500" : ""}
+                  />
+                  <Button
+                    onClick={handleNicknameUpdate}
+                    disabled={isUpdatingNickname || !hasNicknameChanged || nickname.length < 3 || nickname.length > 8}
+                    size="sm"
+                    className="px-4"
+                  >
+                    {isUpdatingNickname ? "Saving..." : "Save"}
+                  </Button>
+                  <Button
+                    onClick={handleNicknameCancel}
+                    disabled={isUpdatingNickname}
+                    size="sm"
+                    variant="outline"
+                  >
+                    Cancel
+                  </Button>
+                </div>
+                {nicknameError && (
+                  <p className="text-sm text-red-500">{nicknameError}</p>
+                )}
+                <p className="text-xs text-gray-500">
+                  3-8 characters, letters, numbers, and underscores only
+                </p>
+              </div>
+            ) : (
+              <div className="mt-1 flex gap-2">
+                <Input
+                  id="nickname"
+                  value={userSettings.nickname || ""}
+                  readOnly
+                  disabled
+                  className="flex-1 bg-gray-50"
+                />
+                <Button
+                  onClick={() => setIsEditingNickname(true)}
+                  size="sm"
+                  variant="outline"
+                >
+                  Edit
+                </Button>
+              </div>
+            )}
           </div>
 
           <div>

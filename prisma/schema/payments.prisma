@@ -13,11 +13,26 @@ enum SubscriptionStatus {
   PENDING
 }
 
+enum PaymentType {
+  ONE_TIME
+  RECURRING
+  INITIAL_SUBSCRIPTION
+}
+
+enum RecurringStatus {
+  ACTIVE
+  PAUSED
+  CANCELLED
+  INACTIVE
+  PENDING_PAYMENT
+}
+
 // Subscription plans with flexible pricing and duration
 model Plan {
   id          String  @id @default(cuid())
   name        String // "1 Month Plan", "3 Month Plan", "Custom Plan", etc.
   price       Int // Price in KRW (e.g., 9900 for 9,900원)
+  priceUSD    Float? // Price in USD for international users
   duration    Int // Duration in days (30, 90, 365, or any custom value)
   description String?
   isActive    Boolean @default(true)
@@ -54,6 +69,12 @@ model Payment {
   currency   String        @default("KRW")
   method     String?
   status     PaymentStatus @default(PENDING)
+
+  // Payment type and recurring info
+  paymentType      PaymentType @default(ONE_TIME)
+  billingKey       String?     // For recurring payments (Korean users only)
+  isInternational  Boolean     @default(false)
+  recurringCycle   Int?        // Days between payments (Korean users only)
 
   // Customer information
   customerEmail       String?
@@ -102,6 +123,20 @@ model UserSubscription {
   // Auto-renewal settings
   autoRenew Boolean @default(false)
 
+  // Billing key reference
+  billingKey        String?
+  
+  // Recurring payment info
+  recurringStatus   RecurringStatus @default(INACTIVE)
+  lastBillingDate   DateTime?
+  nextBillingDate   DateTime?
+  failedAttempts    Int @default(0)
+  lastFailureReason String?
+  lastFailureDate   DateTime?
+  
+  // Grace period handling
+  gracePeriodEnd    DateTime?
+
   // Cancellation
   cancelledAt  DateTime?
   cancelReason String?
@@ -110,6 +145,8 @@ model UserSubscription {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
   plan    Plan    @relation(fields: [planId], references: [id])
   payment Payment @relation(fields: [paymentId], references: [id])
+  billingHistory BillingHistory[]
+  couponApplications CouponApplication[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -133,4 +170,25 @@ model PaymentWebhook {
   @@index([paymentKey])
   @@index([orderId])
   @@index([processed])
+}
+
+// New model for billing history
+model BillingHistory {
+  id               String   @id @default(cuid())
+  userId           String
+  subscriptionId   String
+  billingKey       String
+  amount           Int
+  status           String
+  attemptNumber    Int      @default(1)
+  errorCode        String?
+  errorMessage     String?
+  processedAt      DateTime @default(now())
+  
+  user         User             @relation(fields: [userId], references: [id])
+  subscription UserSubscription @relation(fields: [subscriptionId], references: [id])
+  
+  @@index([userId])
+  @@index([subscriptionId])
+  @@index([processedAt])
 }

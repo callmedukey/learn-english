@@ -16,11 +16,16 @@ interface MonthlyLeaderboardProps {
   userGrade?: string;
 }
 
-export function MonthlyLeaderboard({ userId, userGrade }: MonthlyLeaderboardProps) {
+export function MonthlyLeaderboard({
+  userId,
+  userGrade,
+}: MonthlyLeaderboardProps) {
   return (
     <div className="p-4">
       <div className="mb-8 flex items-center gap-3">
-        <h1 className="text-4xl font-bold text-amber-900">Monthly Leaderboard</h1>
+        <h1 className="text-4xl font-bold text-amber-900">
+          Monthly Leaderboard
+        </h1>
         <TrophyIcon className="h-8 w-8 text-primary" />
       </div>
 
@@ -155,7 +160,7 @@ function MonthlyLeaderboardSkeleton() {
         <div>GRADE</div>
         <div>POINT</div>
       </div>
-      {[1, 2, 3, 4, 5].map((i) => (
+      {Array.from({ length: 10 }, (_, i) => i + 1).map((i) => (
         <div key={i} className="flex items-center gap-4 p-2">
           <div className="w-6 text-center font-bold text-gray-600">{i}</div>
           <div className="flex flex-1 items-center gap-2">

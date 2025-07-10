@@ -98,7 +98,7 @@ export async function getGradeRankings(
     // Sort by score and return top 5
     return userScores
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
+      .slice(0, 10)
       .map((user, index) => ({
         ...user,
         rank: index + 1,
@@ -152,7 +152,7 @@ export async function getGradeRankings(
     // Sort by score and return top 5
     return userScores
       .sort((a, b) => b.score - a.score)
-      .slice(0, 5)
+      .slice(0, 10)
       .map((user, index) => ({
         ...user,
         rank: index + 1,
@@ -248,7 +248,7 @@ export async function getTotalGradeRankings(
   // Sort by total score and return top 5
   return userScores
     .sort((a, b) => b.score - a.score)
-    .slice(0, 5)
+    .slice(0, 10)
     .map((user, index) => ({
       ...user,
       rank: index + 1,

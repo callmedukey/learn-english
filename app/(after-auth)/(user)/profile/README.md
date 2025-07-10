@@ -78,7 +78,7 @@ const TOSS_CLIENT_KEY = "your_actual_client_key";
 And in `app/api/payments/confirm/route.ts`:
 
 ```typescript
-const TOSS_SECRET_KEY = "your_actual_secret_key";
+const TOSS_CLIENT_SECRET = "your_actual_secret_key";
 ```
 
 ### Environment Variables
@@ -87,7 +87,7 @@ Make sure to set these in your `.env` file:
 
 ```env
 TOSS_CLIENT_KEY=test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm
-TOSS_SECRET_KEY=test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6
+TOSS_CLIENT_SECRET=test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6
 ```
 
 ## Database Schema

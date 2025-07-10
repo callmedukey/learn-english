@@ -155,7 +155,7 @@ function LeaderboardSkeleton() {
         <div>GRADE</div>
         <div>POINT</div>
       </div>
-      {[1, 2, 3, 4, 5].map((i) => (
+      {Array.from({ length: 10 }, (_, i) => i + 1).map((i) => (
         <div key={i} className="flex items-center gap-4 p-2">
           <div className="w-6 text-center font-bold text-gray-600">{i}</div>
           <div className="flex flex-1 items-center gap-2">

@@ -2,8 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 
 import { prisma } from "@/prisma/prisma-client";
 
-// TODO: Replace with your actual TossPayments secret key
-const TOSS_SECRET_KEY = "test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6";
+const TOSS_CLIENT_SECRET = process.env.TOSS_CLIENT_SECRET!;
 
 export async function POST(request: NextRequest) {
   try {
@@ -21,7 +20,11 @@ export async function POST(request: NextRequest) {
       where: { orderId },
       include: {
         plan: true,
-        user: true,
+        user: {
+          include: {
+            country: true,
+          },
+        },
         coupon: true,
       },
     });
@@ -47,7 +50,7 @@ export async function POST(request: NextRequest) {
       {
         method: "POST",
         headers: {
-          Authorization: `Basic ${Buffer.from(TOSS_SECRET_KEY + ":").toString("base64")}`,
+          Authorization: `Basic ${Buffer.from(TOSS_CLIENT_SECRET + ":").toString("base64")}`,
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
@@ -101,6 +104,15 @@ export async function POST(request: NextRequest) {
         },
       });
 
+      // Check if this is a recurring payment setup
+      // For Korean users, all subscriptions are recurring (mandatory)
+      const isKoreanUser = payment.user.country?.name === "South Korea";
+      // For initial payment, Korean users will get billing key via webhook
+      const isRecurringSetup = isKoreanUser;
+
+      // Calculate next billing date for recurring subscriptions
+      const nextBillingDate = isRecurringSetup ? endDate : undefined;
+
       // Create user subscription
       const subscription = await tx.userSubscription.create({
         data: {
@@ -110,6 +122,11 @@ export async function POST(request: NextRequest) {
           status: "ACTIVE",
           startDate,
           endDate,
+          // Auto-renewal fields
+          autoRenew: isRecurringSetup,
+          recurringStatus: isRecurringSetup ? "ACTIVE" : ("INACTIVE" as const),
+          nextBillingDate,
+          lastBillingDate: isRecurringSetup ? startDate : undefined,
         },
       });
 
@@ -118,6 +135,25 @@ export async function POST(request: NextRequest) {
         await tx.discountCoupon.update({
           where: { id: payment.coupon.id },
           data: { active: false },
+        });
+      }
+
+      // Create CouponApplication for recurring coupons on recurring subscriptions
+      if (
+        payment.coupon &&
+        payment.coupon.recurringType === "RECURRING" &&
+        isRecurringSetup
+      ) {
+        await tx.couponApplication.create({
+          data: {
+            subscriptionId: subscription.id,
+            couponId: payment.coupon.id,
+            remainingMonths: payment.coupon.recurringMonths,
+            isActive: true,
+            discountPercentage: payment.coupon.discount > 0 ? payment.coupon.discount : null,
+            flatDiscountKRW: payment.coupon.flatDiscount > 0 ? payment.coupon.flatDiscount : null,
+            flatDiscountUSD: payment.coupon.flatDiscountUSD && payment.coupon.flatDiscountUSD > 0 ? payment.coupon.flatDiscountUSD : null,
+          },
         });
       }
 

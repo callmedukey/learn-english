@@ -19,6 +19,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
+import { CouponRecurringType } from "@/prisma/generated/prisma";
 
 import EditCouponDialog from "./edit-coupon-dialog";
 import {
@@ -62,24 +63,37 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
   };
 
   const formatDiscount = (coupon: CouponWithStats) => {
+    const parts = [];
+    
     if (coupon.discount > 0) {
-      return {
-        value: `${coupon.discount}%`,
-        type: "Percentage",
-      };
+      parts.push(`${coupon.discount}%`);
     }
-
+    
     if (coupon.flatDiscount > 0) {
-      return {
-        value: `₩${coupon.flatDiscount.toLocaleString()}`,
-        type: "Flat Amount",
-      };
+      parts.push(`₩${coupon.flatDiscount.toLocaleString()}`);
     }
+    
+    if (coupon.flatDiscountUSD && coupon.flatDiscountUSD > 0) {
+      parts.push(`$${coupon.flatDiscountUSD.toFixed(2)}`);
+    }
+    
+    return parts.length > 0 ? parts.join(" / ") : "No discount";
+  };
 
-    return {
-      value: "No discount",
-      type: "None",
-    };
+  const formatRecurringInfo = (coupon: CouponWithStats) => {
+    if (!coupon.recurringType || coupon.recurringType === CouponRecurringType.ONE_TIME) {
+      return "One-time payment";
+    }
+    
+    if (coupon.recurringType === CouponRecurringType.RECURRING) {
+      const duration = coupon.recurringMonths 
+        ? `${coupon.recurringMonths} month${coupon.recurringMonths > 1 ? 's' : ''}`
+        : "Forever";
+      
+      return `Recurring (${duration})`;
+    }
+    
+    return "Unknown type";
   };
 
   if (coupons.length === 0) {
@@ -103,6 +117,9 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
                 Discount
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                Recurring
+              </th>
+              <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                 Status
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
@@ -112,16 +129,12 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
                 Expires
               </th>
               <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                Created
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
                 Actions
               </th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-200 bg-white">
             {coupons.map((coupon) => {
-              const discount = formatDiscount(coupon);
               return (
                 <tr key={coupon.id} className="hover:bg-gray-50">
                   <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
@@ -130,11 +143,16 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
                     </code>
                   </td>
                   <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
+                    <div className="font-medium">{formatDiscount(coupon)}</div>
+                  </td>
+                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
                     <div className="flex flex-col">
-                      <span className="font-medium">{discount.value}</span>
-                      <span className="text-xs text-gray-500">
-                        {discount.type}
-                      </span>
+                      <span className="text-xs">{formatRecurringInfo(coupon)}</span>
+                      {coupon._count.couponApplications > 0 && (
+                        <Badge className="mt-1 bg-purple-100 text-xs text-purple-800">
+                          {coupon._count.couponApplications} active
+                        </Badge>
+                      )}
                     </div>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
@@ -195,9 +213,6 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
                     ) : (
                       <span className="text-gray-400">No expiry</span>
                     )}
-                  </td>
-                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-500">
-                    {format(coupon.createdAt, "MMM dd, yyyy")}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center space-x-2">

@@ -1,10 +1,12 @@
 "use client";
 
 import { loadTossPayments } from "@tosspayments/tosspayments-sdk";
+import { Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useEffect, useTransition } from "react";
 import { toast } from "sonner";
 
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Plan, DiscountCoupon } from "@/prisma/generated/prisma";
 
@@ -23,6 +25,7 @@ interface PlansClientProps {
   userId: string;
   userEmail: string;
   userName: string;
+  userCountry: string | null;
 }
 
 // TODO: Replace with your actual TossPayments client key
@@ -33,6 +36,7 @@ export default function PlansClient({
   userId,
   userEmail,
   userName,
+  userCountry,
 }: PlansClientProps) {
   console.log(userId, userEmail, userName);
   const router = useRouter();
@@ -47,6 +51,10 @@ export default function PlansClient({
   });
   const [isPending, startTransition] = useTransition();
   const [tossPayments, setTossPayments] = useState<any>(null);
+  
+  const isKoreanUser = userCountry === "South Korea";
+  // Auto-renewal is mandatory for Korean users
+  const enableAutoRenewal = isKoreanUser;
 
   const selectedPlan = plans.find((plan) => plan.id === selectedPlanId);
 
@@ -55,6 +63,7 @@ export default function PlansClient({
     const initTossPayments = async () => {
       try {
         const toss = await loadTossPayments(TOSS_CLIENT_KEY);
+        
         setTossPayments(toss);
       } catch (error) {
         console.error("Failed to load TossPayments:", error);
@@ -69,9 +78,15 @@ export default function PlansClient({
   useEffect(() => {
     if (selectedPlan) {
       startTransition(async () => {
+        // Get the correct price based on currency
+        const basePrice = isKoreanUser 
+          ? selectedPlan.price 
+          : (selectedPlan.priceUSD || selectedPlan.price / 1300) * 100; // Convert to cents for USD
+        
         const result = await calculatePriceWithCouponAction(
-          selectedPlan.price,
+          basePrice,
           appliedCoupon?.code,
+          isKoreanUser ? "KRW" : "USD",
         );
 
         if (result.success) {
@@ -83,7 +98,7 @@ export default function PlansClient({
         }
       });
     }
-  }, [selectedPlan, appliedCoupon]);
+  }, [selectedPlan, appliedCoupon, isKoreanUser]);
 
   const handlePlanSelect = (planId: string) => {
     setSelectedPlanId(planId);
@@ -140,6 +155,7 @@ export default function PlansClient({
           couponCode: appliedCoupon?.code,
           customerEmail: userEmail,
           customerName: userName,
+          isRecurring: enableAutoRenewal && isKoreanUser,
         });
 
         if (!paymentResult.success) {
@@ -165,11 +181,41 @@ export default function PlansClient({
             customerKey: userId,
           });
 
-          // Request payment directly
-          await paymentWidget.requestPayment({
+          // For Korean users with auto-renewal, check if billing key exists
+          if (enableAutoRenewal && isKoreanUser && !paymentResult.hasBillingKey) {
+            // First, register billing key for Korean users
+            try {
+              await paymentWidget.requestBillingAuth({
+                method: "CARD",
+                successUrl: `${window.location.origin}/profile/billing/success?paymentId=${payment.id}`,
+                failUrl: `${window.location.origin}/profile/billing/fail`,
+                customerEmail: userEmail,
+                customerName: userName,
+              });
+              return; // Exit here, billing auth success will continue the payment
+            } catch (billingError: any) {
+              console.error("Billing auth error:", billingError);
+              
+              // Delete the payment record since billing auth failed
+              const deleteResult = await deletePaymentAction(payment.id);
+              if (!deleteResult.success) {
+                console.error("Failed to delete payment record:", deleteResult.error);
+              }
+              
+              if (billingError.code === "USER_CANCEL") {
+                toast.error("카드 등록이 취소되었습니다");
+              } else {
+                toast.error(billingError.message || "카드 등록에 실패했습니다");
+              }
+              return;
+            }
+          }
+
+          // Regular payment (or payment after billing key is registered)
+          const paymentOptions: any = {
             method: "CARD",
             amount: {
-              currency: "KRW",
+              currency: paymentResult.paymentConfig?.currency || "KRW",
               value: payment.amount,
             },
             orderId: payment.orderId,
@@ -184,7 +230,9 @@ export default function PlansClient({
               useCardPoint: false,
               useAppCardOnly: false,
             },
-          });
+          };
+
+          await paymentWidget.requestPayment(paymentOptions);
         } catch (paymentError) {
           // If TossPayments fails, delete the created payment record
           console.error("Payment widget error:", paymentError);
@@ -224,6 +272,7 @@ export default function PlansClient({
             isSelected={selectedPlanId === plan.id}
             onSelect={handlePlanSelect}
             isPopular={plan.id === getMostPopularPlanId()}
+            isKoreanUser={isKoreanUser}
           />
         ))}
       </div>
@@ -233,6 +282,7 @@ export default function PlansClient({
         <CouponInput
           onCouponApplied={handleCouponApplied}
           appliedCoupon={appliedCoupon}
+          isKoreanUser={isKoreanUser}
         />
       </div>
 
@@ -245,7 +295,36 @@ export default function PlansClient({
             originalPrice={priceCalculation.originalPrice}
             discountAmount={priceCalculation.discountAmount}
             finalPrice={priceCalculation.finalPrice}
+            isKoreanUser={isKoreanUser}
           />
+
+          {/* Auto-renewal notice for Korean users */}
+          {isKoreanUser && priceCalculation.finalPrice > 0 && (
+            <Alert>
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                <div className="space-y-2">
+                  <p className="text-sm font-medium">
+                    Auto-Renewal Subscription
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    Your subscription will automatically renew. Your card information is securely saved, 
+                    and you can cancel your subscription anytime from your profile page.
+                  </p>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
+
+          {/* International user notice */}
+          {!isKoreanUser && priceCalculation.finalPrice > 0 && (
+            <Alert>
+              <Info className="h-4 w-4" />
+              <AlertDescription>
+                International cards require manual renewal. We&apos;ll send you a reminder email before your subscription expires.
+              </AlertDescription>
+            </Alert>
+          )}
 
           <Button
             onClick={handleConfirmPayment}

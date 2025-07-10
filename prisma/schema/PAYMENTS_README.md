@@ -317,7 +317,7 @@ Make sure to set these environment variables:
 ```env
 # Toss-Payment
 TOSS_CLIENT_KEY=test_gck_docs_Ovk5rk1EwkEbP0W43n07xlzm
-TOSS_SECRET_KEY=test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6
+TOSS_CLIENT_SECRET=test_gsk_docs_OaPz8L5KdmQXkzRz3y47BMw6
 
 # For production, replace with actual keys from Toss-Payment dashboard
 ```

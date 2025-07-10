@@ -55,5 +55,23 @@ module.exports = {
       log_file: "logs/subscription-cron-combined.log",
       time: true,
     },
+    {
+      name: "billing-cron",
+      script: "npx",
+      args: "tsx scripts/billing-cron-wrapper.ts",
+      cron_restart: "0 10 * * *", // Every day at 10:00 AM (server time, adjust based on your server timezone)
+      autorestart: false, // Don't restart after it completes
+      instances: 1,
+      exec_mode: "fork",
+      watch: false,
+      cwd: "/home/champ/learn-english", // Set working directory explicitly
+      env: {
+        NODE_ENV: "production",
+      },
+      error_file: "logs/billing-cron-error.log",
+      out_file: "logs/billing-cron-out.log",
+      log_file: "logs/billing-cron-combined.log",
+      time: true,
+    },
   ],
 };

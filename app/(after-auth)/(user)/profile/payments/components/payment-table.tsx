@@ -1,4 +1,5 @@
 import { format } from "date-fns";
+import { CreditCard, RefreshCw } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -10,12 +11,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { formatCurrency } from "@/lib/utils/payment-config";
 import { PaymentStatus } from "@/prisma/generated/prisma";
 
 import { UserPaymentWithDetails } from "../../queries/payments.query";
 
 interface PaymentTableProps {
   payments: UserPaymentWithDetails[];
+  userCountry: string | null;
 }
 
 // function getStatusBadgeVariant(status: PaymentStatus) {
@@ -52,14 +55,25 @@ function getStatusColor(status: PaymentStatus) {
   }
 }
 
-function formatAmount(amount: number): string {
-  return new Intl.NumberFormat("ko-KR", {
-    style: "currency",
-    currency: "KRW",
-  }).format(amount);
+function getPaymentTypeIcon(paymentType: string) {
+  if (paymentType === "RECURRING") {
+    return <RefreshCw className="h-4 w-4" />;
+  }
+  return <CreditCard className="h-4 w-4" />;
 }
 
-export default function PaymentTable({ payments }: PaymentTableProps) {
+function getPaymentTypeLabel(paymentType: string, isKoreanUser: boolean) {
+  if (paymentType === "RECURRING") {
+    return "Auto-renewal";
+  }
+  if (paymentType === "INITIAL_SUBSCRIPTION") {
+    return isKoreanUser ? "Initial Payment" : "Subscription";
+  }
+  return "One-time";
+}
+
+export default function PaymentTable({ payments, userCountry }: PaymentTableProps) {
+  const isKoreanUser = userCountry === "South Korea";
   if (payments.length === 0) {
     return (
       <Card>
@@ -95,6 +109,9 @@ export default function PaymentTable({ payments }: PaymentTableProps) {
                   Plan
                 </TableHead>
                 <TableHead className="font-medium text-gray-700">
+                  Type
+                </TableHead>
+                <TableHead className="font-medium text-gray-700">
                   Amount
                 </TableHead>
                 <TableHead className="font-medium text-gray-700">
@@ -123,11 +140,19 @@ export default function PaymentTable({ payments }: PaymentTableProps) {
                       {payment.plan.duration} days
                     </div>
                   </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2">
+                      {getPaymentTypeIcon(payment.paymentType)}
+                      <span className="text-sm">
+                        {getPaymentTypeLabel(payment.paymentType, isKoreanUser)}
+                      </span>
+                    </div>
+                  </TableCell>
                   <TableCell className="font-medium text-gray-900">
-                    {formatAmount(payment.amount)}
+                    {formatCurrency(payment.amount, isKoreanUser ? "KRW" : "USD")}
                     {payment.discountAmount && payment.discountAmount > 0 && (
                       <div className="text-xs text-green-600">
-                        -{formatAmount(payment.discountAmount)} discount
+                        -{formatCurrency(payment.discountAmount, isKoreanUser ? "KRW" : "USD")} discount
                       </div>
                     )}
                   </TableCell>

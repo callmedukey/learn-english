@@ -38,6 +38,7 @@ export default function EditPlanDialog({ plan }: EditPlanDialogProps) {
   const [formData, setFormData] = useState({
     name: plan.name,
     price: plan.price.toString(),
+    priceUSD: plan.priceUSD?.toString() || "",
     duration: plan.duration.toString(),
     description: plan.description || "",
     sortOrder: plan.sortOrder.toString(),
@@ -49,6 +50,7 @@ export default function EditPlanDialog({ plan }: EditPlanDialogProps) {
     setFormData({
       name: plan.name,
       price: plan.price.toString(),
+      priceUSD: plan.priceUSD?.toString() || "",
       duration: plan.duration.toString(),
       description: plan.description || "",
       sortOrder: plan.sortOrder.toString(),
@@ -76,6 +78,7 @@ export default function EditPlanDialog({ plan }: EditPlanDialogProps) {
           id: plan.id,
           name: formData.name,
           price: parseInt(formData.price),
+          priceUSD: formData.priceUSD ? parseFloat(formData.priceUSD) : undefined,
           duration: parseInt(formData.duration),
           description: formData.description || undefined,
           sortOrder: parseInt(formData.sortOrder),
@@ -192,6 +195,32 @@ export default function EditPlanDialog({ plan }: EditPlanDialogProps) {
                 </p>
               )}
             </div>
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="priceUSD">Price (USD) - For International Users</Label>
+            <div className="relative">
+              <Input
+                id="priceUSD"
+                name="priceUSD"
+                type="number"
+                step="0.01"
+                value={formData.priceUSD}
+                onChange={handleInputChange}
+                placeholder="9.99"
+              />
+              <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-500">
+                $
+              </span>
+            </div>
+            <p className="text-xs text-muted-foreground">
+              Leave empty if you don&apos;t want to accept international payments
+            </p>
+            {hasPaymentsOrSubscriptions && (
+              <p className="text-xs text-amber-600">
+                ⚠️ Changing USD price affects new purchases only
+              </p>
+            )}
           </div>
 
           <div className="space-y-2">

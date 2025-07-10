@@ -3,6 +3,8 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { CouponRecurringType } from "@/prisma/generated/prisma";
+
 import {
   createCoupon,
   updateCoupon,
@@ -24,9 +26,13 @@ const createCouponSchema = z.object({
     .min(0, "Discount percentage cannot be negative")
     .max(100, "Discount percentage cannot exceed 100%"),
   flatDiscount: z.number().min(0, "Flat discount cannot be negative"),
+  flatDiscountUSD: z.number().min(0, "USD flat discount cannot be negative").optional().nullable(),
   active: z.boolean().optional(),
   oneTimeUse: z.boolean().optional(),
   deadline: z.date().optional().nullable(),
+  recurringType: z.nativeEnum(CouponRecurringType).optional(),
+  recurringMonths: z.number().min(1).optional().nullable(),
+  maxRecurringUses: z.number().min(1).optional().nullable(),
 });
 
 const updateCouponSchema = z.object({
@@ -49,45 +55,59 @@ const updateCouponSchema = z.object({
     .number()
     .min(0, "Flat discount cannot be negative")
     .optional(),
+  flatDiscountUSD: z
+    .number()
+    .min(0, "USD flat discount cannot be negative")
+    .optional()
+    .nullable(),
   active: z.boolean().optional(),
   oneTimeUse: z.boolean().optional(),
   deadline: z.date().optional().nullable(),
+  recurringType: z.nativeEnum(CouponRecurringType).optional(),
+  recurringMonths: z.number().min(1).optional().nullable(),
+  maxRecurringUses: z.number().min(1).optional().nullable(),
 });
 
 export async function createCouponAction(formData: FormData) {
   try {
     const deadlineStr = formData.get("deadline") as string;
+    const recurringMonthsStr = formData.get("recurringMonths") as string;
+    const maxRecurringUsesStr = formData.get("maxRecurringUses") as string;
+    const flatDiscountUSDStr = formData.get("flatDiscountUSD") as string;
+    
     const data = {
       code: formData.get("code") as string,
       discount: parseInt(formData.get("discount") as string) || 0,
       flatDiscount: parseInt(formData.get("flatDiscount") as string) || 0,
+      flatDiscountUSD: flatDiscountUSDStr ? parseFloat(flatDiscountUSDStr) : null,
       active: formData.get("active") === "true",
       oneTimeUse: formData.get("oneTimeUse") === "true",
       deadline: deadlineStr ? new Date(deadlineStr) : null,
+      recurringType: (formData.get("recurringType") as CouponRecurringType) || CouponRecurringType.ONE_TIME,
+      recurringMonths: recurringMonthsStr ? parseInt(recurringMonthsStr) : null,
+      maxRecurringUses: maxRecurringUsesStr ? parseInt(maxRecurringUsesStr) : null,
     };
 
     const validatedData = createCouponSchema.parse(data);
 
-    // Validate that exactly one discount type is provided
-    if (
-      (validatedData.discount ?? 0) === 0 &&
-      (validatedData.flatDiscount ?? 0) === 0
-    ) {
+    // Validate that at least one discount type is provided
+    const hasPercentageDiscount = (validatedData.discount ?? 0) > 0;
+    const hasFlatDiscountKRW = (validatedData.flatDiscount ?? 0) > 0;
+    const hasFlatDiscountUSD = (validatedData.flatDiscountUSD ?? 0) > 0;
+    
+    if (!hasPercentageDiscount && !hasFlatDiscountKRW && !hasFlatDiscountUSD) {
       return {
         success: false,
-        error:
-          "Either percentage discount or flat discount must be greater than 0",
+        error: "Either percentage discount or flat discount must be greater than 0",
       };
     }
 
-    if (
-      (validatedData.discount ?? 0) > 0 &&
-      (validatedData.flatDiscount ?? 0) > 0
-    ) {
+    // Validate that only one discount type is provided
+    const discountTypesCount = [hasPercentageDiscount, hasFlatDiscountKRW, hasFlatDiscountUSD].filter(Boolean).length;
+    if (discountTypesCount > 1) {
       return {
         success: false,
-        error:
-          "You can only use either percentage discount OR flat discount, not both",
+        error: "Please provide only one discount type (percentage, flat KRW, or flat USD)",
       };
     }
 
@@ -100,7 +120,10 @@ export async function createCouponAction(formData: FormData) {
       };
     }
 
-    await createCoupon(validatedData);
+    await createCoupon({
+      ...validatedData,
+      flatDiscountUSD: validatedData.flatDiscountUSD ?? undefined,
+    });
 
     revalidatePath("/admin/coupons");
 
@@ -127,38 +150,44 @@ export async function createCouponAction(formData: FormData) {
 export async function updateCouponAction(formData: FormData) {
   try {
     const deadlineStr = formData.get("deadline") as string;
+    const recurringMonthsStr = formData.get("recurringMonths") as string;
+    const maxRecurringUsesStr = formData.get("maxRecurringUses") as string;
+    const flatDiscountUSDStr = formData.get("flatDiscountUSD") as string;
+    
     const data = {
       id: formData.get("id") as string,
       code: formData.get("code") as string,
       discount: parseInt(formData.get("discount") as string) || 0,
       flatDiscount: parseInt(formData.get("flatDiscount") as string) || 0,
+      flatDiscountUSD: flatDiscountUSDStr ? parseFloat(flatDiscountUSDStr) : null,
       active: formData.get("active") === "true",
       oneTimeUse: formData.get("oneTimeUse") === "true",
       deadline: deadlineStr === "" ? null : deadlineStr ? new Date(deadlineStr) : null,
+      recurringType: (formData.get("recurringType") as CouponRecurringType) || CouponRecurringType.ONE_TIME,
+      recurringMonths: recurringMonthsStr ? parseInt(recurringMonthsStr) : null,
+      maxRecurringUses: maxRecurringUsesStr ? parseInt(maxRecurringUsesStr) : null,
     };
 
     const validatedData = updateCouponSchema.parse(data);
 
-    // Validate that exactly one discount type is provided
-    if (
-      (validatedData.discount ?? 0) === 0 &&
-      (validatedData.flatDiscount ?? 0) === 0
-    ) {
+    // Validate that at least one discount type is provided
+    const hasPercentageDiscount = (validatedData.discount ?? 0) > 0;
+    const hasFlatDiscountKRW = (validatedData.flatDiscount ?? 0) > 0;
+    const hasFlatDiscountUSD = (validatedData.flatDiscountUSD ?? 0) > 0;
+    
+    if (!hasPercentageDiscount && !hasFlatDiscountKRW && !hasFlatDiscountUSD) {
       return {
         success: false,
-        error:
-          "Either percentage discount or flat discount must be greater than 0",
+        error: "Either percentage discount or flat discount must be greater than 0",
       };
     }
 
-    if (
-      (validatedData.discount ?? 0) > 0 &&
-      (validatedData.flatDiscount ?? 0) > 0
-    ) {
+    // Validate that only one discount type is provided
+    const discountTypesCount = [hasPercentageDiscount, hasFlatDiscountKRW, hasFlatDiscountUSD].filter(Boolean).length;
+    if (discountTypesCount > 1) {
       return {
         success: false,
-        error:
-          "You can only use either percentage discount OR flat discount, not both",
+        error: "Please provide only one discount type (percentage, flat KRW, or flat USD)",
       };
     }
 
@@ -180,9 +209,13 @@ export async function updateCouponAction(formData: FormData) {
       code: validatedData.code,
       discount: validatedData.discount,
       flatDiscount: validatedData.flatDiscount,
+      flatDiscountUSD: validatedData.flatDiscountUSD ?? undefined,
       active: validatedData.active,
       oneTimeUse: validatedData.oneTimeUse,
       deadline: validatedData.deadline,
+      recurringType: validatedData.recurringType,
+      recurringMonths: validatedData.recurringMonths,
+      maxRecurringUses: validatedData.maxRecurringUses,
     });
 
     revalidatePath("/admin/coupons");

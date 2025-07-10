@@ -14,11 +14,13 @@ import { validateCouponAction } from "../actions/coupon.actions";
 interface CouponInputProps {
   onCouponApplied: (coupon: DiscountCoupon | null) => void;
   appliedCoupon: DiscountCoupon | null;
+  isKoreanUser?: boolean;
 }
 
 export default function CouponInput({
   onCouponApplied,
   appliedCoupon,
+  isKoreanUser = true,
 }: CouponInputProps) {
   const [couponCode, setCouponCode] = useState("");
   const [isPending, startTransition] = useTransition();
@@ -30,7 +32,7 @@ export default function CouponInput({
     }
 
     startTransition(async () => {
-      const result = await validateCouponAction(couponCode.trim());
+      const result = await validateCouponAction(couponCode.trim(), isKoreanUser);
 
       if (result.success && result.coupon) {
         toast.success("Coupon applied successfully!");
@@ -88,7 +90,11 @@ export default function CouponInput({
             <span className="text-sm text-green-600">
               {appliedCoupon.discount > 0
                 ? `${appliedCoupon.discount}% off`
-                : `₩${appliedCoupon.flatDiscount.toLocaleString()} off`}
+                : appliedCoupon.flatDiscount > 0
+                ? `₩${appliedCoupon.flatDiscount.toLocaleString()} off`
+                : appliedCoupon.flatDiscountUSD && appliedCoupon.flatDiscountUSD > 0
+                ? `$${appliedCoupon.flatDiscountUSD.toFixed(2)} off`
+                : "Invalid discount"}
             </span>
           </div>
           <Button

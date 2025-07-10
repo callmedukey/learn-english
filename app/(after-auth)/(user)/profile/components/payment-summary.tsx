@@ -13,6 +13,7 @@ interface PaymentSummaryProps {
   originalPrice: number;
   discountAmount: number;
   finalPrice: number;
+  isKoreanUser?: boolean;
 }
 
 export default function PaymentSummary({
@@ -21,12 +22,21 @@ export default function PaymentSummary({
   originalPrice,
   discountAmount,
   finalPrice,
+  isKoreanUser = true,
 }: PaymentSummaryProps) {
   const formatPrice = (price: number) => {
-    return new Intl.NumberFormat("ko-KR", {
-      style: "currency",
-      currency: "KRW",
-    }).format(price);
+    if (isKoreanUser) {
+      return new Intl.NumberFormat("ko-KR", {
+        style: "currency",
+        currency: "KRW",
+      }).format(price);
+    } else {
+      // Price is in cents for USD
+      return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "USD",
+      }).format(price / 100);
+    }
   };
 
   const getExpirationDate = () => {
@@ -34,7 +44,7 @@ export default function PaymentSummary({
     const expirationDate = new Date(
       now.getTime() + selectedPlan.duration * 24 * 60 * 60 * 1000,
     );
-    return expirationDate.toLocaleDateString("ko-KR", {
+    return expirationDate.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -83,18 +93,33 @@ export default function PaymentSummary({
           </div>
 
           {appliedCoupon && discountAmount > 0 && (
-            <div className="flex items-center justify-between text-green-600">
-              <div className="flex items-center space-x-2">
-                <span>Discount</span>
-                <Badge
-                  variant="secondary"
-                  className="bg-green-100 text-green-800"
-                >
-                  {appliedCoupon.code}
-                </Badge>
+            <>
+              <div className="flex items-center justify-between text-green-600">
+                <div className="flex items-center space-x-2">
+                  <span>Discount</span>
+                  <Badge
+                    variant="secondary"
+                    className="bg-green-100 text-green-800"
+                  >
+                    {appliedCoupon.code}
+                  </Badge>
+                </div>
+                <span>-{formatPrice(discountAmount)}</span>
               </div>
-              <span>-{formatPrice(discountAmount)}</span>
-            </div>
+              
+              {/* Show discount duration for recurring coupons */}
+              {appliedCoupon.recurringType === "RECURRING" && isKoreanUser && (
+                <div className="ml-4 text-sm text-green-600">
+                  {appliedCoupon.recurringMonths ? (
+                    <span>
+                      Discount applies for {appliedCoupon.recurringMonths} month{appliedCoupon.recurringMonths > 1 ? "s" : ""}
+                    </span>
+                  ) : (
+                    <span>Discount applies forever</span>
+                  )}
+                </div>
+              )}
+            </>
           )}
         </div>
 
@@ -124,6 +149,20 @@ export default function PaymentSummary({
         {selectedPlan.description && (
           <div className="rounded-md bg-gray-50 p-3">
             <p className="text-sm text-gray-600">{selectedPlan.description}</p>
+          </div>
+        )}
+        
+        {/* Note about future payments for recurring coupons with limited duration */}
+        {appliedCoupon && 
+         appliedCoupon.recurringType === "RECURRING" && 
+         appliedCoupon.recurringMonths && 
+         appliedCoupon.recurringMonths > 0 &&
+         isKoreanUser && (
+          <div className="rounded-md bg-blue-50 p-3">
+            <p className="text-sm text-blue-800">
+              ℹ️ After {appliedCoupon.recurringMonths} month{appliedCoupon.recurringMonths > 1 ? "s" : ""}, 
+              your subscription will renew at the full price of {formatPrice(originalPrice)} per {getDurationText(selectedPlan.duration).toLowerCase()}.
+            </p>
           </div>
         )}
       </CardContent>

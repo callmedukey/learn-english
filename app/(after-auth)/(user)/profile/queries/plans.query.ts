@@ -44,6 +44,8 @@ export async function getUserActiveSubscription(
 
 export async function validateCoupon(
   code: string,
+  paymentType?: "ONE_TIME" | "RECURRING",
+  checkUsageLimit: boolean = true,
 ): Promise<DiscountCoupon | null> {
   if (!code.trim()) {
     return null;
@@ -53,6 +55,14 @@ export async function validateCoupon(
     where: {
       code: code.toUpperCase(),
       active: true,
+    },
+    include: {
+      _count: {
+        select: {
+          payments: true, // Count total uses for one-time coupons
+          couponApplications: true, // Count subscriptions for recurring coupons
+        },
+      },
     },
   });
 
@@ -65,12 +75,40 @@ export async function validateCoupon(
     return null;
   }
 
+  // Check payment type compatibility if specified
+  if (paymentType) {
+    // ONE_TIME payment requires ONE_TIME coupon
+    if (paymentType === "ONE_TIME" && coupon.recurringType === "RECURRING") {
+      return null;
+    }
+    // RECURRING payment requires RECURRING coupon
+    if (paymentType === "RECURRING" && coupon.recurringType === "ONE_TIME") {
+      return null;
+    }
+  }
+
+  // Check usage limits based on coupon type
+  if (checkUsageLimit && coupon.maxRecurringUses !== null) {
+    if (coupon.recurringType === "RECURRING") {
+      // For recurring coupons, check number of subscriptions started
+      if (coupon._count.couponApplications >= coupon.maxRecurringUses) {
+        return null;
+      }
+    } else {
+      // For one-time coupons, check total payment uses
+      if (coupon._count.payments >= coupon.maxRecurringUses) {
+        return null;
+      }
+    }
+  }
+
   return coupon;
 }
 
 export async function calculateDiscountedPrice(
   originalPrice: number,
   coupon: DiscountCoupon | null,
+  currency: "KRW" | "USD" = "KRW",
 ): Promise<{
   originalPrice: number;
   discountAmount: number;
@@ -89,10 +127,13 @@ export async function calculateDiscountedPrice(
   let discountAmount = 0;
 
   if (coupon.discount > 0) {
-    // Percentage discount
+    // Percentage discount applies to any currency
     discountAmount = Math.floor((originalPrice * coupon.discount) / 100);
-  } else if (coupon.flatDiscount > 0) {
-    // Flat discount
+  } else if (currency === "USD" && coupon.flatDiscountUSD && coupon.flatDiscountUSD > 0) {
+    // USD flat discount for international users (price is in cents)
+    discountAmount = Math.min(Math.round(coupon.flatDiscountUSD * 100), originalPrice);
+  } else if (currency === "KRW" && coupon.flatDiscount > 0) {
+    // KRW flat discount for Korean users
     discountAmount = Math.min(coupon.flatDiscount, originalPrice);
   }
 

@@ -8,6 +8,7 @@ import { prisma } from "@/prisma/prisma-client";
 const createPlanSchema = z.object({
   name: z.string().min(1, "Plan name is required"),
   price: z.number().min(0, "Price must be non-negative"),
+  priceUSD: z.number().min(0, "USD price must be non-negative").optional(),
   duration: z.number().min(1, "Duration must be at least 1 day"),
   description: z.string().optional(),
   sortOrder: z.number().default(0),
@@ -17,6 +18,7 @@ const updatePlanSchema = z.object({
   id: z.string(),
   name: z.string().min(1, "Plan name is required"),
   price: z.number().min(0, "Price must be non-negative"),
+  priceUSD: z.number().min(0, "USD price must be non-negative").optional(),
   duration: z.number().min(1, "Duration must be at least 1 day"),
   description: z.string().optional(),
   sortOrder: z.number().default(0),
@@ -31,6 +33,7 @@ export async function createPlanAction(data: z.infer<typeof createPlanSchema>) {
       data: {
         name: validatedData.name,
         price: validatedData.price,
+        priceUSD: validatedData.priceUSD,
         duration: validatedData.duration,
         description: validatedData.description,
         sortOrder: validatedData.sortOrder,
@@ -70,6 +73,7 @@ export async function updatePlanAction(data: z.infer<typeof updatePlanSchema>) {
       data: {
         name: validatedData.name,
         price: validatedData.price,
+        priceUSD: validatedData.priceUSD,
         duration: validatedData.duration,
         description: validatedData.description,
         sortOrder: validatedData.sortOrder,

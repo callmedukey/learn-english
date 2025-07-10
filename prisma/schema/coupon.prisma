@@ -1,18 +1,58 @@
+enum CouponRecurringType {
+  ONE_TIME   // Can only be used on one-time payments
+  RECURRING  // Can only be used on recurring payments
+}
+
 model DiscountCoupon {
   id String @id @default(cuid())
 
   code String @unique
 
   discount     Int // Discount percentage (e.g., 10 for 10%)
-  flatDiscount Int // Flat discount amount (e.g., 10 for $10)
+  flatDiscount Int // Flat discount amount in KRW (e.g., 10000 for ₩10,000)
   active       Boolean @default(true)
 
   oneTimeUse Boolean @default(false)
   deadline   DateTime? // Optional expiration date for the coupon
 
+  // Recurring payment support
+  recurringType        CouponRecurringType @default(ONE_TIME)
+  recurringMonths      Int?    // Number of months discount applies (null = forever)
+  maxRecurringUses     Int?    // Max times it can be used in a subscription
+  
+  // International support
+  flatDiscountUSD      Float?  // Flat discount in USD (e.g., 10.0 for $10.00)
+
   // Relations
   payments Payment[]
+  couponApplications   CouponApplication[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+model CouponApplication {
+  id                   String   @id @default(cuid())
+  subscriptionId       String
+  couponId            String
+  
+  // Tracking
+  appliedCount        Int      @default(0)    // Times discount has been applied
+  remainingMonths     Int?     // Remaining months for discount
+  isActive            Boolean  @default(true)
+  
+  // Discount info (cached for history)
+  discountPercentage  Int?
+  flatDiscountKRW     Int?
+  flatDiscountUSD     Float?
+  
+  // Relations
+  subscription        UserSubscription @relation(fields: [subscriptionId], references: [id], onDelete: Cascade)
+  coupon             DiscountCoupon   @relation(fields: [couponId], references: [id])
+  
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+  
+  @@unique([subscriptionId, couponId])
+  @@index([subscriptionId, isActive])
 }

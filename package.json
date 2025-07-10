@@ -13,6 +13,8 @@
     "status": "pm2 status",
     "medal-job": "tsx scripts/medal-cron.ts",
     "medal-wrapper-test": "tsx scripts/cron-wrapper.ts",
+    "billing-job": "tsx jobs/subscription-billing.job.ts",
+    "billing-wrapper-test": "tsx scripts/billing-cron-wrapper.ts",
     "fix": "tsx prisma/scripts/fix-referrals.ts",
     "lint": "next lint",
     "db:generate": "npx prisma generate",
@@ -20,7 +22,8 @@
     "db:push": "npx prisma db push",
     "test": "jest",
     "test:watch": "jest --watch",
-    "reset-scores": "tsx scripts/reset-scores.ts"
+    "reset-scores": "tsx scripts/reset-scores.ts",
+    "reset-payments": "tsx scripts/reset-payments.ts"
   },
   "prisma": {
     "schema": "./prisma/schema",
@@ -67,7 +70,7 @@
     "isomorphic-dompurify": "^2.25.0",
     "lucide-react": "^0.488.0",
     "mime-types": "^3.0.1",
-    "next": "^15.3.3",
+    "next": "^15.3.5",
     "next-auth": "^5.0.0-beta.25",
     "next-themes": "^0.4.6",
     "react": "^19.0.0",
