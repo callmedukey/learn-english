@@ -48,17 +48,14 @@ async function test100DiscountBillingKeyFlow() {
     const coupon = await prisma.discountCoupon.create({
       data: {
         code: `TEST100_${Date.now()}`,
-        description: "100% discount test coupon",
         discount: 100,
         flatDiscount: 0,
-        isActive: true,
-        maxUses: 1,
-        usedCount: 0,
-        validFrom: new Date(),
-        validUntil: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
-        applicableCountries: ["South Korea"],
+        active: true,
+        oneTimeUse: false,
+        deadline: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
         recurringType: "RECURRING",
         recurringMonths: 3,
+        maxRecurringUses: 1,
       },
     });
     console.log(`✅ Created 100% discount coupon: ${coupon.code}`);

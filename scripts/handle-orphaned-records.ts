@@ -9,7 +9,7 @@ async function handleOrphanedRecords() {
   const validUsers = await prisma.user.findMany({
     select: { id: true }
   });
-  const validUserIds = new Set(validUsers.map(u => u.id));
+  const validUserIds = new Set(validUsers.map((u: { id: string }) => u.id));
   console.log(`Found ${validUserIds.size} valid users\n`);
 
   // Check and report orphaned records in each table

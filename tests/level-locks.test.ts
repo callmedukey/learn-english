@@ -31,7 +31,7 @@ describe("Level Lock System", () => {
 
   describe("checkLevelLockPermission", () => {
     it("should allow access when no lock exists", async () => {
-      (prisma.userLevelLock.findUnique as jest.Mock).mockResolvedValue(null);
+      (prisma.userLevelLock.findUnique as jest.Mock).mockResolvedValue(null as any);
 
       const result = await checkLevelLockPermission(mockUserId, "AR", mockArId);
 
@@ -49,7 +49,7 @@ describe("Level Lock System", () => {
         year: 2024,
         month: 1,
         changesUsed: 0,
-      });
+      } as any);
 
       const result = await checkLevelLockPermission(mockUserId, "AR", mockArId);
 
@@ -67,7 +67,7 @@ describe("Level Lock System", () => {
         year: 2024,
         month: 1,
         changesUsed: 0,
-      });
+      } as any);
 
       const result = await checkLevelLockPermission(mockUserId, "AR", mockArId);
 
@@ -79,7 +79,7 @@ describe("Level Lock System", () => {
 
   describe("getUserLevelLock", () => {
     it("should return null when no lock exists", async () => {
-      (prisma.userLevelLock.findUnique as jest.Mock).mockResolvedValue(null);
+      (prisma.userLevelLock.findUnique as jest.Mock).mockResolvedValue(null as any);
 
       const result = await getUserLevelLock(mockUserId, "RC");
 
@@ -108,7 +108,7 @@ describe("Level Lock System", () => {
       };
 
       (prisma.userLevelLock.findUnique as jest.Mock).mockResolvedValue(
-        mockLock,
+        mockLock as any,
       );
 
       const result = await getUserLevelLock(mockUserId, "RC");

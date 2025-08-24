@@ -15,7 +15,7 @@ export async function validateCouponAction(code: string, isKoreanUser: boolean =
     if (!coupon) {
       // Try to get the coupon without type validation to provide better error message
       const couponWithoutType = await validateCoupon(code);
-      if (couponWithoutType) {
+      if (couponWithoutType && couponWithoutType.recurringType) {
         if (isKoreanUser && couponWithoutType.recurringType === "ONE_TIME") {
           return {
             success: false,

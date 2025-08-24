@@ -54,16 +54,14 @@ async function test100PercentCoupon() {
     const coupon = await prisma.discountCoupon.create({
       data: {
         code: `TEST100_${Date.now()}`,
-        description: "100% discount for 3 months - Test",
         discount: 100, // 100% discount
         flatDiscount: 0,
-        isActive: true,
-        maxUses: 1,
-        usedCount: 0,
-        validFrom: new Date(),
-        validUntil: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // Valid for 1 year
-        applicableCountries: ["South Korea"],
+        active: true,
+        oneTimeUse: false,
+        deadline: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // Valid for 1 year
+        recurringType: "RECURRING",
         recurringMonths: 3, // Valid for 3 months
+        maxRecurringUses: 1,
       },
     });
     console.log(`✅ Created 100% discount coupon: ${coupon.code}`);
@@ -77,10 +75,28 @@ async function test100PercentCoupon() {
     });
 
     if (!subscription) {
+      // Create a dummy payment for the subscription
+      const dummyPayment = await prisma.payment.create({
+        data: {
+          userId: testUser.id,
+          planId: monthlyPlan.id,
+          paymentKey: `DUMMY_${Date.now()}`,
+          orderId: `DUMMY_ORDER_${Date.now()}`,
+          orderName: `Test subscription payment`,
+          amount: 0,
+          originalAmount: monthlyPlan.price,
+          discountAmount: monthlyPlan.price,
+          currency: "KRW",
+          status: "PAID",
+          paymentType: "INITIAL_SUBSCRIPTION",
+        },
+      });
+
       subscription = await prisma.userSubscription.create({
         data: {
           userId: testUser.id,
           planId: monthlyPlan.id,
+          paymentId: dummyPayment.id,
           startDate: new Date(),
           endDate: new Date(),
           nextBillingDate: new Date(), // Due immediately for testing
@@ -105,9 +121,7 @@ async function test100PercentCoupon() {
     const couponApplication = await prisma.couponApplication.create({
       data: {
         couponId: coupon.id,
-        userId: testUser.id,
         subscriptionId: subscription.id,
-        appliedAt: new Date(),
         isActive: true,
         appliedCount: 0,
         remainingMonths: 3,

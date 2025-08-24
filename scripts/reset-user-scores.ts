@@ -37,15 +37,7 @@ async function resetUserScores() {
     // Find user
     console.log(`\nSearching for user with email: ${email}...`);
     const user = await prisma.user.findUnique({
-      where: { email },
-      include: {
-        totalScore: true,
-        arScores: true,
-        rcScores: true,
-        monthlyARScores: true,
-        monthlyRCScores: true,
-        medals: true,
-      }
+      where: { email }
     });
 
     if (!user) {
@@ -53,6 +45,26 @@ async function resetUserScores() {
       rl.close();
       return;
     }
+
+    // Fetch related data
+    const totalScore = await prisma.totalScore.findUnique({
+      where: { userId: user.id }
+    });
+    const arScores = await prisma.aRScore.findMany({
+      where: { userId: user.id }
+    });
+    const rcScores = await prisma.rCScore.findMany({
+      where: { userId: user.id }
+    });
+    const monthlyARScores = await prisma.monthlyARScore.findMany({
+      where: { userId: user.id }
+    });
+    const monthlyRCScores = await prisma.monthlyRCScore.findMany({
+      where: { userId: user.id }
+    });
+    const medals = await prisma.medal.findMany({
+      where: { userId: user.id }
+    });
 
     // Display user information
     console.log(`\n✅ User found:`);
@@ -62,12 +74,12 @@ async function resetUserScores() {
     console.log(`   Created: ${user.createdAt.toLocaleDateString()}`);
     
     console.log(`\n📊 Current Score Statistics:`);
-    console.log(`   Total Score: ${user.totalScore?.score || 0}`);
-    console.log(`   AR Levels with scores: ${user.arScores.length}`);
-    console.log(`   RC Levels with scores: ${user.rcScores.length}`);
-    console.log(`   Monthly AR Records: ${user.monthlyARScores.length}`);
-    console.log(`   Monthly RC Records: ${user.monthlyRCScores.length}`);
-    console.log(`   Medals Earned: ${user.medals.length}`);
+    console.log(`   Total Score: ${totalScore?.score || 0}`);
+    console.log(`   AR Levels with scores: ${arScores.length}`);
+    console.log(`   RC Levels with scores: ${rcScores.length}`);
+    console.log(`   Monthly AR Records: ${monthlyARScores.length}`);
+    console.log(`   Monthly RC Records: ${monthlyRCScores.length}`);
+    console.log(`   Medals Earned: ${medals.length}`);
 
     // Get additional counts
     const novelCompletions = await prisma.novelQuestionCompleted.count({
