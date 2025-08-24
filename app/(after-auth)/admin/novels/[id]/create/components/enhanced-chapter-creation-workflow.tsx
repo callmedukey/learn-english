@@ -21,7 +21,10 @@ import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Textarea } from "@/components/ui/textarea";
 
-import { createQuestionSetAction, createQuestionAction } from "../../[novelId]/edit/actions/chapter.actions";
+import {
+  createQuestionSetAction,
+  createQuestionAction,
+} from "../../[novelId]/edit/actions/chapter.actions";
 import { createChapter } from "../actions/chapters.admin-actions";
 import AddNovelForm from "./add-novel-form";
 
@@ -40,11 +43,9 @@ interface EnhancedChapterCreationWorkflowProps {
   defaultScore?: number;
 }
 
-const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowProps> = ({
-  levelId,
-  defaultTimer = 60,
-  defaultScore = 1,
-}) => {
+const EnhancedChapterCreationWorkflow: React.FC<
+  EnhancedChapterCreationWorkflowProps
+> = ({ levelId, defaultTimer = 60, defaultScore = 1 }) => {
   const router = useRouter();
   const [currentStep, setCurrentStep] = useState<"novel" | "chapters">("novel");
   const [createdNovelId, setCreatedNovelId] = useState<string | null>(null);
@@ -56,7 +57,9 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
   const [title, setTitle] = useState("");
   const [description, setDescription] = useState("");
   const [isFree, setIsFree] = useState(false);
-  const [instructions, setInstructions] = useState("Find the best answer for each question.");
+  const [instructions, setInstructions] = useState(
+    "Find the best answer for each question."
+  );
   const [isActive, setIsActive] = useState(true);
 
   // Questions state
@@ -157,10 +160,12 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
       }
 
       const chapterResult = await createChapter(chapterFormData);
-      
+
       if (chapterResult.error) {
         if (chapterResult.error.includes("already exists")) {
-          toast.error(`${chapterResult.error}. Please use a different order number.`);
+          toast.error(
+            `${chapterResult.error}. Please use a different order number.`
+          );
           // Increment the order number for convenience
           setOrderNumber(orderNumber + 1);
         } else {
@@ -182,11 +187,15 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
       if (instructions.trim() || questions.length > 0) {
         const questionSetFormData = new FormData();
         questionSetFormData.append("chapterId", chapterId);
-        questionSetFormData.append("instructions", instructions.trim() || "Find the best answer for each question.");
+        questionSetFormData.append(
+          "instructions",
+          instructions.trim() || "Find the best answer for each question."
+        );
         questionSetFormData.append("active", isActive.toString());
 
-        const questionSetResult = await createQuestionSetAction(questionSetFormData);
-        
+        const questionSetResult =
+          await createQuestionSetAction(questionSetFormData);
+
         if (questionSetResult.error) {
           toast.error(questionSetResult.error);
           setIsCreating(false);
@@ -216,16 +225,20 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
           questionFormData.append("orderNumber", (i + 1).toString());
 
           const questionResult = await createQuestionAction(questionFormData);
-          
+
           if (questionResult.success) {
             createdCount++;
           }
         }
 
         if (questions.length > 0) {
-          toast.success(`Created chapter ${orderNumber} with ${createdCount} questions`);
+          toast.success(
+            `Created chapter ${orderNumber} with ${createdCount} questions`
+          );
         } else {
-          toast.success(`Chapter ${orderNumber} with instructions created successfully!`);
+          toast.success(
+            `Chapter ${orderNumber} with instructions created successfully!`
+          );
         }
       } else {
         toast.success(`Chapter ${orderNumber} created successfully!`);
@@ -233,10 +246,10 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
 
       // Add chapter to created list
       setCreatedChapters([...createdChapters, chapterId]);
-      
+
       // Reset creating state before resetting form
       setIsCreating(false);
-      
+
       // Reset form for next chapter
       resetChapterForm();
     } catch (error) {
@@ -296,10 +309,7 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
 
       {/* Form content */}
       {currentStep === "novel" && (
-        <AddNovelForm
-          levelId={levelId}
-          onNovelCreated={handleNovelCreated}
-        />
+        <AddNovelForm levelId={levelId} onNovelCreated={handleNovelCreated} />
       )}
 
       {currentStep === "chapters" && createdNovelId && (
@@ -338,9 +348,7 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
           <Card>
             <CardHeader>
               <CardTitle>Chapter Details</CardTitle>
-              <CardDescription>
-                Create the chapter information
-              </CardDescription>
+              <CardDescription>Create the chapter information</CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
               <div className="grid grid-cols-2 gap-4">
@@ -350,7 +358,9 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
                     id="orderNumber"
                     type="number"
                     value={orderNumber}
-                    onChange={(e) => setOrderNumber(parseInt(e.target.value) || 1)}
+                    onChange={(e) =>
+                      setOrderNumber(parseInt(e.target.value) || 1)
+                    }
                     min="1"
                   />
                   <p className="mt-1 text-xs text-gray-500">
@@ -431,7 +441,8 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
                 <div>
                   <CardTitle>Novel Questions</CardTitle>
                   <CardDescription>
-                    Add questions to test understanding ({questions.length} added)
+                    Add questions to test understanding ({questions.length}{" "}
+                    added)
                   </CardDescription>
                 </div>
                 {!showAddQuestion && (
@@ -447,7 +458,7 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
               {showAddQuestion && (
                 <div className="space-y-4 rounded-lg border p-4">
                   <h4 className="font-medium">New Question</h4>
-                  
+
                   <div>
                     <Label htmlFor="questionText">Question</Label>
                     <TiptapEditor
@@ -487,7 +498,10 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
                         const choiceText = stripHtml(choice).trim();
                         if (!choiceText) return null;
                         return (
-                          <div key={index} className="flex items-center space-x-2">
+                          <div
+                            key={index}
+                            className="flex items-center space-x-2"
+                          >
                             <RadioGroupItem
                               value={choice}
                               id={`choice-${index}`}
@@ -528,7 +542,9 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
                         id="score"
                         type="number"
                         value={score}
-                        onChange={(e) => setScore(parseInt(e.target.value) || 1)}
+                        onChange={(e) =>
+                          setScore(parseInt(e.target.value) || 1)
+                        }
                         min="1"
                       />
                     </div>
@@ -547,13 +563,8 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
                   </div>
 
                   <div className="flex space-x-2">
-                    <Button onClick={addQuestion}>
-                      Add Question
-                    </Button>
-                    <Button
-                      variant="outline"
-                      onClick={resetQuestionForm}
-                    >
+                    <Button onClick={addQuestion}>Add Question</Button>
+                    <Button variant="outline" onClick={resetQuestionForm}>
                       Cancel
                     </Button>
                   </div>
@@ -562,10 +573,7 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
 
               {/* Questions List */}
               {questions.map((question, index) => (
-                <div
-                  key={index}
-                  className="rounded-lg border p-4"
-                >
+                <div key={index} className="rounded-lg border p-4">
                   <div className="mb-2 flex items-start justify-between">
                     <h5 className="font-medium">Question {index + 1}</h5>
                     <Button
@@ -577,14 +585,14 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
                       <Trash2 className="h-4 w-4" />
                     </Button>
                   </div>
-                  
+
                   <div
                     className="mb-2"
                     dangerouslySetInnerHTML={{
                       __html: DOMPurify.sanitize(question.question),
                     }}
                   />
-                  
+
                   <div className="mb-2 space-y-1">
                     {question.choices.map((choice, choiceIndex) => (
                       <div
@@ -606,9 +614,10 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
                       </div>
                     ))}
                   </div>
-                  
+
                   <div className="text-sm text-gray-600">
-                    <strong>Score:</strong> {question.score} • <strong>Time:</strong> {question.timeLimit}s
+                    <strong>Score:</strong> {question.score} •{" "}
+                    <strong>Time:</strong> {question.timeLimit}s
                   </div>
                 </div>
               ))}
@@ -638,7 +647,11 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
               disabled={isCreating || !title.trim()}
               title={!title.trim() ? "Please enter a chapter title" : ""}
             >
-              {isCreating ? "Creating..." : createdChapters.length > 0 ? "Create Another Chapter" : "Create Chapter"}
+              {isCreating
+                ? "Creating..."
+                : createdChapters.length > 0
+                  ? "Create Another Chapter"
+                  : "Create Chapter"}
             </Button>
           </div>
         </div>
@@ -648,3 +661,4 @@ const EnhancedChapterCreationWorkflow: React.FC<EnhancedChapterCreationWorkflowP
 };
 
 export default EnhancedChapterCreationWorkflow;
+
