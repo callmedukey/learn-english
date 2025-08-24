@@ -11,6 +11,15 @@ const nextConfig: NextConfig = {
     ],
   },
   serverExternalPackages: ["jsdom", "isomorphic-dompurify"],
+  webpack: (config) => {
+    // Exclude the data directory from webpack processing
+    config.module.rules.push({
+      test: /\/data\//,
+      loader: "ignore-loader",
+    });
+
+    return config;
+  },
 };
 
 export default nextConfig;
