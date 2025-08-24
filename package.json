@@ -25,7 +25,8 @@
     "reset-scores": "tsx scripts/reset-scores.ts",
     "reset-user-scores": "tsx scripts/reset-user-scores.ts",
     "reset-payments": "tsx scripts/reset-payments.ts",
-    "restore-backup": "tsx scripts/restore-backup.ts"
+    "restore-backup": "tsx scripts/restore-backup.ts",
+    "setup-test-accounts": "tsx scripts/setup-test-accounts-maintenance.ts"
   },
   "prisma": {
     "schema": "./prisma/schema",
