@@ -107,7 +107,12 @@ export function NotificationBell({
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end" className="w-80 p-0">
+      <DropdownMenuContent 
+        align="end" 
+        alignOffset={-20}
+        sideOffset={8}
+        className="w-80 max-w-[calc(100vw-2rem)] p-0"
+      >
         <div className="border-b p-4">
           <div className="flex items-center justify-between">
             <h3 className="font-semibold">Notifications</h3>

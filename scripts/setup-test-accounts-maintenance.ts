@@ -90,6 +90,16 @@ async function setupTestAccounts() {
     });
     console.log(`  - Deleted ${deletedCouponApps.count} coupon applications`);
 
+    // Delete billing history (must be done before deleting subscriptions)
+    const deletedBillingHistory = await prisma.billingHistory.deleteMany({
+      where: {
+        subscription: {
+          userId: { in: testUserIds }
+        }
+      },
+    });
+    console.log(`  - Deleted ${deletedBillingHistory.count} billing history records`);
+
     // Delete subscriptions
     const deletedSubscriptions = await prisma.userSubscription.deleteMany({
       where: { userId: { in: testUserIds } },
