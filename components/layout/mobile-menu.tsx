@@ -6,7 +6,6 @@ import React, { useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Sheet,
   SheetContent,
@@ -82,9 +81,6 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
     return date.toLocaleDateString();
   };
 
-  const containsKorean = (text: string) => {
-    return /[\u3131-\u3163\uac00-\ud7a3]/g.test(text);
-  };
 
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>

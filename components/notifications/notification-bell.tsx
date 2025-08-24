@@ -11,7 +11,6 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { cn } from "@/lib/utils";
 
 import {
   markNotificationAsRead,
@@ -81,9 +80,6 @@ export function NotificationBell({
     return date.toLocaleDateString();
   };
 
-  const containsKorean = (text: string) => {
-    return /[\u3131-\u3163\uac00-\ud7a3]/g.test(text);
-  };
 
   return (
     <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
