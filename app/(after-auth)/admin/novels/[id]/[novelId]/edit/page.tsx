@@ -1,8 +1,9 @@
-import { notFound } from "next/navigation";
+import { notFound, redirect } from "next/navigation";
 import React from "react";
 
 import { getNovelSettings } from "@/app/(after-auth)/admin/settings/queries/settings-queries";
-import { LevelType } from "@/prisma/generated/prisma";
+import { auth } from "@/auth";
+import { LevelType, Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 import { getSingleNovelChallenges } from "@/server-queries/admin/content-challenges";
 import { getCurrentKoreaYearMonth } from "@/server-queries/medals";
@@ -18,6 +19,12 @@ interface PageProps {
 
 const NovelEditPage = async ({ params }: PageProps) => {
   const { id, novelId } = await params;
+  const session = await auth();
+  
+  // Only ADMIN can edit novels
+  if (!session || session.user.role !== Role.ADMIN) {
+    redirect(`/admin/novels/${id}`);
+  }
 
   const novel = await prisma.novel.findUnique({
     where: { id: novelId },

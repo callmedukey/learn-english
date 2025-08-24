@@ -14,6 +14,15 @@ export async function DELETE() {
       );
     }
 
+    // Check if user has payment access during maintenance
+    const { hasPaymentAccessByEmail } = await import("@/lib/utils/payment-access");
+    if (!hasPaymentAccessByEmail(session.user.email!)) {
+      return NextResponse.json(
+        { error: "Payment system is under maintenance" },
+        { status: 503 }
+      );
+    }
+
     // Get user with country information
     const user = await prisma.user.findUnique({
       where: { id: session.user.id },

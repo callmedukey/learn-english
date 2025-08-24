@@ -1,10 +1,17 @@
 import React from "react";
 
+import { auth } from "@/auth";
+import { Role } from "@/prisma/generated/prisma";
+
 import ARTable from "./ar-table";
 import { getARs } from "../query/ar.query";
 
 const ARTableWrapper = async () => {
-  const ars = await getARs();
+  const [ars, session] = await Promise.all([
+    getARs(),
+    auth(),
+  ]);
+  const userRole = session?.user?.role as Role | undefined;
 
   return (
     <div className="space-y-4">
@@ -14,7 +21,7 @@ const ARTableWrapper = async () => {
           Total: {ars.length} record{ars.length !== 1 ? "s" : ""}
         </span>
       </div>
-      <ARTable ars={ars} />
+      <ARTable ars={ars} userRole={userRole} />
     </div>
   );
 };

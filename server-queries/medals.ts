@@ -504,65 +504,202 @@ export async function getHistoricalLeaderboard(
   }
 }
 
-export async function getGlobalWinnersData(year: number, month: number) {
+type UserScoreData = {
+  userId: string;
+  nickname: string | null;
+  image: string | null;
+  score: number;
+  grade: string;
+};
+
+export type CategoryLeaderboard = {
+  category: "OVERALL" | "RC" | "AR";
+  grade: string;
+  topThree: Array<{
+    rank: 1 | 2 | 3;
+    user: {
+      nickname: string | null;
+      image: string | null;
+    };
+    score: number;
+  }>;
+};
+
+export async function getGlobalWinnersDataByCategory(year: number, month: number): Promise<CategoryLeaderboard[]> {
   try {
-    const leaderboards = await prisma.monthlyLeaderboard.findMany({
-      where: { year, month, finalized: true },
+    // Get all monthly scores for RC
+    const rcScores = await prisma.monthlyRCScore.findMany({
+      where: { year, month, score: { gt: 0 } },
       include: {
-        goldUser: {
-          select: { nickname: true, image: true, birthday: true },
+        user: {
+          select: { id: true, nickname: true, image: true, birthday: true },
         },
-        silverUser: {
-          select: { nickname: true, image: true, birthday: true },
-        },
-        bronzeUser: {
-          select: { nickname: true, image: true, birthday: true },
+        RCLevel: {
+          select: { level: true },
         },
       },
     });
 
-    // Get level details and organize by grade
-    const enrichedLeaderboards = await Promise.all(
-      leaderboards.map(async (lb) => {
-        let levelName = "";
-        let grade = "";
-        
-        if (lb.levelType === "AR") {
-          const ar = await prisma.aR.findUnique({
-            where: { id: lb.levelId },
-            select: { level: true },
+    // Get all monthly scores for AR
+    const arScores = await prisma.monthlyARScore.findMany({
+      where: { year, month, score: { gt: 0 } },
+      include: {
+        user: {
+          select: { id: true, nickname: true, image: true, birthday: true },
+        },
+        AR: {
+          select: { level: true },
+        },
+      },
+    });
+
+    // Create maps to aggregate scores by user and category
+    const userScoresByGrade = new Map<string, {
+      rc: Map<string, UserScoreData>;
+      ar: Map<string, UserScoreData>;
+      overall: Map<string, UserScoreData>;
+    }>();
+
+    // Process RC scores
+    rcScores.forEach(score => {
+      const grade = calculateGrade(score.user.birthday);
+      if (!userScoresByGrade.has(grade)) {
+        userScoresByGrade.set(grade, {
+          rc: new Map(),
+          ar: new Map(),
+          overall: new Map(),
+        });
+      }
+
+      const gradeData = userScoresByGrade.get(grade)!;
+      const userId = score.user.id;
+
+      // Update RC scores
+      const existingRC = gradeData.rc.get(userId) || {
+        userId,
+        nickname: score.user.nickname,
+        image: score.user.image,
+        score: 0,
+        grade,
+      };
+      existingRC.score += score.score;
+      gradeData.rc.set(userId, existingRC);
+
+      // Update overall scores
+      const existingOverall = gradeData.overall.get(userId) || {
+        userId,
+        nickname: score.user.nickname,
+        image: score.user.image,
+        score: 0,
+        grade,
+      };
+      existingOverall.score += score.score;
+      gradeData.overall.set(userId, existingOverall);
+    });
+
+    // Process AR scores
+    arScores.forEach(score => {
+      const grade = calculateGrade(score.user.birthday);
+      if (!userScoresByGrade.has(grade)) {
+        userScoresByGrade.set(grade, {
+          rc: new Map(),
+          ar: new Map(),
+          overall: new Map(),
+        });
+      }
+
+      const gradeData = userScoresByGrade.get(grade)!;
+      const userId = score.user.id;
+
+      // Update AR scores
+      const existingAR = gradeData.ar.get(userId) || {
+        userId,
+        nickname: score.user.nickname,
+        image: score.user.image,
+        score: 0,
+        grade,
+      };
+      existingAR.score += score.score;
+      gradeData.ar.set(userId, existingAR);
+
+      // Update overall scores
+      const existingOverall = gradeData.overall.get(userId) || {
+        userId,
+        nickname: score.user.nickname,
+        image: score.user.image,
+        score: 0,
+        grade,
+      };
+      existingOverall.score += score.score;
+      gradeData.overall.set(userId, existingOverall);
+    });
+
+    // Convert to leaderboards
+    const leaderboards: CategoryLeaderboard[] = [];
+
+    userScoresByGrade.forEach((gradeData, grade) => {
+      // Process each category
+      const categories: Array<["OVERALL" | "RC" | "AR", Map<string, UserScoreData>]> = [
+        ["OVERALL", gradeData.overall],
+        ["RC", gradeData.rc],
+        ["AR", gradeData.ar],
+      ];
+
+      categories.forEach(([category, userMap]) => {
+        if (userMap.size === 0) return;
+
+        // Sort users by score and get top 3
+        const sortedUsers = Array.from(userMap.values())
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 3);
+
+        if (sortedUsers.length > 0) {
+          leaderboards.push({
+            category,
+            grade,
+            topThree: sortedUsers.map((user, index) => ({
+              rank: (index + 1) as 1 | 2 | 3,
+              user: {
+                nickname: user.nickname,
+                image: user.image,
+              },
+              score: user.score,
+            })),
           });
-          levelName = ar?.level || "";
-          // Calculate grade from the gold winner's birthday, or fallback to others
-          const winnerBirthday = lb.goldUser?.birthday || lb.silverUser?.birthday || lb.bronzeUser?.birthday;
-          grade = calculateGrade(winnerBirthday || null);
-        } else {
-          const rc = await prisma.rCLevel.findUnique({
-            where: { id: lb.levelId },
-            select: { level: true, relevantGrade: true },
-          });
-          levelName = rc?.level || "";
-          // Calculate grade from the gold winner's birthday, or fallback to others
-          const winnerBirthday = lb.goldUser?.birthday || lb.silverUser?.birthday || lb.bronzeUser?.birthday;
-          grade = calculateGrade(winnerBirthday || null);
         }
+      });
+    });
 
-        return {
-          levelType: lb.levelType,
-          levelId: lb.levelId,
-          levelName,
-          grade,
-          goldUser: lb.goldUser ? { nickname: lb.goldUser.nickname, image: lb.goldUser.image } : null,
-          goldScore: lb.goldScore,
-          silverUser: lb.silverUser ? { nickname: lb.silverUser.nickname, image: lb.silverUser.image } : null,
-          silverScore: lb.silverScore,
-          bronzeUser: lb.bronzeUser ? { nickname: lb.bronzeUser.nickname, image: lb.bronzeUser.image } : null,
-          bronzeScore: lb.bronzeScore,
-        };
-      })
-    );
+    return leaderboards;
+  } catch (error) {
+    console.error("Failed to get global winners data by category:", error);
+    return [];
+  }
+}
 
-    return enrichedLeaderboards;
+// Keep the original function for backward compatibility but delegate to new function
+export async function getGlobalWinnersData(year: number, month: number) {
+  try {
+    const categoryLeaderboards = await getGlobalWinnersDataByCategory(year, month);
+    
+    // Transform new format to old format for backward compatibility
+    // This returns only the overall category data in the old format
+    const overallLeaderboards = categoryLeaderboards
+      .filter(lb => lb.category === "OVERALL")
+      .map(lb => ({
+        levelType: "AR" as const, // Default to AR for compatibility
+        levelId: "",
+        levelName: "",
+        grade: lb.grade,
+        goldUser: lb.topThree[0]?.user || null,
+        goldScore: lb.topThree[0]?.score || null,
+        silverUser: lb.topThree[1]?.user || null,
+        silverScore: lb.topThree[1]?.score || null,
+        bronzeUser: lb.topThree[2]?.user || null,
+        bronzeScore: lb.topThree[2]?.score || null,
+      }));
+
+    return overallLeaderboards;
   } catch (error) {
     console.error("Failed to get global winners data:", error);
     return [];

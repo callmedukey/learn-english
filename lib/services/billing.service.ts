@@ -94,6 +94,34 @@ export class BillingService {
       }
     }
 
+    // Check if this is a 100% discount (free) payment
+    if (finalAmount === 0 && appliedCoupon) {
+      console.log(
+        `[BillingService] Processing waived payment due to 100% discount coupon: ${appliedCoupon.coupon.code}`,
+      );
+      
+      const orderId = this.generateOrderId();
+      
+      // Create a mock payment result for waived payments
+      const waivedPaymentResult = {
+        paymentKey: `WAIVED_${orderId}`,
+        orderId,
+        orderName: `${plan.name} - 자동 결제 (${appliedCoupon.coupon.code} 100% 할인 적용)`,
+        amount: 0,
+        totalAmount: 0,
+        method: "WAIVED",
+        status: "WAIVED",
+        approvedAt: new Date().toISOString(),
+        customerKey: user.id,
+        customerEmail: user.email,
+        customerName: user.nickname || user.email.split("@")[0],
+      };
+      
+      // Process as successful payment without charging
+      await this.handlePaymentSuccess(subscription, waivedPaymentResult, appliedCoupon, discountAmount);
+      return { success: true, payment: waivedPaymentResult };
+    }
+
     const decryptedBillingKey = this.decrypt(user.billingKey);
     const orderId = this.generateOrderId();
 
@@ -167,8 +195,8 @@ export class BillingService {
           paymentKey: paymentResult.paymentKey,
           orderId: paymentResult.orderId,
           orderName: paymentResult.orderName,
-          amount: paymentResult.amount,
-          status: "PAID",
+          amount: paymentResult.amount || paymentResult.totalAmount,
+          status: paymentResult.status === "WAIVED" ? "WAIVED" : "PAID",
           paymentType: "RECURRING",
           billingKey: subscription.user.billingKey,
           method: paymentResult.method || "CARD",
@@ -201,7 +229,7 @@ export class BillingService {
           userId: subscription.userId,
           subscriptionId: subscription.id,
           billingKey: subscription.user.billingKey!,
-          amount: paymentResult.amount,
+          amount: paymentResult.amount || paymentResult.totalAmount,
           status: "SUCCESS",
         },
       }),

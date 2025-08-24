@@ -9,6 +9,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
 
 const adminSections = [
   {
@@ -35,6 +36,8 @@ const adminSections = [
 ];
 
 export default async function ChallengesAdminPage() {
+  await requireAdminAccess();
+  
   return (
     <div className="container mx-auto py-8">
       <div className="mb-8">

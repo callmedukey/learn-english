@@ -1,0 +1,29 @@
+# Manual Database Backup and Restore Steps
+
+## Step 1: SSH into VPS and create backup
+ssh champ@69.62.68.65
+
+# Once connected to VPS, run these commands:
+sudo docker ps  # Find your postgres container name
+sudo docker exec [CONTAINER_NAME] pg_dump -U postgres -d my-local-db > ~/db_backup.sql
+exit
+
+## Step 2: Copy backup to local machine
+scp champ@69.62.68.65:~/db_backup.sql ./db_backup.sql
+
+## Step 3: Prepare local database
+# Kill existing connections
+docker exec learn-english-postgres-1 psql -U postgres -c "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = 'my-local-db' AND pid <> pg_backend_pid();" postgres
+
+# Drop and recreate database
+docker exec learn-english-postgres-1 psql -U postgres -c "DROP DATABASE IF EXISTS \"my-local-db\";" postgres
+docker exec learn-english-postgres-1 psql -U postgres -c "CREATE DATABASE \"my-local-db\";" postgres
+
+## Step 4: Restore backup
+cat db_backup.sql | docker exec -i learn-english-postgres-1 psql -U postgres -d my-local-db
+
+## Step 5: Verify
+docker exec -it learn-english-postgres-1 psql -U postgres -d my-local-db -c '\dt'
+
+## Step 6: Update Prisma
+npm run db:generate

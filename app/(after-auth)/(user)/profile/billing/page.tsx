@@ -1,6 +1,8 @@
 import { redirect } from "next/navigation";
 
 import { auth } from "@/auth";
+import PaymentMaintenanceNotice from "@/components/payment-maintenance-notice";
+import { hasPaymentAccess } from "@/lib/utils/payment-access";
 import { prisma } from "@/prisma/prisma-client";
 
 import ActiveCouponCard from "./components/active-coupon-card";
@@ -12,6 +14,12 @@ export default async function BillingManagementPage() {
   const session = await auth();
   if (!session?.user?.id) {
     redirect("/login");
+  }
+
+  // Check if user has payment access during maintenance
+  const hasAccess = await hasPaymentAccess();
+  if (!hasAccess) {
+    return <PaymentMaintenanceNotice />;
   }
 
   const user = await prisma.user.findUnique({

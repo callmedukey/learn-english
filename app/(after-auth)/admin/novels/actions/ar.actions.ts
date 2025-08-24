@@ -3,7 +3,9 @@
 import { revalidatePath } from "next/cache";
 
 import { createMonthlyChallenge } from "@/actions/admin/medals";
-import { LevelType } from "@/prisma/generated/prisma";
+import { auth } from "@/auth";
+import { canDeleteARLevel } from "@/lib/utils/permissions";
+import { LevelType, Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export const updateARAction = async (formData: FormData) => {
@@ -88,6 +90,12 @@ export const updateARAction = async (formData: FormData) => {
 export const deleteARAction = async (arId: string) => {
   if (!arId) {
     return { error: "AR ID is required" };
+  }
+
+  // Check permissions
+  const session = await auth();
+  if (!canDeleteARLevel(session?.user?.role as Role | undefined)) {
+    return { error: "You don't have permission to delete AR levels" };
   }
 
   try {

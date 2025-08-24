@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { type MonthlyPopup } from "@/prisma/generated/prisma";
+import { type CategoryLeaderboard } from "@/server-queries/medals";
 
 import { GlobalWinnersPopup } from "./global-winners-popup";
 import { PersonalAchievementPopup } from "./personal-achievement-popup";
@@ -11,7 +12,7 @@ interface WinnerPopupContainerProps {
   popups: Array<MonthlyPopup & {
     dismissals?: Array<{ dismissedForMonth: boolean }>;
   }>;
-  leaderboardData?: any; // For global winners popup
+  categoryLeaderboards?: CategoryLeaderboard[]; // New format for global winners
   personalRankings?: Array<{
     levelType: "AR" | "RC";
     levelId: string;
@@ -25,7 +26,7 @@ interface WinnerPopupContainerProps {
 
 export function WinnerPopupContainer({
   popups,
-  leaderboardData,
+  categoryLeaderboards,
   personalRankings,
 }: WinnerPopupContainerProps) {
   const [closedPopupIds, setClosedPopupIds] = useState<Set<string>>(new Set());
@@ -35,7 +36,7 @@ export function WinnerPopupContainer({
   const currentPopup = popups.find(popup => {
     if (closedPopupIds.has(popup.id)) return false;
     
-    if (popup.type === "GLOBAL_WINNERS" && !leaderboardData) return false;
+    if (popup.type === "GLOBAL_WINNERS" && !categoryLeaderboards) return false;
     if (popup.type === "PERSONAL_ACHIEVEMENT" && (!personalRankings || personalRankings.length === 0)) return false;
     
     return true;
@@ -60,14 +61,14 @@ export function WinnerPopupContainer({
   }
 
   // Show appropriate popup based on type
-  if (currentPopup.type === "GLOBAL_WINNERS" && leaderboardData) {
+  if (currentPopup.type === "GLOBAL_WINNERS" && categoryLeaderboards) {
     return (
       <GlobalWinnersPopup
         popupId={currentPopup.id}
         title={currentPopup.title}
         year={currentPopup.year}
         month={currentPopup.month}
-        leaderboards={leaderboardData}
+        categoryLeaderboards={categoryLeaderboards}
         onClose={handleClose}
       />
     );

@@ -1,8 +1,10 @@
 import { AlertTriangle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 
+import PaymentMaintenanceNotice from "@/components/payment-maintenance-notice";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { hasPaymentAccess } from "@/lib/utils/payment-access";
 
 interface FailPageProps {
   searchParams: Promise<{
@@ -12,6 +14,11 @@ interface FailPageProps {
 }
 
 export default async function FailPage({ searchParams }: FailPageProps) {
+  // Check if user has payment access during maintenance
+  const hasAccess = await hasPaymentAccess();
+  if (!hasAccess) {
+    return <PaymentMaintenanceNotice />;
+  }
   const params = await searchParams;
 
   return (

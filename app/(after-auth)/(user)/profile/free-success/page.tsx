@@ -2,6 +2,8 @@ import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
 import { auth } from "@/auth";
+import PaymentMaintenanceNotice from "@/components/payment-maintenance-notice";
+import { hasPaymentAccess } from "@/lib/utils/payment-access";
 
 import FreeSuccessContent from "./components/free-success-content";
 
@@ -16,6 +18,12 @@ export default async function FreeSuccessPage({
 
   if (!session?.user) {
     redirect("/auth/signin");
+  }
+
+  // Check if user has payment access during maintenance
+  const hasAccess = await hasPaymentAccess();
+  if (!hasAccess) {
+    return <PaymentMaintenanceNotice />;
   }
 
   const params = await searchParams;

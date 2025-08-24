@@ -4,6 +4,7 @@ enum PaymentStatus {
   FAILED
   CANCELLED
   REFUNDED
+  WAIVED
 }
 
 enum SubscriptionStatus {

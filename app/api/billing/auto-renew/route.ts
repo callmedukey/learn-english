@@ -13,6 +13,15 @@ export async function PATCH(request: NextRequest) {
       );
     }
 
+    // Check if user has payment access during maintenance
+    const { hasPaymentAccessByEmail } = await import("@/lib/utils/payment-access");
+    if (!hasPaymentAccessByEmail(session.user.email!)) {
+      return NextResponse.json(
+        { error: "Payment system is under maintenance" },
+        { status: 503 }
+      );
+    }
+
     const { subscriptionId, autoRenew } = await request.json();
 
     if (!subscriptionId || typeof autoRenew !== "boolean") {

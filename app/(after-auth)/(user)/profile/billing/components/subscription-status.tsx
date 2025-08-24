@@ -155,7 +155,7 @@ export default function SubscriptionStatus({
                 })}
               </p>
               {/* Show next payment amount */}
-              <p className="text-sm">
+              <div className="text-sm">
                 Next payment:{" "}
                 <span className="font-medium">
                   {(() => {
@@ -209,7 +209,7 @@ export default function SubscriptionStatus({
                     }
                   })()}
                 </span>
-              </p>
+              </div>
             </div>
           )}
           {subscription.recurringStatus === "CANCELLED" && (

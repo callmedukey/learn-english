@@ -21,7 +21,7 @@ export default async function middleware(req: NextRequest) {
       return NextResponse.next();
     }
 
-    if (token?.role === "ADMIN") {
+    if (token?.role === "ADMIN" || token?.role === "SUB_ADMIN") {
       return NextResponse.redirect(new URL("/admin", req.url));
     }
   }

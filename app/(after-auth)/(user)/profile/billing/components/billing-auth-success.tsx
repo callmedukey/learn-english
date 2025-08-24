@@ -68,7 +68,7 @@ export default function BillingAuthSuccess({
             console.error("Payment execution error:", paymentError);
             toast.error("Card registered but payment failed. Please try again.");
             setTimeout(() => {
-              router.push("/profile/plans");
+              router.push("/profile");
             }, 2000);
           }
         } else {

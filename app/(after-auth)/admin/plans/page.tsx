@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
 
+import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
+
 import CreatePlanDialog from "./components/create-plan-dialog";
 import PlansTable from "./components/plans-table";
 import { getPlans } from "./queries/plans.query";
@@ -29,7 +31,9 @@ async function PlansContent() {
   );
 }
 
-export default function PlansPage() {
+export default async function PlansPage() {
+  await requireAdminAccess();
+  
   return (
     <div className="px-1">
       <Suspense

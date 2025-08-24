@@ -1,6 +1,7 @@
 enum Role {
   USER
   ADMIN
+  SUB_ADMIN
 }
 
 enum Gender {

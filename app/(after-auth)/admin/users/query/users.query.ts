@@ -73,6 +73,7 @@ export const getUsers = async ({
   country,
   nickname,
   email,
+  role: roleFilter,
   page = 1,
   limit = 10,
 }: Partial<{
@@ -81,6 +82,7 @@ export const getUsers = async ({
   country: string;
   nickname: string;
   email: string;
+  role: string;
   page: number;
   limit: number;
 }>): Promise<{ users: UserData[]; totalUsers: number; totalPages: number }> => {
@@ -105,7 +107,14 @@ export const getUsers = async ({
     whereClause.email = { contains: email, mode: "insensitive" };
   }
 
-  whereClause.role = Role.USER;
+  // Role filter
+  if (roleFilter) {
+    if (Object.values(Role).includes(roleFilter as Role)) {
+      whereClause.role = roleFilter as Role;
+    } else {
+      console.warn(`Invalid role filter: ${roleFilter}`);
+    }
+  }
 
   // Add birthday filter for grade
   if (gradeFilter) {

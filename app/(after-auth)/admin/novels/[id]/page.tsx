@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
 
+import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
+import { Role } from "@/prisma/generated/prisma";
 
 import { getARLevelsForSelection } from "../query/ar.query";
 import { getARByLevel, getNovelsByARLevel } from "../query/novel.query";
@@ -22,10 +24,12 @@ const NovelsListPage = async ({ params }: PageProps) => {
   }
 
   // Fetch novels for this level and all AR levels for moving novels
-  const [novels, arLevels] = await Promise.all([
+  const [novels, arLevels, session] = await Promise.all([
     getNovelsByARLevel(id),
     getARLevelsForSelection(),
+    auth(),
   ]);
+  const userRole = session?.user?.role as Role | undefined;
 
   return (
     <div className="space-y-6 px-1">
@@ -48,12 +52,14 @@ const NovelsListPage = async ({ params }: PageProps) => {
             </p>
           </div>
         </div>
-        <Link href={`/admin/novels/${arLevel.id}/create`}>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Novel
-          </Button>
-        </Link>
+        {(userRole === Role.ADMIN || userRole === Role.SUB_ADMIN) && (
+          <Link href={`/admin/novels/${arLevel.id}/create`}>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Novel
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* AR Level Info */}
@@ -84,7 +90,7 @@ const NovelsListPage = async ({ params }: PageProps) => {
       <Suspense
         fallback={<div className="py-8 text-center">Loading novels...</div>}
       >
-        <NovelsTable novels={novels} arLevels={arLevels} />
+        <NovelsTable novels={novels} arLevels={arLevels} userRole={userRole} />
       </Suspense>
     </div>
   );

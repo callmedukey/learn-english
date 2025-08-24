@@ -2,11 +2,20 @@
 
 import { revalidatePath } from "next/cache";
 
+import { auth } from "@/auth";
+import { canDeleteKeyword } from "@/lib/utils/permissions";
+import { Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export const deleteKeyword = async (keywordId: string) => {
   if (!keywordId) {
     return { error: "Keyword ID is required" };
+  }
+
+  // Check permissions
+  const session = await auth();
+  if (!canDeleteKeyword(session?.user?.role as Role | undefined)) {
+    return { error: "You don't have permission to delete keywords" };
   }
 
   try {

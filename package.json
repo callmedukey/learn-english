@@ -23,7 +23,9 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "reset-scores": "tsx scripts/reset-scores.ts",
-    "reset-payments": "tsx scripts/reset-payments.ts"
+    "reset-user-scores": "tsx scripts/reset-user-scores.ts",
+    "reset-payments": "tsx scripts/reset-payments.ts",
+    "restore-backup": "tsx scripts/restore-backup.ts"
   },
   "prisma": {
     "schema": "./prisma/schema",
@@ -59,6 +61,7 @@
     "@tiptap/pm": "^2.14.0",
     "@tiptap/react": "^2.14.0",
     "@tiptap/starter-kit": "^2.14.0",
+    "@tosspayments/payment-widget-sdk": "^0.12.0",
     "@tosspayments/tosspayments-sdk": "^2.3.5",
     "@types/dompurify": "^3.2.0",
     "bcryptjs": "^3.0.2",

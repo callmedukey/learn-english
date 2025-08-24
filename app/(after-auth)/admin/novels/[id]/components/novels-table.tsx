@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Role } from "@/prisma/generated/prisma";
 
 import { BulkToggleComingSoonDialog } from "./bulk-toggle-coming-soon-dialog";
 import { BulkToggleHiddenDialog } from "./bulk-toggle-hidden-dialog";
@@ -31,9 +32,10 @@ interface NovelsTableProps {
     description: string | null;
     stars: number;
   }[];
+  userRole?: Role;
 }
 
-const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels }) => {
+const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels, userRole }) => {
   const [selectedNovels, setSelectedNovels] = useState<string[]>([]);
 
   const handleSelectAll = (checked: boolean) => {
@@ -68,7 +70,7 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels }) => {
   return (
     <div className="space-y-4">
       {/* Bulk Actions */}
-      {selectedNovels.length > 0 && (
+      {userRole === Role.ADMIN && selectedNovels.length > 0 && (
         <div className="flex items-center justify-between rounded-lg border bg-gray-50 p-4">
           <p className="text-sm font-medium">
             {selectedNovels.length} novel
@@ -92,16 +94,18 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels }) => {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[50px]">
-                <Checkbox
-                  checked={isAllSelected}
-                  onCheckedChange={handleSelectAll}
-                  aria-label="Select all"
-                  className={
-                    isIndeterminate ? "data-[state=checked]:bg-gray-400" : ""
-                  }
-                />
-              </TableHead>
+              {userRole === Role.ADMIN && (
+                <TableHead className="w-[50px]">
+                  <Checkbox
+                    checked={isAllSelected}
+                    onCheckedChange={handleSelectAll}
+                    aria-label="Select all"
+                    className={
+                      isIndeterminate ? "data-[state=checked]:bg-gray-400" : ""
+                    }
+                  />
+                </TableHead>
+              )}
               <TableHead>Title</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Status</TableHead>
@@ -109,7 +113,9 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels }) => {
               <TableHead>Free Chapters</TableHead>
               <TableHead>Challenge</TableHead>
               <TableHead>Created At</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              {userRole === Role.ADMIN && (
+                <TableHead className="text-right">Actions</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -120,15 +126,17 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels }) => {
 
               return (
                 <TableRow key={novel.id}>
-                  <TableCell>
-                    <Checkbox
-                      checked={selectedNovels.includes(novel.id)}
-                      onCheckedChange={(checked) =>
-                        handleSelectOne(novel.id, checked as boolean)
-                      }
-                      aria-label={`Select ${novel.title}`}
-                    />
-                  </TableCell>
+                  {userRole === Role.ADMIN && (
+                    <TableCell>
+                      <Checkbox
+                        checked={selectedNovels.includes(novel.id)}
+                        onCheckedChange={(checked) =>
+                          handleSelectOne(novel.id, checked as boolean)
+                        }
+                        aria-label={`Select ${novel.title}`}
+                      />
+                    </TableCell>
+                  )}
                   <TableCell className="font-medium">{novel.title}</TableCell>
                   <TableCell className="max-w-xs truncate">
                     {novel.description || "No description"}
@@ -181,29 +189,31 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels }) => {
                   <TableCell className="text-sm text-gray-500">
                     {format(new Date(novel.createdAt), "yyyy/MM/dd")}
                   </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end space-x-2">
-                      <Button variant="outline" size="sm">
-                        <Link
-                          href={`/admin/novels/${novel.AR?.id}/${novel.id}/edit`}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      {novel.AR && (
-                        <MoveNovelDialog
+                  {userRole === Role.ADMIN && (
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end space-x-2">
+                        <Button variant="outline" size="sm">
+                          <Link
+                            href={`/admin/novels/${novel.AR?.id}/${novel.id}/edit`}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                        {novel.AR && (
+                          <MoveNovelDialog
+                            novelId={novel.id}
+                            novelTitle={novel.title}
+                            currentARId={novel.AR.id}
+                            arLevels={arLevels}
+                          />
+                        )}
+                        <DeleteNovelAlert
                           novelId={novel.id}
-                          novelTitle={novel.title}
-                          currentARId={novel.AR.id}
-                          arLevels={arLevels}
+                          title={novel.title}
                         />
-                      )}
-                      <DeleteNovelAlert
-                        novelId={novel.id}
-                        title={novel.title}
-                      />
-                    </div>
-                  </TableCell>
+                      </div>
+                    </TableCell>
+                  )}
                 </TableRow>
               );
             })}

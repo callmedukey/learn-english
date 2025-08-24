@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Role } from "@/prisma/generated/prisma";
 
 import { BulkToggleComingSoonDialog } from "./bulk-toggle-coming-soon-dialog";
 import { BulkToggleHiddenDialog } from "./bulk-toggle-hidden-dialog";
@@ -31,11 +32,13 @@ interface KeywordsTableProps {
     description: string | null;
     stars: number;
   }[];
+  userRole?: Role;
 }
 
 const KeywordsTable: React.FC<KeywordsTableProps> = ({
   keywords,
   rcLevels,
+  userRole,
 }) => {
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
 
@@ -71,7 +74,7 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
   return (
     <div className="space-y-4">
       {/* Bulk Actions */}
-      {selectedKeywords.length > 0 && (
+      {userRole === Role.ADMIN && selectedKeywords.length > 0 && (
         <div className="flex items-center justify-between rounded-lg border bg-gray-50 p-4">
           <p className="text-sm font-medium">
             {selectedKeywords.length} keyword
@@ -95,16 +98,18 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[50px]">
-                <Checkbox
-                  checked={isAllSelected}
-                  onCheckedChange={handleSelectAll}
-                  aria-label="Select all"
-                  className={
-                    isIndeterminate ? "data-[state=checked]:bg-gray-400" : ""
-                  }
-                />
-              </TableHead>
+              {userRole === Role.ADMIN && (
+                <TableHead className="w-[50px]">
+                  <Checkbox
+                    checked={isAllSelected}
+                    onCheckedChange={handleSelectAll}
+                    aria-label="Select all"
+                    className={
+                      isIndeterminate ? "data-[state=checked]:bg-gray-400" : ""
+                    }
+                  />
+                </TableHead>
+              )}
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Paid/Free</TableHead>
@@ -113,21 +118,25 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
               <TableHead>Questions</TableHead>
               <TableHead>Challenge</TableHead>
               <TableHead>Created At</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+              {userRole === Role.ADMIN && (
+                <TableHead className="text-right">Actions</TableHead>
+              )}
             </TableRow>
           </TableHeader>
           <TableBody>
             {keywords.map((keyword) => (
               <TableRow key={keyword.id}>
-                <TableCell>
-                  <Checkbox
-                    checked={selectedKeywords.includes(keyword.id)}
-                    onCheckedChange={(checked) =>
-                      handleSelectOne(keyword.id, checked as boolean)
-                    }
-                    aria-label={`Select ${keyword.name}`}
-                  />
-                </TableCell>
+                {userRole === Role.ADMIN && (
+                  <TableCell>
+                    <Checkbox
+                      checked={selectedKeywords.includes(keyword.id)}
+                      onCheckedChange={(checked) =>
+                        handleSelectOne(keyword.id, checked as boolean)
+                      }
+                      aria-label={`Select ${keyword.name}`}
+                    />
+                  </TableCell>
+                )}
                 <TableCell className="font-medium">{keyword.name}</TableCell>
                 <TableCell className="max-w-xs truncate">
                   {keyword.description || "No description"}
@@ -191,27 +200,29 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                 <TableCell className="text-sm text-gray-500">
                   {format(new Date(keyword.createdAt), "yyyy/MM/dd")}
                 </TableCell>
-                <TableCell className="text-right">
-                  <div className="flex items-center justify-end space-x-2">
-                    <Button variant="outline" size="sm" asChild>
-                      <Link
-                        href={`/admin/reading/${keyword.rcLevelId}/${keyword.id}/edit`}
-                      >
-                        <Edit className="h-4 w-4" />
-                      </Link>
-                    </Button>
-                    <MoveKeywordDialog
-                      keywordId={keyword.id}
-                      keywordName={keyword.name}
-                      currentRCLevelId={keyword.rcLevelId}
-                      rcLevels={rcLevels}
-                    />
-                    <DeleteKeywordAlert
-                      keywordId={keyword.id}
-                      name={keyword.name}
-                    />
-                  </div>
-                </TableCell>
+                {userRole === Role.ADMIN && (
+                  <TableCell className="text-right">
+                    <div className="flex items-center justify-end space-x-2">
+                      <Button variant="outline" size="sm" asChild>
+                        <Link
+                          href={`/admin/reading/${keyword.rcLevelId}/${keyword.id}/edit`}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <MoveKeywordDialog
+                        keywordId={keyword.id}
+                        keywordName={keyword.name}
+                        currentRCLevelId={keyword.rcLevelId}
+                        rcLevels={rcLevels}
+                      />
+                      <DeleteKeywordAlert
+                        keywordId={keyword.id}
+                        name={keyword.name}
+                      />
+                    </div>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

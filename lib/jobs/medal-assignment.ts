@@ -1,4 +1,4 @@
-import { addMonths, startOfMonth } from "date-fns";
+import { addMonths, startOfMonth, endOfMonth } from "date-fns";
 import { toZonedTime } from "date-fns-tz";
 
 import { APP_TIMEZONE } from "@/lib/constants/timezone";
@@ -255,9 +255,8 @@ async function createMonthlyWinnerPopups() {
   // Get the start of current month in Korea time
   const displayFromDate = startOfMonth(koreaTime);
 
-  // Display for 7 days
-  const displayUntilDate = new Date(displayFromDate);
-  displayUntilDate.setDate(displayUntilDate.getDate() + 7);
+  // Display until end of current month
+  const displayUntilDate = endOfMonth(koreaTime);
 
   let globalPopupsCreated = 0;
   let personalPopupsCreated = 0;
@@ -269,8 +268,8 @@ async function createMonthlyWinnerPopups() {
         year: lastMonthYear,
         month: lastMonth,
         type: PopupType.GLOBAL_WINNERS,
-        title: `${lastMonthYear}년 ${lastMonth}월 월간 챌린지 우승자`,
-        content: "전체 등급별 우승자가 발표되었습니다!",
+        title: `Monthly Challenge Winners - ${lastMonthYear}/${lastMonth}`,
+        content: "Winners have been announced for all grade levels!",
         displayFrom: displayFromDate,
         displayUntil: displayUntilDate,
         active: true,
@@ -285,8 +284,8 @@ async function createMonthlyWinnerPopups() {
         year: lastMonthYear,
         month: lastMonth,
         type: PopupType.PERSONAL_ACHIEVEMENT,
-        title: `${lastMonthYear}년 ${lastMonth}월 개인 성과`,
-        content: "월간 챌린지에서의 당신의 성과를 확인하세요!",
+        title: `Personal Achievement - ${lastMonthYear}/${lastMonth}`,
+        content: "Check your performance in the monthly challenge!",
         displayFrom: displayFromDate,
         displayUntil: displayUntilDate,
         active: true,

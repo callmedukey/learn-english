@@ -2,6 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 
+import { auth } from "@/auth";
+import { canDeleteChapter } from "@/lib/utils/permissions";
+import { Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 // Chapter Actions
@@ -123,6 +126,12 @@ export const updateChapterAction = async (formData: FormData) => {
 export const deleteChapterAction = async (chapterId: string) => {
   if (!chapterId) {
     return { error: "Chapter ID is required for deletion" };
+  }
+
+  // Check permissions
+  const session = await auth();
+  if (!canDeleteChapter(session?.user?.role as Role | undefined)) {
+    return { error: "You don't have permission to delete chapters" };
   }
 
   try {

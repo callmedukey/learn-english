@@ -3,7 +3,9 @@
 import { revalidatePath } from "next/cache";
 
 import { createMonthlyChallenge } from "@/actions/admin/medals";
-import { LevelType } from "@/prisma/generated/prisma";
+import { auth } from "@/auth";
+import { canDeleteRCLevel } from "@/lib/utils/permissions";
+import { LevelType, Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export const updateRCLevelAction = async (formData: FormData) => {
@@ -100,6 +102,12 @@ export const updateRCLevelAction = async (formData: FormData) => {
 export const deleteRCLevelAction = async (rcLevelId: string) => {
   if (!rcLevelId) {
     return { error: "RC level ID is required" };
+  }
+
+  // Check permissions
+  const session = await auth();
+  if (!canDeleteRCLevel(session?.user?.role as Role | undefined)) {
+    return { error: "You don't have permission to delete RC levels" };
   }
 
   try {

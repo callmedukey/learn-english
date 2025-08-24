@@ -125,51 +125,67 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
     process.env.NODE_ENV === "development",
   callbacks: {
     async session({ session, token }) {
-      session.user.id = token.sub as string;
-      session.user.role = token.role as Role;
-      session.user.nickname = token.nickname as string;
+      if (token.sub) {
+        session.user.id = token.sub as string;
+      }
+      
+      session.user.role = (token.role as Role) || Role.USER;
+      session.user.nickname = (token.nickname as string) || '';
       session.user.gender = token.gender as Gender;
       session.user.birthday = token.birthday as Date;
-      session.user.country = token.country as string;
-      session.user.hasPaidSubscription = token.hasPaidSubscription as boolean;
-      session.user.profileComplete = token.profileComplete as boolean;
+      session.user.country = (token.country as string) || '';
+      session.user.hasPaidSubscription = (token.hasPaidSubscription as boolean) || false;
+      session.user.profileComplete = (token.profileComplete as boolean) || false;
+      
       return session;
     },
     async jwt({ token }) {
-      const foundUser = await prisma.user.findUnique({
-        where: {
-          id: token.sub as string,
-        },
-        include: {
-          subscriptions: {
-            include: {
-              plan: true,
+      if (!token.sub) {
+        return token;
+      }
+
+      try {
+        const foundUser = await prisma.user.findUnique({
+          where: {
+            id: token.sub as string,
+          },
+          include: {
+            subscriptions: {
+              include: {
+                plan: true,
+              },
             },
           },
-        },
-      });
+        });
 
-      token.role = foundUser?.role;
-      token.nickname = foundUser?.nickname;
-      token.gender = foundUser?.gender;
-      token.birthday = foundUser?.birthday;
-      token.country = foundUser?.countryId;
-      token.username = foundUser?.username;
+        if (!foundUser) {
+          return token;
+        }
 
-      // Check for active, non-expired subscriptions
-      const now = new Date();
-      const activeSubscriptions =
-        foundUser?.subscriptions.filter(
-          (subscription) =>
-            subscription.status === SubscriptionStatus.ACTIVE &&
-            subscription.endDate > now,
-        ) || [];
+        token.role = foundUser.role;
+        token.nickname = foundUser.nickname;
+        token.gender = foundUser.gender;
+        token.birthday = foundUser.birthday;
+        token.country = foundUser.countryId;
+        token.username = foundUser.username;
 
-      const hasPaidSubscription = activeSubscriptions.length > 0;
-      token.hasPaidSubscription = hasPaidSubscription;
-      
-      // Check if profile is complete
-      token.profileComplete = isProfileComplete(foundUser);
+        // Check for active, non-expired subscriptions
+        const now = new Date();
+        const activeSubscriptions =
+          foundUser.subscriptions.filter(
+            (subscription) =>
+              subscription.status === SubscriptionStatus.ACTIVE &&
+              subscription.endDate > now,
+          ) || [];
+
+        const hasPaidSubscription = activeSubscriptions.length > 0;
+        token.hasPaidSubscription = hasPaidSubscription;
+        
+        // Check if profile is complete
+        token.profileComplete = isProfileComplete(foundUser);
+      } catch (error) {
+        console.error('Error in JWT callback:', error);
+      }
 
       return token;
     },

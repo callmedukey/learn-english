@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 
+import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
 import { PaymentStatus } from "@/prisma/generated/prisma";
 
 import PaymentsClient from "./components/payments-client";
@@ -74,7 +75,9 @@ async function PaymentsContent({ searchParams }: PaymentsPageProps) {
   );
 }
 
-export default function PaymentsPage({ searchParams }: PaymentsPageProps) {
+export default async function PaymentsPage({ searchParams }: PaymentsPageProps) {
+  await requireAdminAccess();
+  
   return (
     <div className="px-1">
       <div className="mb-6">

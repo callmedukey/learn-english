@@ -2,21 +2,28 @@ import { Plus } from "lucide-react";
 import Link from "next/link";
 import React, { Suspense } from "react";
 
+import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
+import { canCreateARLevel } from "@/lib/utils/permissions";
+import { Role } from "@/prisma/generated/prisma";
 
 import ARTableWrapper from "./components/ar-table-wrapper";
 
-const page = () => {
+const page = async () => {
+  const session = await auth();
+  const userRole = session?.user?.role as Role | undefined;
   return (
     <div className="space-y-6 px-1">
       <div className="flex items-center justify-between">
         <h1 className="text-2xl font-bold">Novels</h1>
-        <Button asChild>
-          <Link href="/admin/novels/create">
-            <Plus className="h-4 w-4" />
-            Create Lexile
-          </Link>
-        </Button>
+        {canCreateARLevel(userRole) && (
+          <Button asChild>
+            <Link href="/admin/novels/create">
+              <Plus className="h-4 w-4" />
+              Create Lexile
+            </Link>
+          </Button>
+        )}
       </div>
 
       <Suspense

@@ -1,8 +1,12 @@
 import React from "react";
 
+import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
+
 import NotificationForm from "./components/notification-form";
 
-const page = () => {
+const page = async () => {
+  await requireAdminAccess();
+  
   return (
     <div className="px-1">
       <div className="mx-auto max-w-4xl space-y-8">

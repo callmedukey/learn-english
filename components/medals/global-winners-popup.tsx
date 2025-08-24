@@ -1,6 +1,7 @@
 "use client";
 
-import { Medal } from "lucide-react";
+import { Medal, Trophy, BookOpen, ChartBar } from "lucide-react";
+import { useState } from "react";
 
 import { dismissPopup } from "@/actions/popup-dismissal";
 import { Button } from "@/components/ui/button";
@@ -12,95 +13,75 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { type CategoryLeaderboard } from "@/server-queries/medals";
 
 interface GlobalWinnersPopupProps {
   popupId: string;
   title: string;
   year: number;
   month: number;
-  leaderboards: Array<{
-    levelType: string;
-    levelId: string;
-    levelName: string;
-    grade: string;
-    goldUser?: { nickname: string | null; image: string | null } | null;
-    goldScore?: number | null;
-    silverUser?: { nickname: string | null; image: string | null } | null;
-    silverScore?: number | null;
-    bronzeUser?: { nickname: string | null; image: string | null } | null;
-    bronzeScore?: number | null;
-  }>;
+  categoryLeaderboards: CategoryLeaderboard[];
   onClose: () => void;
 }
 
 const monthNames = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December"
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const medalColors = {
-  gold: "text-amber-500",
-  silver: "text-gray-400",
-  bronze: "text-orange-600",
-};
+  1: "text-amber-500",
+  2: "text-gray-400",
+  3: "text-orange-600",
+} as const;
 
-// Helper to combine scores across all levels for a grade
-function getTopScorersForGrade(gradeLeaderboards: GlobalWinnersPopupProps["leaderboards"]) {
-  // Collect all users with their scores across all levels
-  const userScores = new Map<string, { user: any; totalScore: number }>();
-  
-  gradeLeaderboards.forEach(lb => {
-    // Process gold user
-    if (lb.goldUser && lb.goldScore) {
-      const key = lb.goldUser.nickname || "Anonymous";
-      const existing = userScores.get(key) || { user: lb.goldUser, totalScore: 0 };
-      existing.totalScore += lb.goldScore;
-      userScores.set(key, existing);
-    }
-    
-    // Process silver user
-    if (lb.silverUser && lb.silverScore) {
-      const key = lb.silverUser.nickname || "Anonymous";
-      const existing = userScores.get(key) || { user: lb.silverUser, totalScore: 0 };
-      existing.totalScore += lb.silverScore;
-      userScores.set(key, existing);
-    }
-    
-    // Process bronze user
-    if (lb.bronzeUser && lb.bronzeScore) {
-      const key = lb.bronzeUser.nickname || "Anonymous";
-      const existing = userScores.get(key) || { user: lb.bronzeUser, totalScore: 0 };
-      existing.totalScore += lb.bronzeScore;
-      userScores.set(key, existing);
-    }
-  });
-  
-  // Sort by total score and return top 3
-  return Array.from(userScores.values())
-    .sort((a, b) => b.totalScore - a.totalScore)
-    .slice(0, 3);
-}
-
-// Helper to clean up grade display
-function formatGradeDisplay(grade: string): string {
-  // Remove duplicate "Grade" text if it exists
-  if (grade.includes("Grade") && grade.endsWith("Grade")) {
-    return grade.replace(/\s*Grade$/, "");
-  }
-  return grade;
-}
+const medalLabels = {
+  1: "1st",
+  2: "2nd",
+  3: "3rd",
+} as const;
 
 // Grade order for sorting
-const gradeOrder = ["Adult", "Grade 12", "Grade 11", "Grade 10", "Grade 9", "Grade 8", "Grade 7", "Grade 6", "Grade 5", "Grade 4", "Grade 3", "Grade 2", "Grade 1", "Kinder"];
+const gradeOrder = [
+  "Adult",
+  "Grade 12",
+  "Grade 11",
+  "Grade 10",
+  "Grade 9",
+  "Grade 8",
+  "Grade 7",
+  "Grade 6",
+  "Grade 5",
+  "Grade 4",
+  "Grade 3",
+  "Grade 2",
+  "Grade 1",
+  "Kinder",
+];
 
 export function GlobalWinnersPopup({
   popupId,
   title,
   year,
   month,
-  leaderboards,
+  categoryLeaderboards,
   onClose,
 }: GlobalWinnersPopupProps) {
+  const [activeTab, setActiveTab] = useState<"OVERALL" | "RC" | "AR">(
+    "OVERALL",
+  );
+
   const handleDismiss = async (dismissForMonth: boolean) => {
     try {
       await dismissPopup(popupId, dismissForMonth);
@@ -112,31 +93,113 @@ export function GlobalWinnersPopup({
 
   const monthName = monthNames[month - 1];
 
-  // Group leaderboards by grade
-  const leaderboardsByGrade = leaderboards.reduce((acc, lb) => {
-    const cleanGrade = formatGradeDisplay(lb.grade);
-    if (!acc[cleanGrade]) {
-      acc[cleanGrade] = [];
-    }
-    acc[cleanGrade].push(lb);
-    return acc;
-  }, {} as Record<string, typeof leaderboards>);
+  // Group leaderboards by grade and category
+  const leaderboardsByGradeAndCategory = categoryLeaderboards.reduce(
+    (acc, lb) => {
+      if (!acc[lb.grade]) {
+        acc[lb.grade] = {
+          OVERALL: null,
+          RC: null,
+          AR: null,
+        };
+      }
+      acc[lb.grade][lb.category] = lb;
+      return acc;
+    },
+    {} as Record<
+      string,
+      Record<"OVERALL" | "RC" | "AR", CategoryLeaderboard | null>
+    >,
+  );
 
   // Sort grades according to order
-  const sortedGrades = Object.keys(leaderboardsByGrade).sort((a, b) => {
-    const aIndex = gradeOrder.indexOf(a);
-    const bIndex = gradeOrder.indexOf(b);
-    if (aIndex === -1 && bIndex === -1) return a.localeCompare(b);
-    if (aIndex === -1) return 1;
-    if (bIndex === -1) return -1;
-    return aIndex - bIndex;
-  });
+  const sortedGrades = Object.keys(leaderboardsByGradeAndCategory).sort(
+    (a, b) => {
+      const aIndex = gradeOrder.indexOf(a);
+      const bIndex = gradeOrder.indexOf(b);
+      if (aIndex === -1 && bIndex === -1) return a.localeCompare(b);
+      if (aIndex === -1) return 1;
+      if (bIndex === -1) return -1;
+      return aIndex - bIndex;
+    },
+  );
+
+  const getCategoryIcon = (category: "OVERALL" | "RC" | "AR") => {
+    switch (category) {
+      case "OVERALL":
+        return <Trophy className="h-4 w-4" />;
+      case "RC":
+        return <BookOpen className="h-4 w-4" />;
+      case "AR":
+        return <ChartBar className="h-4 w-4" />;
+    }
+  };
+
+  const getCategoryLabel = (category: "OVERALL" | "RC" | "AR") => {
+    switch (category) {
+      case "OVERALL":
+        return "Overall";
+      case "RC":
+        return "RC";
+      case "AR":
+        return "Lexile";
+    }
+  };
+
+  const renderLeaderboardContent = (category: "OVERALL" | "RC" | "AR") => {
+    return (
+      <div className="space-y-6 py-4">
+        {sortedGrades.map((grade) => {
+          const leaderboard = leaderboardsByGradeAndCategory[grade][category];
+
+          // Skip grades that don't have data for this category
+          if (!leaderboard || leaderboard.topThree.length === 0) return null;
+
+          return (
+            <div key={`${grade}-${category}`} className="space-y-3">
+              <h3 className="border-b pb-2 text-lg font-semibold text-primary">
+                {grade}
+              </h3>
+
+              <div className="space-y-2">
+                {leaderboard.topThree.map((winner) => (
+                  <div
+                    key={`${grade}-${category}-${winner.rank}`}
+                    className="flex items-center gap-3 rounded-lg p-2 transition-colors hover:bg-accent/50"
+                  >
+                    <Medal className={`h-6 w-6 ${medalColors[winner.rank]}`} />
+                    <span className="w-10 font-medium">
+                      {medalLabels[winner.rank]}
+                    </span>
+                    <span className="flex-1 font-medium">
+                      {winner.user.nickname || "Anonymous"}
+                    </span>
+                    <span className="text-sm text-muted-foreground">
+                      {winner.score} pts
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          );
+        })}
+
+        {sortedGrades.every(
+          (grade) => !leaderboardsByGradeAndCategory[grade][category],
+        ) && (
+          <div className="py-8 text-center text-muted-foreground">
+            No winners for {getCategoryLabel(category)} category this month.
+          </div>
+        )}
+      </div>
+    );
+  };
 
   return (
     <Dialog open onOpenChange={() => handleDismiss(false)}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-center">
+          <DialogTitle className="text-center text-2xl font-bold">
             {title || `${monthName} ${year} Medal Winners`}
           </DialogTitle>
           <DialogDescription className="text-center text-lg">
@@ -144,45 +207,35 @@ export function GlobalWinnersPopup({
           </DialogDescription>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          {sortedGrades.map((grade) => {
-            const gradeLeaderboards = leaderboardsByGrade[grade];
-            const topScorers = getTopScorersForGrade(gradeLeaderboards);
-            
-            // Only show grades that have winners
-            if (topScorers.length === 0) return null;
-            
-            return (
-              <div key={grade} className="space-y-3">
-                <h3 className="text-lg font-semibold text-primary border-b pb-2">
-                  {grade}
-                </h3>
-                
-                <div className="space-y-2">
-                  {topScorers.map((scorer, index) => {
-                    const medal = index === 0 ? "gold" : index === 1 ? "silver" : "bronze";
-                    const place = index === 0 ? "1st" : index === 1 ? "2nd" : "3rd";
-                    
-                    return (
-                      <div key={`${grade}-${index}`} className="flex items-center gap-3 p-2 rounded-lg hover:bg-accent/50 transition-colors">
-                        <Medal className={`h-6 w-6 ${medalColors[medal]}`} />
-                        <span className="font-medium w-10">{place}</span>
-                        <span className="flex-1 font-medium">
-                          {scorer.user.nickname || "Anonymous"}
-                        </span>
-                        <span className="text-sm text-muted-foreground">
-                          {scorer.totalScore} pts
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            );
-          })}
-        </div>
+        <Tabs
+          value={activeTab}
+          onValueChange={(value) => setActiveTab(value as typeof activeTab)}
+        >
+          <TabsList className="grid w-full grid-cols-3">
+            <TabsTrigger value="OVERALL" className="flex items-center gap-2">
+              {getCategoryIcon("OVERALL")}
+              Overall
+            </TabsTrigger>
+            <TabsTrigger value="RC" className="flex items-center gap-2">
+              {getCategoryIcon("RC")}
+              RC
+            </TabsTrigger>
+            <TabsTrigger value="AR" className="flex items-center gap-2">
+              {getCategoryIcon("AR")}
+              Lexile
+            </TabsTrigger>
+          </TabsList>
 
-        <DialogFooter className="flex-col sm:flex-row gap-2">
+          <TabsContent value="OVERALL">
+            {renderLeaderboardContent("OVERALL")}
+          </TabsContent>
+
+          <TabsContent value="RC">{renderLeaderboardContent("RC")}</TabsContent>
+
+          <TabsContent value="AR">{renderLeaderboardContent("AR")}</TabsContent>
+        </Tabs>
+
+        <DialogFooter className="flex-col gap-2 sm:flex-row">
           <Button
             variant="outline"
             onClick={() => handleDismiss(true)}

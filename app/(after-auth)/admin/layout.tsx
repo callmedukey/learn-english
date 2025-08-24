@@ -10,7 +10,7 @@ import { AppSidebar } from "./components/app-sidebar";
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
 
-  if (!session || session.user.role !== Role.ADMIN) {
+  if (!session || (session.user.role !== Role.ADMIN && session.user.role !== Role.SUB_ADMIN)) {
     redirect("/login");
   }
 

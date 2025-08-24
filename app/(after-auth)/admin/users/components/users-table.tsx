@@ -9,14 +9,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; // Assuming you have these shadcn/ui components
+import { Role } from "@/prisma/generated/prisma";
 
+import RoleChangeDropdown from "./role-change-dropdown";
 import { UserData } from "../query/users.query"; // Adjust path as needed
 
 interface UsersTableProps {
   users: UserData[];
+  currentUserRole: Role;
 }
 
-const UsersTable: React.FC<UsersTableProps> = ({ users }) => {
+const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole }) => {
   if (!users || users.length === 0) {
     return <p className="text-center text-gray-500">No users found.</p>;
   }
@@ -31,6 +34,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users }) => {
           <TableHead>Grade</TableHead>
           <TableHead>Gender</TableHead>
           <TableHead>Country</TableHead>
+          <TableHead>Role</TableHead>
           <TableHead>Subscription Status</TableHead>
           <TableHead>Plan</TableHead>
           <TableHead>Start Date</TableHead>
@@ -47,6 +51,13 @@ const UsersTable: React.FC<UsersTableProps> = ({ users }) => {
             <TableCell>{user.grade}</TableCell>
             <TableCell>{user.gender || "N/A"}</TableCell>
             <TableCell>{user.country?.name || "N/A"}</TableCell>
+            <TableCell>
+              {currentUserRole === Role.ADMIN ? (
+                <RoleChangeDropdown userId={user.id} currentRole={user.role} />
+              ) : (
+                <span className="text-sm">{user.role}</span>
+              )}
+            </TableCell>
             <TableCell>
               {user.hasActiveSubscription ? (
                 <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">

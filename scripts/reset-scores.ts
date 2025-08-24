@@ -1,6 +1,12 @@
+import path from 'path';
 import readline from "readline";
 
+import * as dotenv from 'dotenv';
+
 import { prisma } from "@/prisma/prisma-client";
+
+// Load environment variables
+dotenv.config({ path: path.resolve(__dirname, '../.env') });
 
 const rl = readline.createInterface({
   input: process.stdin,

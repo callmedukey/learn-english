@@ -1,5 +1,6 @@
 import React, { Suspense } from "react";
 
+import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
 import { prisma } from "@/prisma/prisma-client";
 
 import UsersFilter from "./components/users-filter";
@@ -14,6 +15,7 @@ interface AdminUsersPageProps {
     country?: string;
     nickname?: string;
     email?: string;
+    role?: string;
     page?: string;
     limit?: string;
   }>;
@@ -24,6 +26,7 @@ const ITEMS_PER_PAGE = 100;
 export default async function AdminUsersPage({
   searchParams,
 }: AdminUsersPageProps) {
+  const session = await requireAdminAccess();
   const resolvedSearchParams = await searchParams;
 
   const currentPage = parseInt(resolvedSearchParams.page || "1", 10);
@@ -38,6 +41,7 @@ export default async function AdminUsersPage({
     country: resolvedSearchParams.country,
     nickname: resolvedSearchParams.nickname,
     email: resolvedSearchParams.email,
+    role: resolvedSearchParams.role,
     page: currentPage,
     limit: limit,
   });
@@ -70,7 +74,7 @@ export default async function AdminUsersPage({
           </div>
         }
       >
-        <UsersTable users={users} />
+        <UsersTable users={users} currentUserRole={session.user.role} />
       </Suspense>
 
       {totalPages > 1 && (

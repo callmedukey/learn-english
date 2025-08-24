@@ -1,9 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { hasPaymentAccess } from "@/lib/utils/payment-access";
 import { prisma } from "@/prisma/prisma-client";
 
 export async function GET(request: NextRequest) {
   try {
+    // Check if user has payment access during maintenance
+    const hasAccess = await hasPaymentAccess();
+    if (!hasAccess) {
+      return NextResponse.json(
+        { success: false, error: "Payment system is under maintenance" },
+        { status: 503 },
+      );
+    }
     const searchParams = request.nextUrl.searchParams;
     const orderId = searchParams.get("orderId");
     const userId = searchParams.get("userId");

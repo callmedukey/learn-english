@@ -38,6 +38,15 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
+    // Check if user has payment access during maintenance
+    const { hasPaymentAccessByEmail } = await import("@/lib/utils/payment-access");
+    if (!hasPaymentAccessByEmail(session.user.email!)) {
+      return NextResponse.json(
+        { error: "Payment system is under maintenance" },
+        { status: 503 },
+      );
+    }
+
     const { paymentId } = await request.json();
 
     if (!paymentId) {
@@ -52,6 +61,7 @@ export async function POST(request: NextRequest) {
       where: { id: paymentId },
       include: {
         plan: true,
+        coupon: true,
         user: {
           select: {
             id: true,
@@ -85,53 +95,90 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Decrypt billing key
-    const billingKey = decrypt(payment.user.billingKey);
+    let paymentResult: any;
 
-    // Execute payment using billing key
-    const response = await fetch(
-      `https://api.tosspayments.com/v1/billing/${billingKey}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Basic ${Buffer.from(TOSS_CLIENT_SECRET + ":").toString("base64")}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          customerKey: payment.user.id,
-          amount: payment.amount,
-          orderId: payment.orderId,
-          orderName: payment.orderName,
-          customerEmail: payment.user.email,
-          customerName:
-            payment.user.nickname || payment.user.email.split("@")[0],
-        }),
-      },
-    );
-
-    const paymentResult = await response.json();
-
-    if (!response.ok) {
-      console.error("Toss payment error:", paymentResult);
-      return NextResponse.json(
-        { error: paymentResult.message || "Payment failed" },
-        { status: 400 },
+    // Check if this is a 100% discount (free) payment
+    if (payment.amount === 0) {
+      console.log(
+        `Processing waived payment due to 100% discount: ${payment.couponCode || "Unknown coupon"}`,
       );
-    }
 
-    // Update payment record
-    await prisma.payment.update({
-      where: { id: paymentId },
-      data: {
-        status: "PAID",
-        paymentKey: paymentResult.paymentKey,
-        method: paymentResult.method || "CARD",
-        approvedAt: new Date(paymentResult.approvedAt),
-        tossResponse: paymentResult,
-        billingKey: payment.user.billingKey,
-        paymentType: "INITIAL_SUBSCRIPTION",
-      },
-    });
+      // Create a mock payment result for waived payments
+      paymentResult = {
+        paymentKey: `WAIVED_${payment.orderId}`,
+        orderId: payment.orderId,
+        orderName: payment.orderName,
+        amount: 0,
+        method: "WAIVED",
+        status: "WAIVED",
+        approvedAt: new Date().toISOString(),
+        customerKey: payment.user.id,
+        customerEmail: payment.user.email,
+        customerName: payment.user.nickname || payment.user.email.split("@")[0],
+      };
+
+      // Update payment record for waived payment
+      await prisma.payment.update({
+        where: { id: paymentId },
+        data: {
+          status: "WAIVED",
+          paymentKey: paymentResult.paymentKey,
+          method: "WAIVED",
+          approvedAt: new Date(paymentResult.approvedAt),
+          tossResponse: paymentResult,
+          billingKey: payment.user.billingKey,
+          paymentType: "INITIAL_SUBSCRIPTION",
+        },
+      });
+    } else {
+      // Decrypt billing key for actual payment
+      const billingKey = decrypt(payment.user.billingKey);
+
+      // Execute payment using billing key
+      const response = await fetch(
+        `https://api.tosspayments.com/v1/billing/${billingKey}`,
+        {
+          method: "POST",
+          headers: {
+            Authorization: `Basic ${Buffer.from(TOSS_CLIENT_SECRET + ":").toString("base64")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            customerKey: payment.user.id,
+            amount: payment.amount,
+            orderId: payment.orderId,
+            orderName: payment.orderName,
+            customerEmail: payment.user.email,
+            customerName:
+              payment.user.nickname || payment.user.email.split("@")[0],
+          }),
+        },
+      );
+
+      paymentResult = await response.json();
+
+      if (!response.ok) {
+        console.error("Toss payment error:", paymentResult);
+        return NextResponse.json(
+          { error: paymentResult.message || "Payment failed" },
+          { status: 400 },
+        );
+      }
+
+      // Update payment record
+      await prisma.payment.update({
+        where: { id: paymentId },
+        data: {
+          status: "PAID",
+          paymentKey: paymentResult.paymentKey,
+          method: paymentResult.method || "CARD",
+          approvedAt: new Date(paymentResult.approvedAt),
+          tossResponse: paymentResult,
+          billingKey: payment.user.billingKey,
+          paymentType: "INITIAL_SUBSCRIPTION",
+        },
+      });
+    }
 
     // Create subscription
     const endDate = new Date();
@@ -153,6 +200,21 @@ export async function POST(request: NextRequest) {
         billingKey: payment.user.billingKey,
       },
     });
+
+    // Create CouponApplication for recurring coupons
+    if (payment.coupon && payment.coupon.recurringType === "RECURRING") {
+      await prisma.couponApplication.create({
+        data: {
+          subscriptionId: subscription.id,
+          couponId: payment.coupon.id,
+          remainingMonths: payment.coupon.recurringMonths,
+          isActive: true,
+          discountPercentage: payment.coupon.discount > 0 ? payment.coupon.discount : null,
+          flatDiscountKRW: payment.coupon.flatDiscount > 0 ? payment.coupon.flatDiscount : null,
+          flatDiscountUSD: payment.coupon.flatDiscountUSD && payment.coupon.flatDiscountUSD > 0 ? payment.coupon.flatDiscountUSD : null,
+        },
+      });
+    }
 
     // Log billing history
     await prisma.billingHistory.create({

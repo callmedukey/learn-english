@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Role } from "@/prisma/generated/prisma";
 
 import DeleteARDialog from "./delete-ar-dialog";
 import EditARDialog from "./edit-ar-dialog";
@@ -19,9 +20,10 @@ import { ARData } from "../query/ar.query";
 
 interface ARTableProps {
   ars: ARData[];
+  userRole?: Role;
 }
 
-const ARTable: React.FC<ARTableProps> = ({ ars }) => {
+const ARTable: React.FC<ARTableProps> = ({ ars, userRole }) => {
   if (!ars || ars.length === 0) {
     return (
       <p className="text-center text-gray-500">No Lexile records found.</p>
@@ -40,7 +42,9 @@ const ARTable: React.FC<ARTableProps> = ({ ars }) => {
           <TableHead>Free Chapters</TableHead>
           <TableHead>Font Size</TableHead>
           <TableHead>Created At</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+          {userRole === Role.ADMIN && (
+            <TableHead className="text-right">Actions</TableHead>
+          )}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -92,28 +96,30 @@ const ARTable: React.FC<ARTableProps> = ({ ars }) => {
             <TableCell className="text-sm text-gray-500">
               {format(new Date(ar.createdAt), "yyyy/MM/dd")}
             </TableCell>
-            <TableCell className="text-right">
-              <div className="flex items-center justify-end space-x-2">
-                <EditARDialog ar={ar}>
-                  <Button variant="outline" size="sm">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </EditARDialog>
-                <DeleteARDialog
-                  arId={ar.id}
-                  arLevel={ar.level}
-                  novelCount={ar.novelCount}
-                >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-red-600 hover:text-red-700"
+            {userRole === Role.ADMIN && (
+              <TableCell className="text-right">
+                <div className="flex items-center justify-end space-x-2">
+                  <EditARDialog ar={ar}>
+                    <Button variant="outline" size="sm">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </EditARDialog>
+                  <DeleteARDialog
+                    arId={ar.id}
+                    arLevel={ar.level}
+                    novelCount={ar.novelCount}
                   >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </DeleteARDialog>
-              </div>
-            </TableCell>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </DeleteARDialog>
+                </div>
+              </TableCell>
+            )}
           </TableRow>
         ))}
       </TableBody>

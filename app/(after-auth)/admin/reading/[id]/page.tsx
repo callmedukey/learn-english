@@ -3,7 +3,9 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import React, { Suspense } from "react";
 
+import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
+import { Role } from "@/prisma/generated/prisma";
 
 import {
   getRCLevelById,
@@ -25,10 +27,12 @@ const RCLevelDetailPage = async ({ params }: PageProps) => {
   }
 
   // Fetch keywords for this level and all RC levels for moving keywords
-  const [keywords, rcLevels] = await Promise.all([
+  const [keywords, rcLevels, session] = await Promise.all([
     getRCKeywordsByLevel(id),
     getRCLevelsForSelection(),
+    auth(),
   ]);
+  const userRole = session?.user?.role as Role | undefined;
 
   return (
     <div className="space-y-6 px-1">
@@ -51,12 +55,14 @@ const RCLevelDetailPage = async ({ params }: PageProps) => {
             </p>
           </div>
         </div>
-        <Link href={`/admin/reading/${rcLevel.id}/create`}>
-          <Button>
-            <Plus className="mr-2 h-4 w-4" />
-            Create Keyword
-          </Button>
-        </Link>
+        {(userRole === Role.ADMIN || userRole === Role.SUB_ADMIN) && (
+          <Link href={`/admin/reading/${rcLevel.id}/create`}>
+            <Button>
+              <Plus className="mr-2 h-4 w-4" />
+              Create Keyword
+            </Button>
+          </Link>
+        )}
       </div>
 
       {/* RC Level Info */}
@@ -91,7 +97,7 @@ const RCLevelDetailPage = async ({ params }: PageProps) => {
       <Suspense
         fallback={<div className="py-8 text-center">Loading keywords...</div>}
       >
-        <KeywordsTable keywords={keywords} rcLevels={rcLevels} />
+        <KeywordsTable keywords={keywords} rcLevels={rcLevels} userRole={userRole} />
       </Suspense>
     </div>
   );

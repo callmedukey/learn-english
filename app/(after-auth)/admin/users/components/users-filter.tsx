@@ -13,7 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Country, Gender } from "@/prisma/generated/prisma";
+import { Country, Gender, Role } from "@/prisma/generated/prisma";
 
 interface UsersFilterProps {
   countries: Pick<Country, "id" | "name">[];
@@ -41,6 +41,7 @@ function FiltersComponent({ countries }: UsersFilterProps) {
   );
   const [gender, setGender] = React.useState(searchParams.get("gender") || "");
   const [grade, setGrade] = React.useState(searchParams.get("grade") || "");
+  const [role, setRole] = React.useState(searchParams.get("role") || "");
 
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -55,6 +56,8 @@ function FiltersComponent({ countries }: UsersFilterProps) {
     else params.delete("gender");
     if (grade) params.set("grade", grade);
     else params.delete("grade");
+    if (role) params.set("role", role);
+    else params.delete("role");
     params.set("page", "1");
     router.push(`${pathname}?${params.toString()}`);
   };
@@ -65,6 +68,7 @@ function FiltersComponent({ countries }: UsersFilterProps) {
     setCountry("");
     setGender("");
     setGrade("");
+    setRole("");
     router.push(`${pathname}?page=1`);
   };
 
@@ -161,6 +165,29 @@ function FiltersComponent({ countries }: UsersFilterProps) {
               {gradeOptions.map((g) => (
                 <SelectItem key={g} value={g}>
                   {g}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="role">Role</Label>
+          <Select
+            value={role}
+            onValueChange={(selectedValue) =>
+              setRole(
+                selectedValue === ALL_ITEMS_SELECT_VALUE ? "" : selectedValue,
+              )
+            }
+          >
+            <SelectTrigger id="role">
+              <SelectValue placeholder="Select role" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL_ITEMS_SELECT_VALUE}>All Roles</SelectItem>
+              {Object.values(Role).map((r) => (
+                <SelectItem key={r} value={r}>
+                  {r}
                 </SelectItem>
               ))}
             </SelectContent>

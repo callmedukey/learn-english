@@ -38,9 +38,22 @@ function encrypt(text: string): string {
 
 export async function POST(request: NextRequest) {
   try {
+    // Check authentication first
     const session = await auth();
     if (!session?.user?.id) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+      return NextResponse.json(
+        { error: "Unauthorized" },
+        { status: 401 }
+      );
+    }
+
+    // Check if user has payment access during maintenance
+    const { hasPaymentAccessByEmail } = await import("@/lib/utils/payment-access");
+    if (!hasPaymentAccessByEmail(session.user.email!)) {
+      return NextResponse.json(
+        { error: "Payment system is under maintenance" },
+        { status: 503 }
+      );
     }
 
     const { authKey, customerKey } = await request.json();

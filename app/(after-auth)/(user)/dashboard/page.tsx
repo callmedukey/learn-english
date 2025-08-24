@@ -11,7 +11,7 @@ import { Role, SubscriptionStatus } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 import {
   getActivePopups,
-  getGlobalWinnersData,
+  getGlobalWinnersDataByCategory,
   getUserMonthlyRankings,
 } from "@/server-queries/medals";
 
@@ -56,14 +56,14 @@ const page = async () => {
   const popups = await getActivePopups(session.user.id);
 
   // For each popup, fetch the necessary data
-  let leaderboardData = undefined;
+  let categoryLeaderboards = undefined;
   let personalRankings = undefined;
 
   if (popups.length > 0) {
     // Check if we need global winners data
     const globalWinnersPopup = popups.find((p) => p.type === "GLOBAL_WINNERS");
     if (globalWinnersPopup) {
-      leaderboardData = await getGlobalWinnersData(
+      categoryLeaderboards = await getGlobalWinnersDataByCategory(
         globalWinnersPopup.year,
         globalWinnersPopup.month,
       );
@@ -86,7 +86,7 @@ const page = async () => {
     <div className="py-16">
       <WinnerPopupContainer
         popups={popups}
-        leaderboardData={leaderboardData}
+        categoryLeaderboards={categoryLeaderboards}
         personalRankings={personalRankings}
       />
       <MonthlyLeaderboard userId={session.user.id} userGrade={userGrade} />

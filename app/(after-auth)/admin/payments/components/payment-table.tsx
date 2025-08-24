@@ -32,6 +32,10 @@ export default function PaymentTable({ payments }: PaymentTableProps) {
         variant: "outline" as const,
         color: "bg-purple-100 text-purple-800",
       },
+      [PaymentStatus.WAIVED]: {
+        variant: "secondary" as const,
+        color: "bg-blue-100 text-blue-800",
+      },
     };
 
     const config = statusConfig[status];

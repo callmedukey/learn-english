@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { RiContractLine } from "react-icons/ri";
 
+import { auth } from "@/auth";
 import {
   Sidebar,
   SidebarContent,
@@ -25,68 +26,92 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
+import {
+  canAccessUserManagement,
+  canAccessPaymentManagement,
+  canAccessSystemSettings,
+  canAccessChallenges,
+  canAccessNotifications,
+} from "@/lib/utils/permissions";
+import { Role } from "@/prisma/generated/prisma";
 
 import SidebarLogout from "./sidebar-logout";
 
-const items = [
+const allItems = [
   {
     title: "Dashboard",
     url: "/admin",
     icon: Home,
+    permission: () => true, // All admin users can access
   },
   {
     title: "Users",
     url: "/admin/users",
     icon: Users,
+    permission: canAccessUserManagement,
   },
   {
     title: "Countries",
     url: "/admin/countries",
     icon: MapPin,
+    permission: canAccessUserManagement,
   },
   {
     title: "Reading Comprehension",
     url: "/admin/reading",
     icon: Brain,
+    permission: () => true, // All admin users can access
   },
   {
     title: "Novels",
     url: "/admin/novels",
     icon: Book,
+    permission: () => true, // All admin users can access
   },
   {
     title: "Challenges",
     url: "/admin/challenges",
     icon: Medal,
+    permission: canAccessChallenges,
   },
   {
     title: "Coupons",
     url: "/admin/coupons",
     icon: RiCoupon2Line,
+    permission: canAccessPaymentManagement,
   },
   {
     title: "Plans",
     url: "/admin/plans",
     icon: RiContractLine,
+    permission: canAccessPaymentManagement,
   },
   {
     title: "Payments",
     url: "/admin/payments",
     icon: RiMoneyDollarCircleLine,
+    permission: canAccessPaymentManagement,
   },
   {
     title: "Notifications",
     url: "/admin/notifications",
     icon: RiNotificationLine,
+    permission: canAccessNotifications,
   },
   {
     title: "Settings",
     url: "/admin/settings",
     icon: Settings,
+    permission: canAccessSystemSettings,
   },
 ];
 
-export function AppSidebar() {
+export async function AppSidebar() {
+  const session = await auth();
+  const userRole = session?.user?.role as Role | undefined;
+  
+  // Filter items based on user permissions
+  const items = allItems.filter(item => item.permission(userRole));
   return (
     <Sidebar>
       <SidebarContent>

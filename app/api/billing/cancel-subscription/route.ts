@@ -13,6 +13,15 @@ export async function POST() {
       );
     }
 
+    // Check if user has payment access during maintenance
+    const { hasPaymentAccessByEmail } = await import("@/lib/utils/payment-access");
+    if (!hasPaymentAccessByEmail(session.user.email!)) {
+      return NextResponse.json(
+        { error: "Payment system is under maintenance" },
+        { status: 503 }
+      );
+    }
+
     // Get active subscription
     const activeSubscription = await prisma.userSubscription.findFirst({
       where: {

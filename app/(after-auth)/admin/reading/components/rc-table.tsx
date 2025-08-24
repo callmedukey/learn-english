@@ -12,6 +12,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Role } from "@/prisma/generated/prisma";
 
 import DeleteRCDialog from "./delete-rc-dialog";
 import EditRCDialog from "./edit-rc-dialog";
@@ -19,9 +20,10 @@ import { RCLevelData } from "../query/rc.query";
 
 interface RCTableProps {
   rcLevels: RCLevelData[];
+  userRole?: Role;
 }
 
-const RCTable: React.FC<RCTableProps> = ({ rcLevels }) => {
+const RCTable: React.FC<RCTableProps> = ({ rcLevels, userRole }) => {
   if (!rcLevels || rcLevels.length === 0) {
     return <p className="text-center text-gray-500">No RC levels found.</p>;
   }
@@ -40,7 +42,9 @@ const RCTable: React.FC<RCTableProps> = ({ rcLevels }) => {
           <TableHead>Font Size</TableHead>
           <TableHead>Description</TableHead>
           <TableHead>Created At</TableHead>
-          <TableHead className="text-right">Actions</TableHead>
+          {userRole === Role.ADMIN && (
+            <TableHead className="text-right">Actions</TableHead>
+          )}
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -104,28 +108,30 @@ const RCTable: React.FC<RCTableProps> = ({ rcLevels }) => {
             <TableCell className="text-sm text-gray-500">
               {format(new Date(rcLevel.createdAt), "yyyy/MM/dd")}
             </TableCell>
-            <TableCell className="text-right">
-              <div className="flex items-center justify-end space-x-2">
-                <EditRCDialog rcLevel={rcLevel}>
-                  <Button variant="outline" size="sm">
-                    <Edit className="h-4 w-4" />
-                  </Button>
-                </EditRCDialog>
-                <DeleteRCDialog
-                  rcLevelId={rcLevel.id}
-                  rcLevel={rcLevel.level}
-                  keywordCount={rcLevel.keywordCount}
-                >
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-red-600 hover:text-red-700"
+            {userRole === Role.ADMIN && (
+              <TableCell className="text-right">
+                <div className="flex items-center justify-end space-x-2">
+                  <EditRCDialog rcLevel={rcLevel}>
+                    <Button variant="outline" size="sm">
+                      <Edit className="h-4 w-4" />
+                    </Button>
+                  </EditRCDialog>
+                  <DeleteRCDialog
+                    rcLevelId={rcLevel.id}
+                    rcLevel={rcLevel.level}
+                    keywordCount={rcLevel.keywordCount}
                   >
-                    <Trash2 className="h-4 w-4" />
-                  </Button>
-                </DeleteRCDialog>
-              </div>
-            </TableCell>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-red-600 hover:text-red-700"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </DeleteRCDialog>
+                </div>
+              </TableCell>
+            )}
           </TableRow>
         ))}
       </TableBody>

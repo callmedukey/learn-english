@@ -18,7 +18,10 @@ const Header = async () => {
     return null;
   }
 
-  if (session?.user.role === Role.ADMIN) {
+  if (
+    session?.user.role === Role.ADMIN ||
+    session?.user.role === Role.SUB_ADMIN
+  ) {
     return null;
   }
 

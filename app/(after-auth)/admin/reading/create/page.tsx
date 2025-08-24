@@ -1,12 +1,21 @@
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import React from "react";
 
+import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
+import { Role } from "@/prisma/generated/prisma";
 
 import CreateRCForm from "./components/create-rc-form";
 
-const CreateRCPage = () => {
+const CreateRCPage = async () => {
+  const session = await auth();
+  
+  // Only ADMIN can create RC levels
+  if (!session || session.user.role !== Role.ADMIN) {
+    redirect("/admin/reading");
+  }
   return (
     <div className="space-y-6 px-1 py-6">
       <div className="flex items-center justify-between">

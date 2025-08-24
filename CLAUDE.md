@@ -38,6 +38,35 @@ Reading Camp - A Next.js 15 application for English learning with reading compre
 - `npm run db:push` - Push schema to database (development)
 - Seed database: `tsx prisma/seed.ts`
 
+### Local Database Access
+The PostgreSQL database runs via Docker. To access it:
+
+**Docker exec into the container:**
+```bash
+docker exec -it learn-english-postgres-1 psql -U postgres -d my-local-db
+```
+
+**Direct psql connection with password:**
+```bash
+PGPASSWORD='redisPrismaNaver2025@' psql -h localhost -p 5432 -U postgres -d my-local-db
+```
+
+**Connection details:**
+- Container name: `learn-english-postgres-1`
+- Host: `localhost`
+- Port: `5432`
+- Database: `my-local-db`
+- Username: `postgres`
+- Password: `redisPrismaNaver2025@`
+
+**Prisma schema location:** `/prisma/schema/`
+
+**Common database commands:**
+- List all tables: `\dt`
+- Describe table structure: `\d table_name`
+- List all schemas: `\dn`
+- Exit psql: `\q`
+
 ### Type Checking
 Run TypeScript compiler: `npx tsc --noEmit`
 

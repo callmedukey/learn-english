@@ -1,0 +1,25 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/duke/Documents/GitHub/learn-english/logs/.f494407162e3a061d6ae90f6fb818b00239bf4a7-audit.json",
+    "files": [
+        {
+            "date": 1755353618964,
+            "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2025-08-16.log",
+            "hash": "15f96939a89f8865a37531b1c2fd249133f314de99dd869207acc5f25e9c583c"
+        },
+        {
+            "date": 1755356955505,
+            "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2025-08-17.log",
+            "hash": "0666d37f616c7ced8ebfa68a404c4457cca65938af967bfae524330570b64d5a"
+        },
+        {
+            "date": 1756025675709,
+            "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2025-08-24.log",
+            "hash": "4e70fae0eaf002433742da5b3a1d4d32f09c72e8eb5427fbf497c00e1a8c1c05"
+        }
+    ],
+    "hashType": "sha256"
+}

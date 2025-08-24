@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
 
+import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
+
 import CouponFiltersComponent from "./components/coupon-filters";
 import CouponsTable from "./components/coupons-table";
 import CreateCouponDialog from "./components/create-coupon-dialog";
@@ -55,7 +57,9 @@ async function CouponsContent({ searchParams }: CouponsPageProps) {
   );
 }
 
-export default function CouponsPage({ searchParams }: CouponsPageProps) {
+export default async function CouponsPage({ searchParams }: CouponsPageProps) {
+  await requireAdminAccess();
+  
   return (
     <div className="px-1">
       <Suspense

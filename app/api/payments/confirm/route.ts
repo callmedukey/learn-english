@@ -1,11 +1,21 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import { hasPaymentAccess } from "@/lib/utils/payment-access";
 import { prisma } from "@/prisma/prisma-client";
 
 const TOSS_CLIENT_SECRET = process.env.TOSS_CLIENT_SECRET!;
 
 export async function POST(request: NextRequest) {
   try {
+    // Check if user has payment access during maintenance
+    const hasAccess = await hasPaymentAccess();
+    if (!hasAccess) {
+      return NextResponse.json(
+        { success: false, error: "Payment system is under maintenance" },
+        { status: 503 },
+      );
+    }
+
     const { paymentKey, orderId, amount } = await request.json();
 
     if (!paymentKey || !orderId || !amount) {
@@ -35,6 +45,16 @@ export async function POST(request: NextRequest) {
         { status: 404 },
       );
     }
+
+    // Debug logging
+    console.log("[Payment Confirm] Payment found:", {
+      orderId: payment.orderId,
+      userId: payment.userId,
+      couponCode: payment.couponCode,
+      hasCoupon: !!payment.coupon,
+      couponType: payment.coupon?.recurringType,
+      userCountry: payment.user.country?.name,
+    });
 
     // Verify amount matches
     if (payment.amount !== amount) {
@@ -107,8 +127,11 @@ export async function POST(request: NextRequest) {
       // Check if this is a recurring payment setup
       // For Korean users, all subscriptions are recurring (mandatory)
       const isKoreanUser = payment.user.country?.name === "South Korea";
-      // For initial payment, Korean users will get billing key via webhook
-      const isRecurringSetup = isKoreanUser;
+      
+      // Check if this payment has a billing key (indicates recurring setup)
+      // Korean users always get recurring, others only if they have billing key
+      const hasBillingKey = tossResult.card?.billingKey || tossResult.billingKey;
+      const isRecurringSetup = isKoreanUser || hasBillingKey;
 
       // Calculate next billing date for recurring subscriptions
       const nextBillingDate = isRecurringSetup ? endDate : undefined;
@@ -138,13 +161,26 @@ export async function POST(request: NextRequest) {
         });
       }
 
+      // Debug logging for CouponApplication creation
+      console.log("[Payment Confirm] Checking CouponApplication creation:", {
+        hasCoupon: !!payment.coupon,
+        couponCode: payment.coupon?.code,
+        couponRecurringType: payment.coupon?.recurringType,
+        hasBillingKey,
+        isRecurringSetup,
+        isKoreanUser,
+        willCreateApplication: !!(payment.coupon && payment.coupon.recurringType === "RECURRING" && isRecurringSetup),
+      });
+
       // Create CouponApplication for recurring coupons on recurring subscriptions
       if (
         payment.coupon &&
         payment.coupon.recurringType === "RECURRING" &&
         isRecurringSetup
       ) {
-        await tx.couponApplication.create({
+        console.log("[Payment Confirm] Creating CouponApplication for subscription:", subscription.id);
+        
+        const couponApplication = await tx.couponApplication.create({
           data: {
             subscriptionId: subscription.id,
             couponId: payment.coupon.id,
@@ -155,6 +191,14 @@ export async function POST(request: NextRequest) {
             flatDiscountUSD: payment.coupon.flatDiscountUSD && payment.coupon.flatDiscountUSD > 0 ? payment.coupon.flatDiscountUSD : null,
           },
         });
+        
+        console.log("[Payment Confirm] CouponApplication created:", {
+          id: couponApplication.id,
+          couponId: couponApplication.couponId,
+          remainingMonths: couponApplication.remainingMonths,
+        });
+      } else {
+        console.log("[Payment Confirm] CouponApplication NOT created - conditions not met");
       }
 
       return { updatedPayment, subscription };

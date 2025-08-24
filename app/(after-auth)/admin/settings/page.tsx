@@ -1,18 +1,13 @@
-import { redirect } from "next/navigation";
 import React, { Suspense } from "react";
 
-import { auth } from "@/auth";
+import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
 
 import NovelSettingsForm from "./components/NovelSettingsForm";
 import PasswordResetForm from "./components/PasswordResetForm";
 import RCSettingsForm from "./components/RCSettingsForm";
 
 export default async function SettingsPage() {
-  const session = await auth();
-
-  if (!session?.user || session.user.role !== "ADMIN") {
-    redirect("/");
-  }
+  const session = await requireAdminAccess();
 
   return (
     <div className="container mx-auto max-w-4xl p-6">

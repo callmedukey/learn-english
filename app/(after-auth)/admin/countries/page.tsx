@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
 
+import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
+
 import AddCountryDialog from "./components/add-country-dialog";
 import CountriesTable from "./components/countries-table";
 
@@ -11,7 +13,9 @@ const PageLoading = () => {
   );
 };
 
-const Page = () => {
+const Page = async () => {
+  await requireAdminAccess();
+  
   return (
     <div className="px-1 py-4">
       <div className="mb-4 flex items-center justify-between">

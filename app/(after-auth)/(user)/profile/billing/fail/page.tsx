@@ -1,11 +1,18 @@
 import { XCircle } from "lucide-react";
 import Link from "next/link";
 
+import PaymentMaintenanceNotice from "@/components/payment-maintenance-notice";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { hasPaymentAccess } from "@/lib/utils/payment-access";
 
-export default function BillingAuthFailPage() {
+export default async function BillingAuthFailPage() {
+  // Check if user has payment access during maintenance
+  const hasAccess = await hasPaymentAccess();
+  if (!hasAccess) {
+    return <PaymentMaintenanceNotice />;
+  }
   return (
     <div className="container max-w-2xl py-6">
       <Card className="max-w-md mx-auto">

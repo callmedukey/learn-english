@@ -1,6 +1,9 @@
 import { redirect } from "next/navigation";
 import { Suspense } from "react";
 
+import PaymentMaintenanceNotice from "@/components/payment-maintenance-notice";
+import { hasPaymentAccess } from "@/lib/utils/payment-access";
+
 import SuccessContent from "./components/success-content";
 
 interface SuccessPageProps {
@@ -12,6 +15,12 @@ interface SuccessPageProps {
 }
 
 export default async function SuccessPage({ searchParams }: SuccessPageProps) {
+  // Check if user has payment access during maintenance
+  const hasAccess = await hasPaymentAccess();
+  if (!hasAccess) {
+    return <PaymentMaintenanceNotice />;
+  }
+
   const params = await searchParams;
 
   if (!params.paymentKey || !params.orderId || !params.amount) {
