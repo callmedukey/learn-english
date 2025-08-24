@@ -38,6 +38,7 @@ export function NotificationBell({
   const [notifications, setNotifications] =
     useState<Notification[]>(initialNotifications);
   const [isOpen, setIsOpen] = useState(false);
+  
 
   const unreadCount = notifications.filter((n) => !n.isRead).length;
 
@@ -45,7 +46,7 @@ export function NotificationBell({
     try {
       await markNotificationAsRead(notificationId);
       setNotifications((prev) =>
-        prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n)),
+        prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n))
       );
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -65,7 +66,7 @@ export function NotificationBell({
     const date = new Date(dateString);
     const now = new Date();
     const diffInMinutes = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60),
+      (now.getTime() - date.getTime()) / (1000 * 60)
     );
 
     if (diffInMinutes < 1) return "Just now";
@@ -82,10 +83,6 @@ export function NotificationBell({
 
   const containsKorean = (text: string) => {
     return /[\u3131-\u3163\uac00-\ud7a3]/g.test(text);
-  };
-
-  const getBreakClass = (message: string) => {
-    return containsKorean(message) ? "break-all" : "break-words";
   };
 
   return (
@@ -107,11 +104,11 @@ export function NotificationBell({
           )}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent 
-        align="end" 
+      <DropdownMenuContent
+        align="end"
         alignOffset={-20}
         sideOffset={8}
-        className="w-80 max-w-[calc(100vw-2rem)] p-0"
+        className="flex max-h-[80vh] w-[32rem] max-w-[calc(100vw-2rem)] flex-col overflow-hidden p-0"
       >
         <div className="border-b p-4">
           <div className="flex items-center justify-between">
@@ -129,7 +126,7 @@ export function NotificationBell({
           </div>
         </div>
 
-        <ScrollArea className="max-h-96">
+        <ScrollArea className="flex-1 overflow-y-auto">
           {notifications.length === 0 ? (
             <div className="p-4 text-center text-gray-500">
               <Bell className="mx-auto h-8 w-8 text-gray-300" />
@@ -140,12 +137,12 @@ export function NotificationBell({
               {notifications.map((notification) => (
                 <div
                   key={notification.id}
-                  className={`p-4 transition-colors hover:bg-gray-50 ${
+                  className={`p-3 transition-colors hover:bg-gray-50 ${
                     !notification.isRead ? "bg-blue-50" : ""
                   }`}
                 >
                   <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
+                    <div className="min-w-0 flex-1 overflow-hidden">
                       <div className="flex items-center gap-2">
                         <h4 className="truncate text-sm font-medium text-gray-900">
                           {notification.title}
@@ -155,10 +152,7 @@ export function NotificationBell({
                         )}
                       </div>
                       <p
-                        className={cn(
-                          "mt-1 text-xs whitespace-pre-wrap text-gray-600",
-                          getBreakClass(notification.message),
-                        )}
+                        className="mt-1 text-xs text-gray-600 whitespace-pre-wrap break-all"
                       >
                         {notification.message}
                       </p>

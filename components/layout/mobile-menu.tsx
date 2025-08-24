@@ -14,7 +14,6 @@ import {
   SheetTitle,
   SheetTrigger,
 } from "@/components/ui/sheet";
-import { cn } from "@/lib/utils";
 
 import {
   markNotificationAsRead,
@@ -44,7 +43,7 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
     try {
       await markNotificationAsRead(notificationId);
       setCurrentNotifications((prev) =>
-        prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n)),
+        prev.map((n) => (n.id === notificationId ? { ...n, isRead: true } : n))
       );
     } catch (error) {
       console.error("Error marking notification as read:", error);
@@ -57,7 +56,7 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
     try {
       await markAllNotificationsAsRead(userId);
       setCurrentNotifications((prev) =>
-        prev.map((n) => ({ ...n, isRead: true })),
+        prev.map((n) => ({ ...n, isRead: true }))
       );
     } catch (error) {
       console.error("Error marking all notifications as read:", error);
@@ -68,7 +67,7 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
     const date = new Date(dateString);
     const now = new Date();
     const diffInMinutes = Math.floor(
-      (now.getTime() - date.getTime()) / (1000 * 60),
+      (now.getTime() - date.getTime()) / (1000 * 60)
     );
 
     if (diffInMinutes < 1) return "Just now";
@@ -87,10 +86,6 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
     return /[\u3131-\u3163\uac00-\ud7a3]/g.test(text);
   };
 
-  const getBreakClass = (message: string) => {
-    return containsKorean(message) ? "break-all" : "break-words";
-  };
-
   return (
     <Sheet open={isOpen} onOpenChange={setIsOpen}>
       <SheetTrigger asChild>
@@ -103,7 +98,7 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
           <span className="sr-only">Open menu</span>
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-[320px] p-0">
+      <SheetContent side="right" className="w-full sm:max-w-md p-0 overflow-x-hidden">
         <SheetHeader className="border-b px-6 py-4">
           <SheetTitle className="text-left">
             {showNotifications ? "Notifications" : "Navigation"}
@@ -198,23 +193,23 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
             </div>
 
             {/* Notifications List */}
-            <ScrollArea className="flex-1">
+            <div className="flex-1 overflow-y-auto overflow-x-hidden">
               {currentNotifications.length === 0 ? (
                 <div className="p-4 text-center text-gray-500">
                   <Bell className="mx-auto h-8 w-8 text-gray-300" />
                   <p className="mt-2 text-sm">No notifications yet</p>
                 </div>
               ) : (
-                <div className="divide-y">
+                <div className="divide-y overflow-x-hidden">
                   {currentNotifications.map((notification) => (
                     <div
                       key={notification.id}
-                      className={`p-4 transition-colors ${
+                      className={`overflow-hidden p-3 transition-colors ${
                         !notification.isRead ? "bg-blue-50" : ""
                       }`}
                     >
-                      <div className="flex items-start justify-between gap-2">
-                        <div className="min-w-0 flex-1">
+                      <div className="flex max-w-full items-start justify-between gap-2">
+                        <div className="max-w-full min-w-0 flex-1 overflow-hidden">
                           <div className="flex items-center gap-2">
                             <h4 className="truncate text-sm font-medium text-gray-900">
                               {notification.title}
@@ -223,14 +218,21 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
                               <div className="h-2 w-2 flex-shrink-0 rounded-full bg-blue-500" />
                             )}
                           </div>
-                          <p
-                            className={cn(
-                              "mt-1 text-xs whitespace-pre-wrap text-gray-600",
-                              getBreakClass(notification.message),
-                            )}
+                          <div
+                            className="mt-1 text-xs text-gray-600"
+                            style={{
+                              whiteSpace: "pre-wrap",
+                              wordBreak: "break-word",
+                              overflowWrap: "break-word",
+                              width: "100%",
+                              maxWidth: "100%",
+                              overflow: "hidden",
+                              overflowX: "hidden",
+                              hyphens: "auto"
+                            }}
                           >
-                            {notification.message}
-                          </p>
+                            {notification.message.replace(/\u00A0/g, ' ')}
+                          </div>
                           <p className="mt-1 text-xs text-gray-400">
                             {formatTimeAgo(notification.createdAt)}
                           </p>
@@ -250,7 +252,7 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
                   ))}
                 </div>
               )}
-            </ScrollArea>
+            </div>
           </div>
         )}
       </SheetContent>
