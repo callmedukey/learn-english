@@ -5,8 +5,6 @@ import { auth } from "@/auth";
 import { getIncompleteProfileRedirect } from "@/lib/utils/profile-validation";
 import { Role } from "@/prisma/generated/prisma";
 
-import Footer from "./components/footer";
-
 const layout = async ({ children }: { children: React.ReactNode }) => {
   const session = await auth();
 
@@ -23,12 +21,9 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
   }
 
   return (
-    <>
-      <div className="mx-auto min-h-[calc(100vh-6rem)] w-full max-w-7xl px-4">
-        {children}
-      </div>
-      <Footer />
-    </>
+    <div className="mx-auto min-h-[calc(100vh-6rem)] w-full max-w-7xl px-4">
+      {children}
+    </div>
   );
 };
 

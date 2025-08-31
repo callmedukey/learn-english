@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
 export default async function middleware(req: NextRequest) {
-  if (req.nextUrl.pathname === "/" || req.nextUrl.pathname === "/dashboard") {
+  if (req.nextUrl.pathname === "/dashboard") {
     const token = await getToken({
       req,
       secret: process.env.AUTH_SECRET as string,
@@ -38,6 +38,6 @@ export const config = {
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
      */
-    '/((?!api|_next/static|_next/image|favicon.ico).*)',
+    "/((?!api|_next/static|_next/image|favicon.ico).*)",
   ],
 };
