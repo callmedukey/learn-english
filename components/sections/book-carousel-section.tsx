@@ -6,14 +6,14 @@ import * as m from "motion/react-client";
 import Image from "next/image";
 import React, { useCallback, useEffect, useState } from "react";
 
-import book1 from "@/public/images/book1.webp";
-import book2 from "@/public/images/book2.webp";
-import book3 from "@/public/images/book3.webp";
-import book4 from "@/public/images/book4.webp";
 import advanced1 from "@/public/images/landing/books/advanced1.webp";
 import advanced2 from "@/public/images/landing/books/advanced2.webp";
 import advanced3 from "@/public/images/landing/books/advanced3.webp";
 import advanced4 from "@/public/images/landing/books/advanced4.webp";
+import beginner1 from "@/public/images/landing/books/beginner1.webp";
+import beginner2 from "@/public/images/landing/books/beginner2.webp";
+import beginner3 from "@/public/images/landing/books/beginner3.webp";
+import beginner4 from "@/public/images/landing/books/beginner4.webp";
 import expert1 from "@/public/images/landing/books/expert1.webp";
 import expert2 from "@/public/images/landing/books/expert2.webp";
 import expert3 from "@/public/images/landing/books/expert3.webp";
@@ -52,7 +52,7 @@ const BookCarouselSection = () => {
   ];
 
   const booksByLevel = [
-    [book1, book2, book3, book4], // Beginner
+    [beginner1, beginner2, beginner3, beginner4], // Beginner
     [intermediate1, intermediate2, intermediate3, intermediate4], // Intermediate
     [advanced1, advanced2, advanced3, advanced4], // Advanced
     [expert1, expert2, expert3, expert4], // Expert

@@ -59,11 +59,20 @@ const AfterAuthNavBar = () => {
     );
   }
 
-  if (
+  // Check if user is admin or sub-admin
+  const isAdminUser = 
     session?.user.role === Role.ADMIN ||
-    session?.user.role === Role.SUB_ADMIN
-  ) {
-    return null;
+    session?.user.role === Role.SUB_ADMIN;
+
+  // Show admin button for admin users
+  if (isAdminUser) {
+    return (
+      <div className="absolute right-4">
+        <Button asChild>
+          <Link href="/admin">관리자</Link>
+        </Button>
+      </div>
+    );
   }
 
   const userId = session?.user?.id;

@@ -35,6 +35,9 @@ export const metadata: Metadata = {
       "Lexile 지수 기반 맞춤 도서 5단계, 수능형 RC 문제 4단계로 체계적인 영어 학습",
     images: ["/og-image-optimized.png"],
   },
+  other: {
+    "google-site-verification": "3XHbonmLokS7sCcMg_U8vT0He1dwayMPVDwG4X5XQcY",
+  },
 };
 
 export const dynamic = "force-static";
@@ -73,4 +76,3 @@ const page = async () => {
 };
 
 export default page;
-
