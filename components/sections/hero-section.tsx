@@ -19,7 +19,7 @@ const HeroSection = () => {
         transition={{ duration: 0.6, ease: "easeOut" }}
       >
         <m.h1
-          className="text-3xl leading-tight font-bold md:text-5xl lg:text-[64px]"
+          className="text-3xl leading-tight font-bold md:text-5xl lg:text-[4rem]"
           initial={{ opacity: 0, y: 20 }}
           whileInView={{ opacity: 1, y: 0 }}
           viewport={{ once: true }}
@@ -106,4 +106,3 @@ const HeroSection = () => {
 };
 
 export default HeroSection;
-
