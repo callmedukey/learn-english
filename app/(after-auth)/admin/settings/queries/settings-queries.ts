@@ -43,3 +43,81 @@ export async function getNovelSettings() {
     return null;
   }
 }
+
+export async function getRCLevelDefaults() {
+  try {
+    const rcLevels = await prisma.rCLevel.findMany({
+      include: {
+        RCLevelSettings: true,
+      },
+      orderBy: {
+        level: 'asc',
+      },
+    });
+
+    // Create default settings for levels that don't have them
+    for (const level of rcLevels) {
+      if (!level.RCLevelSettings) {
+        await prisma.rCLevelSettings.create({
+          data: {
+            RCLevelId: level.id,
+            defaultTimer: 30,
+            defaultScore: 100,
+          },
+        });
+      }
+    }
+
+    // Fetch again with all settings created
+    return await prisma.rCLevel.findMany({
+      include: {
+        RCLevelSettings: true,
+      },
+      orderBy: {
+        level: 'asc',
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching RC level defaults:", error);
+    return [];
+  }
+}
+
+export async function getARLevelDefaults() {
+  try {
+    const arLevels = await prisma.aR.findMany({
+      include: {
+        ARSettings: true,
+      },
+      orderBy: {
+        level: 'asc',
+      },
+    });
+
+    // Create default settings for levels that don't have them
+    for (const level of arLevels) {
+      if (!level.ARSettings) {
+        await prisma.aRSettings.create({
+          data: {
+            ARId: level.id,
+            defaultTimer: 30,
+            defaultScore: 100,
+          },
+        });
+      }
+    }
+
+    // Fetch again with all settings created
+    return await prisma.aR.findMany({
+      include: {
+        ARSettings: true,
+      },
+      orderBy: {
+        level: 'asc',
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching AR level defaults:", error);
+    return [];
+  }
+}

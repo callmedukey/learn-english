@@ -4,6 +4,7 @@ import React from "react";
 import { getRCSettings } from "@/app/(after-auth)/admin/settings/queries/settings-queries";
 import { auth } from "@/auth";
 import { Role } from "@/prisma/generated/prisma";
+import { prisma } from "@/prisma/prisma-client";
 
 import EnhancedKeywordCreationWorkflow from "./components/enhanced-keyword-creation-workflow";
 
@@ -20,16 +21,34 @@ const CreateKeywordPage = async ({ params }: CreateKeywordPageProps) => {
     redirect(`/admin/reading/${id}`);
   }
 
-  // Fetch RC settings for default timer and score
-  const rcSettings = await getRCSettings();
+  // Fetch level-specific settings first
+  const levelSettings = await prisma.rCLevelSettings.findUnique({
+    where: { RCLevelId: id },
+  });
+
+  // If level-specific settings exist, use them; otherwise fall back to global settings
+  let defaultTimer = 60;
+  let defaultScore = 1;
+  
+  if (levelSettings) {
+    defaultTimer = levelSettings.defaultTimer;
+    defaultScore = levelSettings.defaultScore;
+  } else {
+    // Fall back to global RC settings
+    const rcSettings = await getRCSettings();
+    if (rcSettings) {
+      defaultTimer = rcSettings.defaultTimer || 60;
+      defaultScore = rcSettings.defaultScore || 1;
+    }
+  }
   
   return (
     <div className="px-1 py-6">
       <h1 className="mb-6 text-center text-2xl font-bold">Create Keyword</h1>
       <EnhancedKeywordCreationWorkflow 
         rcLevelId={id} 
-        defaultTimer={rcSettings?.defaultTimer || 60}
-        defaultScore={rcSettings?.defaultScore || 1}
+        defaultTimer={defaultTimer}
+        defaultScore={defaultScore}
       />
     </div>
   );

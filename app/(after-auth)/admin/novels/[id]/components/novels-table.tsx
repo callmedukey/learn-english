@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { canEditNovel, canDeleteNovel } from "@/lib/utils/permissions";
 import { Role } from "@/prisma/generated/prisma";
 
 import { BulkToggleComingSoonDialog } from "./bulk-toggle-coming-soon-dialog";
@@ -113,7 +114,7 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels, userRole })
               <TableHead>Free Chapters</TableHead>
               <TableHead>Challenge</TableHead>
               <TableHead>Created At</TableHead>
-              {userRole === Role.ADMIN && (
+              {(canEditNovel(userRole) || canDeleteNovel(userRole)) && (
                 <TableHead className="text-right">Actions</TableHead>
               )}
             </TableRow>
@@ -189,17 +190,19 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels, userRole })
                   <TableCell className="text-sm text-gray-500">
                     {format(new Date(novel.createdAt), "yyyy/MM/dd")}
                   </TableCell>
-                  {userRole === Role.ADMIN && (
+                  {(canEditNovel(userRole) || canDeleteNovel(userRole)) && (
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end space-x-2">
-                        <Button variant="outline" size="sm">
-                          <Link
-                            href={`/admin/novels/${novel.AR?.id}/${novel.id}/edit`}
-                          >
-                            <Edit className="h-4 w-4" />
-                          </Link>
-                        </Button>
-                        {novel.AR && (
+                        {canEditNovel(userRole) && (
+                          <Button variant="outline" size="sm">
+                            <Link
+                              href={`/admin/novels/${novel.AR?.id}/${novel.id}/edit`}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        )}
+                        {canDeleteNovel(userRole) && novel.AR && (
                           <MoveNovelDialog
                             novelId={novel.id}
                             novelTitle={novel.title}
@@ -207,10 +210,12 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels, userRole })
                             arLevels={arLevels}
                           />
                         )}
-                        <DeleteNovelAlert
-                          novelId={novel.id}
-                          title={novel.title}
-                        />
+                        {canDeleteNovel(userRole) && (
+                          <DeleteNovelAlert
+                            novelId={novel.id}
+                            title={novel.title}
+                          />
+                        )}
                       </div>
                     </TableCell>
                   )}

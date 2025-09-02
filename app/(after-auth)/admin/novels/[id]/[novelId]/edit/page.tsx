@@ -3,6 +3,7 @@ import React from "react";
 
 import { getNovelSettings } from "@/app/(after-auth)/admin/settings/queries/settings-queries";
 import { auth } from "@/auth";
+import { canEditNovel } from "@/lib/utils/permissions";
 import { LevelType, Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 import { getSingleNovelChallenges } from "@/server-queries/admin/content-challenges";
@@ -21,8 +22,8 @@ const NovelEditPage = async ({ params }: PageProps) => {
   const { id, novelId } = await params;
   const session = await auth();
   
-  // Only ADMIN can edit novels
-  if (!session || session.user.role !== Role.ADMIN) {
+  // Check if user can edit novels
+  if (!session || !canEditNovel(session.user.role as Role | undefined)) {
     redirect(`/admin/novels/${id}`);
   }
 
@@ -53,7 +54,22 @@ const NovelEditPage = async ({ params }: PageProps) => {
     orderBy: { level: "asc" },
   });
 
-  const novelSettings = await getNovelSettings();
+  // Fetch level-specific settings first
+  const levelSettings = await prisma.aRSettings.findUnique({
+    where: { ARId: novel.ARId! },
+  });
+
+  // Use level-specific settings if available, otherwise fall back to global settings
+  let novelSettings = null;
+  if (levelSettings) {
+    novelSettings = {
+      id: levelSettings.id,
+      defaultTimer: levelSettings.defaultTimer,
+      defaultScore: levelSettings.defaultScore,
+    };
+  } else {
+    novelSettings = await getNovelSettings();
+  }
   
   // Fetch challenge data
   const challenges = await getSingleNovelChallenges(novelId);

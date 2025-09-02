@@ -16,6 +16,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { canEditKeyword, canDeleteKeyword } from "@/lib/utils/permissions";
 import { Role } from "@/prisma/generated/prisma";
 
 import { BulkToggleComingSoonDialog } from "./bulk-toggle-coming-soon-dialog";
@@ -118,7 +119,7 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
               <TableHead>Questions</TableHead>
               <TableHead>Challenge</TableHead>
               <TableHead>Created At</TableHead>
-              {userRole === Role.ADMIN && (
+              {(canEditKeyword(userRole) || canDeleteKeyword(userRole)) && (
                 <TableHead className="text-right">Actions</TableHead>
               )}
             </TableRow>
@@ -200,26 +201,32 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                 <TableCell className="text-sm text-gray-500">
                   {format(new Date(keyword.createdAt), "yyyy/MM/dd")}
                 </TableCell>
-                {userRole === Role.ADMIN && (
+                {(canEditKeyword(userRole) || canDeleteKeyword(userRole)) && (
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end space-x-2">
-                      <Button variant="outline" size="sm" asChild>
-                        <Link
-                          href={`/admin/reading/${keyword.rcLevelId}/${keyword.id}/edit`}
-                        >
-                          <Edit className="h-4 w-4" />
-                        </Link>
-                      </Button>
-                      <MoveKeywordDialog
-                        keywordId={keyword.id}
-                        keywordName={keyword.name}
-                        currentRCLevelId={keyword.rcLevelId}
-                        rcLevels={rcLevels}
-                      />
-                      <DeleteKeywordAlert
-                        keywordId={keyword.id}
-                        name={keyword.name}
-                      />
+                      {canEditKeyword(userRole) && (
+                        <Button variant="outline" size="sm" asChild>
+                          <Link
+                            href={`/admin/reading/${keyword.rcLevelId}/${keyword.id}/edit`}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Link>
+                        </Button>
+                      )}
+                      {canDeleteKeyword(userRole) && (
+                        <>
+                          <MoveKeywordDialog
+                            keywordId={keyword.id}
+                            keywordName={keyword.name}
+                            currentRCLevelId={keyword.rcLevelId}
+                            rcLevels={rcLevels}
+                          />
+                          <DeleteKeywordAlert
+                            keywordId={keyword.id}
+                            name={keyword.name}
+                          />
+                        </>
+                      )}
                     </div>
                   </TableCell>
                 )}

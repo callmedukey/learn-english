@@ -26,6 +26,9 @@ model ARSettings {
   ARId String @unique
 
   fontSize FontSize @default(BASE)
+  
+  defaultTimer Int @default(30)
+  defaultScore Int @default(100)
 }
 
 model RCLevelSettings {
@@ -35,4 +38,7 @@ model RCLevelSettings {
   RCLevelId String @unique
 
   fontSize FontSize @default(BASE)
+  
+  defaultTimer Int @default(30)
+  defaultScore Int @default(100)
 }

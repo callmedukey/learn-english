@@ -3,6 +3,7 @@ import React from "react";
 
 import { getRCSettings } from "@/app/(after-auth)/admin/settings/queries/settings-queries";
 import { auth } from "@/auth";
+import { canEditKeyword } from "@/lib/utils/permissions";
 import { LevelType, Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 import { getSingleKeywordChallenges } from "@/server-queries/admin/content-challenges";
@@ -21,8 +22,8 @@ const KeywordEditPage = async ({ params }: PageProps) => {
   const { id, keywordId } = await params;
   const session = await auth();
   
-  // Only ADMIN can edit keywords
-  if (!session || session.user.role !== Role.ADMIN) {
+  // Check if user can edit keywords
+  if (!session || !canEditKeyword(session.user.role as Role | undefined)) {
     redirect(`/admin/reading/${id}`);
   }
 
@@ -48,7 +49,22 @@ const KeywordEditPage = async ({ params }: PageProps) => {
     orderBy: { level: "asc" },
   });
 
-  const rcSettings = await getRCSettings();
+  // Fetch level-specific settings first
+  const levelSettings = await prisma.rCLevelSettings.findUnique({
+    where: { RCLevelId: keyword.rcLevelId },
+  });
+
+  // Use level-specific settings if available, otherwise fall back to global settings
+  let rcSettings = null;
+  if (levelSettings) {
+    rcSettings = {
+      id: levelSettings.id,
+      defaultTimer: levelSettings.defaultTimer,
+      defaultScore: levelSettings.defaultScore,
+    };
+  } else {
+    rcSettings = await getRCSettings();
+  }
   
   // Fetch challenge data
   const challenges = await getSingleKeywordChallenges(keywordId);
