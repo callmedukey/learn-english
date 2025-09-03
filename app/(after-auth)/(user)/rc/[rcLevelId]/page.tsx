@@ -79,7 +79,6 @@ async function RCKeywords({
   // Pagination setup
   const page = parseInt(searchParams.page || "1", 10);
   const perPage = 30;
-  const skip = (page - 1) * perPage;
 
   // Build the orderBy clause - default to name asc
   const sortBy = searchParams.sortBy || "name";
@@ -195,6 +194,10 @@ async function RCKeywords({
 
   const freeKeywordIds = freeKeywords.map((k) => k.id);
 
+  // Calculate how many regular items to skip based on actual items shown per page
+  const regularItemsPerPage = perPage - freeKeywords.length;
+  const regularSkip = (page - 1) * regularItemsPerPage;
+
   // Get the rest of the keywords (excluding the free ones we already have)
   const regularKeywords = await prisma.rCKeyword.findMany({
     where: {
@@ -255,8 +258,8 @@ async function RCKeywords({
       },
     },
     orderBy,
-    skip: Math.max(0, skip - freeKeywords.length),
-    take: perPage - freeKeywords.length,
+    skip: regularSkip,
+    take: regularItemsPerPage,
   });
 
   // Combine free keywords at the top with regular keywords

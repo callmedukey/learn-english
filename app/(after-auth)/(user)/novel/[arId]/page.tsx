@@ -73,7 +73,6 @@ async function ARNovels({
   // Pagination setup
   const page = parseInt(searchParams.page || "1", 10);
   const perPage = 30;
-  const skip = (page - 1) * perPage;
 
   // Build the orderBy clause - default to title asc
   const sortBy = searchParams.sortBy || "title";
@@ -180,6 +179,14 @@ async function ARNovels({
 
   const pinnedNovelIds = novelsWithFreeChapters.map((n) => n.id);
 
+  // Calculate how many pinned novels we'll show on each page (limited to perPage)
+  const pinnedNovelsOnPage = novelsWithFreeChapters.slice(0, perPage);
+  const pinnedCount = pinnedNovelsOnPage.length;
+  
+  // Calculate how many regular items to skip based on actual items shown per page
+  const regularItemsPerPage = perPage - pinnedCount;
+  const regularSkip = (page - 1) * regularItemsPerPage;
+
   // Get the rest of the novels (excluding the ones with free chapters)
   const regularNovels = await prisma.novel.findMany({
     where: {
@@ -218,13 +225,13 @@ async function ARNovels({
       },
     },
     orderBy,
-    skip: Math.max(0, skip - novelsWithFreeChapters.length),
-    take: perPage - Math.min(perPage, novelsWithFreeChapters.length),
+    skip: regularSkip,
+    take: regularItemsPerPage,
   });
 
   // Combine novels with free chapters at the top with regular novels
   const allNovels = [
-    ...novelsWithFreeChapters.slice(0, perPage),
+    ...pinnedNovelsOnPage,
     ...regularNovels,
   ];
 
