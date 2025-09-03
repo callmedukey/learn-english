@@ -244,8 +244,12 @@ async function ARNovels({
     },
   });
 
-  // Calculate total pages
-  const totalPages = Math.ceil(totalNovelsCount / perPage);
+  // Calculate total pages based on actual pagination behavior
+  // We show pinned items on every page, so we need to account for that
+  const regularItemsCount = Math.max(0, totalNovelsCount - pinnedCount);
+  const totalPages = regularItemsCount > 0 
+    ? Math.ceil(regularItemsCount / regularItemsPerPage) 
+    : 1;
 
   // Apply status filter on the server side if needed
   let filteredNovels = allNovels;
