@@ -130,13 +130,13 @@ async function RCKeywords({
   // Get user's level lock if they're logged in
   const userLevelLock = userId ? await getUserLevelLock(userId, "RC") : null;
   
+  // Get all keywords without pinning
+  const skip = (page - 1) * perPage;
 
-  // Get 5 FREE keywords to pin at the top
-  const freeKeywords = await prisma.rCKeyword.findMany({
+  const allKeywords = await prisma.rCKeyword.findMany({
     where: {
       rcLevelId: rcLevelId,
       hidden: false,
-      isFree: true,
       ...searchWhere,
     },
     include: {
@@ -189,81 +189,9 @@ async function RCKeywords({
       },
     },
     orderBy,
-    take: 5,
+    skip,
+    take: perPage,
   });
-
-  const freeKeywordIds = freeKeywords.map((k) => k.id);
-
-  // Calculate how many regular items to skip based on actual items shown per page
-  const regularItemsPerPage = perPage - freeKeywords.length;
-  const regularSkip = (page - 1) * regularItemsPerPage;
-
-  // Get the rest of the keywords (excluding the free ones we already have)
-  const regularKeywords = await prisma.rCKeyword.findMany({
-    where: {
-      rcLevelId: rcLevelId,
-      hidden: false,
-      id: {
-        notIn: freeKeywordIds,
-      },
-      ...searchWhere,
-    },
-    include: {
-      RCQuestionSet: {
-        include: {
-          RCQuestion: {
-            include: {
-              RCQuestionCompleted: {
-                where: userId
-                  ? {
-                      userId: userId,
-                    }
-                  : undefined,
-                select: {
-                  userId: true,
-                },
-              },
-            },
-            orderBy: {
-              orderNumber: "asc",
-            },
-          },
-          RCQuestionFirstTry: userId
-            ? {
-                where: {
-                  userId: userId,
-                },
-                select: {
-                  id: true,
-                  totalQuestions: true,
-                  correctAnswers: true,
-                  createdAt: true,
-                },
-              }
-            : false,
-          RCQuestionSecondTry: userId
-            ? {
-                where: {
-                  userId: userId,
-                },
-                select: {
-                  id: true,
-                  totalQuestions: true,
-                  correctAnswers: true,
-                  createdAt: true,
-                },
-              }
-            : false,
-        },
-      },
-    },
-    orderBy,
-    skip: regularSkip,
-    take: regularItemsPerPage,
-  });
-
-  // Combine free keywords at the top with regular keywords
-  const allKeywords = [...freeKeywords, ...regularKeywords];
 
   // Get total count for display (only visible keywords)
   const totalKeywordsCount = await prisma.rCKeyword.count({
@@ -274,12 +202,8 @@ async function RCKeywords({
     },
   });
 
-  // Calculate total pages based on actual pagination behavior
-  // We show pinned items on every page, so we need to account for that
-  const regularItemsCount = Math.max(0, totalKeywordsCount - freeKeywords.length);
-  const totalPages = regularItemsCount > 0 
-    ? Math.ceil(regularItemsCount / regularItemsPerPage) 
-    : 1;
+  // Calculate total pages with standard pagination
+  const totalPages = Math.ceil(totalKeywordsCount / perPage);
 
   // Apply status filter on the server side if needed
   let filteredKeywords = allKeywords;

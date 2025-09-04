@@ -25,6 +25,7 @@ model Novel {
 
   hidden Boolean @default(false)
   comingSoon Boolean @default(false)
+  locked Boolean @default(false)
 
   AR   AR?     @relation(fields: [ARId], references: [id], onDelete: Cascade)
   ARId String?

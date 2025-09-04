@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { Role } from "@/prisma/generated/prisma";
 
 import DeleteKeywordDialog from "./delete-keyword-dialog";
 import QuestionSetSection from "./question-set-section";
@@ -34,6 +35,7 @@ interface KeywordEditFormProps {
     isFree: boolean;
     hidden: boolean;
     comingSoon: boolean;
+    locked?: boolean;
     RCLevel: {
       id: string;
       level: string;
@@ -85,6 +87,7 @@ interface KeywordEditFormProps {
     scheduledActive: boolean;
     keywordIds: string[];
   } | null;
+  userRole?: Role;
 }
 
 const KeywordEditForm: React.FC<KeywordEditFormProps> = ({

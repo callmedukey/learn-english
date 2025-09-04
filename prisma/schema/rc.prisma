@@ -29,6 +29,7 @@ model RCKeyword {
 
   hidden Boolean @default(false)
   comingSoon Boolean @default(false)
+  locked Boolean @default(false)
 
   isFree Boolean @default(false)
 

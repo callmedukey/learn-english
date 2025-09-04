@@ -135,16 +135,13 @@ async function ARNovels({
   );
   const hasPendingRequest = !!pendingRequest;
 
-  // Get novels with free chapters to pin at the top
-  const novelsWithFreeChapters = await prisma.novel.findMany({
+  // Get all novels without pinning
+  const skip = (page - 1) * perPage;
+
+  const allNovels = await prisma.novel.findMany({
     where: {
       ARId: arId,
       hidden: false,
-      novelChapters: {
-        some: {
-          isFree: true,
-        },
-      },
       ...searchWhere,
     },
     include: {
@@ -175,65 +172,9 @@ async function ARNovels({
       },
     },
     orderBy,
+    skip,
+    take: perPage,
   });
-
-  const pinnedNovelIds = novelsWithFreeChapters.map((n) => n.id);
-
-  // Calculate how many pinned novels we'll show on each page (limited to perPage)
-  const pinnedNovelsOnPage = novelsWithFreeChapters.slice(0, perPage);
-  const pinnedCount = pinnedNovelsOnPage.length;
-  
-  // Calculate how many regular items to skip based on actual items shown per page
-  const regularItemsPerPage = perPage - pinnedCount;
-  const regularSkip = (page - 1) * regularItemsPerPage;
-
-  // Get the rest of the novels (excluding the ones with free chapters)
-  const regularNovels = await prisma.novel.findMany({
-    where: {
-      ARId: arId,
-      hidden: false,
-      id: {
-        notIn: pinnedNovelIds,
-      },
-      ...searchWhere,
-    },
-    include: {
-      novelChapters: {
-        include: {
-          novelQuestionSet: {
-            include: {
-              novelQuestions: {
-                include: {
-                  novelQuestionCompleted: {
-                    where: userId
-                      ? {
-                          userId: userId,
-                        }
-                      : undefined,
-                    select: {
-                      userId: true,
-                    },
-                  },
-                },
-              },
-            },
-          },
-        },
-        orderBy: {
-          orderNumber: "asc",
-        },
-      },
-    },
-    orderBy,
-    skip: regularSkip,
-    take: regularItemsPerPage,
-  });
-
-  // Combine novels with free chapters at the top with regular novels
-  const allNovels = [
-    ...pinnedNovelsOnPage,
-    ...regularNovels,
-  ];
 
   // Get total count for display (only visible novels)
   const totalNovelsCount = await prisma.novel.count({
@@ -244,12 +185,8 @@ async function ARNovels({
     },
   });
 
-  // Calculate total pages based on actual pagination behavior
-  // We show pinned items on every page, so we need to account for that
-  const regularItemsCount = Math.max(0, totalNovelsCount - pinnedCount);
-  const totalPages = regularItemsCount > 0 
-    ? Math.ceil(regularItemsCount / regularItemsPerPage) 
-    : 1;
+  // Calculate total pages with standard pagination
+  const totalPages = Math.ceil(totalNovelsCount / perPage);
 
   // Apply status filter on the server side if needed
   let filteredNovels = allNovels;

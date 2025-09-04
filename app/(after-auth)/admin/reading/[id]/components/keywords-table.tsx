@@ -1,9 +1,10 @@
 "use client";
 
 import { format } from "date-fns";
-import { Edit, Eye, EyeOff } from "lucide-react";
+import { Edit, Eye, EyeOff, Lock, LockOpen } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useState, useTransition } from "react";
+import { toast } from "sonner";
 
 import { ChallengeBadge } from "@/components/admin/challenge-badge";
 import { Button } from "@/components/ui/button";
@@ -16,13 +17,14 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { canEditKeyword, canDeleteKeyword } from "@/lib/utils/permissions";
+import { canEditKeyword, canDeleteKeyword, canLockKeyword } from "@/lib/utils/permissions";
 import { Role } from "@/prisma/generated/prisma";
 
 import { BulkToggleComingSoonDialog } from "./bulk-toggle-coming-soon-dialog";
 import { BulkToggleHiddenDialog } from "./bulk-toggle-hidden-dialog";
 import DeleteKeywordAlert from "./delete-keyword-alert";
 import MoveKeywordDialog from "./move-keyword-dialog";
+import { toggleKeywordLock } from "../../actions/lock-keyword.actions";
 import { RCKeywordData } from "../../query/rc-detail.query";
 
 interface KeywordsTableProps {
@@ -42,6 +44,8 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
   userRole,
 }) => {
   const [selectedKeywords, setSelectedKeywords] = useState<string[]>([]);
+  const [isPending, startTransition] = useTransition();
+  const [lockingKeywordId, setLockingKeywordId] = useState<string | null>(null);
 
   const handleSelectAll = (checked: boolean) => {
     if (checked) {
@@ -57,6 +61,19 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
     } else {
       setSelectedKeywords(selectedKeywords.filter((id) => id !== keywordId));
     }
+  };
+
+  const handleLockToggle = async (keywordId: string) => {
+    setLockingKeywordId(keywordId);
+    startTransition(async () => {
+      const result = await toggleKeywordLock(keywordId);
+      if (result.success) {
+        toast.success(result.message);
+      } else {
+        toast.error(result.error || "Failed to toggle lock status");
+      }
+      setLockingKeywordId(null);
+    });
   };
 
   const isAllSelected =
@@ -115,6 +132,7 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
               <TableHead>Description</TableHead>
               <TableHead>Paid/Free</TableHead>
               <TableHead>Status</TableHead>
+              {canLockKeyword(userRole) && <TableHead>Lock</TableHead>}
               <TableHead>Question Set</TableHead>
               <TableHead>Questions</TableHead>
               <TableHead>Challenge</TableHead>
@@ -138,7 +156,16 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                     />
                   </TableCell>
                 )}
-                <TableCell className="font-medium">{keyword.name}</TableCell>
+                <TableCell className="font-medium">
+                  <div className="flex items-center gap-2">
+                    {keyword.name}
+                    {keyword.locked && (
+                      <span title="Locked - Only admins can edit">
+                        <Lock className="h-4 w-4 text-amber-600" />
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
                 <TableCell className="max-w-xs truncate">
                   {keyword.description || "No description"}
                 </TableCell>
@@ -173,6 +200,22 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                     )}
                   </div>
                 </TableCell>
+                {canLockKeyword(userRole) && (
+                  <TableCell>
+                    <Button
+                      variant={keyword.locked ? "secondary" : "ghost"}
+                      size="sm"
+                      onClick={() => handleLockToggle(keyword.id)}
+                      disabled={isPending && lockingKeywordId === keyword.id}
+                    >
+                      {keyword.locked ? (
+                        <Lock className="h-4 w-4 text-amber-600" />
+                      ) : (
+                        <LockOpen className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TableCell>
+                )}
                 <TableCell>
                   {keyword.RCQuestionSet ? (
                     <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
@@ -201,10 +244,10 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                 <TableCell className="text-sm text-gray-500">
                   {format(new Date(keyword.createdAt), "yyyy/MM/dd")}
                 </TableCell>
-                {(canEditKeyword(userRole) || canDeleteKeyword(userRole)) && (
+                {(canEditKeyword(userRole, keyword.locked) || canDeleteKeyword(userRole)) && (
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end space-x-2">
-                      {canEditKeyword(userRole) && (
+                      {canEditKeyword(userRole, keyword.locked) && (
                         <Button variant="outline" size="sm" asChild>
                           <Link
                             href={`/admin/reading/${keyword.rcLevelId}/${keyword.id}/edit`}

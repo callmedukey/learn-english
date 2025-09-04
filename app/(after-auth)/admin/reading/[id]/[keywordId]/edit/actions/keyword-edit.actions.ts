@@ -2,6 +2,9 @@
 
 import { revalidatePath } from "next/cache";
 
+import { auth } from "@/auth";
+import { canEditKeyword } from "@/lib/utils/permissions";
+import { Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export const updateKeywordAction = async (formData: FormData) => {
@@ -25,6 +28,14 @@ export const updateKeywordAction = async (formData: FormData) => {
     };
   }
 
+  // Check user permissions
+  const session = await auth();
+  const userRole = session?.user?.role as Role | undefined;
+
+  if (!session) {
+    return { error: "Unauthorized" };
+  }
+
   try {
     // Check if keyword exists
     const existingKeyword = await prisma.rCKeyword.findUnique({
@@ -36,6 +47,11 @@ export const updateKeywordAction = async (formData: FormData) => {
 
     if (!existingKeyword) {
       return { error: "Keyword not found" };
+    }
+
+    // Check if user can edit this keyword
+    if (!canEditKeyword(userRole, existingKeyword.locked)) {
+      return { error: "You don't have permission to edit this locked keyword" };
     }
 
     // Check if RC level exists

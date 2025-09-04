@@ -4,6 +4,9 @@ import console from "console";
 
 import { revalidatePath } from "next/cache";
 
+import { auth } from "@/auth";
+import { canEditNovel } from "@/lib/utils/permissions";
+import { Role } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export const updateNovelAction = async (formData: FormData) => {
@@ -25,6 +28,14 @@ export const updateNovelAction = async (formData: FormData) => {
     };
   }
 
+  // Check user permissions
+  const session = await auth();
+  const userRole = session?.user?.role as Role | undefined;
+
+  if (!session) {
+    return { error: "Unauthorized" };
+  }
+
   try {
     const existingNovel = await prisma.novel.findUnique({
       where: { id: novelId },
@@ -33,6 +44,11 @@ export const updateNovelAction = async (formData: FormData) => {
 
     if (!existingNovel) {
       return { error: "Novel not found" };
+    }
+
+    // Check if user can edit this novel
+    if (!canEditNovel(userRole, existingNovel.locked)) {
+      return { error: "You don't have permission to edit this locked novel" };
     }
 
     const result = await prisma.$transaction(async (tx) => {

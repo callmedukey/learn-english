@@ -20,6 +20,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { Role } from "@/prisma/generated/prisma";
 
 import ChapterSection from "./chapter-section";
 import DeleteNovelDialog from "./delete-novel-dialog";
@@ -32,6 +33,7 @@ interface NovelEditFormProps {
     description?: string | null;
     hidden: boolean;
     comingSoon: boolean;
+    locked?: boolean;
     ARId: string | null;
     AR: {
       id: string;
@@ -89,6 +91,7 @@ interface NovelEditFormProps {
     scheduledActive: boolean;
     novelIds: string[];
   } | null;
+  userRole?: Role;
 }
 
 const NovelEditForm: React.FC<NovelEditFormProps> = ({

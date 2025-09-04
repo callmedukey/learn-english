@@ -21,11 +21,7 @@ interface PageProps {
 const NovelEditPage = async ({ params }: PageProps) => {
   const { id, novelId } = await params;
   const session = await auth();
-  
-  // Check if user can edit novels
-  if (!session || !canEditNovel(session.user.role as Role | undefined)) {
-    redirect(`/admin/novels/${id}`);
-  }
+  const userRole = session?.user?.role as Role | undefined;
 
   const novel = await prisma.novel.findUnique({
     where: { id: novelId },
@@ -48,6 +44,11 @@ const NovelEditPage = async ({ params }: PageProps) => {
 
   if (!novel || novel.ARId !== id) {
     notFound();
+  }
+
+  // Check if user can edit this novel
+  if (!session || !canEditNovel(userRole, novel.locked)) {
+    redirect(`/admin/novels/${id}`);
   }
 
   const arLevels = await prisma.aR.findMany({
@@ -121,6 +122,7 @@ const NovelEditPage = async ({ params }: PageProps) => {
         novelSettings={novelSettings}
         challenges={challenges}
         currentMonthChallenge={currentMonthChallenge}
+        userRole={userRole}
       />
     </div>
   );

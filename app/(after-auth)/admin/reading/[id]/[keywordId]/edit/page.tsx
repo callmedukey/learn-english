@@ -21,11 +21,7 @@ interface PageProps {
 const KeywordEditPage = async ({ params }: PageProps) => {
   const { id, keywordId } = await params;
   const session = await auth();
-  
-  // Check if user can edit keywords
-  if (!session || !canEditKeyword(session.user.role as Role | undefined)) {
-    redirect(`/admin/reading/${id}`);
-  }
+  const userRole = session?.user?.role as Role | undefined;
 
   const keyword = await prisma.rCKeyword.findUnique({
     where: { id: keywordId },
@@ -43,6 +39,11 @@ const KeywordEditPage = async ({ params }: PageProps) => {
 
   if (!keyword || keyword.rcLevelId !== id) {
     notFound();
+  }
+
+  // Check if user can edit this keyword
+  if (!session || !canEditKeyword(userRole, keyword.locked)) {
+    redirect(`/admin/reading/${id}`);
   }
 
   const rcLevels = await prisma.rCLevel.findMany({
@@ -116,6 +117,7 @@ const KeywordEditPage = async ({ params }: PageProps) => {
         rcSettings={rcSettings}
         challenges={challenges}
         currentMonthChallenge={currentMonthChallenge}
+        userRole={userRole}
       />
     </div>
   );
