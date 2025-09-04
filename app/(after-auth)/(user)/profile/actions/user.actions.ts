@@ -4,6 +4,7 @@ import { compare, hash } from "bcryptjs";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { nicknameRegex } from "@/lib/regex/auth.regex";
 import { passwordSchema } from "@/lib/schemas/auth.schema";
 import { Gender } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
@@ -37,7 +38,7 @@ const updateNicknameSchema = z.object({
   nickname: z.string()
     .min(3, "Nickname must be at least 3 characters")
     .max(8, "Nickname must be at most 8 characters")
-    .regex(/^[a-zA-Z0-9_]+$/, "Nickname can only contain letters, numbers, and underscores"),
+    .regex(nicknameRegex, "Nickname must contain only lowercase letters and numbers"),
 });
 
 export type UpdateNicknameType = z.infer<typeof updateNicknameSchema>;
@@ -225,10 +226,13 @@ export async function updateNickname(userId: string, data: UpdateNicknameType) {
       };
     }
 
-    // Check if nickname is already taken
+    // Check if nickname is already taken (case-insensitive)
     const existingUser = await prisma.user.findFirst({
       where: {
-        nickname: parsed.data.nickname,
+        nickname: {
+          equals: parsed.data.nickname,
+          mode: "insensitive",
+        },
         NOT: { id: userId },
       },
     });

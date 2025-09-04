@@ -79,7 +79,7 @@ export function GlobalWinnersPopup({
   onClose,
 }: GlobalWinnersPopupProps) {
   const [activeTab, setActiveTab] = useState<"OVERALL" | "RC" | "AR">(
-    "OVERALL",
+    "OVERALL"
   );
 
   const handleDismiss = async (dismissForMonth: boolean) => {
@@ -109,7 +109,7 @@ export function GlobalWinnersPopup({
     {} as Record<
       string,
       Record<"OVERALL" | "RC" | "AR", CategoryLeaderboard | null>
-    >,
+    >
   );
 
   // Sort grades according to order
@@ -121,7 +121,7 @@ export function GlobalWinnersPopup({
       if (aIndex === -1) return 1;
       if (bIndex === -1) return -1;
       return aIndex - bIndex;
-    },
+    }
   );
 
   const getCategoryIcon = (category: "OVERALL" | "RC" | "AR") => {
@@ -142,7 +142,7 @@ export function GlobalWinnersPopup({
       case "RC":
         return "RC";
       case "AR":
-        return "Lexile";
+        return "Novel";
     }
   };
 
@@ -185,7 +185,7 @@ export function GlobalWinnersPopup({
         })}
 
         {sortedGrades.every(
-          (grade) => !leaderboardsByGradeAndCategory[grade][category],
+          (grade) => !leaderboardsByGradeAndCategory[grade][category]
         ) && (
           <div className="py-8 text-center text-muted-foreground">
             No winners for {getCategoryLabel(category)} category this month.
@@ -222,7 +222,7 @@ export function GlobalWinnersPopup({
             </TabsTrigger>
             <TabsTrigger value="AR" className="flex items-center gap-2">
               {getCategoryIcon("AR")}
-              Lexile
+              Novel
             </TabsTrigger>
           </TabsList>
 

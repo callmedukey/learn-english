@@ -231,6 +231,27 @@ export async function socialSignUpAction(
 
   const { nickname, gender, birthday, country, referrer, email } = parsed.data;
 
+  // Check if nickname is already taken
+  const existingNickname = await prisma.user.findFirst({
+    where: {
+      nickname: {
+        equals: nickname,
+        mode: "insensitive",
+      },
+    },
+  });
+
+  if (existingNickname) {
+    return {
+      success: false,
+      message: "Nickname already exists",
+      inputs,
+      errors: {
+        nickname: ["This nickname is already taken"],
+      },
+    };
+  }
+
   let foundReferrer: Pick<User, "id"> | null = null;
 
   if (referrer) {

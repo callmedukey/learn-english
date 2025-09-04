@@ -10,6 +10,7 @@ import CheckboxWithLabel from "@/components/custom-ui/checkbox-with-label";
 import DayPicker from "@/components/custom-ui/day-picker";
 import InputWithLabel from "@/components/custom-ui/input-with-label";
 import SelectWithLabel from "@/components/custom-ui/select-with-label";
+import BirthdayConfirmationDialog from "@/components/dialogs/birthday-confirmation-dialog";
 import { SignUpType } from "@/lib/schemas/auth.schema";
 import { Country } from "@/prisma/generated/prisma";
 import { ActionResponse } from "@/types/actions";
@@ -28,7 +29,18 @@ const SocialRegisterForm = ({ email, countries }: SocialRegisterFormProps) => {
   const [date, setDate] = useState<Date | undefined>();
   const [state, action] = useActionState(socialSignUpAction, initialState);
   const [transitionIsPending, startTransition] = useTransition();
+  const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [showBirthdayDialog, setShowBirthdayDialog] = useState(false);
+  const [pendingFormData, setPendingFormData] = useState<FormData | null>(
+    null
+  );
   const router = useRouter();
+
+  const handleFormSubmit = (formData: FormData) => {
+    startTransition(() => {
+      action(formData);
+    });
+  };
 
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -37,9 +49,17 @@ const SocialRegisterForm = ({ email, countries }: SocialRegisterFormProps) => {
     formData.append("email", email);
     formData.append("birthday", date?.toISOString() || "");
 
-    startTransition(() => {
-      action(formData);
-    });
+    // Check if birthday is before 2006 and country is selected
+    if (date && selectedCountry) {
+      const birthYear = date.getFullYear();
+      if (birthYear < 2006) {
+        setPendingFormData(formData);
+        setShowBirthdayDialog(true);
+        return;
+      }
+    }
+
+    handleFormSubmit(formData);
   };
 
   useEffect(() => {
@@ -107,6 +127,7 @@ const SocialRegisterForm = ({ email, countries }: SocialRegisterFormProps) => {
           defaultValue={state.inputs?.country}
           placeholder="Select your country"
           error={state.errors?.country?.[0]}
+          onValueChange={setSelectedCountry}
           items={countries.map((country) => ({
             label: country.name,
             value: country.id,
@@ -140,6 +161,24 @@ const SocialRegisterForm = ({ email, countries }: SocialRegisterFormProps) => {
       <p className="text-center text-sm text-gray-500">
         © 2025 Reading Champ. All rights reserved.
       </p>
+      <BirthdayConfirmationDialog
+        open={showBirthdayDialog}
+        isKorea={
+          countries.find((c) => c.id === selectedCountry)?.name ===
+          "South Korea"
+        }
+        onConfirm={() => {
+          setShowBirthdayDialog(false);
+          if (pendingFormData) {
+            handleFormSubmit(pendingFormData);
+            setPendingFormData(null);
+          }
+        }}
+        onCancel={() => {
+          setShowBirthdayDialog(false);
+          setPendingFormData(null);
+        }}
+      />
     </form>
   );
 };

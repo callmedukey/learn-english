@@ -246,7 +246,7 @@ export default function SettingsContentWrapper({
                   <p className="text-sm text-red-500">{nicknameError}</p>
                 )}
                 <p className="text-xs text-gray-500">
-                  3-8 characters, letters, numbers, and underscores only
+                  3-8 characters, lowercase letters and numbers only
                 </p>
               </div>
             ) : (

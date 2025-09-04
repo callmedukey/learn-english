@@ -34,7 +34,7 @@ const baseSignUpObjectSchema = z.object({
       message: "Nickname must be less than 8 characters",
     })
     .regex(nicknameRegex, {
-      message: "Nickname must contain only letters, numbers, and underscores",
+      message: "Nickname must contain only lowercase letters and numbers",
     }),
   gender: z.nativeEnum(Gender).optional(),
   birthday: z.coerce

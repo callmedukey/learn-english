@@ -65,19 +65,19 @@ const page = async () => {
     if (globalWinnersPopup) {
       categoryLeaderboards = await getGlobalWinnersDataByCategory(
         globalWinnersPopup.year,
-        globalWinnersPopup.month,
+        globalWinnersPopup.month
       );
     }
 
     // Check if we need personal rankings
     const personalAchievementPopup = popups.find(
-      (p) => p.type === "PERSONAL_ACHIEVEMENT",
+      (p) => p.type === "PERSONAL_ACHIEVEMENT"
     );
     if (personalAchievementPopup) {
       personalRankings = await getUserMonthlyRankings(
         session.user.id,
         personalAchievementPopup.year,
-        personalAchievementPopup.month,
+        personalAchievementPopup.month
       );
     }
   }
@@ -89,8 +89,9 @@ const page = async () => {
         categoryLeaderboards={categoryLeaderboards}
         personalRankings={personalRankings}
       />
-      <MonthlyLeaderboard userId={session.user.id} userGrade={userGrade} />
+
       <Leaderboard userId={session.user.id} userGrade={userGrade} />
+      <MonthlyLeaderboard userId={session.user.id} userGrade={userGrade} />
       <ContinueLearning userId={session.user.id} />
     </div>
   );
