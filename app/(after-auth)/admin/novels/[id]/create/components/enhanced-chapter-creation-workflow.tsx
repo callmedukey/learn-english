@@ -107,8 +107,8 @@ const EnhancedChapterCreationWorkflow: React.FC<
     }
 
     const validChoices = choices.filter((c) => c.trim());
-    if (validChoices.length < 2) {
-      toast.error("Please provide at least 2 answer choices");
+    if (validChoices.length !== 4) {
+      toast.error("Please provide exactly 4 answer choices");
       return;
     }
 
@@ -563,7 +563,12 @@ const EnhancedChapterCreationWorkflow: React.FC<
                   </div>
 
                   <div className="flex space-x-2">
-                    <Button onClick={addQuestion}>Add Question</Button>
+                    <Button 
+                      onClick={addQuestion}
+                      disabled={!questionText.trim() || !answer || choices.filter((c) => c.trim()).length !== 4}
+                    >
+                      Add Question
+                    </Button>
                     <Button variant="outline" onClick={resetQuestionForm}>
                       Cancel
                     </Button>

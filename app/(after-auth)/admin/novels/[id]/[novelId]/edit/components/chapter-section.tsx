@@ -722,6 +722,13 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
   const handleCreateQuestion = async () => {
     // Client-side validation
     const validChoices = newQuestion.choices.filter((c) => stripHtml(c).trim());
+    
+    // Validate that we have exactly 4 choices
+    if (validChoices.length !== 4) {
+      toast.error("Please provide exactly 4 answer choices");
+      return;
+    }
+    
     if (!isAnswerValid(newQuestion.answer, newQuestion.choices)) {
       toast.error(
         "The correct answer must exactly match one of the provided choices",
@@ -850,6 +857,11 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
                   Please select the correct answer
                 </p>
               )}
+              {validChoicesForButton.length !== 4 && (
+                <p className="mt-1 text-xs text-red-500">
+                  You must provide exactly 4 answer choices
+                </p>
+              )}
             </div>
 
             <div>
@@ -921,7 +933,7 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
                 !newQuestion.question ||
                 !newQuestion.answer ||
                 !isNewQuestionAnswerValid ||
-                validChoicesForButton.length === 0
+                validChoicesForButton.length !== 4
               }
             >
               <Save className="mr-2 h-4 w-4" />
@@ -997,6 +1009,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
   const handleUpdate = async () => {
     // Client-side validation
     const validChoices = editForm.choices.filter((c) => c.trim());
+    
+    // Validate that we have exactly 4 choices
+    if (validChoices.length !== 4) {
+      toast.error("Please provide exactly 4 answer choices");
+      return;
+    }
+    
     if (!isAnswerValid(editForm.answer, validChoices)) {
       toast.error(
         "The correct answer must exactly match one of the provided choices",
@@ -1097,6 +1116,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
                 Please select the correct answer
               </p>
             )}
+            {validEditChoices.length !== 4 && (
+              <p className="mt-1 text-xs text-red-500">
+                You must provide exactly 4 answer choices
+              </p>
+            )}
           </div>
 
           <div>
@@ -1165,7 +1189,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
               !editForm.question ||
               !editForm.answer ||
               !isEditAnswerValid ||
-              validEditChoices.length === 0
+              validEditChoices.length !== 4
             }
           >
             <Save className="mr-2 h-4 w-4" />

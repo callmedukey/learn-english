@@ -135,13 +135,20 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
   const handleCreateQuestion = () => {
     if (!keyword.RCQuestionSet) return;
 
+    // Validate that we have exactly 4 non-empty choices
+    const validChoices = choices.filter((c) => c.trim());
+    if (validChoices.length !== 4) {
+      toast.error("Please provide exactly 4 answer choices");
+      return;
+    }
+
     startTransition(async () => {
       const formData = new FormData();
       formData.append("questionSetId", keyword.RCQuestionSet!.id);
       formData.append("question", questionText);
       formData.append(
         "choices",
-        JSON.stringify(choices.filter((c) => c.trim())),
+        JSON.stringify(validChoices),
       );
       formData.append("answer", answer);
       formData.append("explanation", explanation);
@@ -440,6 +447,11 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
                       Please select the correct answer
                     </p>
                   )}
+                {choices.filter((c) => stripHtml(c).trim()).length !== 4 && (
+                  <p className="mt-1 text-sm text-red-500">
+                    You must provide exactly 4 answer choices
+                  </p>
+                )}
               </div>
 
               <div>
@@ -478,7 +490,10 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
               </div>
 
               <div className="flex space-x-2">
-                <Button onClick={handleCreateQuestion} disabled={isPending}>
+                <Button 
+                  onClick={handleCreateQuestion} 
+                  disabled={isPending || !questionText || !answer || choices.filter((c) => c.trim()).length !== 4}
+                >
                   {isPending ? "Adding..." : "Add Question"}
                 </Button>
                 <Button
@@ -556,6 +571,13 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
   const handleUpdate = () => {
     // Client-side validation
     const validChoices = editForm.choices.filter((c) => c.trim());
+    
+    // Validate that we have exactly 4 choices
+    if (validChoices.length !== 4) {
+      toast.error("Please provide exactly 4 answer choices");
+      return;
+    }
+    
     if (!isAnswerValid(editForm.answer, validChoices)) {
       toast.error(
         "The correct answer must exactly match one of the provided choices",
@@ -667,6 +689,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                   Please select the correct answer
                 </p>
               )}
+            {editForm.choices.filter((c) => stripHtml(c).trim()).length !== 4 && (
+              <p className="mt-1 text-xs text-red-500">
+                You must provide exactly 4 answer choices
+              </p>
+            )}
           </div>
 
           <div>
@@ -739,7 +766,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
                 isPending ||
                 !editForm.question ||
                 !editForm.answer ||
-                validEditChoices.length === 0
+                validEditChoices.length !== 4
               }
             >
               <Save className="mr-2 h-4 w-4" />

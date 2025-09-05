@@ -171,8 +171,8 @@ export const createQuestionAction = async (formData: FormData) => {
   try {
     const choices = JSON.parse(choicesJson);
 
-    if (!Array.isArray(choices) || choices.length < 2) {
-      return { error: "At least 2 answer choices are required" };
+    if (!Array.isArray(choices) || choices.length !== 4) {
+      return { error: "Exactly 4 answer choices are required" };
     }
 
     // Check if the answer matches one of the choices
@@ -244,8 +244,8 @@ export const updateQuestionAction = async (formData: FormData) => {
   try {
     const choices = JSON.parse(choicesJson);
 
-    if (!Array.isArray(choices) || choices.length < 2) {
-      return { error: "At least 2 answer choices are required" };
+    if (!Array.isArray(choices) || choices.length !== 4) {
+      return { error: "Exactly 4 answer choices are required" };
     }
 
     if (!choices.includes(answer)) {

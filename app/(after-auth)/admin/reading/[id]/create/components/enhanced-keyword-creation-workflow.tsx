@@ -89,8 +89,8 @@ const EnhancedKeywordCreationWorkflow: React.FC<EnhancedKeywordCreationWorkflowP
     }
 
     const validChoices = choices.filter((c) => c.trim());
-    if (validChoices.length < 2) {
-      toast.error("Please provide at least 2 answer choices");
+    if (validChoices.length !== 4) {
+      toast.error("Please provide exactly 4 answer choices");
       return;
     }
 
@@ -447,7 +447,10 @@ const EnhancedKeywordCreationWorkflow: React.FC<EnhancedKeywordCreationWorkflowP
                   </div>
 
                   <div className="flex space-x-2">
-                    <Button onClick={addQuestion}>
+                    <Button 
+                      onClick={addQuestion}
+                      disabled={!questionText.trim() || !answer || choices.filter((c) => c.trim()).length !== 4}
+                    >
                       Add Question
                     </Button>
                     <Button
