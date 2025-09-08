@@ -47,7 +47,9 @@ export function TiptapEditor({
         class: cn(
           "prose prose-sm max-w-none focus:outline-none",
           "min-h-[80px] px-3 py-2",
-          "[&_p]:my-0", // Remove default paragraph margins
+          "[&_p:first-child]:mt-0", // No top margin for first paragraph
+          "[&_p:not(:first-child)]:mt-3", // Add top margin to subsequent paragraphs
+          "[&_p]:mb-0", // No bottom margin
           editorClassName,
         ),
         style: `min-height: ${rows * 1.5}rem`,
