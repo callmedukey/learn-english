@@ -10,6 +10,9 @@ export const metadata: Metadata = {
   description: "Sign up to join Reading Champ",
 };
 
+export const revalidate = 0;
+export const dynamic = "force-dynamic";
+
 const page = async () => {
   const countries = await prisma.country.findMany({
     select: {
