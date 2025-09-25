@@ -4,6 +4,7 @@ import { toZonedTime } from "date-fns-tz";
 import { processRecurringBilling } from "../jobs/subscription-billing.job";
 import { APP_TIMEZONE } from "../lib/constants/timezone";
 import { prisma } from "../prisma/prisma-client";
+import { PaymentLogger } from "../lib/utils/payment-logger";
 
 /**
  * Billing cron wrapper that processes recurring payments daily
@@ -24,17 +25,22 @@ async function main() {
 
   try {
     console.log("🔄 Processing recurring billing payments...");
-    
+    PaymentLogger.logBillingJobStart();
+
     await processRecurringBilling();
-    
+
     console.log("\n✅ Billing job completed successfully!");
     process.exit(0);
   } catch (error) {
     console.error("\n❌ Billing job failed:", error);
-    
+
+    PaymentLogger.logBillingJobError(
+      error instanceof Error ? error.message : String(error)
+    );
+
     // TODO: Send alert notification to admin
     // This is critical - failed billing means lost revenue
-    
+
     process.exit(1);
   }
 }

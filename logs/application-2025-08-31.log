@@ -1,4 +1,0 @@
-{"level":"info","message":"Logger initialized","service":"grep-app-server","timestamp":"2025-08-31 11:46:07"}
-{"level":"info","message":"Starting FastMCP server in stdio mode","service":"grep-app-server","timestamp":"2025-08-31 11:46:07"}
-{"level":"info","message":"Client connected via stdio","service":"grep-app-server","sessionIdentifier":"1p2f74ym","timestamp":"2025-08-31 11:46:07"}
-{"level":"info","message":"FastMCP server started successfully in stdio mode","service":"grep-app-server","timestamp":"2025-08-31 11:46:07"}

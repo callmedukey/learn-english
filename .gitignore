@@ -46,3 +46,6 @@ next-env.d.ts
 /data
 public/uploads
 /backups
+
+# payment logs (sensitive information)
+/payments

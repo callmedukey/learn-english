@@ -2,28 +2,33 @@ import { auth } from "@/auth";
 
 /**
  * Check if the current user has access to payment features
- * During maintenance, only test@readingchamp.com has access
+ * All authenticated users now have access to payments
  */
 export async function hasPaymentAccess(): Promise<boolean> {
   const session = await auth();
-  
+
   if (!session?.user?.email) {
     return false;
   }
-  
-  // Only allow test account during maintenance
-  return session.user.email === "test@readingchamp.com";
+
+  // All authenticated users have payment access
+  return true;
 }
 
 /**
  * Check if a specific email has access to payment features
+ * All emails now have access to payments
  */
-export function hasPaymentAccessByEmail(email: string): boolean {
-  return email === "test@readingchamp.com";
+export function hasPaymentAccessByEmail(
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars, unused-imports/no-unused-vars
+  _email: string,
+): boolean {
+  return true;
 }
 
 /**
  * Get maintenance message for payment system
+ * Currently not used since payments are available to all users
  */
 export function getPaymentMaintenanceMessage(): string {
   return "Payment system is currently under maintenance. Please check back later.";

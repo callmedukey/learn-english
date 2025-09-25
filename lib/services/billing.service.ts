@@ -1,5 +1,6 @@
 import * as crypto from "crypto";
 
+import { PaymentLogger } from "@/lib/utils/payment-logger";
 import { UserSubscription, User, Plan, CouponApplication, DiscountCoupon } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -99,9 +100,18 @@ export class BillingService {
       console.log(
         `[BillingService] Processing waived payment due to 100% discount coupon: ${appliedCoupon.coupon.code}`,
       );
-      
+
       const orderId = this.generateOrderId();
-      
+
+      // Log waived payment
+      PaymentLogger.logPaymentWaived(
+        user.id,
+        subscription.id,
+        orderId,
+        appliedCoupon.coupon.code,
+        plan.price
+      );
+
       // Create a mock payment result for waived payments
       const waivedPaymentResult = {
         paymentKey: `WAIVED_${orderId}`,
@@ -116,7 +126,7 @@ export class BillingService {
         customerEmail: user.email,
         customerName: user.nickname || user.email.split("@")[0],
       };
-      
+
       // Process as successful payment without charging
       await this.handlePaymentSuccess(subscription, waivedPaymentResult, appliedCoupon, discountAmount);
       return { success: true, payment: waivedPaymentResult };
@@ -124,6 +134,9 @@ export class BillingService {
 
     const decryptedBillingKey = this.decrypt(user.billingKey);
     const orderId = this.generateOrderId();
+
+    // Log payment attempt
+    PaymentLogger.logPaymentAttempt(user.id, subscription.id, finalAmount);
 
     try {
       console.log(
@@ -157,6 +170,19 @@ export class BillingService {
         console.log(
           `[BillingService] Payment successful: paymentKey=${paymentResult.paymentKey}`,
         );
+
+        // Log payment success
+        PaymentLogger.logPaymentSuccess(
+          user.id,
+          subscription.id,
+          paymentResult.paymentKey,
+          orderId,
+          finalAmount,
+          plan.price,
+          discountAmount > 0 ? discountAmount : undefined,
+          appliedCoupon?.coupon.code
+        );
+
         // Success - update subscription and coupon application
         await this.handlePaymentSuccess(subscription, paymentResult, appliedCoupon, discountAmount);
         return { success: true, payment: paymentResult };
@@ -164,12 +190,32 @@ export class BillingService {
         console.error(
           `[BillingService] Payment failed: ${paymentResult.code} - ${paymentResult.message}`,
         );
+
+        // Log payment failure
+        PaymentLogger.logPaymentFailure(
+          user.id,
+          subscription.id,
+          finalAmount,
+          `${paymentResult.code} - ${paymentResult.message}`,
+          subscription.failedAttempts + 1
+        );
+
         // Failure - handle retry logic
         await this.handlePaymentFailure(subscription, paymentResult);
         return { success: false, error: paymentResult };
       }
     } catch (error) {
       console.error(`[BillingService] Payment exception:`, error);
+
+      // Log payment exception
+      PaymentLogger.logPaymentFailure(
+        user.id,
+        subscription.id,
+        finalAmount,
+        error instanceof Error ? error.message : String(error),
+        subscription.failedAttempts + 1
+      );
+
       await this.handlePaymentFailure(subscription, error);
       throw error;
     }
@@ -389,6 +435,13 @@ export class BillingService {
 
     console.log(
       `[BillingService] Billing complete: ${successCount} successful, ${failureCount} failed`,
+    );
+
+    // Log billing job completion with counts
+    PaymentLogger.logBillingJobComplete(
+      successCount,
+      failureCount,
+      subscriptionsDue.length
     );
   }
 
