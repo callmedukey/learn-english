@@ -1,5 +1,7 @@
+"use client";
+
 import { format } from "date-fns";
-import React from "react";
+import React, { useState } from "react";
 
 import {
   Table,
@@ -9,22 +11,45 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; // Assuming you have these shadcn/ui components
-import { Role } from "@/prisma/generated/prisma";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import { Country, Role } from "@/prisma/generated/prisma";
 
 import RoleChangeDropdown from "./role-change-dropdown";
+import UpdateUserForm from "./update-user-form";
 import { UserData } from "../query/users.query"; // Adjust path as needed
 
 interface UsersTableProps {
   users: UserData[];
   currentUserRole: Role;
+  countries: Pick<Country, "id" | "name">[];
 }
 
-const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole }) => {
+const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countries }) => {
+  const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
+  const [isDialogOpen, setIsDialogOpen] = useState(false);
+
+  const handleUserClick = (user: UserData) => {
+    setSelectedUser(user);
+    setIsDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setIsDialogOpen(false);
+    setSelectedUser(null);
+  };
+
   if (!users || users.length === 0) {
     return <p className="text-center text-gray-500">No users found.</p>;
   }
 
   return (
+    <>
     <Table>
       <TableHeader>
         <TableRow>
@@ -45,7 +70,15 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole }) => {
       <TableBody>
         {users.map((user) => (
           <TableRow key={user.id}>
-            <TableCell>{user.nickname || "N/A"}</TableCell>
+            <TableCell>
+              <button
+                type="button"
+                onClick={() => handleUserClick(user)}
+                className="cursor-pointer text-blue-600 hover:text-blue-800 hover:underline bg-transparent border-none p-0 font-inherit text-left"
+              >
+                {user.nickname || "N/A"}
+              </button>
+            </TableCell>
             <TableCell>{user.email}</TableCell>
             <TableCell>{user.birthday || "N/A"}</TableCell>
             <TableCell>{user.grade}</TableCell>
@@ -128,6 +161,25 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole }) => {
         ))}
       </TableBody>
     </Table>
+
+    {selectedUser && (
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Update User: {selectedUser.nickname}</DialogTitle>
+            <DialogDescription>
+              Update the user&apos;s birthday and country information.
+            </DialogDescription>
+          </DialogHeader>
+          <UpdateUserForm
+            user={selectedUser}
+            countries={countries}
+            onUserUpdated={handleDialogClose}
+          />
+        </DialogContent>
+      </Dialog>
+    )}
+    </>
   );
 };
 

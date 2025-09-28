@@ -74,7 +74,7 @@ export default async function AdminUsersPage({
           </div>
         }
       >
-        <UsersTable users={users} currentUserRole={session.user.role} />
+        <UsersTable users={users} currentUserRole={session.user.role} countries={countries} />
       </Suspense>
 
       {totalPages > 1 && (
