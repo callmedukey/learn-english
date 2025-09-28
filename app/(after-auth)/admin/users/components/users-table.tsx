@@ -4,6 +4,13 @@ import { format } from "date-fns";
 import React, { useState } from "react";
 
 import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
+import {
   Table,
   TableBody,
   TableCell,
@@ -11,13 +18,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; // Assuming you have these shadcn/ui components
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 import { Country, Role } from "@/prisma/generated/prisma";
 
 import RoleChangeDropdown from "./role-change-dropdown";
