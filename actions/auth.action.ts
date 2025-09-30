@@ -109,8 +109,19 @@ export async function signUpAction(
     };
   }
 
-  const { email, password, nickname, gender, birthday, country, referrer } =
-    parsed.data;
+  const {
+    email,
+    password,
+    nickname,
+    gender,
+    birthday,
+    country,
+    referrer,
+    parentName,
+    parentPhone,
+    studentName,
+    studentPhone,
+  } = parsed.data;
 
   let foundReferrer: Pick<User, "id"> | null = null;
 
@@ -186,6 +197,10 @@ export async function signUpAction(
         countryId: country,
         referrerId: foundReferrer?.id,
         isReferred: !!foundReferrer,
+        parentName: parentName || undefined,
+        parentPhone: parentPhone || undefined,
+        studentName: studentName || undefined,
+        studentPhone: studentPhone || undefined,
       },
     });
 
@@ -229,7 +244,18 @@ export async function socialSignUpAction(
     };
   }
 
-  const { nickname, gender, birthday, country, referrer, email } = parsed.data;
+  const {
+    nickname,
+    gender,
+    birthday,
+    country,
+    referrer,
+    email,
+    parentName,
+    parentPhone,
+    studentName,
+    studentPhone,
+  } = parsed.data;
 
   // Check if nickname is already taken
   const existingNickname = await prisma.user.findFirst({
@@ -289,6 +315,10 @@ export async function socialSignUpAction(
         referrerId: foundReferrer?.id,
         isReferred: !!foundReferrer,
         emailVerified: new Date(), // Mark email as verified for social sign-ups
+        parentName: parentName || undefined,
+        parentPhone: parentPhone || undefined,
+        studentName: studentName || undefined,
+        studentPhone: studentPhone || undefined,
       },
     });
 

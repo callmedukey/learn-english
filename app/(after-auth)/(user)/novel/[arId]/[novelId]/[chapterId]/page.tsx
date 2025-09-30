@@ -7,8 +7,6 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { getUserLevelLock } from "@/server-queries/level-locks";
-import { getActiveChallengeItems } from "@/server-queries/medals";
 
 import QuizComponent from "./components/quiz-component";
 import {
@@ -72,15 +70,9 @@ async function ChapterContent({
   // Check premium access
   const hasPremiumAccess = chapter.isFree || session.user.hasPaidSubscription;
 
-  // Check if this novel is part of a monthly challenge
-  const challengeNovelIds = chapter.novel.AR ? await getActiveChallengeItems("AR", chapter.novel.AR.id) : [];
-  const isMonthlyChallenge = challengeNovelIds?.includes(novelId) || false;
-  
-  // Check user's level lock status
-  const userLevelLock = await getUserLevelLock(session.user.id, "AR");
-  
-  // Check challenge access - only block if it's a challenge novel AND user hasn't joined ANY level
-  const challengeBlocked = isMonthlyChallenge && !userLevelLock;
+  // Level locks removed - users can access all levels
+  // Challenge blocking removed - users can access all content without locks
+  const challengeBlocked = false;
   
   // Can access quiz if they have premium access AND (not a challenge novel OR they've joined the challenge)
   // const canAccess = hasPremiumAccess && !challengeBlocked;

@@ -213,12 +213,7 @@ export async function getActivePopups(userId?: string) {
 
 export async function getUserMonthlyRankings(userId: string, year: number, month: number) {
   try {
-    // Get user's level locks for the specified month
-    const levelLocks = await prisma.userLevelLock.findMany({
-      where: { userId, year, month },
-    });
-    
-    // Get user details separately
+    // Get user details
     const user = await prisma.user.findUnique({
       where: { id: userId },
       select: {
@@ -237,42 +232,33 @@ export async function getUserMonthlyRankings(userId: string, year: number, month
       grade: string;
     }> = [];
 
-    for (const lock of levelLocks) {
-      if (lock.levelType === "AR") {
+    // Get all AR scores for this user in this month
+    const arScores = await prisma.monthlyARScore.findMany({
+      where: { userId, year, month, score: { gt: 0 } },
+    });
+
+    for (const arScore of arScores) {
         // Get AR level details
         const arLevel = await prisma.aR.findUnique({
-          where: { id: lock.levelId },
+          where: { id: arScore.ARId },
           select: { level: true },
         });
 
-        // Get user's monthly score and rank
-        const userScore = await prisma.monthlyARScore.findUnique({
-          where: {
-            userId_ARId_year_month: {
-              userId,
-              ARId: lock.levelId,
-              year,
-              month,
-            },
-          },
-          select: { score: true },
-        });
-
-        if (userScore && arLevel) {
+        if (arLevel) {
           // Count how many users scored higher
           const higherScorers = await prisma.monthlyARScore.count({
             where: {
-              ARId: lock.levelId,
+              ARId: arScore.ARId,
               year,
               month,
-              score: { gt: userScore.score },
+              score: { gt: arScore.score },
             },
           });
 
           // Total participants
           const totalParticipants = await prisma.monthlyARScore.count({
             where: {
-              ARId: lock.levelId,
+              ARId: arScore.ARId,
               year,
               month,
               score: { gt: 0 },
@@ -281,49 +267,43 @@ export async function getUserMonthlyRankings(userId: string, year: number, month
 
           rankings.push({
             levelType: "AR",
-            levelId: lock.levelId,
+            levelId: arScore.ARId,
             levelName: arLevel.level,
             rank: higherScorers + 1,
             totalParticipants,
-            score: userScore.score,
+            score: arScore.score,
             grade: calculateGrade(user?.birthday || null),
           });
         }
-      } else {
+    }
+
+    // Get all RC scores for this user in this month
+    const rcScores = await prisma.monthlyRCScore.findMany({
+      where: { userId, year, month, score: { gt: 0 } },
+    });
+
+    for (const rcScore of rcScores) {
         // Get RC level details
         const rcLevel = await prisma.rCLevel.findUnique({
-          where: { id: lock.levelId },
+          where: { id: rcScore.RCLevelId },
           select: { level: true },
         });
 
-        // Get user's monthly score and rank
-        const userScore = await prisma.monthlyRCScore.findUnique({
-          where: {
-            userId_RCLevelId_year_month: {
-              userId,
-              RCLevelId: lock.levelId,
-              year,
-              month,
-            },
-          },
-          select: { score: true },
-        });
-
-        if (userScore && rcLevel) {
+        if (rcLevel) {
           // Count how many users scored higher
           const higherScorers = await prisma.monthlyRCScore.count({
             where: {
-              RCLevelId: lock.levelId,
+              RCLevelId: rcScore.RCLevelId,
               year,
               month,
-              score: { gt: userScore.score },
+              score: { gt: rcScore.score },
             },
           });
 
           // Total participants
           const totalParticipants = await prisma.monthlyRCScore.count({
             where: {
-              RCLevelId: lock.levelId,
+              RCLevelId: rcScore.RCLevelId,
               year,
               month,
               score: { gt: 0 },
@@ -332,15 +312,14 @@ export async function getUserMonthlyRankings(userId: string, year: number, month
 
           rankings.push({
             levelType: "RC",
-            levelId: lock.levelId,
+            levelId: rcScore.RCLevelId,
             levelName: rcLevel.level,
             rank: higherScorers + 1,
             totalParticipants,
-            score: userScore.score,
+            score: rcScore.score,
             grade: calculateGrade(user?.birthday || null),
           });
         }
-      }
     }
 
     return rankings;

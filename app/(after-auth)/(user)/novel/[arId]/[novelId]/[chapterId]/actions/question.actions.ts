@@ -3,11 +3,9 @@
 import { toZonedTime } from "date-fns-tz";
 import { revalidatePath } from "next/cache";
 
-import { createUserLevelLock } from "@/actions/level-locks";
 import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import { checkAndCreateRankingNotification } from "@/lib/services/notification.service";
 import { prisma } from "@/prisma/prisma-client";
-import { checkLevelLockPermission } from "@/server-queries/level-locks";
 
 export interface QuestionCompletionResult {
   success: boolean;
@@ -213,22 +211,8 @@ export const completeQuestionAction = async (
       const arId = question.novelQuestionSet.novelChapter.novel.AR.id;
       const novelId = question.novelQuestionSet.novelChapter.novel.id;
 
-      // Check level lock permission for monthly scores only
-      const lockCheck = await checkLevelLockPermission(userId, "AR", arId);
-      
-      console.log('Level lock check:', {
-        allowed: lockCheck.allowed,
-        shouldCreateLock: lockCheck.shouldCreateLock,
-        currentLevel: lockCheck.currentLevel,
-        arId,
-      });
-      
       // Use transaction for atomic updates
       await prisma.$transaction(async (tx) => {
-        // Create level lock if needed (only on first score in any level)
-        if (lockCheck.shouldCreateLock) {
-          await createUserLevelLock(userId, "AR", arId);
-        }
         // Update cumulative AR score
         const existingARScore = await tx.aRScore.findFirst({
           where: {
@@ -289,9 +273,8 @@ export const completeQuestionAction = async (
           },
         });
 
-        // Only update monthly score if user is locked to this exact level
-        // This means: user has a lock AND it's for the same level as the quiz
-        if (challenge && lockCheck.currentLevel === arId) {
+        // Update monthly score if challenge exists and quiz is part of it
+        if (challenge) {
           // Update monthly score for medal tracking
           await tx.monthlyARScore.upsert({
             where: {

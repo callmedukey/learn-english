@@ -133,30 +133,8 @@ async function main() {
       },
     });
 
-    // Create user level locks for testing personal rankings
-    // Always include devduke
-    const usersToLock = [...new Set([...(devduke ? [devduke] : []), ...scoreUsers])];
-    for (const user of usersToLock) {
-      await prisma.userLevelLock.upsert({
-        where: {
-          userId_levelType_year_month: {
-            userId: user.id,
-            levelType: "AR",
-            year: lastMonthYear,
-            month: lastMonth,
-          },
-        },
-        update: {},
-        create: {
-          userId: user.id,
-          year: lastMonthYear,
-          month: lastMonth,
-          levelType: "AR",
-          levelId: ar.id,
-          lockedAt: new Date(lastMonthYear, lastMonth - 1, 1),
-        },
-      });
-    }
+    // Level locks have been removed from the system
+    // Users no longer need to be locked to levels
   }
 
   // Similar for RC levels
@@ -254,28 +232,7 @@ async function main() {
       },
     });
 
-    const usersToLockRC = [...new Set([...(devduke ? [devduke] : []), ...scoreUsers])];
-    for (const user of usersToLockRC) {
-      await prisma.userLevelLock.upsert({
-        where: {
-          userId_levelType_year_month: {
-            userId: user.id,
-            levelType: "RC",
-            year: lastMonthYear,
-            month: lastMonth,
-          },
-        },
-        update: {},
-        create: {
-          userId: user.id,
-          year: lastMonthYear,
-          month: lastMonth,
-          levelType: "RC",
-          levelId: rc.id,
-          lockedAt: new Date(lastMonthYear, lastMonth - 1, 1),
-        },
-      });
-    }
+    // Level locks have been removed from the system
   }
 
   // Create popup records

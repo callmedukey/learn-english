@@ -55,6 +55,11 @@ export interface UserData
   role: Role;
   createdAt: Date;
   updatedAt: Date;
+  // South Korea specific fields
+  parentName: string | null;
+  parentPhone: string | null;
+  studentName: string | null;
+  studentPhone: string | null;
   // Subscription information
   hasActiveSubscription: boolean;
   activeSubscription: {
@@ -192,6 +197,10 @@ export const getUsers = async ({
       role: user.role,
       createdAt: user.createdAt,
       updatedAt: user.updatedAt,
+      parentName: user.parentName,
+      parentPhone: user.parentPhone,
+      studentName: user.studentName,
+      studentPhone: user.studentPhone,
       hasActiveSubscription: !!activeSubscription,
       activeSubscription: activeSubscription
         ? {

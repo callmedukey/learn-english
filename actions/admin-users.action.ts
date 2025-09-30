@@ -11,6 +11,36 @@ const updateUserDetailsSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
   birthday: z.string().optional(),
   countryId: z.string().optional(),
+  parentName: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z가-힣\s]*$/, {
+      message: "Name can only contain letters and spaces",
+    })
+    .optional()
+    .or(z.literal("")),
+  parentPhone: z
+    .string()
+    .regex(/^010-\d{4}-\d{4}$/, {
+      message: "Phone number must be in format: 010-0000-0000",
+    })
+    .optional()
+    .or(z.literal("")),
+  studentName: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z가-힣\s]*$/, {
+      message: "Name can only contain letters and spaces",
+    })
+    .optional()
+    .or(z.literal("")),
+  studentPhone: z
+    .string()
+    .regex(/^010-\d{4}-\d{4}$/, {
+      message: "Phone number must be in format: 010-0000-0000",
+    })
+    .optional()
+    .or(z.literal("")),
 });
 
 type UpdateUserDetailsType = z.infer<typeof updateUserDetailsSchema>;
@@ -23,14 +53,7 @@ export async function updateUserDetailsAction(
     await requireAdminAccess();
 
     const validatedData = updateUserDetailsSchema.parse(data);
-    const { userId, birthday, countryId } = validatedData;
-
-    if (!birthday && !countryId) {
-      return {
-        success: false,
-        message: "At least one field (birthday or country) must be provided",
-      };
-    }
+    const { userId, birthday, countryId, parentName, parentPhone, studentName, studentPhone } = validatedData;
 
     const updateData: any = {};
 
@@ -40,6 +63,22 @@ export async function updateUserDetailsAction(
 
     if (countryId) {
       updateData.countryId = countryId;
+    }
+
+    if (parentName !== undefined) {
+      updateData.parentName = parentName || null;
+    }
+
+    if (parentPhone !== undefined) {
+      updateData.parentPhone = parentPhone || null;
+    }
+
+    if (studentName !== undefined) {
+      updateData.studentName = studentName || null;
+    }
+
+    if (studentPhone !== undefined) {
+      updateData.studentPhone = studentPhone || null;
     }
 
     await prisma.user.update({

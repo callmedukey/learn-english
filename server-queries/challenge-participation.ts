@@ -58,23 +58,9 @@ export async function checkChallengeParticipation(
       }
     })();
 
-    // Check if user has joined the challenge (has level lock)
-    const userLevelLock = await prisma.userLevelLock.findUnique({
-      where: {
-        userId_levelType_year_month: {
-          userId,
-          levelType,
-          year,
-          month,
-        },
-      },
-      select: {
-        levelId: true,
-      },
-    });
-
-    const hasJoinedChallenge = userLevelLock?.levelId === levelId;
-    const isLockedToDifferentLevel = !!(userLevelLock && userLevelLock.levelId !== levelId);
+    // No level lock system - users can participate in any challenge
+    const hasJoinedChallenge = false; // Not needed anymore
+    const isLockedToDifferentLevel = false;
 
     // Get challenge details if content is part of challenge
     let challengeDetails = null;
@@ -107,7 +93,7 @@ export async function checkChallengeParticipation(
       isChallengeContent,
       hasJoinedChallenge,
       isLockedToDifferentLevel,
-      currentLockedLevelId: userLevelLock?.levelId || null,
+      currentLockedLevelId: null,
       challengeDetails,
     };
   } catch (error) {

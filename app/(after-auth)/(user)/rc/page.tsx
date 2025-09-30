@@ -4,7 +4,6 @@ import { auth } from "@/auth";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
-import { getUserLevelLock } from "@/server-queries/level-locks";
 
 import { RCLevelCard } from "./components/rc-level-card";
 
@@ -98,7 +97,7 @@ async function RCLevels() {
   }));
 
   // Get user's level lock for RC if they're logged in
-  const userLevelLock = userId ? await getUserLevelLock(userId, "RC") : null;
+  // Level locks removed - users can access all levels
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -114,11 +113,11 @@ async function RCLevels() {
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {rcLevelsWithMedals.map((rcLevel) => (
-          <RCLevelCard 
-            key={rcLevel.id} 
-            rcLevel={rcLevel} 
+          <RCLevelCard
+            key={rcLevel.id}
+            rcLevel={rcLevel}
             userId={userId}
-            isUserSelectedLevel={userLevelLock?.levelId === rcLevel.id}
+            isUserSelectedLevel={false}
           />
         ))}
       </div>

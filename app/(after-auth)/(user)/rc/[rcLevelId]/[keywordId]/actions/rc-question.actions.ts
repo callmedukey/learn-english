@@ -3,12 +3,10 @@
 import { toZonedTime } from "date-fns-tz";
 import { revalidatePath } from "next/cache";
 
-import { createUserLevelLock } from "@/actions/level-locks";
 import { auth } from "@/auth";
 import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import { checkAndCreateRankingNotification } from "@/lib/services/notification.service";
 import { prisma } from "@/prisma/prisma-client";
-import { checkLevelLockPermission } from "@/server-queries/level-locks";
 
 export interface RCQuestionCompletionResult {
   success: boolean;
@@ -276,15 +274,8 @@ export async function submitRCAnswer(
 
     // Only update scores if points were awarded (not retry and correct answer)
     if (pointsAwarded > 0) {
-      // Check level lock permission for monthly scores only
-      const lockCheck = await checkLevelLockPermission(session.user.id, "RC", rcLevelId);
-
       // Use transaction for atomic updates
       await prisma.$transaction(async (tx) => {
-        // Create level lock if needed (only on first score in any level)
-        if (lockCheck.shouldCreateLock) {
-          await createUserLevelLock(session.user.id, "RC", rcLevelId);
-        }
         // Update cumulative RC score
         const existingRCScore = await tx.rCScore.findFirst({
           where: {
@@ -345,9 +336,8 @@ export async function submitRCAnswer(
           },
         });
 
-        // Only update monthly score if user is locked to this exact level
-        // This means: user has a lock AND it's for the same level as the quiz
-        if (challenge && lockCheck.currentLevel === rcLevelId) {
+        // Update monthly score if challenge exists and quiz is part of it
+        if (challenge) {
           // Update monthly score for medal tracking
           await tx.monthlyRCScore.upsert({
             where: {

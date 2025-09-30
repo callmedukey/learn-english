@@ -3,9 +3,7 @@
 import DOMPurify from "isomorphic-dompurify";
 import { FileText, Lock, Target, Repeat, Trophy, Info } from "lucide-react";
 import Link from "next/link";
-import { useState } from "react";
 
-import { ChallengeRequiredDialog } from "@/components/dialogs/challenge-required-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -55,7 +53,6 @@ interface RCKeywordCardProps {
     } | null;
   };
   rcLevelId: string;
-  rcLevelName?: string;
   userId?: string;
   hasPaidSubscription?: boolean;
   isMonthlyChallenge?: boolean;
@@ -68,13 +65,11 @@ interface RCKeywordCardProps {
 export function RCKeywordCard({
   keyword,
   rcLevelId,
-  rcLevelName = "",
   userId,
   hasPaidSubscription,
   isMonthlyChallenge = false,
   userLevelLock,
 }: RCKeywordCardProps) {
-  const [challengeDialogOpen, setChallengeDialogOpen] = useState(false);
   // Calculate quiz attempt status
   let totalQuestions = 0;
   let firstTryData: { totalQuestions: number; correctAnswers: number } | null =
@@ -92,9 +87,8 @@ export function RCKeywordCard({
   const isQuestionSetActive = keyword.RCQuestionSet?.active === true;
   const hasQuestions = totalQuestions > 0;
 
-  // Check challenge access - if it's a challenge keyword and user hasn't joined ANY challenge, show dialog
-  // Otherwise, allow access regardless of level
-  const challengeBlocked = isMonthlyChallenge && !userLevelLock;
+  // Challenge blocking removed - users can access all content without locks
+  const challengeBlocked = false;
 
   // Determine status based on first/second try completion
   let status:
@@ -364,12 +358,6 @@ export function RCKeywordCard({
             className="w-full"
             variant={status === "available" ? "outline" : "default"}
             disabled={status === "locked" || status === "no-content" || status === "coming-soon"}
-            onClick={(e) => {
-              if (challengeBlocked) {
-                e.preventDefault();
-                setChallengeDialogOpen(true);
-              }
-            }}
           >
             {getButtonText()}
           </Button>
@@ -378,36 +366,11 @@ export function RCKeywordCard({
     </Card>
   );
 
-  const handleCardClick = (e: React.MouseEvent) => {
-    if (challengeBlocked) {
-      e.preventDefault();
-      setChallengeDialogOpen(true);
-    }
-  };
-
-  return (
-    <>
-      {isClickable ? (
-        <Link href={`/rc/${rcLevelId}/${keyword.id}`} className="group">
-          {cardContent}
-        </Link>
-      ) : challengeBlocked && (keyword.isFree || hasPaidSubscription) ? (
-        <div className="group cursor-pointer" onClick={handleCardClick}>
-          {cardContent}
-        </div>
-      ) : (
-        cardContent
-      )}
-      
-      <ChallengeRequiredDialog
-        open={challengeDialogOpen}
-        onOpenChange={setChallengeDialogOpen}
-        levelType="RC"
-        levelId={rcLevelId}
-        levelName={rcLevelName}
-        contentName={keyword.name}
-        contentType="keyword"
-      />
-    </>
+  return isClickable ? (
+    <Link href={`/rc/${rcLevelId}/${keyword.id}`} className="group">
+      {cardContent}
+    </Link>
+  ) : (
+    cardContent
   );
 }

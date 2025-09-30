@@ -4,7 +4,6 @@ import { auth } from "@/auth";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
-import { getUserLevelLock } from "@/server-queries/level-locks";
 
 import { ARCard } from "./components/ar-card";
 
@@ -90,7 +89,7 @@ async function ARChoices() {
   }));
 
   // Get user's level lock for AR if they're logged in
-  const userLevelLock = userId ? await getUserLevelLock(userId, "AR") : null;
+  // Level locks removed - users can access all levels
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -110,7 +109,7 @@ async function ARChoices() {
             key={ar.id}
             ar={ar}
             userId={userId}
-            isUserSelectedLevel={userLevelLock?.levelId === ar.id}
+            isUserSelectedLevel={false}
           />
         ))}
       </div>

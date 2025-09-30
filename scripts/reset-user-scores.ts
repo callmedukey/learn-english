@@ -147,19 +147,7 @@ async function resetUserScores() {
       });
       console.log(`✓ Deleted ${medals.count} medals`);
 
-      // Delete level change requests
-      console.log("Deleting level change requests...");
-      const changeRequests = await tx.levelChangeRequest.deleteMany({
-        where: { userId: user.id }
-      });
-      console.log(`✓ Deleted ${changeRequests.count} level change requests`);
-
-      // Delete level locks
-      console.log("Deleting user level locks...");
-      const levelLocks = await tx.userLevelLock.deleteMany({
-        where: { userId: user.id }
-      });
-      console.log(`✓ Deleted ${levelLocks.count} level locks`);
+      // Level locks have been removed from the system
 
       // Delete novel question completions
       console.log("Deleting novel question completions...");

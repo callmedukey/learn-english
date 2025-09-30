@@ -56,6 +56,37 @@ const baseSignUpObjectSchema = z.object({
     ),
   country: z.string({ required_error: "Country is required" }),
   referrer: z.string().optional(),
+  // South Korea specific fields
+  parentName: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z가-힣\s]*$/, {
+      message: "Name can only contain letters and spaces",
+    })
+    .optional()
+    .or(z.literal("")),
+  parentPhone: z
+    .string()
+    .regex(/^010-\d{4}-\d{4}$/, {
+      message: "Phone number must be in format: 010-0000-0000",
+    })
+    .optional()
+    .or(z.literal("")),
+  studentName: z
+    .string()
+    .trim()
+    .regex(/^[a-zA-Z가-힣\s]*$/, {
+      message: "Name can only contain letters and spaces",
+    })
+    .optional()
+    .or(z.literal("")),
+  studentPhone: z
+    .string()
+    .regex(/^010-\d{4}-\d{4}$/, {
+      message: "Phone number must be in format: 010-0000-0000",
+    })
+    .optional()
+    .or(z.literal("")),
   terms: z
     .preprocess((val) => val === "on", z.boolean())
     .refine((val) => val, {
@@ -81,6 +112,10 @@ export const socialSignUpSchema = baseSignUpObjectSchema.pick({
   country: true,
   terms: true,
   referrer: true,
+  parentName: true,
+  parentPhone: true,
+  studentName: true,
+  studentPhone: true,
 });
 
 export type SocialSignUpType = z.infer<typeof socialSignUpSchema>;

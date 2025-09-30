@@ -31,6 +31,12 @@ model User {
   isReferred    Boolean @default(false)
   referrerCount Int     @default(0)
 
+  // South Korea specific fields
+  parentName  String?
+  parentPhone String?
+  studentName String?
+  studentPhone String?
+
   emailVerified DateTime?
   image         String?
   role          Role      @default(USER)
@@ -74,11 +80,6 @@ model User {
   silverMedals MonthlyLeaderboard[] @relation("SilverMedals")
   bronzeMedals MonthlyLeaderboard[] @relation("BronzeMedals")
 
-  // Level lock relations
-  levelLocks UserLevelLock[]
-  levelChangeRequests LevelChangeRequest[]
-  reviewedChangeRequests LevelChangeRequest[] @relation("ReviewedRequests")
-  
   // Popup dismissals
   popupDismissals UserPopupDismissal[]
 }

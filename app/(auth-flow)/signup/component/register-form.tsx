@@ -36,7 +36,28 @@ const RegisterForm = ({
   const [pendingFormData, setPendingFormData] = useState<FormData | null>(
     null
   );
+  const [parentPhone, setParentPhone] = useState<string>("");
+  const [studentPhone, setStudentPhone] = useState<string>("");
   const router = useRouter();
+
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-digit characters
+    const numbers = value.replace(/\D/g, "");
+
+    // Format as 010-0000-0000
+    if (numbers.length <= 3) {
+      return numbers;
+    } else if (numbers.length <= 7) {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    } else {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+    }
+  };
+
+  const handlePhoneChange = (value: string, setter: (value: string) => void) => {
+    const formatted = formatPhoneNumber(value);
+    setter(formatted);
+  };
 
   const handleFormSubmit = (formData: FormData) => {
     startTransition(() => {
@@ -133,6 +154,46 @@ const RegisterForm = ({
             value: country.id,
           }))}
         />
+        {selectedCountry &&
+          countries.find((c) => c.id === selectedCountry)?.name ===
+            "South Korea" && (
+            <>
+              <InputWithLabel
+                label="학부모 이름"
+                name="parentName"
+                type="text"
+                defaultValue={state.inputs?.parentName}
+                placeholder="학부모 이름을 입력하세요"
+                error={state.errors?.parentName?.[0]}
+              />
+              <InputWithLabel
+                label="학부모 전화번호"
+                name="parentPhone"
+                type="tel"
+                value={parentPhone}
+                onChange={(e) => handlePhoneChange(e.target.value, setParentPhone)}
+                placeholder="010-1234-5678"
+                error={state.errors?.parentPhone?.[0]}
+              />
+              <InputWithLabel
+                label="학생 이름"
+                name="studentName"
+                type="text"
+                defaultValue={state.inputs?.studentName}
+                placeholder="학생 이름을 입력하세요"
+                error={state.errors?.studentName?.[0]}
+              />
+              <InputWithLabel
+                label="학생 전화번호"
+                name="studentPhone"
+                type="tel"
+                value={studentPhone}
+                onChange={(e) => handlePhoneChange(e.target.value, setStudentPhone)}
+                placeholder="010-1234-5678"
+                error={state.errors?.studentPhone?.[0]}
+              />
+            </>
+          )}
         <InputWithLabel
           label="Password"
           name="password"

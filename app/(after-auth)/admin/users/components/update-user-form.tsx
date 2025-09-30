@@ -6,6 +6,7 @@ import { toast } from "sonner";
 import { updateUserDetailsAction } from "@/actions/admin-users.action";
 import ButtonWithLoading from "@/components/custom-ui/button-with-loading";
 import DayPicker from "@/components/custom-ui/day-picker";
+import InputWithLabel from "@/components/custom-ui/input-with-label";
 import SelectWithLabel from "@/components/custom-ui/select-with-label";
 import { DialogFooter } from "@/components/ui/dialog";
 import { Country } from "@/prisma/generated/prisma";
@@ -35,21 +36,43 @@ export default function UpdateUserForm({
   const [selectedCountry, setSelectedCountry] = useState<string>(
     user.country?.id || "",
   );
+  const [parentName, setParentName] = useState<string>(user.parentName || "");
+  const [parentPhone, setParentPhone] = useState<string>(user.parentPhone || "");
+  const [studentName, setStudentName] = useState<string>(user.studentName || "");
+  const [studentPhone, setStudentPhone] = useState<string>(user.studentPhone || "");
   const [state, formAction] = useActionState(updateUserDetailsAction, initialState);
   const [isPending, startTransition] = useTransition();
 
+  const formatPhoneNumber = (value: string) => {
+    // Remove all non-digit characters
+    const numbers = value.replace(/\D/g, "");
+
+    // Format as 010-0000-0000
+    if (numbers.length <= 3) {
+      return numbers;
+    } else if (numbers.length <= 7) {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3)}`;
+    } else {
+      return `${numbers.slice(0, 3)}-${numbers.slice(3, 7)}-${numbers.slice(7, 11)}`;
+    }
+  };
+
+  const handlePhoneChange = (value: string, setter: (value: string) => void) => {
+    const formatted = formatPhoneNumber(value);
+    setter(formatted);
+  };
+
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-
-    if (!date && !selectedCountry) {
-      toast.error("Please select at least one field to update");
-      return;
-    }
 
     const updateData = {
       userId: user.id,
       ...(date && { birthday: date.toISOString() }),
       ...(selectedCountry && { countryId: selectedCountry }),
+      parentName: parentName || undefined,
+      parentPhone: parentPhone || undefined,
+      studentName: studentName || undefined,
+      studentPhone: studentPhone || undefined,
     };
 
     startTransition(() => {
@@ -86,6 +109,46 @@ export default function UpdateUserForm({
           label: country.name,
           value: country.id,
         }))}
+      />
+
+      <InputWithLabel
+        label="Parent Name (학부모 이름)"
+        name="parentName"
+        type="text"
+        value={parentName}
+        onChange={(e) => setParentName(e.target.value)}
+        placeholder="Enter parent name"
+        error={state.errors?.parentName?.[0]}
+      />
+
+      <InputWithLabel
+        label="Parent Phone (학부모 전화번호)"
+        name="parentPhone"
+        type="tel"
+        value={parentPhone}
+        onChange={(e) => handlePhoneChange(e.target.value, setParentPhone)}
+        placeholder="010-1234-5678"
+        error={state.errors?.parentPhone?.[0]}
+      />
+
+      <InputWithLabel
+        label="Student Name (학생 이름)"
+        name="studentName"
+        type="text"
+        value={studentName}
+        onChange={(e) => setStudentName(e.target.value)}
+        placeholder="Enter student name"
+        error={state.errors?.studentName?.[0]}
+      />
+
+      <InputWithLabel
+        label="Student Phone (학생 전화번호)"
+        name="studentPhone"
+        type="tel"
+        value={studentPhone}
+        onChange={(e) => handlePhoneChange(e.target.value, setStudentPhone)}
+        placeholder="010-1234-5678"
+        error={state.errors?.studentPhone?.[0]}
       />
 
       <DialogFooter>

@@ -9,13 +9,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
-import { getUserLevelLock } from "@/server-queries/level-locks";
-import {
-  getActiveChallengeItems,
-  getCurrentKoreaYearMonth,
-} from "@/server-queries/medals";
+import { getActiveChallengeItems } from "@/server-queries/medals";
 
-import { RCChallengeConfirmationButton } from "./components/rc-challenge-confirmation-button";
 import { RCKeywordCard } from "./components/rc-keyword-card";
 import { RCKeywordFilters } from "./components/rc-keyword-filters";
 import { RCKeywordsPagination } from "./components/rc-keywords-pagination";
@@ -109,27 +104,6 @@ async function RCKeywords({
   // Get challenge keyword IDs for this RC level
   const challengeKeywordIds = await getActiveChallengeItems("RC", rcLevelId);
 
-  // Get current month/year for challenge button
-  const { year: currentYear, month: currentMonth } = getCurrentKoreaYearMonth();
-  const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "September",
-    "October",
-    "November",
-    "December",
-  ];
-  const currentMonthName = monthNames[currentMonth - 1];
-
-  // Get user's level lock if they're logged in
-  const userLevelLock = userId ? await getUserLevelLock(userId, "RC") : null;
-  
   // Get all keywords without pinning
   const skip = (page - 1) * perPage;
 
@@ -260,17 +234,6 @@ async function RCKeywords({
               ))}
             </div>
           </div>
-          <RCChallengeConfirmationButton
-            rcLevelId={rcLevelId}
-            rcLevel={`RC Level ${rcLevel.level}`}
-            hasActiveChallenge={
-              !!challengeKeywordIds && challengeKeywordIds.length > 0
-            }
-            challengeKeywordCount={challengeKeywordIds?.length || 0}
-            currentMonth={currentMonthName}
-            currentYear={currentYear}
-            userLevelLock={userLevelLock}
-          />
         </div>
 
         <div className="mb-4 flex items-center gap-3">
@@ -330,7 +293,7 @@ async function RCKeywords({
               isMonthlyChallenge={
                 challengeKeywordIds?.includes(keyword.id) || false
               }
-              userLevelLock={userLevelLock}
+              userLevelLock={null}
             />
           ))}
         </div>

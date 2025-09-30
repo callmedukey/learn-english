@@ -73,14 +73,7 @@ async function resetAllScoresAndNotifications() {
       const leaderboards = await tx.monthlyLeaderboard.deleteMany({});
       console.log(`✓ Deleted ${leaderboards.count} leaderboard records`);
 
-      // Delete level locks and change requests
-      console.log("Deleting level change requests...");
-      const changeRequests = await tx.levelChangeRequest.deleteMany({});
-      console.log(`✓ Deleted ${changeRequests.count} level change requests`);
-
-      console.log("Deleting user level locks...");
-      const levelLocks = await tx.userLevelLock.deleteMany({});
-      console.log(`✓ Deleted ${levelLocks.count} level locks`);
+      // Level locks have been removed from the system
 
       // Delete all question completion records
       console.log("Deleting novel question completions...");

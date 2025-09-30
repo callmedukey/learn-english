@@ -20,7 +20,6 @@ async function main() {
     console.log("Job completed successfully!");
     console.log(`Medals awarded for ${result.medalizedChallenges} challenges`);
     console.log(`Activated ${result.activatedChallenges} new challenges`);
-    console.log(`Unlocked ${result.unlockedLevels} user level locks`);
     console.log("========================================\n");
 
     process.exit(0);

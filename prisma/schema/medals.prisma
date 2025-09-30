@@ -210,63 +210,6 @@ model MonthlyRCScore {
   @@index([RCLevelId, year, month, score]) // For leaderboard queries with score sorting
 }
 
-enum ChangeRequestStatus {
-  PENDING
-  APPROVED
-  REJECTED
-  AUTO_APPROVED
-}
-
-model UserLevelLock {
-  id        String    @id @default(uuid())
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  levelType LevelType // AR or RC
-  levelId   String    // References AR.id or RCLevel.id
-  
-  year      Int
-  month     Int       // 1-12
-  
-  lockedAt  DateTime  @default(now())
-  changesUsed Int     @default(0)
-  lastChangeAt DateTime?
-  
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  
-  @@unique([userId, levelType, year, month])
-  @@index([userId, year, month])
-  @@index([levelType, levelId])
-}
-
-model LevelChangeRequest {
-  id        String    @id @default(uuid())
-  userId    String
-  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
-  levelType LevelType
-  fromLevelId String
-  toLevelId   String
-  
-  year      Int
-  month     Int
-  
-  reason    String?
-  status    ChangeRequestStatus @default(PENDING)
-  
-  reviewedBy   String?
-  reviewer     User?    @relation("ReviewedRequests", fields: [reviewedBy], references: [id])
-  reviewedAt   DateTime?
-  reviewNote  String?
-  
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-
-  @@index([userId, year, month])
-  @@index([status])
-}
-
 model SystemConfig {
   id        String    @id @default(uuid())
   key       String    @unique

@@ -9,8 +9,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { prisma } from "@/prisma/prisma-client";
-import { getUserLevelLock } from "@/server-queries/level-locks";
-import { getActiveChallengeItems } from "@/server-queries/medals";
 
 import { RCQuizComponent } from "./components/rc-quiz-component";
 
@@ -114,15 +112,9 @@ async function RCKeywordContent({
   // Check premium access
   const hasPremiumAccess = keyword.isFree || session.user.hasPaidSubscription;
 
-  // Check if this keyword is part of a monthly challenge
-  const challengeKeywordIds = await getActiveChallengeItems("RC", rcLevelId);
-  const isMonthlyChallenge = challengeKeywordIds?.includes(keywordId) || false;
-  
-  // Check user's level lock status
-  const userLevelLock = await getUserLevelLock(session.user.id, "RC");
-  
-  // Check challenge access - only block if it's a challenge keyword AND user hasn't joined ANY level
-  const challengeBlocked = isMonthlyChallenge && !userLevelLock;
+  // Level locks removed - users can access all levels
+  // Challenge blocking removed - users can access all content without locks
+  const challengeBlocked = false;
   
   // Can access quiz if they have premium access AND (not a challenge keyword OR they've joined the challenge)
   // const canAccess = hasPremiumAccess && !challengeBlocked;

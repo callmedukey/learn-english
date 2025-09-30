@@ -59,6 +59,10 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
           <TableHead>Grade</TableHead>
           <TableHead>Gender</TableHead>
           <TableHead>Country</TableHead>
+          <TableHead>Parent Name</TableHead>
+          <TableHead>Parent Phone</TableHead>
+          <TableHead>Student Name</TableHead>
+          <TableHead>Student Phone</TableHead>
           <TableHead>Role</TableHead>
           <TableHead>Subscription Status</TableHead>
           <TableHead>Plan</TableHead>
@@ -84,6 +88,10 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
             <TableCell>{user.grade}</TableCell>
             <TableCell>{user.gender || "N/A"}</TableCell>
             <TableCell>{user.country?.name || "N/A"}</TableCell>
+            <TableCell>{user.parentName || "N/A"}</TableCell>
+            <TableCell>{user.parentPhone || "N/A"}</TableCell>
+            <TableCell>{user.studentName || "N/A"}</TableCell>
+            <TableCell>{user.studentPhone || "N/A"}</TableCell>
             <TableCell>
               {currentUserRole === Role.ADMIN ? (
                 <RoleChangeDropdown userId={user.id} currentRole={user.role} />
