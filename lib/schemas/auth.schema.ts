@@ -92,31 +92,159 @@ const baseSignUpObjectSchema = z.object({
     .refine((val) => val, {
       message: "You must agree to the terms and conditions",
     }),
+  // Korean consent fields (optional)
+  termsAgreed: z.preprocess((val) => val === "on", z.boolean()).optional(),
+  privacyAgreed: z.preprocess((val) => val === "on", z.boolean()).optional(),
+  ageVerified: z.string().optional(),
+  guardianPrivacyAgreed: z
+    .preprocess((val) => val === "on", z.boolean())
+    .optional(),
+  marketingAgreed: z.preprocess((val) => val === "on", z.boolean()).optional(),
 });
 
-export const signUpSchema = baseSignUpObjectSchema.refine(
-  (data) => data.password === data.confirmPassword,
-  {
+export const signUpSchema = baseSignUpObjectSchema
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
     path: ["confirmPassword"],
-  },
-);
+  })
+  .refine(
+    (data) => {
+      // If country is South Korea, Korean consent fields are required
+      if (data.country === "South Korea" || data.country === "KR") {
+        return data.termsAgreed === true;
+      }
+      return true;
+    },
+    {
+      message: "이용약관에 동의해주세요",
+      path: ["termsAgreed"],
+    },
+  )
+  .refine(
+    (data) => {
+      // If country is South Korea, privacy agreement is required
+      if (data.country === "South Korea" || data.country === "KR") {
+        return data.privacyAgreed === true;
+      }
+      return true;
+    },
+    {
+      message: "개인정보 수집 및 이용에 동의해주세요",
+      path: ["privacyAgreed"],
+    },
+  )
+  .refine(
+    (data) => {
+      // If country is South Korea, age verification is required
+      if (data.country === "South Korea" || data.country === "KR") {
+        return (
+          data.ageVerified === "14_or_older" ||
+          data.ageVerified === "under_14_with_consent"
+        );
+      }
+      return true;
+    },
+    {
+      message: "연령 확인을 선택해주세요",
+      path: ["ageVerified"],
+    },
+  )
+  .refine(
+    (data) => {
+      // If under 14, guardian privacy agreement is required
+      if (
+        (data.country === "South Korea" || data.country === "KR") &&
+        data.ageVerified === "under_14_with_consent"
+      ) {
+        return data.guardianPrivacyAgreed === true;
+      }
+      return true;
+    },
+    {
+      message: "법정대리인의 개인정보 수집 및 이용에 동의해주세요",
+      path: ["guardianPrivacyAgreed"],
+    },
+  );
 
 export type SignUpType = z.infer<typeof signUpSchema>;
 
-export const socialSignUpSchema = baseSignUpObjectSchema.pick({
-  email: true,
-  nickname: true,
-  gender: true,
-  birthday: true,
-  country: true,
-  terms: true,
-  referrer: true,
-  parentName: true,
-  parentPhone: true,
-  studentName: true,
-  studentPhone: true,
-});
+export const socialSignUpSchema = baseSignUpObjectSchema
+  .pick({
+    email: true,
+    nickname: true,
+    gender: true,
+    birthday: true,
+    country: true,
+    terms: true,
+    referrer: true,
+    parentName: true,
+    parentPhone: true,
+    studentName: true,
+    studentPhone: true,
+    termsAgreed: true,
+    privacyAgreed: true,
+    ageVerified: true,
+    guardianPrivacyAgreed: true,
+    marketingAgreed: true,
+  })
+  .refine(
+    (data) => {
+      // If country is South Korea, Korean consent fields are required
+      if (data.country === "South Korea" || data.country === "KR") {
+        return data.termsAgreed === true;
+      }
+      return true;
+    },
+    {
+      message: "이용약관에 동의해주세요",
+      path: ["termsAgreed"],
+    },
+  )
+  .refine(
+    (data) => {
+      // If country is South Korea, privacy agreement is required
+      if (data.country === "South Korea" || data.country === "KR") {
+        return data.privacyAgreed === true;
+      }
+      return true;
+    },
+    {
+      message: "개인정보 수집 및 이용에 동의해주세요",
+      path: ["privacyAgreed"],
+    },
+  )
+  .refine(
+    (data) => {
+      // If country is South Korea, age verification is required
+      if (data.country === "South Korea" || data.country === "KR") {
+        return (
+          data.ageVerified === "14_or_older" ||
+          data.ageVerified === "under_14_with_consent"
+        );
+      }
+      return true;
+    },
+    {
+      message: "연령 확인을 선택해주세요",
+      path: ["ageVerified"],
+    },
+  )
+  .refine(
+    (data) => {
+      // If under 14, guardian privacy agreement is required
+      if (
+        (data.country === "South Korea" || data.country === "KR") &&
+        data.ageVerified === "under_14_with_consent"
+      ) {
+        return data.guardianPrivacyAgreed === true;
+      }
+      return true;
+    },
+    {
+      message: "법정대리인의 개인정보 수집 및 이용에 동의해주세요",
+      path: ["guardianPrivacyAgreed"],
+    },
+  );
 
 export type SocialSignUpType = z.infer<typeof socialSignUpSchema>;
 

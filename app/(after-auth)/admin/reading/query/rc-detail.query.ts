@@ -55,9 +55,10 @@ export const getRCKeywordsByLevel = async (
     },
   });
 
-  // Get challenges for all keywords
+  // Get challenges for all keywords, filtered by their RC level
   const keywordIds = keywords.map(k => k.id);
-  const challengeMap = await getKeywordChallenges(keywordIds);
+  const keywordToLevelMap = new Map(keywords.map(k => [k.id, k.rcLevelId]));
+  const challengeMap = await getKeywordChallenges(keywordIds, keywordToLevelMap);
 
   // Add challenge data to each keyword
   const keywordsWithChallenges = keywords.map(keyword => ({

@@ -59,6 +59,13 @@ model User {
   ARScore ARScore[]
   RCScore RCScore[]
 
+  // Korean consent tracking (optional for backward compatibility)
+  termsAgreed            Boolean?
+  privacyAgreed          Boolean?
+  ageVerified            String? // "14_or_older" or "under_14_with_consent"
+  guardianPrivacyAgreed  Boolean?
+  marketingAgreed        Boolean?
+
   // Payment and subscription relations
   payments      Payment[]
   subscriptions UserSubscription[]

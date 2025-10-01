@@ -98,7 +98,24 @@ export async function signUpAction(
     formData.entries(),
   ) as unknown as SignUpType;
 
-  const parsed = signUpSchema.safeParse(inputs);
+  // Get country name for validation
+  const countryData = await prisma.country.findUnique({
+    where: { id: inputs.country },
+    select: { name: true },
+  });
+
+  // Replace country ID with country name for validation
+  const inputsForValidation = {
+    ...inputs,
+    country: countryData?.name || inputs.country,
+  };
+
+  const parsed = signUpSchema.safeParse(inputsForValidation);
+
+  // Restore the country ID after validation
+  if (parsed.success) {
+    parsed.data.country = inputs.country;
+  }
 
   if (!parsed.success) {
     return {
@@ -121,6 +138,11 @@ export async function signUpAction(
     parentPhone,
     studentName,
     studentPhone,
+    termsAgreed,
+    privacyAgreed,
+    ageVerified,
+    guardianPrivacyAgreed,
+    marketingAgreed,
   } = parsed.data;
 
   let foundReferrer: Pick<User, "id"> | null = null;
@@ -201,6 +223,11 @@ export async function signUpAction(
         parentPhone: parentPhone || undefined,
         studentName: studentName || undefined,
         studentPhone: studentPhone || undefined,
+        termsAgreed: termsAgreed || undefined,
+        privacyAgreed: privacyAgreed || undefined,
+        ageVerified: ageVerified || undefined,
+        guardianPrivacyAgreed: guardianPrivacyAgreed || undefined,
+        marketingAgreed: marketingAgreed || undefined,
       },
     });
 
@@ -233,7 +260,24 @@ export async function socialSignUpAction(
     formData.entries(),
   ) as unknown as SocialSignUpType;
 
-  const parsed = socialSignUpSchema.safeParse(inputs);
+  // Get country name for validation
+  const countryData = await prisma.country.findUnique({
+    where: { id: inputs.country },
+    select: { name: true },
+  });
+
+  // Replace country ID with country name for validation
+  const inputsForValidation = {
+    ...inputs,
+    country: countryData?.name || inputs.country,
+  };
+
+  const parsed = socialSignUpSchema.safeParse(inputsForValidation);
+
+  // Restore the country ID after validation
+  if (parsed.success) {
+    parsed.data.country = inputs.country;
+  }
 
   if (!parsed.success) {
     return {
@@ -255,6 +299,11 @@ export async function socialSignUpAction(
     parentPhone,
     studentName,
     studentPhone,
+    termsAgreed,
+    privacyAgreed,
+    ageVerified,
+    guardianPrivacyAgreed,
+    marketingAgreed,
   } = parsed.data;
 
   // Check if nickname is already taken
@@ -319,6 +368,11 @@ export async function socialSignUpAction(
         parentPhone: parentPhone || undefined,
         studentName: studentName || undefined,
         studentPhone: studentPhone || undefined,
+        termsAgreed: termsAgreed || undefined,
+        privacyAgreed: privacyAgreed || undefined,
+        ageVerified: ageVerified || undefined,
+        guardianPrivacyAgreed: guardianPrivacyAgreed || undefined,
+        marketingAgreed: marketingAgreed || undefined,
       },
     });
 

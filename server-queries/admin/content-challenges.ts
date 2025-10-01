@@ -84,7 +84,8 @@ export async function getNovelChallenges(
  * Returns a map of keywordId -> challenges[]
  */
 export async function getKeywordChallenges(
-  keywordIds: string[]
+  keywordIds: string[],
+  keywordToLevelMap?: Map<string, string>
 ): Promise<Map<string, ContentChallenge[]>> {
   if (!keywordIds.length) return new Map();
 
@@ -103,6 +104,7 @@ export async function getKeywordChallenges(
         month: true,
         active: true,
         scheduledActive: true,
+        levelId: true,
         keywordIds: true,
         _count: {
           select: {
@@ -114,7 +116,7 @@ export async function getKeywordChallenges(
 
     // Create a map of keywordId -> challenges
     const keywordChallengeMap = new Map<string, ContentChallenge[]>();
-    
+
     // Initialize map with empty arrays for all keywords
     keywordIds.forEach(keywordId => {
       keywordChallengeMap.set(keywordId, []);
@@ -125,6 +127,14 @@ export async function getKeywordChallenges(
       // For each keyword in this challenge
       challenge.keywordIds.forEach(keywordId => {
         if (keywordIds.includes(keywordId)) {
+          // If we have level mapping, only include challenges for the keyword's level
+          if (keywordToLevelMap) {
+            const keywordLevelId = keywordToLevelMap.get(keywordId);
+            if (keywordLevelId && challenge.levelId !== keywordLevelId) {
+              return; // Skip challenges from different levels
+            }
+          }
+
           const existingChallenges = keywordChallengeMap.get(keywordId) || [];
           existingChallenges.push({
             id: challenge.id,
