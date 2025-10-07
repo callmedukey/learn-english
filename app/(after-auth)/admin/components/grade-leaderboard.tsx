@@ -1,124 +1,84 @@
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+"use client";
 
-import { LeaderboardUser } from "../queries/leaderboard.query";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+
+import LeaderboardTable from "./leaderboard-table";
+import { LeaderboardResult } from "../queries/leaderboard.query";
 
 interface GradeLeaderboardProps {
-  users: LeaderboardUser[];
+  selectedGrade: string;
+  onGradeChange: (grade: string) => void;
+  gradeData: LeaderboardResult;
+  currentPage: number;
+  pageSize: number;
+  onPageChange: (page: number) => void;
+  onPageSizeChange: (pageSize: number) => void;
 }
 
-export default function GradeLeaderboard({ users }: GradeLeaderboardProps) {
-  // Group users by grade
-  const usersByGrade = users.reduce(
-    (acc, user) => {
-      if (!acc[user.grade]) {
-        acc[user.grade] = [];
-      }
-      acc[user.grade].push(user);
-      return acc;
-    },
-    {} as Record<string, LeaderboardUser[]>,
-  );
+const GRADE_OPTIONS = [
+  { value: "Kinder", label: "Kinder" },
+  { value: "Grade 1", label: "Grade 1" },
+  { value: "Grade 2", label: "Grade 2" },
+  { value: "Grade 3", label: "Grade 3" },
+  { value: "Grade 4", label: "Grade 4" },
+  { value: "Grade 5", label: "Grade 5" },
+  { value: "Grade 6", label: "Grade 6" },
+  { value: "Grade 7", label: "Grade 7" },
+  { value: "Grade 8", label: "Grade 8" },
+  { value: "Grade 9", label: "Grade 9" },
+  { value: "Grade 10", label: "Grade 10" },
+  { value: "Grade 11", label: "Grade 11" },
+  { value: "Grade 12", label: "Grade 12" },
+  { value: "Adult", label: "Adult" },
+];
 
-  // Sort grades and get top 3 users per grade
-  const sortedGrades = Object.keys(usersByGrade).sort((a, b) => {
-    // Custom sorting for grades
-    const gradeOrder = [
-      "Below Grade 1",
-      "Grade 1",
-      "Grade 2",
-      "Grade 3",
-      "Grade 4",
-      "Grade 5",
-      "Grade 6",
-      "Grade 7",
-      "Grade 8",
-      "Grade 9",
-      "Grade 10",
-      "Grade 11",
-      "Grade 12",
-      "Adult",
-      "N/A",
-    ];
-
-    const indexA = gradeOrder.indexOf(a);
-    const indexB = gradeOrder.indexOf(b);
-
-    if (indexA === -1 && indexB === -1) return a.localeCompare(b);
-    if (indexA === -1) return 1;
-    if (indexB === -1) return -1;
-
-    return indexA - indexB;
-  });
-
-  if (sortedGrades.length === 0) {
-    return (
-      <Card>
-        <CardContent className="py-8 text-center">
-          <p className="text-muted-foreground">No grade data available.</p>
-        </CardContent>
-      </Card>
-    );
-  }
-
+export default function GradeLeaderboard({
+  selectedGrade,
+  onGradeChange,
+  gradeData,
+  currentPage,
+  pageSize,
+  onPageChange,
+  onPageSizeChange,
+}: GradeLeaderboardProps) {
   return (
-    <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-      {sortedGrades.map((grade) => {
-        const gradeUsers = usersByGrade[grade]
-          .sort((a, b) => b.totalScore - a.totalScore)
-          .slice(0, 3); // Top 3 per grade
+    <div className="space-y-4">
+      <div className="flex items-center gap-4">
+        <label htmlFor="grade-selector" className="text-sm font-medium">
+          Select Grade:
+        </label>
+        <Select value={selectedGrade} onValueChange={onGradeChange}>
+          <SelectTrigger id="grade-selector" className="w-[200px]">
+            <SelectValue placeholder="Select a grade" />
+          </SelectTrigger>
+          <SelectContent>
+            {GRADE_OPTIONS.map((option) => (
+              <SelectItem key={option.value} value={option.value}>
+                {option.label}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+        <p className="text-sm text-muted-foreground">
+          {gradeData.total} student{gradeData.total !== 1 ? "s" : ""} in {selectedGrade}
+        </p>
+      </div>
 
-        return (
-          <Card key={grade}>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-lg">{grade}</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                {usersByGrade[grade].length} student
-                {usersByGrade[grade].length !== 1 ? "s" : ""}
-              </p>
-            </CardHeader>
-            <CardContent className="pt-0">
-              <div className="space-y-3">
-                {gradeUsers.map((user, index) => (
-                  <div
-                    key={user.id}
-                    className="flex items-center justify-between"
-                  >
-                    <div className="flex items-center space-x-2">
-                      <span className="text-sm font-medium text-muted-foreground">
-                        #{index + 1}
-                      </span>
-                      {index === 0 && <span>🥇</span>}
-                      {index === 1 && <span>🥈</span>}
-                      {index === 2 && <span>🥉</span>}
-                      <div>
-                        <p className="text-sm font-medium">
-                          {user.nickname || user.name || "Anonymous"}
-                        </p>
-                        <p className="text-xs text-muted-foreground">
-                          {user.country?.name || "Unknown"}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-sm font-semibold">
-                        {user.totalScore.toLocaleString()}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        Novel: {user.arScores} | RC: {user.rcScores}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-                {gradeUsers.length === 0 && (
-                  <p className="py-4 text-center text-sm text-muted-foreground">
-                    No students with scores yet
-                  </p>
-                )}
-              </div>
-            </CardContent>
-          </Card>
-        );
-      })}
+      <LeaderboardTable
+        users={gradeData.users}
+        currentPage={currentPage}
+        pageSize={pageSize}
+        total={gradeData.total}
+        totalPages={gradeData.totalPages}
+        onPageChange={onPageChange}
+        onPageSizeChange={onPageSizeChange}
+      />
     </div>
   );
 }
