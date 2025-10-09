@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Target, Trash2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -16,6 +16,7 @@ import { Role } from "@/prisma/generated/prisma";
 
 import DeleteRCDialog from "./delete-rc-dialog";
 import EditRCDialog from "./edit-rc-dialog";
+import OverridePointsDialog from "./override-points-dialog";
 import { RCLevelData } from "../query/rc.query";
 
 interface RCTableProps {
@@ -116,6 +117,20 @@ const RCTable: React.FC<RCTableProps> = ({ rcLevels, userRole }) => {
                       <Edit className="h-4 w-4" />
                     </Button>
                   </EditRCDialog>
+                  <OverridePointsDialog
+                    rcLevelId={rcLevel.id}
+                    rcLevel={rcLevel.level}
+                    questionCount={rcLevel.questionCount}
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-blue-600 hover:text-blue-700"
+                      title="Override all question points"
+                    >
+                      <Target className="h-4 w-4" />
+                    </Button>
+                  </OverridePointsDialog>
                   <DeleteRCDialog
                     rcLevelId={rcLevel.id}
                     rcLevel={rcLevel.level}

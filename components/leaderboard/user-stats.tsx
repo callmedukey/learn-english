@@ -85,13 +85,13 @@ export async function UserStats({ userId }: UserStatsProps) {
                       variant="destructive"
                       className="flex items-center justify-center bg-primary px-4 py-2 font-bold text-white hover:bg-primary"
                     >
-                      {userRanking.overallRankingPercentage} Overall
+                      #{userRanking.userRank} Overall ({userRanking.overallRankingPercentage})
                     </Badge>
                     <Badge
                       variant="destructive"
                       className="flex items-center justify-center bg-amber-500 px-4 py-2 font-bold text-white hover:bg-amber-600"
                     >
-                      {userRanking.gradeRankingPercentage} in {userStats.grade}
+                      #{userRanking.userRankInGrade} in {userStats.grade} ({userRanking.gradeRankingPercentage})
                     </Badge>
                   </>
                 )}

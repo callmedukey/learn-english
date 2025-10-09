@@ -11,6 +11,7 @@ const updateUserDetailsSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
   birthday: z.string().optional(),
   countryId: z.string().optional(),
+  campusId: z.string().optional(),
   parentName: z
     .string()
     .trim()
@@ -53,7 +54,7 @@ export async function updateUserDetailsAction(
     await requireAdminAccess();
 
     const validatedData = updateUserDetailsSchema.parse(data);
-    const { userId, birthday, countryId, parentName, parentPhone, studentName, studentPhone } = validatedData;
+    const { userId, birthday, countryId, campusId, parentName, parentPhone, studentName, studentPhone } = validatedData;
 
     const updateData: any = {};
 
@@ -63,6 +64,10 @@ export async function updateUserDetailsAction(
 
     if (countryId) {
       updateData.countryId = countryId;
+    }
+
+    if (campusId !== undefined) {
+      updateData.campusId = campusId || null;
     }
 
     if (parentName !== undefined) {
@@ -81,12 +86,45 @@ export async function updateUserDetailsAction(
       updateData.studentPhone = studentPhone || null;
     }
 
-    await prisma.user.update({
-      where: { id: userId },
-      data: updateData,
-    });
+    // If campus is being manually assigned, auto-approve any pending request
+    if (campusId !== undefined && campusId) {
+      const pendingRequest = await prisma.campusRequest.findFirst({
+        where: {
+          userId,
+          campusId,
+          status: "PENDING",
+        },
+      });
+
+      if (pendingRequest) {
+        await prisma.$transaction([
+          prisma.user.update({
+            where: { id: userId },
+            data: updateData,
+          }),
+          prisma.campusRequest.update({
+            where: { id: pendingRequest.id },
+            data: {
+              status: "APPROVED",
+              reviewedAt: new Date(),
+            },
+          }),
+        ]);
+      } else {
+        await prisma.user.update({
+          where: { id: userId },
+          data: updateData,
+        });
+      }
+    } else {
+      await prisma.user.update({
+        where: { id: userId },
+        data: updateData,
+      });
+    }
 
     revalidatePath("/admin/users");
+    revalidatePath("/admin/campuses");
 
     return {
       success: true,

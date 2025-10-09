@@ -55,6 +55,7 @@ const baseSignUpObjectSchema = z.object({
       },
     ),
   country: z.string({ required_error: "Country is required" }),
+  campus: z.string().optional(),
   referrer: z.string().optional(),
   // South Korea specific fields
   parentName: z
@@ -175,6 +176,7 @@ export const socialSignUpSchema = baseSignUpObjectSchema
     gender: true,
     birthday: true,
     country: true,
+    campus: true,
     terms: true,
     referrer: true,
     parentName: true,

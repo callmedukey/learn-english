@@ -5,6 +5,7 @@ import { useCallback, useEffect, useState, useTransition } from "react";
 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
+import CampusFilter from "./campus-filter";
 import CountryFilter from "./country-filter";
 import GradeFilter from "./grade-filter";
 import GradeLeaderboard from "./grade-leaderboard";
@@ -21,6 +22,7 @@ interface LeaderboardClientProps {
   initialMonthlyData: LeaderboardResult;
   initialGradeData: LeaderboardResult;
   countries: CountryOption[];
+  campuses: { id: string; name: string }[];
 }
 
 export default function LeaderboardClient({
@@ -28,6 +30,7 @@ export default function LeaderboardClient({
   initialMonthlyData,
   initialGradeData,
   countries,
+  campuses,
 }: LeaderboardClientProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -42,6 +45,9 @@ export default function LeaderboardClient({
   );
   const [selectedGrade, setSelectedGrade] = useState<string | null>(
     searchParams.get("grade") || null
+  );
+  const [selectedCampus, setSelectedCampus] = useState<string | null>(
+    searchParams.get("campus") || null
   );
   const [scoreFilters, setScoreFilters] = useState<ScoreFilterValues>({
     totalScoreMin: searchParams.get("totalScoreMin")
@@ -127,6 +133,7 @@ export default function LeaderboardClient({
       if (searchQuery) queryParams.set("search", searchQuery);
       if (selectedCountry) queryParams.set("country", selectedCountry);
       if (selectedGrade) queryParams.set("grade", selectedGrade);
+      if (selectedCampus) queryParams.set("campus", selectedCampus);
       if (scoreFilters.totalScoreMin !== undefined)
         queryParams.set("totalScoreMin", String(scoreFilters.totalScoreMin));
       if (scoreFilters.totalScoreMax !== undefined)
@@ -165,6 +172,7 @@ export default function LeaderboardClient({
     searchQuery,
     selectedCountry,
     selectedGrade,
+    selectedCampus,
     scoreFilters,
     allTimePage,
     allTimePageSize,
@@ -194,6 +202,13 @@ export default function LeaderboardClient({
     setAllTimePage(1);
     setMonthlyPage(1);
     updateURL({ grade, allTimePage: 1, monthlyPage: 1 });
+  };
+
+  const handleCampusChange = (campus: string | null) => {
+    setSelectedCampus(campus);
+    setAllTimePage(1);
+    setMonthlyPage(1);
+    updateURL({ campus, allTimePage: 1, monthlyPage: 1 });
   };
 
   const handleScoreFiltersChange = (filters: ScoreFilterValues) => {
@@ -268,6 +283,12 @@ export default function LeaderboardClient({
                 from {countries.find((c) => c.id === selectedCountry)?.name}
               </span>
             )}
+            {selectedCampus && (
+              <span>
+                {" "}
+                at {campuses.find((c) => c.id === selectedCampus)?.name}
+              </span>
+            )}
             {selectedGrade && <span> in {selectedGrade}</span>}
             {searchQuery && <span> matching &quot;{searchQuery}&quot;</span>}
           </p>
@@ -282,6 +303,11 @@ export default function LeaderboardClient({
             countries={countries}
             selectedCountry={selectedCountry}
             onCountryChange={handleCountryChange}
+          />
+          <CampusFilter
+            campuses={campuses}
+            selectedCampus={selectedCampus}
+            onCampusChange={handleCampusChange}
           />
           <GradeFilter
             selectedGrade={selectedGrade}

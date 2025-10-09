@@ -13,6 +13,7 @@ interface AdminUsersPageProps {
     grade?: string;
     gender?: string;
     country?: string;
+    campus?: string;
     nickname?: string;
     email?: string;
     role?: string;
@@ -39,6 +40,7 @@ export default async function AdminUsersPage({
     grade: resolvedSearchParams.grade,
     gender: resolvedSearchParams.gender,
     country: resolvedSearchParams.country,
+    campus: resolvedSearchParams.campus,
     nickname: resolvedSearchParams.nickname,
     email: resolvedSearchParams.email,
     role: resolvedSearchParams.role,
@@ -46,11 +48,18 @@ export default async function AdminUsersPage({
     limit: limit,
   });
 
-  const countries = await prisma.country.findMany({
-    orderBy: {
-      name: "asc",
-    },
-  });
+  const [countries, campuses] = await Promise.all([
+    prisma.country.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    }),
+    prisma.campus.findMany({
+      orderBy: {
+        name: "asc",
+      },
+    }),
+  ]);
 
   return (
     <div className="container mx-auto px-4 py-8 md:px-6">
@@ -64,7 +73,7 @@ export default async function AdminUsersPage({
           </div>
         }
       >
-        <UsersFilter countries={countries} />
+        <UsersFilter countries={countries} campuses={campuses} />
       </Suspense>
 
       <Suspense
@@ -74,7 +83,7 @@ export default async function AdminUsersPage({
           </div>
         }
       >
-        <UsersTable users={users} currentUserRole={session.user.role} countries={countries} />
+        <UsersTable users={users} currentUserRole={session.user.role} countries={countries} campuses={campuses} />
       </Suspense>
 
       {totalPages > 1 && (

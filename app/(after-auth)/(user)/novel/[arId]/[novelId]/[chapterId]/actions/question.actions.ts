@@ -189,6 +189,10 @@ export const completeQuestionAction = async (
         where: { id: existingCompletion.id },
         data: {
           score: pointsAwarded,
+          selectedAnswer: selectedAnswer,
+          isCorrect: isCorrect,
+          isRetry: isRetry,
+          isTimedOut: isTimedOut,
         },
       });
     } else {
@@ -202,6 +206,10 @@ export const completeQuestionAction = async (
           novelQuestionId: questionId,
           userId: userId,
           score: pointsAwarded,
+          selectedAnswer: selectedAnswer,
+          isCorrect: isCorrect,
+          isRetry: isRetry,
+          isTimedOut: isTimedOut,
         },
       });
     }

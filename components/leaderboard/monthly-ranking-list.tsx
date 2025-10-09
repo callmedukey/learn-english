@@ -2,6 +2,8 @@
 
 import Image from "next/image";
 
+import { ScrollArea } from "@/components/ui/scroll-area";
+
 import { UserStatsPopover } from "./user-stats-popover";
 
 interface MonthlyRankingItem {
@@ -34,7 +36,7 @@ export function MonthlyRankingList({
       </div>
 
       {/* Rankings with scrollable container */}
-      <div className="max-h-[15rem] overflow-y-auto">
+      <ScrollArea className="h-[25rem] w-full">
         {rankings.length === 0 ? (
           <div className="py-8 text-center text-gray-500">
             No rankings available
@@ -141,7 +143,7 @@ export function MonthlyRankingList({
               ))}
           </div>
         )}
-      </div>
+      </ScrollArea>
     </div>
   );
 }

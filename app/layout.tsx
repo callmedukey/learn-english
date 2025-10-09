@@ -5,6 +5,7 @@ import "./globals.css";
 import Footer from "@/components/layout/footer";
 import Header from "@/components/layout/header";
 import { AuthProvider } from "@/components/providers/auth-provider";
+import { QueryProvider } from "@/components/providers/query-provider";
 import { Toaster } from "@/components/ui/sonner";
 import { cn } from "@/lib/utils";
 
@@ -112,12 +113,14 @@ export default function RootLayout({
   return (
     <html lang="ko" suppressHydrationWarning>
       <body className={cn(notoSans.variable, "antialiased")}>
-        <AuthProvider>
-          <Header />
-          {children}
-          <Footer />
-          <Toaster />
-        </AuthProvider>
+        <QueryProvider>
+          <AuthProvider>
+            <Header />
+            {children}
+            <Footer />
+            <Toaster />
+          </AuthProvider>
+        </QueryProvider>
       </body>
     </html>
   );

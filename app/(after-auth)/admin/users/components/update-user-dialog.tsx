@@ -10,7 +10,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-import { Country } from "@/prisma/generated/prisma";
+import { Campus, Country } from "@/prisma/generated/prisma";
 
 import UpdateUserForm from "./update-user-form";
 import { UserData } from "../query/users.query";
@@ -18,12 +18,14 @@ import { UserData } from "../query/users.query";
 interface UpdateUserDialogProps {
   user: UserData;
   countries: Pick<Country, "id" | "name">[];
+  campuses: Pick<Campus, "id" | "name">[];
   children: React.ReactNode;
 }
 
 const UpdateUserDialog: React.FC<UpdateUserDialogProps> = ({
   user,
   countries,
+  campuses,
   children,
 }) => {
   const [open, setOpen] = useState(false);
@@ -45,6 +47,7 @@ const UpdateUserDialog: React.FC<UpdateUserDialogProps> = ({
         <UpdateUserForm
           user={user}
           countries={countries}
+          campuses={campuses}
           onUserUpdated={handleUserUpdated}
         />
       </DialogContent>

@@ -18,6 +18,10 @@ interface UserWithReferrerAndCountryAndSubscription extends PrismaUser {
     id: string;
     name: string;
   } | null;
+  campus: {
+    id: string;
+    name: string;
+  } | null;
   subscriptions: {
     id: string;
     status: SubscriptionStatus;
@@ -42,6 +46,10 @@ export interface UserData
   grade: string;
   gender: string | null;
   country: {
+    id: string;
+    name: string;
+  } | null;
+  campus: {
     id: string;
     name: string;
   } | null;
@@ -76,6 +84,7 @@ export const getUsers = async ({
   grade: gradeFilter,
   gender: genderFilter,
   country,
+  campus,
   nickname,
   email,
   role: roleFilter,
@@ -85,6 +94,7 @@ export const getUsers = async ({
   grade: string;
   gender: string;
   country: string;
+  campus: string;
   nickname: string;
   email: string;
   role: string;
@@ -104,6 +114,9 @@ export const getUsers = async ({
   }
   if (country) {
     whereClause.countryId = country;
+  }
+  if (campus) {
+    whereClause.campusId = campus;
   }
   if (nickname) {
     whereClause.nickname = { contains: nickname, mode: "insensitive" };
@@ -149,6 +162,12 @@ export const getUsers = async ({
             name: true,
           },
         },
+        campus: {
+          select: {
+            id: true,
+            name: true,
+          },
+        },
         subscriptions: {
           include: {
             plan: {
@@ -187,6 +206,7 @@ export const getUsers = async ({
       grade: calculateGrade(user.birthday),
       gender: user.gender as string | null,
       country: user.country,
+      campus: user.campus,
       referrerNickname: user.referrer?.nickname,
       name: user.name,
       username: user.username,

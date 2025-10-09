@@ -16,6 +16,7 @@ export async function GET(request: NextRequest) {
     const filters: LeaderboardFilters = {
       searchQuery: searchParams.get("search") || undefined,
       countryId: searchParams.get("country") || undefined,
+      campusId: searchParams.get("campus") || undefined,
       grade: searchParams.get("grade") || undefined,
       totalScoreMin: searchParams.get("totalScoreMin")
         ? Number(searchParams.get("totalScoreMin"))

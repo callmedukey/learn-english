@@ -3,6 +3,7 @@
 import { format } from "date-fns";
 import React, { useState } from "react";
 
+import ScoreLogDialog from "@/app/(after-auth)/admin/components/score-log-dialog";
 import {
   Dialog,
   DialogContent,
@@ -18,7 +19,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"; // Assuming you have these shadcn/ui components
-import { Country, Role } from "@/prisma/generated/prisma";
+import { Campus, Country, Role } from "@/prisma/generated/prisma";
 
 import RoleChangeDropdown from "./role-change-dropdown";
 import UpdateUserForm from "./update-user-form";
@@ -28,9 +29,10 @@ interface UsersTableProps {
   users: UserData[];
   currentUserRole: Role;
   countries: Pick<Country, "id" | "name">[];
+  campuses: Pick<Campus, "id" | "name">[];
 }
 
-const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countries }) => {
+const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countries, campuses }) => {
   const [selectedUser, setSelectedUser] = useState<UserData | null>(null);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
 
@@ -59,6 +61,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
           <TableHead>Grade</TableHead>
           <TableHead>Gender</TableHead>
           <TableHead>Country</TableHead>
+          <TableHead>Campus</TableHead>
           <TableHead>Parent Name</TableHead>
           <TableHead>Parent Phone</TableHead>
           <TableHead>Student Name</TableHead>
@@ -69,6 +72,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
           <TableHead>Start Date</TableHead>
           <TableHead>End Date</TableHead>
           <TableHead>Referred By</TableHead>
+          <TableHead className="text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
@@ -88,6 +92,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
             <TableCell>{user.grade}</TableCell>
             <TableCell>{user.gender || "N/A"}</TableCell>
             <TableCell>{user.country?.name || "N/A"}</TableCell>
+            <TableCell>{user.campus?.name || "N/A"}</TableCell>
             <TableCell>{user.parentName || "N/A"}</TableCell>
             <TableCell>{user.parentPhone || "N/A"}</TableCell>
             <TableCell>{user.studentName || "N/A"}</TableCell>
@@ -165,6 +170,12 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
                 ? user.referrerNickname || "N/A (Referred)"
                 : "Not Referred"}
             </TableCell>
+            <TableCell className="text-center">
+              <ScoreLogDialog
+                userId={user.id}
+                userNickname={user.nickname || user.name || "Anonymous"}
+              />
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>
@@ -182,6 +193,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
           <UpdateUserForm
             user={selectedUser}
             countries={countries}
+            campuses={campuses}
             onUserUpdated={handleDialogClose}
           />
         </DialogContent>

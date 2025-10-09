@@ -109,6 +109,12 @@ model NovelQuestionCompleted {
 
   score Int
 
+  // Answer tracking fields
+  selectedAnswer String?
+  isCorrect      Boolean @default(false)
+  isRetry        Boolean @default(false)
+  isTimedOut     Boolean @default(false)
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }

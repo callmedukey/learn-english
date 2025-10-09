@@ -18,6 +18,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import ScoreLogDialog from "./score-log-dialog";
 import { LeaderboardUser } from "../queries/leaderboard.query";
 
 interface LeaderboardTableProps {
@@ -100,9 +101,11 @@ export default function LeaderboardTable({
               <TableHead>User</TableHead>
               <TableHead>Grade</TableHead>
               <TableHead>Country</TableHead>
+              <TableHead>Campus</TableHead>
               <TableHead>Total Score</TableHead>
               <TableHead>Lexile Score</TableHead>
               <TableHead>RC Score</TableHead>
+              <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -137,11 +140,18 @@ export default function LeaderboardTable({
                     </span>
                   </TableCell>
                   <TableCell>{user.country?.name || "N/A"}</TableCell>
+                  <TableCell>{user.campus?.name || "N/A"}</TableCell>
                   <TableCell className="font-semibold">
                     {user.totalScore.toLocaleString()}
                   </TableCell>
                   <TableCell>{user.arScores.toLocaleString()}</TableCell>
                   <TableCell>{user.rcScores.toLocaleString()}</TableCell>
+                  <TableCell className="text-center">
+                    <ScoreLogDialog
+                      userId={user.id}
+                      userNickname={user.nickname || user.name || "Anonymous"}
+                    />
+                  </TableCell>
                 </TableRow>
               );
             })}

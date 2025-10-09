@@ -133,6 +133,7 @@ export async function signUpAction(
     gender,
     birthday,
     country,
+    campus,
     referrer,
     parentName,
     parentPhone,
@@ -209,7 +210,7 @@ export async function signUpAction(
   const hashedPassword = await bcrypt.hash(password, 10);
 
   try {
-    await prisma.user.create({
+    const newUser = await prisma.user.create({
       data: {
         email,
         nickname,
@@ -230,6 +231,16 @@ export async function signUpAction(
         marketingAgreed: marketingAgreed || undefined,
       },
     });
+
+    // Create campus request if campus is provided
+    if (campus) {
+      await prisma.campusRequest.create({
+        data: {
+          userId: newUser.id,
+          campusId: campus,
+        },
+      });
+    }
 
     if (foundReferrer) {
       await prisma.user.update({
@@ -293,6 +304,7 @@ export async function socialSignUpAction(
     gender,
     birthday,
     country,
+    campus,
     referrer,
     email,
     parentName,
@@ -375,6 +387,16 @@ export async function socialSignUpAction(
         marketingAgreed: marketingAgreed || undefined,
       },
     });
+
+    // Create campus request if campus is provided
+    if (campus) {
+      await prisma.campusRequest.create({
+        data: {
+          userId: user.id,
+          campusId: campus,
+        },
+      });
+    }
 
     if (foundReferrer) {
       await prisma.user.update({

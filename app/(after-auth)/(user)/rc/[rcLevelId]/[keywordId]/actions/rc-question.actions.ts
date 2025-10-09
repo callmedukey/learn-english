@@ -255,6 +255,10 @@ export async function submitRCAnswer(
         where: { id: existingCompletion.id },
         data: {
           score: pointsAwarded,
+          selectedAnswer: answer,
+          isCorrect: isCorrect,
+          isRetry: isRetry,
+          isTimedOut: isTimedOut,
         },
       });
     } else {
@@ -268,6 +272,10 @@ export async function submitRCAnswer(
           RCQuestionId: questionId,
           userId: session.user.id,
           score: pointsAwarded,
+          selectedAnswer: answer,
+          isCorrect: isCorrect,
+          isRetry: isRetry,
+          isTimedOut: isTimedOut,
         },
       });
     }

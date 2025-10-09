@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
 
+import { prisma } from "@/prisma/prisma-client";
+
 import LeaderboardClient from "./components/leaderboard-client";
 import LeaderboardStats from "./components/leaderboard-stats";
 import {
@@ -15,6 +17,7 @@ interface PageProps {
   searchParams: Promise<{
     search?: string;
     country?: string;
+    campus?: string;
     grade?: string;
     totalScoreMin?: string;
     totalScoreMax?: string;
@@ -39,6 +42,7 @@ async function LeaderboardData({ searchParams }: PageProps) {
   const filters: LeaderboardFilters = {
     searchQuery: params.search || undefined,
     countryId: params.country || undefined,
+    campusId: params.campus || undefined,
     grade: params.grade || undefined,
     totalScoreMin: params.totalScoreMin
       ? Number(params.totalScoreMin)
@@ -74,21 +78,31 @@ async function LeaderboardData({ searchParams }: PageProps) {
   };
 
   // Fetch data with filters and pagination
-  const [allTimeData, monthlyData, gradeData, countries] = await Promise.all([
+  const [allTimeData, monthlyData, gradeData, countries, campuses] = await Promise.all([
     getLeaderboardData(filters, allTimePagination),
     getMonthlyLeaderboardData(filters, monthlyPagination),
     getGradeLeaderboardData(gradeTabGrade, filters, gradeTabPagination),
     getCountries(),
+    prisma.campus.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    }),
   ]);
 
   return (
     <div className="space-y-8">
-      <LeaderboardStats users={allTimeData.users} />
+      <LeaderboardStats totalUsers={allTimeData.total} stats={allTimeData.stats} />
       <LeaderboardClient
         initialAllTimeData={allTimeData}
         initialMonthlyData={monthlyData}
         initialGradeData={gradeData}
         countries={countries}
+        campuses={campuses}
       />
     </div>
   );

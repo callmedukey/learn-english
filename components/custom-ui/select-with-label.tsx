@@ -16,6 +16,7 @@ interface SelectWithLabelProps extends React.ComponentProps<typeof Select> {
   error?: string;
   id?: string;
   hint?: string;
+  description?: string;
 }
 
 export default function SelectWithLabel({
@@ -24,6 +25,7 @@ export default function SelectWithLabel({
   hint,
   items,
   error,
+  description,
   id: propId,
   ...props
 }: SelectWithLabelProps) {
@@ -37,6 +39,9 @@ export default function SelectWithLabel({
         </Label>
         {hint && <span className="text-sm text-muted-foreground">{hint}</span>}
       </div>
+      {description && (
+        <p className="text-sm text-muted-foreground">{description}</p>
+      )}
       <Select {...props}>
         <SelectTrigger
           id={finalId}

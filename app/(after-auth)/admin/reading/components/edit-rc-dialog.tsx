@@ -29,7 +29,7 @@ const EditRCDialog: React.FC<EditRCDialogProps> = ({ rcLevel, children }) => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="sm:max-w-[500px]">
+      <DialogContent className="max-h-[90vh] overflow-y-auto sm:max-w-[500px]">
         <DialogHeader>
           <DialogTitle>Edit RC Level</DialogTitle>
           <DialogDescription>

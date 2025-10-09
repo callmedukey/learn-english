@@ -10,6 +10,38 @@ enum Gender {
   Other
 }
 
+enum CampusRequestStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
+model Campus {
+  id        String   @id @default(cuid())
+  name      String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  users     User[]
+  campusRequests CampusRequest[]
+}
+
+model CampusRequest {
+  id          String              @id @default(cuid())
+  userId      String
+  user        User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  campusId    String
+  campus      Campus              @relation(fields: [campusId], references: [id], onDelete: Cascade)
+  status      CampusRequestStatus @default(PENDING)
+  requestedAt DateTime            @default(now())
+  reviewedAt  DateTime?
+  reviewedBy  String?
+  reviewer    User?               @relation("CampusRequestReviewer", fields: [reviewedBy], references: [id], onDelete: SetNull)
+
+  @@unique([userId, campusId])
+  @@index([status])
+  @@index([campusId])
+}
+
 model User {
   id        String    @id @default(cuid())
   name      String?
@@ -22,6 +54,8 @@ model User {
   password  String?
   countryId String?
   country   Country?  @relation(fields: [countryId], references: [id], onDelete: SetNull)
+  campusId  String?
+  campus    Campus?   @relation(fields: [campusId], references: [id], onDelete: SetNull)
 
   referrer   User?   @relation("UserReferral", fields: [referrerId], references: [id], onDelete: SetNull)
   referrerId String?
@@ -89,6 +123,10 @@ model User {
 
   // Popup dismissals
   popupDismissals UserPopupDismissal[]
+
+  // Campus request relations
+  campusRequests CampusRequest[]
+  reviewedCampusRequests CampusRequest[] @relation("CampusRequestReviewer")
 }
 
 model Account {

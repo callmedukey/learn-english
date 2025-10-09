@@ -14,6 +14,10 @@ export interface LeaderboardUser {
     id: string;
     name: string;
   } | null;
+  campus: {
+    id: string;
+    name: string;
+  } | null;
   parentName: string | null;
   studentName: string | null;
   rank: number;
@@ -29,6 +33,7 @@ export interface CountryOption {
 
 export interface LeaderboardFilters {
   countryId?: string;
+  campusId?: string;
   grade?: string;
   searchQuery?: string;
   totalScoreMin?: number;
@@ -44,12 +49,177 @@ export interface PaginationParams {
   pageSize: number;
 }
 
+export interface LeaderboardStats {
+  averageScore: number;
+  topCountries: Array<[string, number]>;
+  topGrades: Array<[string, number]>;
+  topCampuses: Array<[string, number]>;
+  totalScoresByGrade: Array<[string, number]>;
+  totalScoresByCampus: Array<[string, number]>;
+  todayScoresByGrade: Array<[string, number]>;
+  todayScoresByCampus: Array<[string, number]>;
+}
+
 export interface LeaderboardResult {
   users: LeaderboardUser[];
   total: number;
   page: number;
   pageSize: number;
   totalPages: number;
+  stats: LeaderboardStats;
+}
+
+// Helper function to get grade sort order: Adult -> Grade 12 -> ... -> Grade 1 -> Kinder
+function getGradeOrder(grade: string): number {
+  if (grade === "Adult") return 0;
+  if (grade === "Kinder") return 14;
+  const match = grade.match(/Grade (\d+)/);
+  if (match) {
+    return 13 - parseInt(match[1]); // Grade 12 = 1, Grade 11 = 2, ..., Grade 1 = 12
+  }
+  return 999; // Unknown grades go last
+}
+
+// Helper function to get today's scores by grade
+async function getTodayScoresByGrade(): Promise<Array<[string, number]>> {
+  // Get today's date range (start and end of day in server timezone)
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+  const startOfTomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+
+  // Fetch all Novel (AR) completions from today with user data
+  const novelCompletions = await prisma.novelQuestionCompleted.findMany({
+    where: {
+      createdAt: {
+        gte: startOfToday,
+        lt: startOfTomorrow,
+      },
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          birthday: true,
+        },
+      },
+    },
+  });
+
+  // Fetch all RC completions from today with user data
+  const rcCompletions = await prisma.rCQuestionCompleted.findMany({
+    where: {
+      createdAt: {
+        gte: startOfToday,
+        lt: startOfTomorrow,
+      },
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          birthday: true,
+        },
+      },
+    },
+  });
+
+  // Aggregate scores by grade
+  const scoresByGradeMap: Record<string, number> = {};
+
+  // Process Novel completions
+  for (const completion of novelCompletions) {
+    const grade = calculateGrade(completion.user.birthday);
+    if (grade !== "N/A") {
+      scoresByGradeMap[grade] = (scoresByGradeMap[grade] || 0) + completion.score;
+    }
+  }
+
+  // Process RC completions
+  for (const completion of rcCompletions) {
+    const grade = calculateGrade(completion.user.birthday);
+    if (grade !== "N/A") {
+      scoresByGradeMap[grade] = (scoresByGradeMap[grade] || 0) + completion.score;
+    }
+  }
+
+  // Convert to array and sort by grade order
+  const todayScoresByGrade = Object.entries(scoresByGradeMap)
+    .sort(([gradeA], [gradeB]) => getGradeOrder(gradeA) - getGradeOrder(gradeB));
+
+  return todayScoresByGrade;
+}
+
+// Helper function to get today's scores by campus
+async function getTodayScoresByCampus(): Promise<Array<[string, number]>> {
+  // Get today's date range (start and end of day in server timezone)
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+  const startOfTomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+
+  // Fetch all Novel (AR) completions from today with user and campus data
+  const novelCompletions = await prisma.novelQuestionCompleted.findMany({
+    where: {
+      createdAt: {
+        gte: startOfToday,
+        lt: startOfTomorrow,
+      },
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          campus: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Fetch all RC completions from today with user and campus data
+  const rcCompletions = await prisma.rCQuestionCompleted.findMany({
+    where: {
+      createdAt: {
+        gte: startOfToday,
+        lt: startOfTomorrow,
+      },
+    },
+    include: {
+      user: {
+        select: {
+          id: true,
+          campus: {
+            select: {
+              name: true,
+            },
+          },
+        },
+      },
+    },
+  });
+
+  // Aggregate scores by campus
+  const scoresByCampusMap: Record<string, number> = {};
+
+  // Process Novel completions
+  for (const completion of novelCompletions) {
+    const campusName = completion.user.campus?.name || "Unknown";
+    scoresByCampusMap[campusName] = (scoresByCampusMap[campusName] || 0) + completion.score;
+  }
+
+  // Process RC completions
+  for (const completion of rcCompletions) {
+    const campusName = completion.user.campus?.name || "Unknown";
+    scoresByCampusMap[campusName] = (scoresByCampusMap[campusName] || 0) + completion.score;
+  }
+
+  // Convert to array and sort by total score (descending)
+  const todayScoresByCampus = Object.entries(scoresByCampusMap)
+    .sort(([, a], [, b]) => b - a);
+
+  return todayScoresByCampus;
 }
 
 export async function getLeaderboardData(
@@ -60,6 +230,12 @@ export async function getLeaderboardData(
   const users = await prisma.user.findMany({
     include: {
       country: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      campus: {
         select: {
           id: true,
           name: true,
@@ -91,6 +267,7 @@ export async function getLeaderboardData(
       birthday: user.birthday,
       grade,
       country: user.country,
+      campus: user.campus,
       parentName: user.parentName,
       studentName: user.studentName,
       totalScore,
@@ -116,6 +293,82 @@ export async function getLeaderboardData(
     rank: index + 1,
   }));
 
+  // Calculate aggregate stats from ALL users (before filters) for dashboard
+  const totalUsers = usersWithRanks.length;
+  const totalScoreAll = usersWithRanks.reduce((sum, user) => sum + user.totalScore, 0);
+  const averageScore = totalUsers > 0 ? Math.round(totalScoreAll / totalUsers) : 0;
+
+  // Count users by country (all users)
+  const countryDistributionAll = usersWithRanks.reduce(
+    (acc, user) => {
+      const countryName = user.country?.name || "Unknown";
+      acc[countryName] = (acc[countryName] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const topCountries = Object.entries(countryDistributionAll)
+    .sort(([, a], [, b]) => b - a);
+
+  // Count users by grade (all users, filter out N/A)
+  const gradeDistributionAll = usersWithRanks.reduce(
+    (acc, user) => {
+      if (user.grade !== "N/A") {
+        acc[user.grade] = (acc[user.grade] || 0) + 1;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const topGrades = Object.entries(gradeDistributionAll)
+    .sort(([gradeA], [gradeB]) => getGradeOrder(gradeA) - getGradeOrder(gradeB));
+
+  // Count users by campus (all users)
+  const campusDistributionAll = usersWithRanks.reduce(
+    (acc, user) => {
+      const campusName = user.campus?.name || "Unknown";
+      acc[campusName] = (acc[campusName] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const topCampuses = Object.entries(campusDistributionAll)
+    .sort(([, a], [, b]) => b - a);
+
+  // Calculate total scores by grade (exclude N/A)
+  const totalScoresByGradeMap = usersWithRanks.reduce(
+    (acc, user) => {
+      if (user.grade !== "N/A") {
+        acc[user.grade] = (acc[user.grade] || 0) + user.totalScore;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const totalScoresByGrade = Object.entries(totalScoresByGradeMap)
+    .sort(([gradeA], [gradeB]) => getGradeOrder(gradeA) - getGradeOrder(gradeB));
+
+  // Calculate total scores by campus
+  const totalScoresByCampusMap = usersWithRanks.reduce(
+    (acc, user) => {
+      const campusName = user.campus?.name || "Unknown";
+      acc[campusName] = (acc[campusName] || 0) + user.totalScore;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const totalScoresByCampus = Object.entries(totalScoresByCampusMap)
+    .sort(([, a], [, b]) => b - a);
+
+  // Get today's scores by grade and campus
+  const todayScoresByGrade = await getTodayScoresByGrade();
+  const todayScoresByCampus = await getTodayScoresByCampus();
+
   // NOW apply filters to the ranked users
   let filteredUsers = usersWithRanks;
 
@@ -133,6 +386,11 @@ export async function getLeaderboardData(
   // Apply country filter
   if (filters.countryId) {
     filteredUsers = filteredUsers.filter((user) => user.country?.id === filters.countryId);
+  }
+
+  // Apply campus filter
+  if (filters.campusId) {
+    filteredUsers = filteredUsers.filter((user) => user.campus?.id === filters.campusId);
   }
 
   // Apply grade filter
@@ -177,6 +435,16 @@ export async function getLeaderboardData(
     page: pagination.page,
     pageSize: pagination.pageSize,
     totalPages,
+    stats: {
+      averageScore,
+      topCountries,
+      topGrades,
+      topCampuses,
+      totalScoresByGrade,
+      totalScoresByCampus,
+      todayScoresByGrade,
+      todayScoresByCampus,
+    },
   };
 }
 
@@ -208,6 +476,12 @@ export async function getGradeLeaderboardData(
           name: true,
         },
       },
+      campus: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
       score: true,
       ARScore: true,
       RCScore: true,
@@ -234,6 +508,7 @@ export async function getGradeLeaderboardData(
       birthday: user.birthday,
       grade: userGrade,
       country: user.country,
+      campus: user.campus,
       parentName: user.parentName,
       studentName: user.studentName,
       totalScore,
@@ -241,6 +516,82 @@ export async function getGradeLeaderboardData(
       rcScores,
     };
   });
+
+  // Calculate aggregate stats from ALL users (before grade filter) for dashboard
+  const totalUsers = mappedUsers.length;
+  const totalScoreAll = mappedUsers.reduce((sum, user) => sum + user.totalScore, 0);
+  const averageScore = totalUsers > 0 ? Math.round(totalScoreAll / totalUsers) : 0;
+
+  // Count users by country (all users)
+  const countryDistributionAll = mappedUsers.reduce(
+    (acc, user) => {
+      const countryName = user.country?.name || "Unknown";
+      acc[countryName] = (acc[countryName] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const topCountries = Object.entries(countryDistributionAll)
+    .sort(([, a], [, b]) => b - a);
+
+  // Count users by grade (all users, filter out N/A)
+  const gradeDistributionAll = mappedUsers.reduce(
+    (acc, user) => {
+      if (user.grade !== "N/A") {
+        acc[user.grade] = (acc[user.grade] || 0) + 1;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const topGrades = Object.entries(gradeDistributionAll)
+    .sort(([gradeA], [gradeB]) => getGradeOrder(gradeA) - getGradeOrder(gradeB));
+
+  // Count users by campus (all users)
+  const campusDistributionAll = mappedUsers.reduce(
+    (acc, user) => {
+      const campusName = user.campus?.name || "Unknown";
+      acc[campusName] = (acc[campusName] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const topCampuses = Object.entries(campusDistributionAll)
+    .sort(([, a], [, b]) => b - a);
+
+  // Calculate total scores by grade (exclude N/A) - using all users for consistency
+  const totalScoresByGradeMap = mappedUsers.reduce(
+    (acc, user) => {
+      if (user.grade !== "N/A") {
+        acc[user.grade] = (acc[user.grade] || 0) + user.totalScore;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const totalScoresByGrade = Object.entries(totalScoresByGradeMap)
+    .sort(([gradeA], [gradeB]) => getGradeOrder(gradeA) - getGradeOrder(gradeB));
+
+  // Calculate total scores by campus - using all users for consistency
+  const totalScoresByCampusMap = mappedUsers.reduce(
+    (acc, user) => {
+      const campusName = user.campus?.name || "Unknown";
+      acc[campusName] = (acc[campusName] || 0) + user.totalScore;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const totalScoresByCampus = Object.entries(totalScoresByCampusMap)
+    .sort(([, a], [, b]) => b - a);
+
+  // Get today's scores by grade and campus
+  const todayScoresByGrade = await getTodayScoresByGrade();
+  const todayScoresByCampus = await getTodayScoresByCampus();
 
   // Filter by specified grade FIRST to get all users in this grade
   const gradeUsers = mappedUsers.filter((user) => user.grade === grade);
@@ -281,6 +632,11 @@ export async function getGradeLeaderboardData(
     filteredUsers = filteredUsers.filter((user) => user.country?.id === filters.countryId);
   }
 
+  // Apply campus filter
+  if (filters.campusId) {
+    filteredUsers = filteredUsers.filter((user) => user.campus?.id === filters.campusId);
+  }
+
   if (filters.totalScoreMin !== undefined) {
     filteredUsers = filteredUsers.filter((user) => user.totalScore >= filters.totalScoreMin!);
   }
@@ -318,6 +674,16 @@ export async function getGradeLeaderboardData(
     page: pagination.page,
     pageSize: pagination.pageSize,
     totalPages,
+    stats: {
+      averageScore,
+      topCountries,
+      topGrades,
+      topCampuses,
+      totalScoresByGrade,
+      totalScoresByCampus,
+      todayScoresByGrade,
+      todayScoresByCampus,
+    },
   };
 }
 
@@ -336,6 +702,12 @@ export async function getMonthlyLeaderboardData(
   const users = await prisma.user.findMany({
     include: {
       country: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      campus: {
         select: {
           id: true,
           name: true,
@@ -372,6 +744,7 @@ export async function getMonthlyLeaderboardData(
         birthday: user.birthday,
         grade,
         country: user.country,
+        campus: user.campus,
         parentName: user.parentName,
         studentName: user.studentName,
         totalScore,
@@ -398,6 +771,120 @@ export async function getMonthlyLeaderboardData(
     rank: index + 1,
   }));
 
+  // For monthly tab, we need to fetch ALL users again for global stats (not just monthly active)
+  // This ensures stats are consistent across all tabs
+  const allUsers = await prisma.user.findMany({
+    include: {
+      country: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      score: true,
+    },
+  });
+
+  const allUsersWithGrades = allUsers.map((user) => {
+    const totalScore = user.score?.score || 0;
+    const grade = calculateGrade(user.birthday);
+    return {
+      grade,
+      country: user.country,
+      totalScore,
+    };
+  });
+
+  // Calculate aggregate stats from ALL users (for dashboard consistency)
+  const totalUsers = allUsersWithGrades.length;
+  const totalScoreAll = allUsersWithGrades.reduce((sum, user) => sum + user.totalScore, 0);
+  const averageScore = totalUsers > 0 ? Math.round(totalScoreAll / totalUsers) : 0;
+
+  // Count users by country (all users)
+  const countryDistributionAll = allUsersWithGrades.reduce(
+    (acc, user) => {
+      const countryName = user.country?.name || "Unknown";
+      acc[countryName] = (acc[countryName] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const topCountries = Object.entries(countryDistributionAll)
+    .sort(([, a], [, b]) => b - a);
+
+  // Count users by grade (all users, filter out N/A)
+  const gradeDistributionAll = allUsersWithGrades.reduce(
+    (acc, user) => {
+      if (user.grade !== "N/A") {
+        acc[user.grade] = (acc[user.grade] || 0) + 1;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const topGrades = Object.entries(gradeDistributionAll)
+    .sort(([gradeA], [gradeB]) => getGradeOrder(gradeA) - getGradeOrder(gradeB));
+
+  // For campus distribution, we need to use the full user data with campus info
+  const allUsersWithCampus = await prisma.user.findMany({
+    include: {
+      campus: {
+        select: {
+          id: true,
+          name: true,
+        },
+      },
+      score: true,
+    },
+  });
+
+  // Count users by campus (all users)
+  const campusDistributionAll = allUsersWithCampus.reduce(
+    (acc, user) => {
+      const campusName = user.campus?.name || "Unknown";
+      acc[campusName] = (acc[campusName] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const topCampuses = Object.entries(campusDistributionAll)
+    .sort(([, a], [, b]) => b - a);
+
+  // Calculate total scores by grade (exclude N/A) - using all users for consistency
+  const totalScoresByGradeMap = allUsersWithGrades.reduce(
+    (acc, user) => {
+      if (user.grade !== "N/A") {
+        acc[user.grade] = (acc[user.grade] || 0) + user.totalScore;
+      }
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const totalScoresByGrade = Object.entries(totalScoresByGradeMap)
+    .sort(([gradeA], [gradeB]) => getGradeOrder(gradeA) - getGradeOrder(gradeB));
+
+  // Calculate total scores by campus - using all users with campus info for consistency
+  const totalScoresByCampusMap = allUsersWithCampus.reduce(
+    (acc, user) => {
+      const campusName = user.campus?.name || "Unknown";
+      const userTotalScore = user.score?.score || 0;
+      acc[campusName] = (acc[campusName] || 0) + userTotalScore;
+      return acc;
+    },
+    {} as Record<string, number>,
+  );
+
+  const totalScoresByCampus = Object.entries(totalScoresByCampusMap)
+    .sort(([, a], [, b]) => b - a);
+
+  // Get today's scores by grade and campus
+  const todayScoresByGrade = await getTodayScoresByGrade();
+  const todayScoresByCampus = await getTodayScoresByCampus();
+
   // NOW apply filters to the ranked users
   let filteredUsers = usersWithRanks;
 
@@ -415,6 +902,11 @@ export async function getMonthlyLeaderboardData(
   // Apply country filter
   if (filters.countryId) {
     filteredUsers = filteredUsers.filter((user) => user.country?.id === filters.countryId);
+  }
+
+  // Apply campus filter
+  if (filters.campusId) {
+    filteredUsers = filteredUsers.filter((user) => user.campus?.id === filters.campusId);
   }
 
   // Apply grade filter
@@ -459,5 +951,15 @@ export async function getMonthlyLeaderboardData(
     page: pagination.page,
     pageSize: pagination.pageSize,
     totalPages,
+    stats: {
+      averageScore,
+      topCountries,
+      topGrades,
+      topCampuses,
+      totalScoresByGrade,
+      totalScoresByCampus,
+      todayScoresByGrade,
+      todayScoresByCampus,
+    },
   };
 }

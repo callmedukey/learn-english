@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { Edit, Trash2 } from "lucide-react";
+import { Edit, Target, Trash2 } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -16,6 +16,7 @@ import { Role } from "@/prisma/generated/prisma";
 
 import DeleteARDialog from "./delete-ar-dialog";
 import EditARDialog from "./edit-ar-dialog";
+import OverridePointsDialog from "./override-points-dialog";
 import { ARData } from "../query/ar.query";
 
 interface ARTableProps {
@@ -104,6 +105,20 @@ const ARTable: React.FC<ARTableProps> = ({ ars, userRole }) => {
                       <Edit className="h-4 w-4" />
                     </Button>
                   </EditARDialog>
+                  <OverridePointsDialog
+                    arId={ar.id}
+                    arLevel={ar.level}
+                    questionCount={ar.questionCount}
+                  >
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="text-blue-600 hover:text-blue-700"
+                      title="Override all question points"
+                    >
+                      <Target className="h-4 w-4" />
+                    </Button>
+                  </OverridePointsDialog>
                   <DeleteARDialog
                     arId={ar.id}
                     arLevel={ar.level}

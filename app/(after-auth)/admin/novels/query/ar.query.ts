@@ -6,6 +6,7 @@ import { prisma } from "@/prisma/prisma-client";
 export interface ARData extends AR {
   novelCount: number;
   freeChapterCount: number;
+  questionCount: number;
   ARSettings: ARSettings | null;
 }
 
@@ -29,6 +30,19 @@ export const getARs = async (): Promise<ARData[]> => {
               },
             },
           },
+          novelChapters: {
+            include: {
+              novelQuestionSet: {
+                include: {
+                  _count: {
+                    select: {
+                      novelQuestions: true,
+                    },
+                  },
+                },
+              },
+            },
+          },
         },
       },
     },
@@ -42,10 +56,23 @@ export const getARs = async (): Promise<ARData[]> => {
       return total + novel._count.novelChapters;
     }, 0);
 
+    const questionCount = ar.novels.reduce((total, novel) => {
+      return (
+        total +
+        novel.novelChapters.reduce((chapterTotal, chapter) => {
+          return (
+            chapterTotal +
+            (chapter.novelQuestionSet?._count.novelQuestions || 0)
+          );
+        }, 0)
+      );
+    }, 0);
+
     return {
       ...ar,
       novelCount: ar._count.novels,
       freeChapterCount,
+      questionCount,
       ARSettings: ar.ARSettings,
     };
   });

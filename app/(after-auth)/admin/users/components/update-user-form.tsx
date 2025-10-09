@@ -9,7 +9,7 @@ import DayPicker from "@/components/custom-ui/day-picker";
 import InputWithLabel from "@/components/custom-ui/input-with-label";
 import SelectWithLabel from "@/components/custom-ui/select-with-label";
 import { DialogFooter } from "@/components/ui/dialog";
-import { Country } from "@/prisma/generated/prisma";
+import { Campus, Country } from "@/prisma/generated/prisma";
 import { ActionResponse } from "@/types/actions";
 
 import { UserData } from "../query/users.query";
@@ -17,6 +17,7 @@ import { UserData } from "../query/users.query";
 interface UpdateUserFormProps {
   user: UserData;
   countries: Pick<Country, "id" | "name">[];
+  campuses: Pick<Campus, "id" | "name">[];
   onUserUpdated: () => void;
 }
 
@@ -28,6 +29,7 @@ const initialState: ActionResponse<any> = {
 export default function UpdateUserForm({
   user,
   countries,
+  campuses,
   onUserUpdated,
 }: UpdateUserFormProps) {
   const [date, setDate] = useState<Date | undefined>(
@@ -35,6 +37,9 @@ export default function UpdateUserForm({
   );
   const [selectedCountry, setSelectedCountry] = useState<string>(
     user.country?.id || "",
+  );
+  const [selectedCampus, setSelectedCampus] = useState<string>(
+    user.campus?.id || "",
   );
   const [parentName, setParentName] = useState<string>(user.parentName || "");
   const [parentPhone, setParentPhone] = useState<string>(user.parentPhone || "");
@@ -69,6 +74,7 @@ export default function UpdateUserForm({
       userId: user.id,
       ...(date && { birthday: date.toISOString() }),
       ...(selectedCountry && { countryId: selectedCountry }),
+      campusId: selectedCampus || undefined,
       parentName: parentName || undefined,
       parentPhone: parentPhone || undefined,
       studentName: studentName || undefined,
@@ -108,6 +114,19 @@ export default function UpdateUserForm({
         items={countries.map((country) => ({
           label: country.name,
           value: country.id,
+        }))}
+      />
+
+      <SelectWithLabel
+        label="Campus"
+        hint="Optional"
+        placeholder="Select campus"
+        value={selectedCampus}
+        onValueChange={setSelectedCampus}
+        error={state.errors?.campusId?.[0]}
+        items={campuses.map((campus) => ({
+          label: campus.name,
+          value: campus.id,
         }))}
       />
 

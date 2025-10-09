@@ -83,3 +83,59 @@ export const getARByLevel = async (id: string) => {
     },
   });
 };
+
+export const searchNovels = async (searchTerm: string): Promise<NovelData[]> => {
+  const novels = await prisma.novel.findMany({
+    where: {
+      OR: [
+        {
+          title: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+        {
+          description: {
+            contains: searchTerm,
+            mode: "insensitive",
+          },
+        },
+      ],
+    },
+    include: {
+      AR: {
+        select: {
+          id: true,
+          level: true,
+        },
+      },
+      novelChapters: {
+        select: {
+          id: true,
+          title: true,
+          description: true,
+          orderNumber: true,
+          isFree: true,
+        },
+        orderBy: {
+          orderNumber: "asc",
+        },
+      },
+    },
+    orderBy: {
+      createdAt: "desc",
+    },
+  });
+
+  // Get challenges for all novels
+  const novelIds = novels.map(n => n.id);
+  const challengeMap = await getNovelChallenges(novelIds);
+
+  // Add challenge data to each novel
+  const novelsWithChallenges = novels.map(novel => ({
+    ...novel,
+    challenges: challengeMap.get(novel.id) || [],
+  }));
+
+  return novelsWithChallenges;
+};

@@ -6,6 +6,7 @@ import {
 import {
   Book,
   Brain,
+  Building2,
   Home,
   MapPin,
   Medal,
@@ -54,6 +55,12 @@ const allItems = [
     title: "Countries",
     url: "/admin/countries",
     icon: MapPin,
+    permission: canAccessUserManagement,
+  },
+  {
+    title: "Campuses",
+    url: "/admin/campuses",
+    icon: Building2,
     permission: canAccessUserManagement,
   },
   {

@@ -11,6 +11,23 @@ export const seed = async () => {
       },
     });
 
+    // Seed campus data
+    const campuses = [
+      "BPA (Bundang)",
+      "BPA (Dongtan)",
+      "BPA (Gwanggyo)",
+    ];
+
+    for (const campusName of campuses) {
+      await prisma.campus.upsert({
+        where: { name: campusName },
+        update: {},
+        create: { name: campusName },
+      });
+    }
+
+    console.log("Campus data seeded successfully");
+
     await prisma.user.upsert({
       where: {
         email: "admin2@readingchamp.com",

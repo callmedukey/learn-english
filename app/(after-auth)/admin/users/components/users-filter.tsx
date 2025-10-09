@@ -13,10 +13,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Country, Gender, Role } from "@/prisma/generated/prisma";
+import { Campus, Country, Gender, Role } from "@/prisma/generated/prisma";
 
 interface UsersFilterProps {
   countries: Pick<Country, "id" | "name">[];
+  campuses: Pick<Campus, "id" | "name">[];
 }
 
 const gradeOptions = [
@@ -27,7 +28,7 @@ const gradeOptions = [
 
 const ALL_ITEMS_SELECT_VALUE = "__ALL_ITEMS__";
 
-function FiltersComponent({ countries }: UsersFilterProps) {
+function FiltersComponent({ countries, campuses }: UsersFilterProps) {
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
@@ -38,6 +39,9 @@ function FiltersComponent({ countries }: UsersFilterProps) {
   const [email, setEmail] = React.useState(searchParams.get("email") || "");
   const [country, setCountry] = React.useState(
     searchParams.get("country") || "",
+  );
+  const [campus, setCampus] = React.useState(
+    searchParams.get("campus") || "",
   );
   const [gender, setGender] = React.useState(searchParams.get("gender") || "");
   const [grade, setGrade] = React.useState(searchParams.get("grade") || "");
@@ -52,6 +56,8 @@ function FiltersComponent({ countries }: UsersFilterProps) {
     else params.delete("email");
     if (country) params.set("country", country);
     else params.delete("country");
+    if (campus) params.set("campus", campus);
+    else params.delete("campus");
     if (gender) params.set("gender", gender);
     else params.delete("gender");
     if (grade) params.set("grade", grade);
@@ -66,6 +72,7 @@ function FiltersComponent({ countries }: UsersFilterProps) {
     setNickname("");
     setEmail("");
     setCountry("");
+    setCampus("");
     setGender("");
     setGrade("");
     setRole("");
@@ -117,6 +124,31 @@ function FiltersComponent({ countries }: UsersFilterProps) {
               {countries.map((country) => (
                 <SelectItem key={country.id} value={country.id}>
                   {country.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+        <div>
+          <Label htmlFor="campus">Campus</Label>
+          <Select
+            value={campus}
+            onValueChange={(selectedValue) =>
+              setCampus(
+                selectedValue === ALL_ITEMS_SELECT_VALUE ? "" : selectedValue,
+              )
+            }
+          >
+            <SelectTrigger id="campus">
+              <SelectValue placeholder="Select campus" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value={ALL_ITEMS_SELECT_VALUE}>
+                All Campuses
+              </SelectItem>
+              {campuses.map((campus) => (
+                <SelectItem key={campus.id} value={campus.id}>
+                  {campus.name}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -204,10 +236,10 @@ function FiltersComponent({ countries }: UsersFilterProps) {
   );
 }
 
-const UsersFilter = ({ countries }: UsersFilterProps) => {
+const UsersFilter = ({ countries, campuses }: UsersFilterProps) => {
   return (
     <Suspense fallback={<div>Loading filters...</div>}>
-      <FiltersComponent countries={countries} />
+      <FiltersComponent countries={countries} campuses={campuses} />
     </Suspense>
   );
 };

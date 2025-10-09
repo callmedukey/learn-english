@@ -20,8 +20,17 @@ const page = async ({ searchParams }: PageProps) => {
 
   const decodedEmail = decodeURIComponent(email);
 
-  const [countries, user] = await Promise.all([
+  const [countries, campuses, user] = await Promise.all([
     prisma.country.findMany({
+      select: {
+        id: true,
+        name: true,
+      },
+      orderBy: {
+        name: "asc",
+      },
+    }),
+    prisma.campus.findMany({
       select: {
         id: true,
         name: true,
@@ -48,7 +57,7 @@ const page = async ({ searchParams }: PageProps) => {
 
   return (
     <main className="mx-auto flex min-h-[calc(100vh-6rem)] max-w-7xl items-center justify-center py-16">
-      <SocialRegisterForm email={decodedEmail} countries={countries} />
+      <SocialRegisterForm email={decodedEmail} countries={countries} campuses={campuses} />
     </main>
   );
 };

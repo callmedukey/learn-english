@@ -18,7 +18,7 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { SignUpType } from "@/lib/schemas/auth.schema";
-import { Country } from "@/prisma/generated/prisma";
+import { Campus, Country } from "@/prisma/generated/prisma";
 import { ActionResponse } from "@/types/actions";
 
 const initialState: ActionResponse<SignUpType> = {
@@ -28,13 +28,16 @@ const initialState: ActionResponse<SignUpType> = {
 
 const RegisterForm = ({
   countries,
+  campuses,
 }: {
   countries: Pick<Country, "id" | "name">[];
+  campuses: Pick<Campus, "id" | "name">[];
 }) => {
   const [date, setDate] = useState<Date | undefined>();
   const [state, action] = useActionState(signUpAction, initialState);
   const [transitionIsPending, startTransition] = useTransition();
   const [selectedCountry, setSelectedCountry] = useState<string>("");
+  const [selectedCampus, setSelectedCampus] = useState<string>("");
   const [showBirthdayDialog, setShowBirthdayDialog] = useState(false);
   const [pendingFormData, setPendingFormData] = useState<FormData | null>(
     null
@@ -162,6 +165,20 @@ const RegisterForm = ({
           countries.find((c) => c.id === selectedCountry)?.name ===
             "South Korea" && (
             <>
+              <SelectWithLabel
+                label="Campus"
+                name="campus"
+                hint="Optional"
+                placeholder="Select your campus"
+                value={selectedCampus}
+                onValueChange={setSelectedCampus}
+                error={state.errors?.campus?.[0]}
+                description="Your campus request will be reviewed by an administrator before being approved."
+                items={campuses.map((campus) => ({
+                  label: campus.name,
+                  value: campus.id,
+                }))}
+              />
               <InputWithLabel
                 label="학부모 이름"
                 name="parentName"
