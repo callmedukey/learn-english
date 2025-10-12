@@ -37,3 +37,42 @@ model RCScore {
 
   RCQuestionCompleted RCQuestionCompleted[]
 }
+
+// Score Transaction - Unified tracking for all question completions (RC, Novel, BPA)
+model ScoreTransaction {
+  id String @id @default(uuid())
+
+  // User context
+  userId String
+  user   User   @relation("ScoreTransactions", fields: [userId], references: [id], onDelete: Cascade)
+
+  // Source type and reference
+  source   String // "RC", "Novel", "BPA"
+  sourceId String // ID of the completed question record
+
+  // Points awarded
+  score Int
+
+  // Context information (pre-formatted for display)
+  levelInfo   String? // "Level 2", "Beginner", "Grade 3", etc.
+  novelInfo   String? // Novel title (for Novel/BPA)
+  unitInfo    String? // Unit name (BPA only)
+  chapterInfo String? // Chapter number/title
+  keywordInfo String? // Keyword name (RC only)
+
+  // Question details (for score log detail view)
+  questionText   String   @db.Text
+  selectedAnswer String?  @db.Text
+  correctAnswer  String   @db.Text
+  isCorrect      Boolean  @default(false)
+  isRetry        Boolean  @default(false)
+  isTimedOut     Boolean  @default(false)
+  explanation    String   @db.Text
+
+  createdAt DateTime @default(now())
+
+  @@index([userId, source])
+  @@index([userId, createdAt])
+  @@index([source, createdAt])
+  @@index([userId, source, createdAt])
+}

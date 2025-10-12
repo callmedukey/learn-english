@@ -127,6 +127,18 @@ model User {
   // Campus request relations
   campusRequests CampusRequest[]
   reviewedCampusRequests CampusRequest[] @relation("CampusRequestReviewer")
+
+  // BPA relations
+  bpaLevelAssignments          BPAUserLevelAssignment[]        @relation("BPALevelAssignments")
+  bpaAssignmentHistory         BPAUserLevelAssignmentHistory[] @relation("BPAAssignmentHistory")
+  bpaAssignmentHistoryAsAdmin  BPAUserLevelAssignmentHistory[] @relation("BPAAssignmentHistoryAdmin")
+  bpaScores                    BPAScore[]                      @relation("BPAScores")
+  bpaQuestionsCompleted        BPAQuestionCompleted[]          @relation("BPAQuestionsCompleted")
+  bpaQuestionFirstTries        BPAQuestionFirstTry[]           @relation("BPAQuestionFirstTries")
+  bpaQuestionSecondTries       BPAQuestionSecondTry[]          @relation("BPAQuestionSecondTries")
+
+  // Score transaction tracking
+  scoreTransactions            ScoreTransaction[]              @relation("ScoreTransactions")
 }
 
 model Account {

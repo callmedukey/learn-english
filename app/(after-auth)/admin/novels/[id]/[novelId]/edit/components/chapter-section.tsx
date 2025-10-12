@@ -651,7 +651,12 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
         </div>
       ) : (
         <div className="rounded bg-gray-50 p-3">
-          <p className="text-sm">{questionSet?.instructions}</p>
+          <div
+            className="text-sm"
+            dangerouslySetInnerHTML={{
+              __html: DOMPurify.sanitize(questionSet?.instructions || ""),
+            }}
+          />
         </div>
       )}
 

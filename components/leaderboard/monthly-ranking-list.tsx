@@ -14,6 +14,7 @@ interface MonthlyRankingItem {
   score: number;
   countryIcon?: string;
   medalImageUrl?: string;
+  campusId?: string | null;
 }
 
 interface MonthlyRankingListProps {
@@ -95,7 +96,7 @@ export function MonthlyRankingList({
 
                     {/* Nickname with Medal */}
                     <div className="flex min-w-0 items-center gap-1">
-                      <span className="truncate font-medium text-gray-900">
+                      <span className={`truncate font-medium ${item.campusId ? 'text-primary italic' : 'text-gray-900'}`}>
                         {item.nickname}
                       </span>
                       {item.rank === 1 && !item.medalImageUrl && (

@@ -1,9 +1,16 @@
 import React, { Suspense } from "react";
 
-import { prisma } from "@/prisma/prisma-client";
-
+import CampusLeaderboardClient from "./components/campus-leaderboard-client";
 import LeaderboardClient from "./components/leaderboard-client";
 import LeaderboardStats from "./components/leaderboard-stats";
+import {
+  CampusLeaderboardFilters,
+  getBPALevels,
+  getBPATimeframes,
+  getCampusLeaderboardData,
+  getCampuses,
+  PaginationParams as CampusPaginationParams,
+} from "./queries/campus-leaderboard.query";
 import {
   getCountries,
   getGradeLeaderboardData,
@@ -32,6 +39,14 @@ interface PageProps {
     gradeTabGrade?: string;
     gradeTabPage?: string;
     gradeTabPageSize?: string;
+    // Campus leaderboard params
+    timeframeId?: string;
+    semesterId?: string;
+    campusId?: string;
+    bpaLevelId?: string;
+    unitId?: string;
+    campusPage?: string;
+    campusPageSize?: string;
   }>;
 }
 
@@ -77,33 +92,66 @@ async function LeaderboardData({ searchParams }: PageProps) {
     pageSize: Number(params.gradeTabPageSize) || 100,
   };
 
+  // Parse campus leaderboard filters
+  const campusFilters: CampusLeaderboardFilters = {
+    timeframeId: params.timeframeId || undefined,
+    semesterId: params.semesterId || undefined,
+    campusId: params.campusId || undefined,
+    bpaLevelId: params.bpaLevelId || undefined,
+    unitId: params.unitId || undefined,
+  };
+
+  const campusPagination: CampusPaginationParams = {
+    page: Number(params.campusPage) || 1,
+    pageSize: Number(params.campusPageSize) || 20,
+  };
+
   // Fetch data with filters and pagination
-  const [allTimeData, monthlyData, gradeData, countries, campuses] = await Promise.all([
+  const [
+    allTimeData,
+    monthlyData,
+    gradeData,
+    countries,
+    campuses,
+    campusLeaderboardData,
+    timeframes,
+    bpaLevels,
+  ] = await Promise.all([
     getLeaderboardData(filters, allTimePagination),
     getMonthlyLeaderboardData(filters, monthlyPagination),
     getGradeLeaderboardData(gradeTabGrade, filters, gradeTabPagination),
     getCountries(),
-    prisma.campus.findMany({
-      select: {
-        id: true,
-        name: true,
-      },
-      orderBy: {
-        name: "asc",
-      },
-    }),
+    getCampuses(),
+    getCampusLeaderboardData(campusFilters, campusPagination),
+    getBPATimeframes(),
+    getBPALevels(),
   ]);
 
   return (
-    <div className="space-y-8">
-      <LeaderboardStats totalUsers={allTimeData.total} stats={allTimeData.stats} />
-      <LeaderboardClient
-        initialAllTimeData={allTimeData}
-        initialMonthlyData={monthlyData}
-        initialGradeData={gradeData}
-        countries={countries}
-        campuses={campuses}
-      />
+    <div className="space-y-12">
+      <div>
+        <h2 className="mb-4 text-2xl font-bold text-gray-900">User Leaderboard</h2>
+        <div className="space-y-8">
+          <LeaderboardStats totalUsers={allTimeData.total} stats={allTimeData.stats} />
+          <LeaderboardClient
+            initialAllTimeData={allTimeData}
+            initialMonthlyData={monthlyData}
+            initialGradeData={gradeData}
+            countries={countries}
+            campuses={campuses}
+          />
+        </div>
+      </div>
+
+      <div className="border-t border-gray-300 pt-8">
+        <h2 className="mb-4 text-2xl font-bold text-gray-900">Campus Leaderboard</h2>
+        <CampusLeaderboardClient
+          initialData={campusLeaderboardData}
+          timeframes={timeframes}
+          campuses={campuses}
+          bpaLevels={bpaLevels}
+        />
+      </div>
     </div>
   );
 }

@@ -14,6 +14,7 @@ export interface MonthlyGradeRankingUser {
   countryIcon?: string;
   rank: number;
   medalImageUrl?: string;
+  campusId?: string | null;
 }
 
 // Helper function to extract just the number from grade
@@ -100,6 +101,7 @@ export async function getMonthlyGradeRankings(
           grade: formatGradeForDisplay(userGradeCalculated),
           score: totalScore,
           countryIcon: user.country?.countryIcon?.iconUrl,
+          campusId: user.campusId,
         };
       });
 
@@ -165,6 +167,7 @@ export async function getMonthlyGradeRankings(
           grade: formatGradeForDisplay(userGradeCalculated),
           score: totalScore,
           countryIcon: user.country?.countryIcon?.iconUrl,
+          campusId: user.campusId,
         };
       });
 
@@ -284,6 +287,7 @@ export async function getTotalMonthlyGradeRankings(
         grade: formatGradeForDisplay(userGradeCalculated),
         score: totalScore,
         countryIcon: user.country?.countryIcon?.iconUrl,
+        campusId: user.campusId,
       };
     })
     .filter((user) => user.score > 0); // Only include users with scores

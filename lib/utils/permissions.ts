@@ -90,3 +90,49 @@ export const canAccessChallenges = (role: Role | undefined): boolean => {
 export const canAccessNotifications = (role: Role | undefined): boolean => {
   return role === Role.ADMIN;
 };
+
+// Campus Management Permissions
+export const canAccessCampusManagement = (role: Role | undefined): boolean => {
+  return role === Role.ADMIN;
+};
+
+export const canManageCampusStudents = (role: Role | undefined): boolean => {
+  return role === Role.ADMIN;
+};
+
+// BPA Permissions (mirrors Novel/AR permissions)
+export const canCreateBPALevel = (role: Role | undefined): boolean => {
+  return role === Role.ADMIN;
+};
+
+export const canDeleteBPALevel = (role: Role | undefined): boolean => {
+  return role === Role.ADMIN;
+};
+
+export const canEditBPALevel = (role: Role | undefined): boolean => {
+  return role === Role.ADMIN || role === Role.SUB_ADMIN;
+};
+
+export const canCreateBPANovel = (role: Role | undefined): boolean => {
+  return role === Role.ADMIN || role === Role.SUB_ADMIN;
+};
+
+export const canDeleteBPANovel = (role: Role | undefined): boolean => {
+  return role === Role.ADMIN;
+};
+
+export const canEditBPANovel = (role: Role | undefined, isLocked: boolean = false): boolean => {
+  // Admins can always edit
+  if (role === Role.ADMIN) return true;
+  // Sub-admins can only edit unlocked novels
+  if (role === Role.SUB_ADMIN) return !isLocked;
+  return false;
+};
+
+export const canLockBPANovel = (role: Role | undefined): boolean => {
+  return role === Role.ADMIN;
+};
+
+export const canDeleteBPAChapter = (role: Role | undefined): boolean => {
+  return role === Role.ADMIN;
+};

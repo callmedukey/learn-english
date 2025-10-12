@@ -38,7 +38,19 @@ model RCLevelSettings {
   RCLevelId String @unique
 
   fontSize FontSize @default(BASE)
-  
+
+  defaultTimer Int @default(30)
+  defaultScore Int @default(100)
+}
+
+model BPALevelSettings {
+  id        String   @id @default(uuid())
+
+  bpaLevel BPALevel @relation(fields: [bpaLevelId], references: [id], onDelete: Cascade)
+  bpaLevelId String @unique
+
+  fontSize FontSize @default(BASE)
+
   defaultTimer Int @default(30)
   defaultScore Int @default(100)
 }

@@ -15,6 +15,7 @@ export interface MonthlyLevelRankingUser {
   countryIcon?: string;
   rank: number;
   medalImageUrl?: string;
+  campusId?: string | null;
 }
 
 // Helper function to extract just the number from grade
@@ -94,6 +95,7 @@ export async function getMonthlyLevelRankings(
         countryIcon: score.user.country?.countryIcon?.iconUrl,
         rank,
         medalImageUrl,
+        campusId: score.user.campusId,
       };
     });
   } else {
@@ -140,6 +142,7 @@ export async function getMonthlyLevelRankings(
         countryIcon: score.user.country?.countryIcon?.iconUrl,
         rank,
         medalImageUrl,
+        campusId: score.user.campusId,
       };
     });
   }

@@ -10,6 +10,7 @@ export interface OverallRankingUser {
   score: number;
   countryIcon?: string;
   rank: number;
+  campusId?: string | null;
 }
 
 // Helper function to extract just the number from grade
@@ -62,6 +63,7 @@ export async function getOverallRankings(
         grade: formatGradeForDisplay(grade),
         score: totalScore,
         countryIcon: user.country?.countryIcon?.iconUrl,
+        campusId: user.campusId,
       };
     });
 
@@ -109,6 +111,7 @@ export async function getOverallRankings(
         grade: formatGradeForDisplay(grade),
         score: totalScore,
         countryIcon: user.country?.countryIcon?.iconUrl,
+        campusId: user.campusId,
       };
     });
 
@@ -124,7 +127,7 @@ export async function getOverallRankings(
 }
 
 export async function getTotalOverallRankings(): Promise<OverallRankingUser[]> {
-  // Get all users with either AR or RC scores
+  // Get all users with either AR, RC, or BPA scores
   const users = await prisma.user.findMany({
     include: {
       ARScore: {
@@ -137,6 +140,7 @@ export async function getTotalOverallRankings(): Promise<OverallRankingUser[]> {
           RCLevel: true,
         },
       },
+      bpaScores: true,
       country: {
         include: {
           countryIcon: true,
@@ -155,6 +159,11 @@ export async function getTotalOverallRankings(): Promise<OverallRankingUser[]> {
             some: {},
           },
         },
+        {
+          bpaScores: {
+            some: {},
+          },
+        },
       ],
     },
   });
@@ -169,7 +178,11 @@ export async function getTotalOverallRankings(): Promise<OverallRankingUser[]> {
       (sum, score) => sum + score.score,
       0,
     );
-    const totalScore = arScore + rcScore;
+    const bpaScore = user.bpaScores.reduce(
+      (sum, score) => sum + score.score,
+      0,
+    );
+    const totalScore = arScore + rcScore + bpaScore;
     const grade = calculateGrade(user.birthday);
 
     return {
@@ -178,10 +191,11 @@ export async function getTotalOverallRankings(): Promise<OverallRankingUser[]> {
       grade: formatGradeForDisplay(grade),
       score: totalScore,
       countryIcon: user.country?.countryIcon?.iconUrl,
+      campusId: user.campusId,
     };
   });
 
-  // Sort by total score and return top 5
+  // Sort by total score and return top 10
   return userScores
     .filter((user) => user.score > 0) // Only include users with scores
     .sort((a, b) => b.score - a.score)

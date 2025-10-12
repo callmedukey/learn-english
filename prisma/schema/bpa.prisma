@@ -1,0 +1,356 @@
+enum BPASeason {
+  SPRING
+  SUMMER
+  FALL
+  WINTER
+}
+
+// Dynamic BPA Level (replaces hardcoded enum)
+model BPALevel {
+  id          String   @id @default(uuid())
+  name        String   @unique // "Level 2", "Level 3", etc.
+  description String?
+  stars       Int      // Difficulty 1-5
+  orderNumber Int      @unique // For sorting
+
+  novels                   BPANovel[]
+  userLevelAssignments     BPAUserLevelAssignment[]
+  assignmentHistory        BPAUserLevelAssignmentHistory[] @relation("BPAAssignmentHistory")
+  bpaScores                BPAScore[]
+  bpaLevelSettings         BPALevelSettings?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([orderNumber])
+}
+
+// BPA Timeframe (e.g., 2025-05-01 ~ 2026-01-01)
+model BPATimeframe {
+  id        String   @id @default(cuid())
+  year      Int
+  startDate DateTime
+  endDate   DateTime
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  semesters            BPASemester[]
+  userLevelAssignments BPAUserLevelAssignment[]
+  assignmentHistory    BPAUserLevelAssignmentHistory[] @relation("BPAAssignmentHistory")
+  bpaScores            BPAScore[]
+  novelAssignments     BPANovelSemesterAssignment[]
+
+  @@unique([year, startDate])
+  @@index([year])
+}
+
+// BPA Semester - Individual season within a timeframe with date ranges
+model BPASemester {
+  id          String       @id @default(cuid())
+  timeframeId String
+  season      BPASeason
+  startDate   DateTime
+  endDate     DateTime
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  timeframe            BPATimeframe                    @relation(fields: [timeframeId], references: [id], onDelete: Cascade)
+  userLevelAssignments BPAUserLevelAssignment[]
+  assignmentHistory    BPAUserLevelAssignmentHistory[]
+  bpaScores            BPAScore[]
+  novelAssignments     BPANovelSemesterAssignment[]
+
+  @@unique([timeframeId, season])
+  @@index([timeframeId])
+  @@index([season])
+  @@index([startDate, endDate])
+}
+
+// User level assignment for each season within a timeframe
+model BPAUserLevelAssignment {
+  id            String       @id @default(cuid())
+  userId        String
+  user          User         @relation("BPALevelAssignments", fields: [userId], references: [id], onDelete: Cascade)
+  semesterId    String?      // Optional during migration
+  semester      BPASemester? @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  timeframeId   String
+  timeframe     BPATimeframe @relation(fields: [timeframeId], references: [id], onDelete: Cascade)
+  season        BPASeason // Kept for backward compatibility during migration
+  bpaLevelId    String
+  bpaLevel      BPALevel     @relation(fields: [bpaLevelId], references: [id], onDelete: Cascade)
+  assignedAt    DateTime     @default(now())
+  assignedBy    String? // Admin who assigned the level
+  createdAt     DateTime     @default(now())
+  updatedAt     DateTime     @updatedAt
+
+  @@unique([userId, timeframeId, season]) // Keep for migration
+  @@index([userId])
+  @@index([semesterId])
+  @@index([timeframeId])
+  @@index([season])
+  @@index([bpaLevelId])
+}
+
+// Assignment history tracking - full audit trail of all changes
+enum BPAAssignmentAction {
+  CREATED
+  UPDATED
+  DELETED
+}
+
+model BPAUserLevelAssignmentHistory {
+  id            String               @id @default(cuid())
+  userId        String
+  user          User                 @relation("BPAAssignmentHistory", fields: [userId], references: [id], onDelete: Cascade)
+  semesterId    String?              // Optional during migration
+  semester      BPASemester?         @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  timeframeId   String
+  timeframe     BPATimeframe         @relation("BPAAssignmentHistory", fields: [timeframeId], references: [id], onDelete: Cascade)
+  season        BPASeason // Kept for backward compatibility during migration
+  bpaLevelId    String
+  bpaLevel      BPALevel             @relation("BPAAssignmentHistory", fields: [bpaLevelId], references: [id], onDelete: Cascade)
+  action        BPAAssignmentAction
+  assignedBy    String? // Admin who made the change
+  assignedByUser User?               @relation("BPAAssignmentHistoryAdmin", fields: [assignedBy], references: [id], onDelete: SetNull)
+  createdAt     DateTime             @default(now())
+
+  @@index([userId])
+  @@index([semesterId])
+  @@index([timeframeId])
+  @@index([season])
+  @@index([bpaLevelId])
+  @@index([userId, createdAt])
+}
+
+// BPA Novel (mirrors Novel model)
+model BPANovel {
+  id          String  @id @default(uuid())
+  title       String
+  description String?
+  hidden      Boolean @default(false)
+  comingSoon  Boolean @default(false)
+  locked      Boolean @default(false)
+
+  bpaLevelId String
+  bpaLevel   BPALevel @relation(fields: [bpaLevelId], references: [id], onDelete: Cascade)
+
+  units               BPAUnit[]
+  chapters            BPAChapter[] // Legacy relation, kept for backward compatibility
+  semesterAssignments BPANovelSemesterAssignment[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([bpaLevelId])
+  @@index([hidden])
+}
+
+// BPA Unit - Collection of chapters within a novel
+model BPAUnit {
+  id          String   @id @default(uuid())
+  novelId     String
+  novel       BPANovel @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  name        String
+  description String?
+  orderNumber Int
+
+  chapters BPAChapter[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([novelId])
+  @@index([orderNumber])
+  @@index([novelId, orderNumber])
+}
+
+// BPA Chapter (mirrors NovelChapter)
+model BPAChapter {
+  id          String   @id @default(uuid())
+
+  // Unit relation (primary)
+  unitId      String?
+  unit        BPAUnit? @relation(fields: [unitId], references: [id], onDelete: Cascade)
+
+  // Novel relation (legacy, kept for backward compatibility)
+  novelId     String
+  novel       BPANovel @relation(fields: [novelId], references: [id], onDelete: Cascade)
+
+  orderNumber Int
+  title       String
+  description String?
+  isFree      Boolean @default(false)
+
+  questionSetId String?
+  questionSet   BPAQuestionSet?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([unitId])
+  @@index([novelId])
+  @@index([orderNumber])
+  @@index([unitId, orderNumber])
+}
+
+// BPA Question Set (mirrors NovelQuestionSet)
+model BPAQuestionSet {
+  id           String   @id @default(uuid())
+  instructions String
+  active       Boolean  @default(false)
+
+  chapterId String?     @unique
+  chapter   BPAChapter? @relation(fields: [chapterId], references: [id], onDelete: Cascade)
+
+  questions   BPAQuestion[]
+  firstTries  BPAQuestionFirstTry[]
+  secondTries BPAQuestionSecondTry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// BPA Question (mirrors NovelQuestion)
+model BPAQuestion {
+  id            String         @id @default(uuid())
+  questionSetId String
+  questionSet   BPAQuestionSet @relation(fields: [questionSetId], references: [id], onDelete: Cascade)
+
+  orderNumber Int
+  question    String
+  choices     String[]
+  answer      String
+  explanation String
+  score       Int
+  timeLimit   Int
+
+  completed BPAQuestionCompleted[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([questionSetId])
+  @@index([orderNumber])
+}
+
+// BPA Question Completed
+model BPAQuestionCompleted {
+  id         String      @id @default(uuid())
+  questionId String
+  question   BPAQuestion @relation(fields: [questionId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation("BPAQuestionsCompleted", fields: [userId], references: [id], onDelete: Cascade)
+
+  bpaScoreId String?
+  bpaScore   BPAScore? @relation(fields: [bpaScoreId], references: [id], onDelete: Cascade)
+
+  score          Int
+  selectedAnswer String?
+  isCorrect      Boolean @default(false)
+  isRetry        Boolean @default(false)
+  isTimedOut     Boolean @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@index([questionId])
+  @@index([bpaScoreId])
+}
+
+// BPA Score for Leaderboards (per semester/level)
+// Awards to this + TotalScore only (no monthly table)
+model BPAScore {
+  id         String   @id @default(uuid())
+  userId     String
+  user       User     @relation("BPAScores", fields: [userId], references: [id], onDelete: Cascade)
+
+  bpaLevelId String
+  bpaLevel   BPALevel @relation(fields: [bpaLevelId], references: [id], onDelete: Cascade)
+
+  semesterId String?      // Optional during migration
+  semester   BPASemester? @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+
+  timeframeId String
+  timeframe   BPATimeframe @relation(fields: [timeframeId], references: [id], onDelete: Cascade)
+
+  season BPASeason // Kept for backward compatibility during migration
+  score  Int       @default(0)
+
+  questionsCompleted BPAQuestionCompleted[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, bpaLevelId, timeframeId, season]) // Keep for migration
+  @@index([bpaLevelId, semesterId])
+  @@index([userId, semesterId])
+  @@index([bpaLevelId, semesterId, score]) // For leaderboard queries
+  @@index([bpaLevelId, timeframeId, season]) // Keep for migration
+}
+
+// First Try tracking (mirrors Novel system)
+model BPAQuestionFirstTry {
+  id            String         @id @default(uuid())
+  questionSetId String
+  questionSet   BPAQuestionSet @relation(fields: [questionSetId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation("BPAQuestionFirstTries", fields: [userId], references: [id], onDelete: Cascade)
+
+  totalQuestions Int @default(0)
+  correctAnswers Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, questionSetId])
+  @@index([userId])
+  @@index([questionSetId])
+}
+
+// Second Try tracking (mirrors Novel system)
+model BPAQuestionSecondTry {
+  id            String         @id @default(uuid())
+  questionSetId String
+  questionSet   BPAQuestionSet @relation(fields: [questionSetId], references: [id], onDelete: Cascade)
+
+  userId String
+  user   User   @relation("BPAQuestionSecondTries", fields: [userId], references: [id], onDelete: Cascade)
+
+  totalQuestions Int @default(0)
+  correctAnswers Int @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, questionSetId])
+  @@index([userId])
+  @@index([questionSetId])
+}
+
+// BPA Novel Semester Assignment - Controls when novels are available
+model BPANovelSemesterAssignment {
+  id          String       @id @default(cuid())
+  novelId     String
+  novel       BPANovel     @relation(fields: [novelId], references: [id], onDelete: Cascade)
+  semesterId  String?      // Optional during migration
+  semester    BPASemester? @relation(fields: [semesterId], references: [id], onDelete: Cascade)
+  timeframeId String
+  timeframe   BPATimeframe @relation(fields: [timeframeId], references: [id], onDelete: Cascade)
+  season      BPASeason // Kept for backward compatibility during migration
+  assignedAt  DateTime     @default(now())
+  assignedBy  String? // Admin who assigned the novel
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  @@unique([novelId, timeframeId, season]) // Keep for migration
+  @@index([novelId])
+  @@index([semesterId])
+  @@index([timeframeId, season])
+  @@index([timeframeId])
+}

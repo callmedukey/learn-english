@@ -1,14 +1,15 @@
 import { format } from "date-fns";
+import Link from "next/link";
 import React from "react";
 
 import { Button } from "@/components/ui/button";
 import {
   Table,
-  TableHeader,
   TableBody,
-  TableHead,
-  TableRow,
   TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
 } from "@/components/ui/table";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -80,7 +81,12 @@ const CampusesTable = async () => {
               {index + 1}
             </TableCell>
             <TableCell className="px-6 py-4 text-center text-sm whitespace-nowrap text-gray-900">
-              {campus.name}
+              <Link
+                href={`/admin/campuses/${campus.id}`}
+                className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+              >
+                {campus.name}
+              </Link>
             </TableCell>
             <TableCell className="px-6 py-4 text-center text-sm whitespace-nowrap text-gray-500">
               {campus._count.users}

@@ -27,7 +27,8 @@
     "reset-payments": "tsx scripts/reset-payments.ts",
     "restore-backup": "tsx scripts/restore-backup.ts",
     "setup-test-accounts": "tsx scripts/setup-test-accounts-maintenance.ts",
-    "backfill-iscorrect": "tsx scripts/backfill-iscorrect.ts"
+    "backfill-iscorrect": "tsx scripts/backfill-iscorrect.ts",
+    "backfill-score-transactions": "tsx prisma/migrations/backfill-score-transactions.ts"
   },
   "prisma": {
     "schema": "./prisma/schema",

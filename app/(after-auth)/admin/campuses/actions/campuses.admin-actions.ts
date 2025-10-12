@@ -2,9 +2,11 @@
 
 import { revalidatePath } from "next/cache";
 
+import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
 import { prisma } from "@/prisma/prisma-client";
 
 export const createCampusAction = async (formData: FormData) => {
+  await requireAdminAccess();
   const campusName = formData.get("campusName") as string;
 
   if (!campusName || campusName.trim() === "") {
@@ -38,6 +40,7 @@ export const createCampusAction = async (formData: FormData) => {
 };
 
 export const updateCampusAction = async (formData: FormData) => {
+  await requireAdminAccess();
   const campusId = formData.get("campusId") as string;
   const campusName = formData.get("campusName") as string;
 
@@ -83,6 +86,7 @@ export const updateCampusAction = async (formData: FormData) => {
 };
 
 export const deleteCampusAction = async (campusId: string) => {
+  await requireAdminAccess();
   if (!campusId) {
     return { error: "Campus ID is required" };
   }

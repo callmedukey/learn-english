@@ -32,10 +32,20 @@ interface ScoreLogDialogProps {
 async function fetchScoreLog(
   userId: string,
   page: number,
-  pageSize: number
+  pageSize: number,
+  source?: "RC" | "Novel" | "BPA"
 ): Promise<ScoreLogResponse> {
+  const params = new URLSearchParams({
+    page: page.toString(),
+    pageSize: pageSize.toString(),
+  });
+
+  if (source) {
+    params.append("source", source);
+  }
+
   const response = await fetch(
-    `/api/admin/users/${userId}/score-log?page=${page}&pageSize=${pageSize}`
+    `/api/admin/users/${userId}/score-log?${params.toString()}`
   );
 
   if (!response.ok) {
@@ -52,13 +62,19 @@ export default function ScoreLogDialog({
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
   const [expandedLogId, setExpandedLogId] = useState<string | null>(null);
+  const [sourceFilter, setSourceFilter] = useState<"RC" | "Novel" | "BPA" | undefined>(undefined);
   const pageSize = 20;
 
   const { data, isLoading, isError } = useQuery({
-    queryKey: ["user-score-log", userId, page],
-    queryFn: () => fetchScoreLog(userId, page, pageSize),
+    queryKey: ["user-score-log", userId, page, sourceFilter],
+    queryFn: () => fetchScoreLog(userId, page, pageSize, sourceFilter),
     enabled: open, // Only fetch when dialog is open
   });
+
+  const handleSourceFilterChange = (source: "RC" | "Novel" | "BPA" | undefined) => {
+    setSourceFilter(source);
+    setPage(1); // Reset to first page when filter changes
+  };
 
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
@@ -76,11 +92,42 @@ export default function ScoreLogDialog({
         <DialogHeader>
           <DialogTitle>Score Log: {userNickname}</DialogTitle>
           <DialogDescription>
-            Detailed history of scores earned from RC and Novel activities
+            Detailed history of scores earned from RC, Novel, and BPA activities
           </DialogDescription>
         </DialogHeader>
 
         <div className="space-y-4">
+          {/* Filter tabs */}
+          <div className="flex gap-2 flex-wrap">
+            <Button
+              variant={sourceFilter === undefined ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleSourceFilterChange(undefined)}
+            >
+              All
+            </Button>
+            <Button
+              variant={sourceFilter === "RC" ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleSourceFilterChange("RC")}
+            >
+              RC
+            </Button>
+            <Button
+              variant={sourceFilter === "Novel" ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleSourceFilterChange("Novel")}
+            >
+              Novel
+            </Button>
+            <Button
+              variant={sourceFilter === "BPA" ? "default" : "outline"}
+              size="sm"
+              onClick={() => handleSourceFilterChange("BPA")}
+            >
+              BPA
+            </Button>
+          </div>
           <div className="h-[500px] relative">
             <ScrollArea className="h-full">
               <div className="pr-4">
@@ -131,7 +178,9 @@ export default function ScoreLogDialog({
                                   className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
                                     log.source === "RC"
                                       ? "bg-blue-100 text-blue-800"
-                                      : "bg-purple-100 text-purple-800"
+                                      : log.source === "Novel"
+                                      ? "bg-purple-100 text-purple-800"
+                                      : "bg-green-100 text-green-800"
                                   }`}
                                 >
                                   {log.source}

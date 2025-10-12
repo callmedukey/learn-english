@@ -1,6 +1,6 @@
 "use client";
 
-import { User } from "lucide-react";
+import { User, Crown } from "lucide-react";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 
@@ -100,6 +100,15 @@ const AfterAuthNavBar = () => {
         >
           Reading Comprehension
         </Link>
+        {session?.user?.campusId && (
+          <Link
+            href="/bpa"
+            className="flex items-center gap-1 text-base font-bold text-primary underline-offset-4 transition-colors hover:underline"
+          >
+            BPA 회원전용
+            <Crown className="size-4" fill="currentColor" strokeWidth={0} />
+          </Link>
+        )}
       </nav>
 
       {/* Right Side Icons */}

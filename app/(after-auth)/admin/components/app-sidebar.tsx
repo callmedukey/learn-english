@@ -7,6 +7,7 @@ import {
   Book,
   Brain,
   Building2,
+  Crown,
   Home,
   MapPin,
   Medal,
@@ -33,6 +34,7 @@ import {
   canAccessSystemSettings,
   canAccessChallenges,
   canAccessNotifications,
+  canAccessCampusManagement,
 } from "@/lib/utils/permissions";
 import { Role } from "@/prisma/generated/prisma";
 
@@ -61,7 +63,7 @@ const allItems = [
     title: "Campuses",
     url: "/admin/campuses",
     icon: Building2,
-    permission: canAccessUserManagement,
+    permission: canAccessCampusManagement,
   },
   {
     title: "Reading Comprehension",
@@ -73,6 +75,12 @@ const allItems = [
     title: "Novels",
     url: "/admin/novels",
     icon: Book,
+    permission: () => true, // All admin users can access
+  },
+  {
+    title: "BPA Only",
+    url: "/admin/bpa",
+    icon: Crown,
     permission: () => true, // All admin users can access
   },
   {

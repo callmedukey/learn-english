@@ -23,6 +23,7 @@ declare module "next-auth" {
       gender: Gender | undefined;
       birthday: Date;
       country: string;
+      campusId: string | null;
       role: Role;
       hasPaidSubscription: boolean;
       profileComplete: boolean;
@@ -134,6 +135,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.gender = token.gender as Gender;
       session.user.birthday = token.birthday as Date;
       session.user.country = (token.country as string) || '';
+      session.user.campusId = (token.campusId as string | null) || null;
       session.user.hasPaidSubscription = (token.hasPaidSubscription as boolean) || false;
       session.user.profileComplete = (token.profileComplete as boolean) || false;
       
@@ -167,6 +169,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.gender = foundUser.gender;
         token.birthday = foundUser.birthday;
         token.country = foundUser.countryId;
+        token.campusId = foundUser.campusId;
         token.username = foundUser.username;
 
         // Check for active, non-expired subscriptions

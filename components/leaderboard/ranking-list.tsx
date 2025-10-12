@@ -13,6 +13,7 @@ interface RankingItem {
   grade: string;
   score: number;
   countryIcon?: string;
+  campusId?: string | null;
 }
 
 interface RankingListProps {
@@ -71,7 +72,7 @@ export function RankingList({ rankings, currentUserId }: RankingListProps) {
 
                     {/* Nickname with Medal */}
                     <div className="flex min-w-0 items-center gap-1">
-                      <span className="truncate font-medium text-gray-900">
+                      <span className={`truncate font-medium ${item.campusId ? 'text-primary italic' : 'text-gray-900'}`}>
                         {item.nickname}
                       </span>
                       {item.rank === 1 && (

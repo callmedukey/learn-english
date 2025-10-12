@@ -1,7 +1,7 @@
 export interface ScoreLogEntry {
   id: string;
   score: number;
-  source: "RC" | "Novel";
+  source: "RC" | "Novel" | "BPA";
   sourceDetails: string;
   createdAt: Date;
   // Question details

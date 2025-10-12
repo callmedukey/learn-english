@@ -11,6 +11,7 @@ export interface GradeRankingUser {
   score: number;
   countryIcon?: string;
   rank: number;
+  campusId?: string | null;
 }
 
 // Helper function to extract just the number from grade
@@ -92,6 +93,7 @@ export async function getGradeRankings(
           grade: formatGradeForDisplay(userGradeCalculated),
           score: totalScore,
           countryIcon: user.country?.countryIcon?.iconUrl,
+          campusId: user.campusId,
         };
       });
 
@@ -146,6 +148,7 @@ export async function getGradeRankings(
           grade: formatGradeForDisplay(userGradeCalculated),
           score: totalScore,
           countryIcon: user.country?.countryIcon?.iconUrl,
+          campusId: user.campusId,
         };
       });
 
@@ -198,9 +201,14 @@ export async function getTotalGradeRankings(
           some: {},
         },
       },
+      {
+        bpaScores: {
+          some: {},
+        },
+      },
     ],
   };
-  
+
   if (birthYearRange) {
     whereClause.birthday = {
       gte: new Date(`${birthYearRange.minYear}-01-01`),
@@ -208,11 +216,12 @@ export async function getTotalGradeRankings(
     };
   }
 
-  // Get users with either AR or RC scores filtered by grade at database level
+  // Get users with either AR, RC, or BPA scores filtered by grade at database level
   const users = await prisma.user.findMany({
     include: {
       ARScore: true,
       RCScore: true,
+      bpaScores: true,
       country: {
         include: {
           countryIcon: true,
@@ -233,7 +242,11 @@ export async function getTotalGradeRankings(
         (sum, score) => sum + score.score,
         0,
       );
-      const totalScore = arScore + rcScore;
+      const bpaScore = user.bpaScores.reduce(
+        (sum, score) => sum + score.score,
+        0,
+      );
+      const totalScore = arScore + rcScore + bpaScore;
 
       return {
         id: user.id,
@@ -241,11 +254,12 @@ export async function getTotalGradeRankings(
         grade: formatGradeForDisplay(userGradeCalculated),
         score: totalScore,
         countryIcon: user.country?.countryIcon?.iconUrl,
+        campusId: user.campusId,
       };
     })
     .filter((user) => user.score > 0); // Only include users with scores
 
-  // Sort by total score and return top 5
+  // Sort by total score and return top 10
   return userScores
     .sort((a, b) => b.score - a.score)
     .slice(0, 10)
