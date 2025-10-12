@@ -19,6 +19,13 @@ model NovelSettings {
   defaultScore Int @default(0)
 }
 
+model BPASettings {
+  id        String   @id @default(uuid())
+
+  defaultTimer Int @default(0)
+  defaultScore Int @default(0)
+}
+
 model ARSettings {
   id        String   @id @default(uuid())
 

@@ -2,6 +2,8 @@ import React, { Suspense } from "react";
 
 import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
 
+import BPALevelDefaultsForm from "./components/BPALevelDefaultsForm";
+import BPASettingsForm from "./components/BPASettingsForm";
 import NovelLevelDefaultsForm from "./components/NovelLevelDefaultsForm";
 import NovelSettingsForm from "./components/NovelSettingsForm";
 import PasswordResetForm from "./components/PasswordResetForm";
@@ -75,6 +77,32 @@ export default async function SettingsPage() {
           </p>
           <Suspense fallback={<div className="text-gray-500">Loading...</div>}>
             <NovelLevelDefaultsForm />
+          </Suspense>
+        </section>
+
+        {/* BPA Settings Section */}
+        <section className="rounded-lg bg-white p-6 shadow">
+          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+            BPA Global Settings
+          </h2>
+          <p className="mb-4 text-sm text-gray-600">
+            These are fallback defaults used when level-specific defaults are not set.
+          </p>
+          <Suspense fallback={<div className="text-gray-500">Loading...</div>}>
+            <BPASettingsForm />
+          </Suspense>
+        </section>
+
+        {/* BPA Level Defaults Section */}
+        <section className="rounded-lg bg-white p-6 shadow">
+          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+            BPA Level Default Settings
+          </h2>
+          <p className="mb-4 text-sm text-gray-600">
+            Set default timer and score values for each BPA level. These values will automatically populate when creating new BPA questions.
+          </p>
+          <Suspense fallback={<div className="text-gray-500">Loading...</div>}>
+            <BPALevelDefaultsForm />
           </Suspense>
         </section>
       </div>

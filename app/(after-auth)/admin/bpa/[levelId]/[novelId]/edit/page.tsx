@@ -1,7 +1,7 @@
 import { notFound, redirect } from "next/navigation";
 import React from "react";
 
-import { getNovelSettings } from "@/app/(after-auth)/admin/settings/queries/settings-queries";
+import { getBPASettings } from "@/app/(after-auth)/admin/settings/queries/settings-queries";
 import { auth } from "@/auth";
 import { canEditNovel } from "@/lib/utils/permissions";
 import { Role } from "@/prisma/generated/prisma";
@@ -59,8 +59,32 @@ const BPANovelEditPage = async ({ params }: PageProps) => {
     orderBy: { orderNumber: "asc" },
   });
 
-  // Use global novel settings for BPA (no level-specific settings yet)
-  const novelSettings = await getNovelSettings();
+  // Fetch level-specific settings first
+  const levelSettings = await prisma.bPALevelSettings.findUnique({
+    where: { bpaLevelId: levelId },
+  });
+
+  // If level-specific settings exist, use them; otherwise fall back to global BPA settings
+  let defaultTimer = 40;
+  let defaultScore = 10;
+
+  if (levelSettings) {
+    defaultTimer = levelSettings.defaultTimer;
+    defaultScore = levelSettings.defaultScore;
+  } else {
+    // Fall back to global BPA settings
+    const bpaSettings = await getBPASettings();
+    if (bpaSettings) {
+      defaultTimer = bpaSettings.defaultTimer || 40;
+      defaultScore = bpaSettings.defaultScore || 10;
+    }
+  }
+
+  const novelSettings = {
+    id: "bpa-settings",
+    defaultTimer,
+    defaultScore,
+  };
 
   // Fetch all timeframes for semester assignment
   const timeframes = await prisma.bPATimeframe.findMany({

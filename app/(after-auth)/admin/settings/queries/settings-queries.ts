@@ -121,3 +121,63 @@ export async function getARLevelDefaults() {
     return [];
   }
 }
+
+export async function getBPASettings() {
+  try {
+    let settings = await prisma.bPASettings.findFirst();
+
+    // Create default settings if none exist
+    if (!settings) {
+      settings = await prisma.bPASettings.create({
+        data: {
+          defaultTimer: 0,
+          defaultScore: 0,
+        },
+      });
+    }
+
+    return settings;
+  } catch (error) {
+    console.error("Error fetching BPA settings:", error);
+    return null;
+  }
+}
+
+export async function getBPALevelDefaults() {
+  try {
+    const bpaLevels = await prisma.bPALevel.findMany({
+      include: {
+        bpaLevelSettings: true,
+      },
+      orderBy: {
+        orderNumber: 'asc',
+      },
+    });
+
+    // Create default settings for levels that don't have them
+    for (const level of bpaLevels) {
+      if (!level.bpaLevelSettings) {
+        await prisma.bPALevelSettings.create({
+          data: {
+            bpaLevelId: level.id,
+            defaultTimer: 30,
+            defaultScore: 100,
+          },
+        });
+      }
+    }
+
+    // Fetch again with all settings created
+    return await prisma.bPALevel.findMany({
+      include: {
+        bpaLevelSettings: true,
+      },
+      orderBy: {
+        orderNumber: 'asc',
+      },
+    });
+  } catch (error) {
+    console.error("Error fetching BPA level defaults:", error);
+    return [];
+  }
+}
