@@ -1,5 +1,7 @@
 "use client";
 
+import { Crown } from "lucide-react";
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -138,19 +140,19 @@ function RankingDisplay({ timeframeId, season, levelId }: RankingDisplayProps) {
 
                         {/* User Info */}
                         <div className="flex min-w-0 flex-1 items-center gap-2">
-                          {/* Nickname with Medal */}
+                          {/* Nickname with Crown */}
                           <div className="flex min-w-0 items-center gap-1">
                             <span className="truncate font-medium text-gray-900">
                               {item.nickname}
                             </span>
                             {item.rank === 1 && (
-                              <span className="flex-shrink-0 text-base">🥇</span>
+                              <Crown className="h-4 w-4 flex-shrink-0 fill-amber-400 text-amber-400" />
                             )}
                             {item.rank === 2 && (
-                              <span className="flex-shrink-0 text-base">🥈</span>
+                              <Crown className="h-4 w-4 flex-shrink-0 fill-gray-400 text-gray-400" />
                             )}
                             {item.rank === 3 && (
-                              <span className="flex-shrink-0 text-base">🥉</span>
+                              <Crown className="h-4 w-4 flex-shrink-0 fill-amber-700 text-amber-700" />
                             )}
                           </div>
                         </div>
