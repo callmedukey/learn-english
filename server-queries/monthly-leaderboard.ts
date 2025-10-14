@@ -166,8 +166,16 @@ export async function getMonthlyLeaderboardByGrade(
     },
   });
 
+  // Get BPA levels for this grade
+  const bpaLevels = await prisma.bPALevel.findMany({
+    select: {
+      id: true,
+    },
+  });
+
   const arLevelIds = arLevels.map((l) => l.id);
   const rcLevelIds = rcLevels.map((l) => l.id);
+  const bpaLevelIds = bpaLevels.map((l) => l.id);
 
   // Get AR scores
   const arScores = await prisma.monthlyARScore.groupBy({
@@ -195,6 +203,19 @@ export async function getMonthlyLeaderboardByGrade(
     },
   });
 
+  // Get BPA scores
+  const bpaScores = await prisma.monthlyBPAScore.groupBy({
+    by: ["userId"],
+    where: {
+      bpaLevelId: { in: bpaLevelIds },
+      year,
+      month,
+    },
+    _sum: {
+      score: true,
+    },
+  });
+
   // Combine scores
   const userScores = new Map<string, number>();
 
@@ -203,6 +224,11 @@ export async function getMonthlyLeaderboardByGrade(
   });
 
   rcScores.forEach((s) => {
+    const currentScore = userScores.get(s.userId) || 0;
+    userScores.set(s.userId, currentScore + (s._sum.score || 0));
+  });
+
+  bpaScores.forEach((s) => {
     const currentScore = userScores.get(s.userId) || 0;
     userScores.set(s.userId, currentScore + (s._sum.score || 0));
   });
@@ -268,6 +294,18 @@ export async function getMonthlyOverallLeaderboard(limit: number = 10) {
     },
   });
 
+  // Get all BPA scores
+  const bpaScores = await prisma.monthlyBPAScore.groupBy({
+    by: ["userId"],
+    where: {
+      year,
+      month,
+    },
+    _sum: {
+      score: true,
+    },
+  });
+
   // Combine scores
   const userScores = new Map<string, number>();
 
@@ -276,6 +314,11 @@ export async function getMonthlyOverallLeaderboard(limit: number = 10) {
   });
 
   rcScores.forEach((s) => {
+    const currentScore = userScores.get(s.userId) || 0;
+    userScores.set(s.userId, currentScore + (s._sum.score || 0));
+  });
+
+  bpaScores.forEach((s) => {
     const currentScore = userScores.get(s.userId) || 0;
     userScores.set(s.userId, currentScore + (s._sum.score || 0));
   });

@@ -20,6 +20,7 @@ export async function getUserRanking(
     include: {
       ARScore: true,
       RCScore: true,
+      bpaScores: true,
     },
   });
 
@@ -27,10 +28,11 @@ export async function getUserRanking(
     return null;
   }
 
-  // Calculate user's total score
+  // Calculate user's total score (AR + RC + BPA)
   const userTotalScore =
     user.ARScore.reduce((sum, score) => sum + score.score, 0) +
-    user.RCScore.reduce((sum, score) => sum + score.score, 0);
+    user.RCScore.reduce((sum, score) => sum + score.score, 0) +
+    user.bpaScores.reduce((sum, score) => sum + score.score, 0);
 
   // Get all users with their scores
   const allUsers = await prisma.user.findMany({
@@ -47,14 +49,20 @@ export async function getUserRanking(
           score: true,
         },
       },
+      bpaScores: {
+        select: {
+          score: true,
+        },
+      },
     },
   });
 
-  // Calculate total scores for all users
+  // Calculate total scores for all users (AR + RC + BPA)
   const userScores = allUsers.map((u) => {
     const totalScore =
       u.ARScore.reduce((sum, score) => sum + score.score, 0) +
-      u.RCScore.reduce((sum, score) => sum + score.score, 0);
+      u.RCScore.reduce((sum, score) => sum + score.score, 0) +
+      u.bpaScores.reduce((sum, score) => sum + score.score, 0);
     return {
       id: u.id,
       score: totalScore,

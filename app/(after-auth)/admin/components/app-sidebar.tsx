@@ -78,7 +78,7 @@ const allItems = [
     permission: () => true, // All admin users can access
   },
   {
-    title: "BPA Only",
+    title: "VIP Only",
     url: "/admin/bpa",
     icon: Crown,
     permission: () => true, // All admin users can access

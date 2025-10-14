@@ -18,6 +18,7 @@ model BPALevel {
   assignmentHistory        BPAUserLevelAssignmentHistory[] @relation("BPAAssignmentHistory")
   bpaScores                BPAScore[]
   bpaLevelSettings         BPALevelSettings?
+  monthlyBPAScores         MonthlyBPAScore[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt

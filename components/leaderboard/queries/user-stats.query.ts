@@ -17,8 +17,14 @@ export interface UserStatsData {
     score: number;
     count: number;
   }[];
+  bpaStats: {
+    level: string;
+    score: number;
+    count: number;
+  }[];
   totalArScore: number;
   totalRcScore: number;
+  totalBpaScore: number;
 }
 
 export async function getUserStats(
@@ -35,6 +41,11 @@ export async function getUserStats(
       RCScore: {
         include: {
           RCLevel: true,
+        },
+      },
+      bpaScores: {
+        include: {
+          bpaLevel: true,
         },
       },
     },
@@ -68,6 +79,17 @@ export async function getUserStats(
     });
   });
 
+  // Group BPA scores by level
+  const bpaStatsMap = new Map<string, { score: number; count: number }>();
+  user.bpaScores.forEach((bpaScore) => {
+    const level = bpaScore.bpaLevel.name;
+    const existing = bpaStatsMap.get(level) || { score: 0, count: 0 };
+    bpaStatsMap.set(level, {
+      score: existing.score + bpaScore.score,
+      count: existing.count + 1,
+    });
+  });
+
   // Convert to arrays and sort
   const arStats = Array.from(arStatsMap.entries())
     .map(([level, data]) => ({
@@ -85,11 +107,23 @@ export async function getUserStats(
     }))
     .sort((a, b) => a.level.localeCompare(b.level));
 
+  const bpaStats = Array.from(bpaStatsMap.entries())
+    .map(([level, data]) => ({
+      level,
+      score: data.score,
+      count: data.count,
+    }))
+    .sort((a, b) => a.level.localeCompare(b.level));
+
   const totalArScore = user.ARScore.reduce(
     (sum, score) => sum + score.score,
     0,
   );
   const totalRcScore = user.RCScore.reduce(
+    (sum, score) => sum + score.score,
+    0,
+  );
+  const totalBpaScore = user.bpaScores.reduce(
     (sum, score) => sum + score.score,
     0,
   );
@@ -100,7 +134,9 @@ export async function getUserStats(
     grade,
     arStats,
     rcStats,
+    bpaStats,
     totalArScore,
     totalRcScore,
+    totalBpaScore,
   };
 }

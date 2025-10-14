@@ -1,8 +1,10 @@
 "use server";
 
+import { toZonedTime } from "date-fns-tz";
 import { revalidatePath } from "next/cache";
 
 import { auth } from "@/auth";
+import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import { prisma } from "@/prisma/prisma-client";
 
 import { getCurrentBPAContext } from "./get-current-bpa-context";
@@ -270,6 +272,58 @@ export async function submitBPAAnswer(
             });
           }
         }
+
+        // 3. Update MonthlyBPAScore (for monthly leaderboard)
+        // Calculate current month/year in Korea timezone
+        const now = new Date();
+        const koreaTime = toZonedTime(now, APP_TIMEZONE);
+        const year = koreaTime.getFullYear();
+        const month = koreaTime.getMonth() + 1;
+
+        console.log("=== MonthlyBPAScore Update START ===");
+        console.log("About to upsert MonthlyBPAScore:", {
+          userId: session.user.id,
+          bpaLevelId: levelId,
+          year,
+          month,
+          pointsAwarded,
+          timestamp: new Date().toISOString(),
+        });
+
+        try {
+          const monthlyResult = await tx.monthlyBPAScore.upsert({
+            where: {
+              userId_bpaLevelId_year_month: {
+                userId: session.user.id,
+                bpaLevelId: levelId,
+                year: year,
+                month: month,
+              },
+            },
+            update: {
+              score: {
+                increment: pointsAwarded,
+              },
+            },
+            create: {
+              userId: session.user.id,
+              bpaLevelId: levelId,
+              year: year,
+              month: month,
+              score: pointsAwarded,
+            },
+          });
+          console.log("MonthlyBPAScore upsert SUCCESS:", {
+            id: monthlyResult.id,
+            score: monthlyResult.score,
+            created: monthlyResult.createdAt,
+            updated: monthlyResult.updatedAt,
+          });
+        } catch (monthlyError) {
+          console.error("!!! MonthlyBPAScore upsert FAILED !!!", monthlyError);
+          throw monthlyError; // Re-throw to fail the transaction
+        }
+        console.log("=== MonthlyBPAScore Update END ===");
       });
 
       // TODO: Implement BPA-specific ranking notifications

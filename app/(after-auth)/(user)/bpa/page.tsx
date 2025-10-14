@@ -20,9 +20,47 @@ const BPAPage = async () => {
     select: { campusId: true },
   });
 
-  // If no campus is assigned, redirect to dashboard
+  // If no campus is assigned, show access denied message
   if (!user?.campusId) {
-    redirect("/dashboard");
+    return (
+      <div className="flex min-h-[calc(100vh-200px)] flex-col items-center justify-center px-4">
+        <div className="max-w-md text-center space-y-6">
+          <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-amber-100">
+            <svg
+              className="h-10 w-10 text-amber-600"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke="currentColor"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+              />
+            </svg>
+          </div>
+
+          <div className="space-y-3">
+            <h1 className="text-3xl font-bold text-gray-900">
+              접속 권한이 없습니다
+            </h1>
+            <p className="text-lg text-gray-600">
+              관리자에게 문의해주세요
+            </p>
+          </div>
+
+          <div className="pt-4">
+            <a
+              href="/dashboard"
+              className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-primary/90 transition-colors"
+            >
+              대시보드로 돌아가기
+            </a>
+          </div>
+        </div>
+      </div>
+    );
   }
 
   // Fetch the latest timeframe to get user's level assignments

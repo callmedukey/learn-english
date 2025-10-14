@@ -36,7 +36,8 @@ export async function UserStats({ userId }: UserStatsProps) {
     );
   }
 
-  const totalScore = userStats.totalArScore + userStats.totalRcScore;
+  const novelScore = userStats.totalArScore + userStats.totalBpaScore; // Novel includes AR + BPA
+  const totalScore = novelScore + userStats.totalRcScore;
 
   return (
     <UserStatsPopover userId={userId}>
@@ -53,7 +54,7 @@ export async function UserStats({ userId }: UserStatsProps) {
               <div className="text-lg font-bold text-primary">NOVEL</div>
               <div className="rounded-lg bg-gray-100 p-2">
                 <div className="text-base font-bold text-gray-800">
-                  {userStats.totalArScore.toLocaleString()}
+                  {novelScore.toLocaleString()}
                 </div>
               </div>
             </div>

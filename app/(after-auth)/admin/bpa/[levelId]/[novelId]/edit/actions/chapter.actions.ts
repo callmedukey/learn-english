@@ -91,9 +91,11 @@ export const updateChapterAction = async (formData: FormData) => {
       return { error: "Chapter not found" };
     }
 
+    // Check order number conflict within the same unit (if chapter has unitId) or novel
     const conflictingChapter = await prisma.bPAChapter.findFirst({
       where: {
         novelId: existingChapter.novelId,
+        ...(existingChapter.unitId ? { unitId: existingChapter.unitId } : { unitId: null }),
         orderNumber,
         id: { not: chapterId },
       },
@@ -101,7 +103,7 @@ export const updateChapterAction = async (formData: FormData) => {
 
     if (conflictingChapter) {
       return {
-        error: `Chapter with order number ${orderNumber} already exists`,
+        error: `Chapter with order number ${orderNumber} already exists${existingChapter.unitId ? " in this unit" : ""}`,
       };
     }
 

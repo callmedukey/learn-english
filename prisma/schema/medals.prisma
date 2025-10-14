@@ -187,27 +187,49 @@ model MonthlyARScore {
 
 model MonthlyRCScore {
   id        String @id @default(uuid())
-  
+
   userId    String
   user      User   @relation(fields: [userId], references: [id], onDelete: Cascade)
-  
+
   RCLevelId String
   RCLevel   RCLevel @relation(fields: [RCLevelId], references: [id], onDelete: Cascade)
-  
+
   year      Int
   month     Int
   score     Int    @default(0)
-  
+
   challengeId String?
   challenge   MonthlyChallenge? @relation(fields: [challengeId], references: [id])
-  
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-  
+
   @@unique([userId, RCLevelId, year, month])
   @@index([RCLevelId, year, month])
   @@index([userId, year, month])
   @@index([RCLevelId, year, month, score]) // For leaderboard queries with score sorting
+}
+
+model MonthlyBPAScore {
+  id         String @id @default(uuid())
+
+  userId     String
+  user       User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  bpaLevelId String
+  bpaLevel   BPALevel @relation(fields: [bpaLevelId], references: [id], onDelete: Cascade)
+
+  year       Int
+  month      Int
+  score      Int    @default(0)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([userId, bpaLevelId, year, month])
+  @@index([bpaLevelId, year, month])
+  @@index([userId, year, month])
+  @@index([bpaLevelId, year, month, score]) // For leaderboard queries with score sorting
 }
 
 model SystemConfig {

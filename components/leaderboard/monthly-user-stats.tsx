@@ -25,31 +25,43 @@ export async function MonthlyUserStats({ userId }: MonthlyUserStatsProps) {
   });
   const userGrade = calculateGrade(user?.birthday || null);
 
-  // Get monthly AR scores
-  const monthlyARScores = await prisma.monthlyARScore.aggregate({
-    where: {
-      userId,
-      year,
-      month,
-    },
-    _sum: {
-      score: true,
-    },
-  });
+  // Get monthly AR, RC, and BPA scores
+  const [monthlyARScores, monthlyRCScores, monthlyBPAScores] = await Promise.all([
+    prisma.monthlyARScore.aggregate({
+      where: {
+        userId,
+        year,
+        month,
+      },
+      _sum: {
+        score: true,
+      },
+    }),
+    prisma.monthlyRCScore.aggregate({
+      where: {
+        userId,
+        year,
+        month,
+      },
+      _sum: {
+        score: true,
+      },
+    }),
+    prisma.monthlyBPAScore.aggregate({
+      where: {
+        userId,
+        year,
+        month,
+      },
+      _sum: {
+        score: true,
+      },
+    }),
+  ]);
 
-  // Get monthly RC scores
-  const monthlyRCScores = await prisma.monthlyRCScore.aggregate({
-    where: {
-      userId,
-      year,
-      month,
-    },
-    _sum: {
-      score: true,
-    },
-  });
-
-  const novelScore = monthlyARScores._sum.score || 0;
+  const arScore = monthlyARScores._sum.score || 0;
+  const bpaScore = monthlyBPAScores._sum.score || 0;
+  const novelScore = arScore + bpaScore; // Novel includes both AR and BPA
   const rcScore = monthlyRCScores._sum.score || 0;
   const totalScore = novelScore + rcScore;
 

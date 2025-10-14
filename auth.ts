@@ -157,6 +157,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
                 plan: true,
               },
             },
+            country: true,
           },
         });
 
@@ -168,7 +169,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         token.nickname = foundUser.nickname;
         token.gender = foundUser.gender;
         token.birthday = foundUser.birthday;
-        token.country = foundUser.countryId;
+        token.country = foundUser.country?.name || foundUser.countryId || '';
         token.campusId = foundUser.campusId;
         token.username = foundUser.username;
 

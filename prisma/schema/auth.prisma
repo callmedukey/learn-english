@@ -115,7 +115,8 @@ model User {
   medals Medal[]
   monthlyARScores MonthlyARScore[]
   monthlyRCScores MonthlyRCScore[]
-  
+  monthlyBPAScores MonthlyBPAScore[]
+
   // Leaderboard relations
   goldMedals   MonthlyLeaderboard[] @relation("GoldMedals")
   silverMedals MonthlyLeaderboard[] @relation("SilverMedals")

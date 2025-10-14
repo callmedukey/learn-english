@@ -35,8 +35,8 @@ export async function getMonthlyUserRanking(
     return null;
   }
 
-  // Get user's monthly scores
-  const [userARScores, userRCScores] = await Promise.all([
+  // Get user's monthly scores (AR + RC + BPA)
+  const [userARScores, userRCScores, userBPAScores] = await Promise.all([
     prisma.monthlyARScore.aggregate({
       where: {
         userId,
@@ -57,13 +57,25 @@ export async function getMonthlyUserRanking(
         score: true,
       },
     }),
+    prisma.monthlyBPAScore.aggregate({
+      where: {
+        userId,
+        year,
+        month,
+      },
+      _sum: {
+        score: true,
+      },
+    }),
   ]);
 
   const userTotalScore =
-    (userARScores._sum.score || 0) + (userRCScores._sum.score || 0);
+    (userARScores._sum.score || 0) +
+    (userRCScores._sum.score || 0) +
+    (userBPAScores._sum.score || 0);
 
-  // Get all users' monthly scores
-  const [allARScores, allRCScores] = await Promise.all([
+  // Get all users' monthly scores (AR + RC + BPA)
+  const [allARScores, allRCScores, allBPAScores] = await Promise.all([
     prisma.monthlyARScore.groupBy({
       by: ["userId"],
       where: {
@@ -84,6 +96,16 @@ export async function getMonthlyUserRanking(
         score: true,
       },
     }),
+    prisma.monthlyBPAScore.groupBy({
+      by: ["userId"],
+      where: {
+        year,
+        month,
+      },
+      _sum: {
+        score: true,
+      },
+    }),
   ]);
 
   // Create maps for quick lookup
@@ -93,12 +115,16 @@ export async function getMonthlyUserRanking(
   const rcScoreMap = new Map(
     allRCScores.map((s) => [s.userId, s._sum.score || 0]),
   );
+  const bpaScoreMap = new Map(
+    allBPAScores.map((s) => [s.userId, s._sum.score || 0]),
+  );
 
   // Get all unique user IDs with monthly scores
   const allUserIds = Array.from(
     new Set([
       ...allARScores.map((s) => s.userId),
       ...allRCScores.map((s) => s.userId),
+      ...allBPAScores.map((s) => s.userId),
     ]),
   );
 
@@ -113,9 +139,12 @@ export async function getMonthlyUserRanking(
     },
   });
 
-  // Calculate total scores for all users with grades
+  // Calculate total scores for all users with grades (AR + RC + BPA)
   const userScores = allUsers.map((u) => {
-    const totalScore = (arScoreMap.get(u.id) || 0) + (rcScoreMap.get(u.id) || 0);
+    const totalScore =
+      (arScoreMap.get(u.id) || 0) +
+      (rcScoreMap.get(u.id) || 0) +
+      (bpaScoreMap.get(u.id) || 0);
     return {
       id: u.id,
       score: totalScore,

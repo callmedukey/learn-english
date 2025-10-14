@@ -77,22 +77,60 @@ async function finalizeEndedChallenges() {
       // Get top 3 scorers
       let topScorers;
       if (challenge.levelType === "AR") {
-        topScorers = await prisma.monthlyARScore.findMany({
-          where: {
-            ARId: challenge.levelId,
-            year: challenge.year,
-            month: challenge.month,
-            challengeId: challenge.id,
-            score: { gt: 0 }, // Only consider users with scores
-          },
-          orderBy: { score: "desc" },
-          take: 3,
-          include: {
-            user: {
-              select: { id: true, nickname: true },
+        // Query both AR and BPA scores in parallel (Novel challenges include both)
+        const [arScores, bpaScores] = await Promise.all([
+          prisma.monthlyARScore.findMany({
+            where: {
+              ARId: challenge.levelId,
+              year: challenge.year,
+              month: challenge.month,
+              challengeId: challenge.id,
+              score: { gt: 0 },
             },
-          },
-        });
+            include: {
+              user: {
+                select: { id: true, nickname: true },
+              },
+            },
+          }),
+          prisma.monthlyBPAScore.findMany({
+            where: {
+              year: challenge.year,
+              month: challenge.month,
+              score: { gt: 0 },
+            },
+            include: {
+              user: {
+                select: { id: true, nickname: true },
+              },
+            },
+          }),
+        ]);
+
+        // Create maps for quick lookup
+        const arScoreMap = new Map(arScores.map((s) => [s.userId, s.score]));
+        const bpaScoreMap = new Map(bpaScores.map((s) => [s.userId, s.score]));
+        const userInfoMap = new Map<string, { id: string; nickname: string | null }>();
+        arScores.forEach((s) => userInfoMap.set(s.userId, s.user));
+        bpaScores.forEach((s) => userInfoMap.set(s.userId, s.user));
+
+        // Get all unique user IDs
+        const allUserIds = Array.from(new Set([
+          ...arScores.map((s) => s.userId),
+          ...bpaScores.map((s) => s.userId),
+        ]));
+
+        // Calculate combined scores (AR + BPA)
+        const combinedScores = allUserIds.map((userId) => ({
+          userId,
+          score: (arScoreMap.get(userId) || 0) + (bpaScoreMap.get(userId) || 0),
+          user: userInfoMap.get(userId)!,
+        }));
+
+        // Sort by total score and get top 3
+        topScorers = combinedScores
+          .sort((a, b) => b.score - a.score)
+          .slice(0, 3);
       } else {
         topScorers = await prisma.monthlyRCScore.findMany({
           where: {

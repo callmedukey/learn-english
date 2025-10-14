@@ -41,6 +41,11 @@ export default function DayPicker({
 }: DayPickerProps) {
   const generatedId = useId();
   const finalId = propId || generatedId;
+
+  // Calculate end date as 5 years from now
+  const currentYear = new Date().getFullYear();
+  const endYear = currentYear + 5;
+
   const handleCalendarChange = (
     _value: string | number,
     _e: React.ChangeEventHandler<HTMLSelectElement>,
@@ -92,6 +97,7 @@ export default function DayPicker({
             captionLayout="dropdown"
             defaultMonth={new Date()}
             startMonth={new Date(1940, 6)}
+            endMonth={new Date(endYear, 11)}
             hideNavigation
             components={{
               DropdownNav: (props: DropdownNavProps) => {

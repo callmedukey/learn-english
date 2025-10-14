@@ -78,6 +78,9 @@ const AfterAuthNavBar = () => {
   const userId = session?.user?.id;
   if (!userId) return null;
 
+  // Check if user is from South Korea
+  const isSouthKorean = session?.user?.country === "South Korea";
+
   return (
     <div className="flex items-center">
       {/* Desktop Navigation Items - Hidden on mobile */}
@@ -100,12 +103,12 @@ const AfterAuthNavBar = () => {
         >
           Reading Comprehension
         </Link>
-        {session?.user?.campusId && (
+        {isSouthKorean && (
           <Link
             href="/bpa"
             className="flex items-center gap-1 text-base font-bold text-primary underline-offset-4 transition-colors hover:underline"
           >
-            BPA 회원전용
+            VIP 회원전용
             <Crown className="size-4" fill="currentColor" strokeWidth={0} />
           </Link>
         )}
@@ -115,9 +118,10 @@ const AfterAuthNavBar = () => {
       <div className="absolute right-4 flex items-center space-x-2">
         {/* Mobile Menu - Shown only on mobile */}
         <div className="lg:hidden">
-          <MobileMenu 
-            userId={userId} 
-            notifications={notificationsLoading ? [] : notifications} 
+          <MobileMenu
+            userId={userId}
+            notifications={notificationsLoading ? [] : notifications}
+            hasCampusAccess={isSouthKorean}
           />
         </div>
 

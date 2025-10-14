@@ -1,7 +1,9 @@
 "use server";
 
+import { toZonedTime } from "date-fns-tz";
 import { revalidatePath } from "next/cache";
 
+import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface BPAQuestionCompletionResult {
@@ -258,6 +260,36 @@ export const completeBPAQuestionAction = async (
             },
           });
         }
+
+        // Update MonthlyBPAScore (for monthly leaderboard)
+        // Calculate current month/year in Korea timezone
+        const now = new Date();
+        const koreaTime = toZonedTime(now, APP_TIMEZONE);
+        const year = koreaTime.getFullYear();
+        const month = koreaTime.getMonth() + 1;
+
+        await tx.monthlyBPAScore.upsert({
+          where: {
+            userId_bpaLevelId_year_month: {
+              userId: userId,
+              bpaLevelId: levelId,
+              year: year,
+              month: month,
+            },
+          },
+          update: {
+            score: {
+              increment: pointsAwarded,
+            },
+          },
+          create: {
+            userId: userId,
+            bpaLevelId: levelId,
+            year: year,
+            month: month,
+            score: pointsAwarded,
+          },
+        });
 
         // Update total score
         await tx.totalScore.upsert({
