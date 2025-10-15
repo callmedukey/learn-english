@@ -183,3 +183,31 @@ export async function deleteTimeframeAction(timeframeId: string) {
     return { success: false, error: "Failed to delete timeframe" };
   }
 }
+
+export async function setActiveTimeframeAction(
+  timeframeId: string
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    // Use transaction to ensure only 1 active timeframe
+    await prisma.$transaction(async (tx) => {
+      // Deactivate all timeframes
+      await tx.bPATimeframe.updateMany({
+        data: { isActive: false },
+      });
+
+      // Activate the selected one
+      await tx.bPATimeframe.update({
+        where: { id: timeframeId },
+        data: { isActive: true },
+      });
+    });
+
+    revalidatePath("/admin/bpa");
+    revalidatePath("/bpa");
+
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to set active timeframe:", error);
+    return { success: false, error: "Failed to update active timeframe" };
+  }
+}

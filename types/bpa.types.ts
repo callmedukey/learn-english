@@ -5,6 +5,7 @@ export interface BPASemester {
   startDate: string;
   endDate: string;
   label: string; // e.g., "2025 Spring (05/01 ~ 01/01)"
+  isActive: boolean;
 }
 
 export interface BPARanking {

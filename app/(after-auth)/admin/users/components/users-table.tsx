@@ -187,7 +187,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
           <DialogHeader>
             <DialogTitle>Update User: {selectedUser.nickname}</DialogTitle>
             <DialogDescription>
-              Update the user&apos;s birthday and country information.
+              Update the user&apos;s information including nickname, birthday, country, and contact details.
             </DialogDescription>
           </DialogHeader>
           <UpdateUserForm

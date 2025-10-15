@@ -21,6 +21,7 @@ export async function GET() {
       startDate: timeframe.startDate.toISOString().split("T")[0],
       endDate: timeframe.endDate.toISOString().split("T")[0],
       label: `${timeframe.startDate.toISOString().split("T")[0]} ~ ${timeframe.endDate.toISOString().split("T")[0]}`,
+      isActive: timeframe.isActive,
     }));
 
     return NextResponse.json({ timeframes: formattedTimeframes });

@@ -204,38 +204,37 @@ export const completeBPAQuestionAction = async (
 
       // Use transaction for atomic updates
       await prisma.$transaction(async (tx) => {
-        // Get the current timeframe and user's season assignment
-        const latestTimeframe = await tx.bPATimeframe.findFirst({
-          orderBy: { startDate: "desc" },
-        });
-
-        if (!latestTimeframe) {
-          console.warn("No BPA timeframe found, skipping score update");
-          return;
-        }
-
-        // Get user's level assignment for this timeframe to determine season
+        // Get user's ACTUAL level assignment first (not the latest timeframe!)
+        // This fixes the bug where users assigned to older timeframes couldn't score
         const levelAssignment = await tx.bPAUserLevelAssignment.findFirst({
           where: {
             userId: userId,
-            timeframeId: latestTimeframe.id,
             bpaLevelId: levelId,
+          },
+          orderBy: {
+            assignedAt: "desc", // Most recent assignment for this level
+          },
+          include: {
+            timeframe: true, // Include their actual assigned timeframe
           },
         });
 
-        if (!levelAssignment) {
+        if (!levelAssignment || !levelAssignment.timeframe) {
           console.warn(
-            "No BPA level assignment found for user, skipping score update",
+            `No BPA level assignment found for user ${userId} at level ${levelId}, skipping score update`,
           );
           return;
         }
+
+        // Use the user's actual assigned timeframe, not the latest one
+        const userTimeframe = levelAssignment.timeframe;
 
         // Update BPA score with timeframe and season
         const existingBPAScore = await tx.bPAScore.findFirst({
           where: {
             userId: userId,
             bpaLevelId: levelId,
-            timeframeId: latestTimeframe.id,
+            timeframeId: userTimeframe.id,
             season: levelAssignment.season,
           },
         });
@@ -254,7 +253,7 @@ export const completeBPAQuestionAction = async (
             data: {
               userId: userId,
               bpaLevelId: levelId,
-              timeframeId: latestTimeframe.id,
+              timeframeId: userTimeframe.id,
               season: levelAssignment.season,
               score: pointsAwarded,
             },

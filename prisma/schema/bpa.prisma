@@ -32,6 +32,7 @@ model BPATimeframe {
   year      Int
   startDate DateTime
   endDate   DateTime
+  isActive  Boolean  @default(false) // Mark as active timeframe for leaderboards
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -44,6 +45,7 @@ model BPATimeframe {
 
   @@unique([year, startDate])
   @@index([year])
+  @@index([isActive])
 }
 
 // BPA Semester - Individual season within a timeframe with date ranges

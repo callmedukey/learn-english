@@ -32,6 +32,7 @@ export default function UpdateUserForm({
   campuses,
   onUserUpdated,
 }: UpdateUserFormProps) {
+  const [nickname, setNickname] = useState<string>(user.nickname || "");
   const [date, setDate] = useState<Date | undefined>(
     user.birthday ? new Date(user.birthday) : undefined,
   );
@@ -72,6 +73,7 @@ export default function UpdateUserForm({
 
     const updateData = {
       userId: user.id,
+      nickname: nickname || undefined,
       ...(date && { birthday: date.toISOString() }),
       ...(selectedCountry && { countryId: selectedCountry }),
       campusId: selectedCampus || undefined,
@@ -97,6 +99,16 @@ export default function UpdateUserForm({
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
+      <InputWithLabel
+        label="Nickname"
+        name="nickname"
+        type="text"
+        value={nickname}
+        onChange={(e) => setNickname(e.target.value.toLowerCase())}
+        placeholder="Enter nickname (3-8 characters, lowercase and numbers)"
+        error={state.errors?.nickname?.[0]}
+      />
+
       <DayPicker
         label="Birthday"
         date={date}

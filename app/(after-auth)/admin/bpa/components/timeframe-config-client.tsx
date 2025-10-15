@@ -30,6 +30,7 @@ import {
   createTimeframeAction,
   deleteTimeframeAction,
   updateTimeframeAction,
+  setActiveTimeframeAction,
 } from "../actions/timeframe.actions";
 import { BPATimeframeWithSemesters } from "../queries/bpa-admin.query";
 
@@ -109,6 +110,18 @@ const TimeframeConfigClient: React.FC<TimeframeConfigClientProps> = ({
         toast.success("Timeframe deleted successfully");
       } else {
         toast.error(result.error || "Failed to delete timeframe");
+      }
+    });
+  };
+
+  const handleSetActive = async (timeframeId: string) => {
+    startTransition(async () => {
+      const result = await setActiveTimeframeAction(timeframeId);
+
+      if (result.success) {
+        toast.success("Active timeframe updated successfully");
+      } else {
+        toast.error(result.error || "Failed to set active timeframe");
       }
     });
   };
@@ -324,6 +337,7 @@ const TimeframeConfigClient: React.FC<TimeframeConfigClientProps> = ({
             <TableHeader>
               <TableRow>
                 <TableHead>Year</TableHead>
+                <TableHead>Status</TableHead>
                 <TableHead>Start Month</TableHead>
                 <TableHead>End Month</TableHead>
                 <TableHead>Duration</TableHead>
@@ -345,6 +359,17 @@ const TimeframeConfigClient: React.FC<TimeframeConfigClientProps> = ({
                       {timeframe.year}
                     </TableCell>
                     <TableCell>
+                      {timeframe.isActive ? (
+                        <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                          Active
+                        </span>
+                      ) : (
+                        <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
+                          Inactive
+                        </span>
+                      )}
+                    </TableCell>
+                    <TableCell>
                       {format(start, "MMM yyyy")}
                     </TableCell>
                     <TableCell>
@@ -360,6 +385,16 @@ const TimeframeConfigClient: React.FC<TimeframeConfigClientProps> = ({
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex items-center justify-end space-x-2">
+                        {!timeframe.isActive && (
+                          <Button
+                            variant="default"
+                            size="sm"
+                            onClick={() => handleSetActive(timeframe.id)}
+                            disabled={isPending}
+                          >
+                            Set Active
+                          </Button>
+                        )}
                         <Button
                           variant="outline"
                           size="sm"

@@ -3,12 +3,22 @@
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+import { nicknameRegex } from "@/lib/regex/auth.regex";
 import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
 import { prisma } from "@/prisma/prisma-client";
 import { ActionResponse } from "@/types/actions";
 
 const updateUserDetailsSchema = z.object({
   userId: z.string().min(1, "User ID is required"),
+  nickname: z
+    .string()
+    .min(3, { message: "Nickname must be at least 3 characters" })
+    .max(8, { message: "Nickname must be less than 8 characters" })
+    .regex(nicknameRegex, {
+      message: "Nickname must contain only lowercase letters and numbers",
+    })
+    .optional()
+    .or(z.literal("")),
   birthday: z.string().optional(),
   countryId: z.string().optional(),
   campusId: z.string().optional(),
@@ -54,9 +64,44 @@ export async function updateUserDetailsAction(
     await requireAdminAccess();
 
     const validatedData = updateUserDetailsSchema.parse(data);
-    const { userId, birthday, countryId, campusId, parentName, parentPhone, studentName, studentPhone } = validatedData;
+    const { userId, nickname, birthday, countryId, campusId, parentName, parentPhone, studentName, studentPhone } = validatedData;
+
+    // Check nickname uniqueness if provided and different from current
+    if (nickname && nickname.trim() !== "") {
+      const currentUser = await prisma.user.findUnique({
+        where: { id: userId },
+        select: { nickname: true },
+      });
+
+      // Only check uniqueness if nickname is being changed
+      if (currentUser && nickname !== currentUser.nickname) {
+        const existingUser = await prisma.user.findFirst({
+          where: {
+            nickname: {
+              equals: nickname,
+              mode: "insensitive",
+            },
+            id: { not: userId }, // Exclude current user
+          },
+        });
+
+        if (existingUser) {
+          return {
+            success: false,
+            message: "Nickname already exists",
+            errors: {
+              nickname: ["This nickname is already taken"],
+            },
+          };
+        }
+      }
+    }
 
     const updateData: any = {};
+
+    if (nickname !== undefined && nickname.trim() !== "") {
+      updateData.nickname = nickname;
+    }
 
     if (birthday) {
       updateData.birthday = new Date(birthday);

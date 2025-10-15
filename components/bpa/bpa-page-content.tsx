@@ -26,16 +26,23 @@ export function BPAPageContent({
   const [selectedTimeframe, setSelectedTimeframe] = useState<string | null>(null);
   const { data: timeframes } = useBPASemesters();
 
-  // Auto-select the latest timeframe when data loads
+  // Auto-select the ACTIVE timeframe when data loads
   useEffect(() => {
     if (timeframes && timeframes.length > 0 && !selectedTimeframe) {
-      // Get the most recent timeframe (assuming they're ordered or we can sort by date)
-      const latestTimeframe = timeframes.reduce((latest, current) => {
-        const latestDate = new Date(latest.startDate);
-        const currentDate = new Date(current.startDate);
-        return currentDate > latestDate ? current : latest;
-      });
-      setSelectedTimeframe(latestTimeframe.id);
+      // Find the active timeframe
+      const activeTimeframe = timeframes.find((tf) => tf.isActive);
+
+      if (activeTimeframe) {
+        setSelectedTimeframe(activeTimeframe.id);
+      } else {
+        // Fallback to latest if none are marked active
+        const latestTimeframe = timeframes.reduce((latest, current) => {
+          const latestDate = new Date(latest.startDate);
+          const currentDate = new Date(current.startDate);
+          return currentDate > latestDate ? current : latest;
+        });
+        setSelectedTimeframe(latestTimeframe.id);
+      }
     }
   }, [timeframes, selectedTimeframe]);
 
