@@ -29,7 +29,8 @@
     "setup-test-accounts": "tsx scripts/setup-test-accounts-maintenance.ts",
     "grant-100y-sub": "tsx scripts/grant-100-year-subscription.ts",
     "backfill-iscorrect": "tsx scripts/backfill-iscorrect.ts",
-    "backfill-score-transactions": "tsx prisma/migrations/backfill-score-transactions.ts"
+    "backfill-score-transactions": "tsx prisma/migrations/backfill-score-transactions.ts",
+    "backfill-monthly-bpa": "tsx prisma/migrations/backfill-monthly-bpa-scores.ts"
   },
   "prisma": {
     "schema": "./prisma/schema",
