@@ -63,7 +63,7 @@ const DeleteKeywordDialog: React.FC<DeleteKeywordDialogProps> = ({
           </AlertDialogDescription>
         </AlertDialogHeader>
         <div className="py-4">
-          <Label htmlFor="confirm-delete" className="text-sm font-medium">
+          <Label htmlFor="confirm-delete" className="text-base font-medium">
             Type &quot;delete&quot; to confirm
           </Label>
           <Input

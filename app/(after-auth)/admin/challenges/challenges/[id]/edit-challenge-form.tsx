@@ -94,8 +94,8 @@ export default function EditChallengeForm({
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
         {/* Challenge Period (Read-only) */}
         <div className="space-y-2">
-          <p className="text-sm font-medium">Challenge Period</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base font-medium">Challenge Period</p>
+          <p className="text-base text-muted-foreground">
             {format(
               toZonedTime(challenge.startDate, APP_TIMEZONE),
               "yyyy-MM-dd HH:mm"
@@ -116,7 +116,7 @@ export default function EditChallengeForm({
           render={({ field }) => (
             <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
               <div className="space-y-0.5">
-                <FormLabel className="text-base">Active Status</FormLabel>
+                <FormLabel className="text-lg">Active Status</FormLabel>
                 <FormDescription>
                   Deactivate to stop accepting new scores for this challenge
                 </FormDescription>
@@ -139,7 +139,7 @@ export default function EditChallengeForm({
             render={({ field }) => (
               <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
                 <div className="space-y-0.5">
-                  <FormLabel className="text-base">Auto-Activate</FormLabel>
+                  <FormLabel className="text-lg">Auto-Activate</FormLabel>
                   <FormDescription>
                     Automatically activate when {challenge.year}년 {challenge.month}월 begins
                   </FormDescription>
@@ -180,7 +180,7 @@ export default function EditChallengeForm({
                         field.onChange(updated);
                       }}
                     />
-                    <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                    <label className="text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                       {item.title || item.name}
                     </label>
                   </div>
@@ -193,7 +193,7 @@ export default function EditChallengeForm({
 
         {/* Warning if medals already awarded */}
         {challenge._count.medals > 0 && (
-          <div className="rounded-lg bg-yellow-50 p-4 text-sm text-yellow-800">
+          <div className="rounded-lg bg-yellow-50 p-4 text-base text-yellow-800">
             <p className="font-medium">⚠️ Warning</p>
             <p>
               This challenge has already awarded {challenge._count.medals}{" "}

@@ -16,8 +16,8 @@ const RCTableWrapper = async () => {
   return (
     <div className="space-y-4">
       <div className="flex items-center justify-between">
-        <h2 className="text-xl font-semibold">Reading Comprehension Levels</h2>
-        <span className="text-sm text-gray-500">
+        <h2 className="text-2xl font-semibold">Reading Comprehension Levels</h2>
+        <span className="text-base text-gray-500">
           Total: {rcLevels.length} level{rcLevels.length !== 1 ? "s" : ""}
         </span>
       </div>

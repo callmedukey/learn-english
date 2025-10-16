@@ -40,12 +40,21 @@ export default function CampusLeaderboardClient({
   const searchParams = useSearchParams();
   const [isPending, startTransition] = useTransition();
 
+  // Find timeframe and semester that match today's date
+  const today = new Date();
+  const activeTimeframe = timeframes.find(tf =>
+    new Date(tf.startDate) <= today && new Date(tf.endDate) >= today
+  );
+  const activeSemester = activeTimeframe?.semesters.find(sem =>
+    new Date(sem.startDate) <= today && new Date(sem.endDate) >= today
+  );
+
   // State for filters (with campus prefix to avoid conflicts with user leaderboard)
   const [selectedTimeframeId, setSelectedTimeframeId] = useState<string | null>(
-    searchParams.get("timeframeId") || (timeframes.length > 0 ? timeframes[0].id : null)
+    searchParams.get("timeframeId") || activeTimeframe?.id || (timeframes.length > 0 ? timeframes[0].id : null)
   );
   const [selectedSemesterId, setSelectedSemesterId] = useState<string | null>(
-    searchParams.get("semesterId") || null
+    searchParams.get("semesterId") || activeSemester?.id || null
   );
   const [selectedCampusId, setSelectedCampusId] = useState<string | null>(
     searchParams.get("campusId") || null
@@ -55,6 +64,9 @@ export default function CampusLeaderboardClient({
   );
   const [selectedUnitId, setSelectedUnitId] = useState<string | null>(
     searchParams.get("unitId") || null
+  );
+  const [selectedGrade, setSelectedGrade] = useState<string | null>(
+    searchParams.get("grade") || null
   );
   const [availableUnits, setAvailableUnits] = useState<
     { id: string; name: string; orderNumber: number }[]
@@ -126,6 +138,7 @@ export default function CampusLeaderboardClient({
       if (selectedCampusId) queryParams.set("campusId", selectedCampusId);
       if (selectedBPALevelId) queryParams.set("bpaLevelId", selectedBPALevelId);
       if (selectedUnitId) queryParams.set("unitId", selectedUnitId);
+      if (selectedGrade) queryParams.set("grade", selectedGrade);
       queryParams.set("campusPage", String(page));
       queryParams.set("campusPageSize", String(pageSize));
 
@@ -145,6 +158,7 @@ export default function CampusLeaderboardClient({
     selectedCampusId,
     selectedBPALevelId,
     selectedUnitId,
+    selectedGrade,
     page,
     pageSize,
   ]);
@@ -181,6 +195,12 @@ export default function CampusLeaderboardClient({
     updateURL({ unitId, campusPage: 1 });
   };
 
+  const handleGradeChange = (grade: string | null) => {
+    setSelectedGrade(grade);
+    setPage(1);
+    updateURL({ grade, campusPage: 1 });
+  };
+
   const handlePageChange = (newPage: number) => {
     setPage(newPage);
     updateURL({ campusPage: newPage });
@@ -201,9 +221,9 @@ export default function CampusLeaderboardClient({
     <div className="space-y-6">
       {/* Header */}
       <div>
-        <h2 className="text-xl font-semibold text-gray-900">Campus Rankings</h2>
-        <p className="text-sm text-gray-600">
-          Showing {data.total} campuses
+        <h2 className="text-2xl font-semibold text-gray-900">Campus Student Rankings</h2>
+        <p className="text-base text-gray-600">
+          Showing {data.total} students
           {selectedSemester && <span> for {selectedSemester.season} semester</span>}
           {selectedCampusId && (
             <span>
@@ -215,6 +235,12 @@ export default function CampusLeaderboardClient({
             <span>
               {" "}
               - {bpaLevels.find((l) => l.id === selectedBPALevelId)?.name}
+            </span>
+          )}
+          {selectedGrade && (
+            <span>
+              {" "}
+              - {selectedGrade}
             </span>
           )}
         </p>
@@ -230,7 +256,7 @@ export default function CampusLeaderboardClient({
       />
 
       {/* Filters */}
-      {selectedSemesterId && (
+      {(selectedSemesterId || selectedTimeframeId) && (
         <div className="flex flex-wrap items-center gap-3 rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
           <CampusFilter
             campuses={campuses}
@@ -239,14 +265,14 @@ export default function CampusLeaderboardClient({
           />
 
           <div className="flex items-center gap-2">
-            <label htmlFor="bpa-level-select" className="text-sm font-medium">
+            <label htmlFor="bpa-level-select" className="text-base font-medium">
               BPA Level:
             </label>
             <select
               id="bpa-level-select"
               value={selectedBPALevelId || ""}
               onChange={(e) => handleBPALevelChange(e.target.value || null)}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm"
+              className="rounded-md border border-gray-300 px-3 py-2 text-base"
             >
               <option value="">All Levels</option>
               {bpaLevels.map((level) => (
@@ -258,7 +284,7 @@ export default function CampusLeaderboardClient({
           </div>
 
           <div className="flex items-center gap-2">
-            <label htmlFor="unit-select" className="text-sm font-medium">
+            <label htmlFor="unit-select" className="text-base font-medium">
               Unit:
             </label>
             <select
@@ -266,7 +292,7 @@ export default function CampusLeaderboardClient({
               value={selectedUnitId || ""}
               onChange={(e) => handleUnitChange(e.target.value || null)}
               disabled={!selectedBPALevelId || availableUnits.length === 0}
-              className="rounded-md border border-gray-300 px-3 py-2 text-sm disabled:opacity-50"
+              className="rounded-md border border-gray-300 px-3 py-2 text-base disabled:opacity-50"
             >
               <option value="">All Units</option>
               {availableUnits.map((unit) => (
@@ -274,6 +300,27 @@ export default function CampusLeaderboardClient({
                   {unit.name}
                 </option>
               ))}
+            </select>
+          </div>
+
+          <div className="flex items-center gap-2">
+            <label htmlFor="grade-select" className="text-base font-medium">
+              Grade:
+            </label>
+            <select
+              id="grade-select"
+              value={selectedGrade || ""}
+              onChange={(e) => handleGradeChange(e.target.value || null)}
+              className="rounded-md border border-gray-300 px-3 py-2 text-base"
+            >
+              <option value="">All Grades</option>
+              <option value="Kinder">Kinder</option>
+              {Array.from({ length: 12 }, (_, i) => i + 1).map((grade) => (
+                <option key={grade} value={`Grade ${grade}`}>
+                  Grade {grade}
+                </option>
+              ))}
+              <option value="Adult">Adult</option>
             </select>
           </div>
         </div>
@@ -287,9 +334,9 @@ export default function CampusLeaderboardClient({
       )}
 
       {/* Results Table */}
-      {selectedSemesterId ? (
+      {selectedSemesterId || selectedTimeframeId ? (
         <CampusLeaderboardTable
-          campuses={data.campuses}
+          students={data.students}
           currentPage={page}
           pageSize={pageSize}
           total={data.total}
@@ -299,7 +346,7 @@ export default function CampusLeaderboardClient({
         />
       ) : (
         <div className="rounded-lg border border-gray-200 bg-gray-50 p-8 text-center text-gray-600">
-          Please select a semester to view campus rankings
+          Please select a timeframe to view student rankings
         </div>
       )}
     </div>

@@ -73,7 +73,7 @@ export default function PaymentFiltersComponent({
   return (
     <div className="space-y-4 rounded-lg bg-gray-50 p-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Filters</h3>
+        <h3 className="text-xl font-semibold">Filters</h3>
         {hasActiveFilters && (
           <Button
             variant="outline"
@@ -90,7 +90,7 @@ export default function PaymentFiltersComponent({
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6">
         {/* Search */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Search</label>
+          <label className="text-base font-medium">Search</label>
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
@@ -110,7 +110,7 @@ export default function PaymentFiltersComponent({
 
         {/* Status Filter */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Status</label>
+          <label className="text-base font-medium">Status</label>
           <Select
             value={filters.status || "ALL"}
             onValueChange={(value) =>
@@ -133,7 +133,7 @@ export default function PaymentFiltersComponent({
 
         {/* Method Filter */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Payment Method</label>
+          <label className="text-base font-medium">Payment Method</label>
           <Input
             placeholder="Enter payment method..."
             value={filters.method || ""}
@@ -145,7 +145,7 @@ export default function PaymentFiltersComponent({
 
         {/* Plan Filter */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Plan</label>
+          <label className="text-base font-medium">Plan</label>
           <Select
             value={filters.planId || "ALL"}
             onValueChange={(value) =>
@@ -168,7 +168,7 @@ export default function PaymentFiltersComponent({
 
         {/* Date From */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">From Date</label>
+          <label className="text-base font-medium">From Date</label>
           <Popover open={dateFromOpen} onOpenChange={setDateFromOpen}>
             <PopoverTrigger asChild>
               <Button
@@ -199,7 +199,7 @@ export default function PaymentFiltersComponent({
 
         {/* Date To */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">To Date</label>
+          <label className="text-base font-medium">To Date</label>
           <Popover open={dateToOpen} onOpenChange={setDateToOpen}>
             <PopoverTrigger asChild>
               <Button

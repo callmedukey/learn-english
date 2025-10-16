@@ -104,7 +104,7 @@ function MedalImageCard({ level }: { level: MedalImageLevel }) {
                   ) : (
                     <div className="text-center text-muted-foreground">
                       <Upload className="mx-auto mb-2 h-8 w-8" />
-                      <p className="text-xs">No image</p>
+                      <p className="text-sm">No image</p>
                     </div>
                   )}
                 </div>

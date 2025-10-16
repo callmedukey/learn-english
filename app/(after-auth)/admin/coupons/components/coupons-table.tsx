@@ -110,26 +110,26 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
         <table className="w-full">
           <thead className="border-b bg-gray-50">
             <tr>
-              <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-sm font-medium tracking-wider text-gray-500 uppercase">
+                Actions
+              </th>
+              <th className="px-6 py-3 text-left text-sm font-medium tracking-wider text-gray-500 uppercase">
                 Code
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-sm font-medium tracking-wider text-gray-500 uppercase">
                 Discount
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-sm font-medium tracking-wider text-gray-500 uppercase">
                 Recurring
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-sm font-medium tracking-wider text-gray-500 uppercase">
                 Status
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-sm font-medium tracking-wider text-gray-500 uppercase">
                 Usage
               </th>
-              <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+              <th className="px-6 py-3 text-left text-sm font-medium tracking-wider text-gray-500 uppercase">
                 Expires
-              </th>
-              <th className="px-6 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                Actions
               </th>
             </tr>
           </thead>
@@ -137,83 +137,6 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
             {coupons.map((coupon) => {
               return (
                 <tr key={coupon.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm font-medium whitespace-nowrap text-gray-900">
-                    <code className="rounded bg-gray-100 px-2 py-1 font-mono text-sm">
-                      {coupon.code}
-                    </code>
-                  </td>
-                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-                    <div className="font-medium">{formatDiscount(coupon)}</div>
-                  </td>
-                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-                    <div className="flex flex-col">
-                      <span className="text-xs">{formatRecurringInfo(coupon)}</span>
-                      {coupon._count.couponApplications > 0 && (
-                        <Badge className="mt-1 bg-purple-100 text-xs text-purple-800">
-                          {coupon._count.couponApplications} active
-                        </Badge>
-                      )}
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap">
-                    <div className="flex items-center space-x-2">
-                      <Switch
-                        checked={coupon.active}
-                        onCheckedChange={(checked) =>
-                          handleToggleStatus(coupon.id, checked)
-                        }
-                        disabled={isPending}
-                      />
-                      <div className="flex flex-col">
-                        <Badge
-                          className={
-                            coupon.active
-                              ? "bg-green-100 text-green-800"
-                              : "bg-gray-100 text-gray-800"
-                          }
-                        >
-                          {coupon.active ? "Active" : "Inactive"}
-                        </Badge>
-                        {coupon.oneTimeUse && (
-                          <Badge className="mt-1 bg-amber-100 text-xs text-amber-800">
-                            One-time use
-                          </Badge>
-                        )}
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm whitespace-nowrap text-gray-900">
-                    <div>
-                      <span className="font-medium">
-                        {coupon._count.payments}
-                      </span>
-                      <span className="ml-1 text-gray-500">
-                        {coupon._count.payments === 1 ? "use" : "uses"}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4 text-sm whitespace-nowrap">
-                    {coupon.deadline ? (
-                      <div>
-                        <div
-                          className={
-                            new Date(coupon.deadline) < new Date()
-                              ? "text-red-600 font-medium"
-                              : "text-gray-900"
-                          }
-                        >
-                          {format(coupon.deadline, "MMM dd, yyyy")}
-                        </div>
-                        {new Date(coupon.deadline) < new Date() && (
-                          <Badge className="mt-1 bg-red-100 text-xs text-red-800">
-                            Expired
-                          </Badge>
-                        )}
-                      </div>
-                    ) : (
-                      <span className="text-gray-400">No expiry</span>
-                    )}
-                  </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <div className="flex items-center space-x-2">
                       <EditCouponDialog
@@ -261,6 +184,83 @@ export default function CouponsTable({ coupons }: CouponsTableProps) {
                         </AlertDialogContent>
                       </AlertDialog>
                     </div>
+                  </td>
+                  <td className="px-6 py-4 text-base font-medium whitespace-nowrap text-gray-900">
+                    <code className="rounded bg-gray-100 px-2 py-1 font-mono text-base">
+                      {coupon.code}
+                    </code>
+                  </td>
+                  <td className="px-6 py-4 text-base whitespace-nowrap text-gray-900">
+                    <div className="font-medium">{formatDiscount(coupon)}</div>
+                  </td>
+                  <td className="px-6 py-4 text-base whitespace-nowrap text-gray-900">
+                    <div className="flex flex-col">
+                      <span className="text-sm">{formatRecurringInfo(coupon)}</span>
+                      {coupon._count.couponApplications > 0 && (
+                        <Badge className="mt-1 bg-purple-100 text-sm text-purple-800">
+                          {coupon._count.couponApplications} active
+                        </Badge>
+                      )}
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <div className="flex items-center space-x-2">
+                      <Switch
+                        checked={coupon.active}
+                        onCheckedChange={(checked) =>
+                          handleToggleStatus(coupon.id, checked)
+                        }
+                        disabled={isPending}
+                      />
+                      <div className="flex flex-col">
+                        <Badge
+                          className={
+                            coupon.active
+                              ? "bg-green-100 text-green-800"
+                              : "bg-gray-100 text-gray-800"
+                          }
+                        >
+                          {coupon.active ? "Active" : "Inactive"}
+                        </Badge>
+                        {coupon.oneTimeUse && (
+                          <Badge className="mt-1 bg-amber-100 text-sm text-amber-800">
+                            One-time use
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-base whitespace-nowrap text-gray-900">
+                    <div>
+                      <span className="font-medium">
+                        {coupon._count.payments}
+                      </span>
+                      <span className="ml-1 text-gray-500">
+                        {coupon._count.payments === 1 ? "use" : "uses"}
+                      </span>
+                    </div>
+                  </td>
+                  <td className="px-6 py-4 text-base whitespace-nowrap">
+                    {coupon.deadline ? (
+                      <div>
+                        <div
+                          className={
+                            new Date(coupon.deadline) < new Date()
+                              ? "text-red-600 font-medium"
+                              : "text-gray-900"
+                          }
+                        >
+                          {format(coupon.deadline, "MMM dd, yyyy")}
+                        </div>
+                        {new Date(coupon.deadline) < new Date() && (
+                          <Badge className="mt-1 bg-red-100 text-sm text-red-800">
+                            Expired
+                          </Badge>
+                        )}
+                      </div>
+                    ) : (
+                      <span className="text-gray-400">No expiry</span>
+                    )}
                   </td>
                 </tr>
               );

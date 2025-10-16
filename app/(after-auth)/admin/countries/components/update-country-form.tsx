@@ -114,7 +114,7 @@ const UpdateCountryForm: React.FC<UpdateCountryFormProps> = ({
         />
         {iconPreview && (
           <div className="mt-2">
-            <p className="text-sm text-gray-500">Current/New Icon Preview:</p>
+            <p className="text-base text-gray-500">Current/New Icon Preview:</p>
             <Image
               src={iconPreview}
               alt="Icon Preview"

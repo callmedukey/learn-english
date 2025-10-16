@@ -1,5 +1,7 @@
 import React, { Suspense } from "react";
 
+import { auth } from "@/auth";
+
 import CampusLeaderboardClient from "./components/campus-leaderboard-client";
 import LeaderboardClient from "./components/leaderboard-client";
 import LeaderboardStats from "./components/leaderboard-stats";
@@ -52,6 +54,10 @@ interface PageProps {
 
 async function LeaderboardData({ searchParams }: PageProps) {
   const params = await searchParams;
+
+  // Get current user's session to check role
+  const session = await auth();
+  const isAdminOrSubAdmin = session?.user?.role === "ADMIN" || session?.user?.role === "SUB_ADMIN";
 
   // Parse filters from search params
   const filters: LeaderboardFilters = {
@@ -129,18 +135,22 @@ async function LeaderboardData({ searchParams }: PageProps) {
 
   return (
     <div className="space-y-12">
+      {isAdminOrSubAdmin && (
+        <div>
+          <h2 className="mb-4 text-2xl font-bold text-gray-900">User Stats</h2>
+          <LeaderboardStats totalUsers={allTimeData.total} stats={allTimeData.stats} />
+        </div>
+      )}
+
       <div>
         <h2 className="mb-4 text-2xl font-bold text-gray-900">User Leaderboard</h2>
-        <div className="space-y-8">
-          <LeaderboardStats totalUsers={allTimeData.total} stats={allTimeData.stats} />
-          <LeaderboardClient
-            initialAllTimeData={allTimeData}
-            initialMonthlyData={monthlyData}
-            initialGradeData={gradeData}
-            countries={countries}
-            campuses={campuses}
-          />
-        </div>
+        <LeaderboardClient
+          initialAllTimeData={allTimeData}
+          initialMonthlyData={monthlyData}
+          initialGradeData={gradeData}
+          countries={countries}
+          campuses={campuses}
+        />
       </div>
 
       <div className="border-t border-gray-300 pt-8">

@@ -37,7 +37,7 @@ export default function GradeFilter({
 }: GradeFilterProps) {
   return (
     <div className="flex items-center gap-2">
-      <label htmlFor="grade-filter" className="text-sm font-medium">
+      <label htmlFor="grade-filter" className="text-base font-medium">
         Grade:
       </label>
       <Select

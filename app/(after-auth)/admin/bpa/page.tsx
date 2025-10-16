@@ -21,7 +21,7 @@ const BPAAdminPage = async () => {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-2xl font-bold">BPA Timeframes</h2>
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-gray-600">
               Configure timeframes for BPA challenges (each timeframe spans all 4
               seasons)
             </p>
@@ -41,7 +41,7 @@ const BPAAdminPage = async () => {
         <div className="flex items-center justify-between">
           <div>
             <h1 className="text-2xl font-bold">BPA Levels</h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-gray-600">
               Manage BPA levels and their novels
             </p>
           </div>

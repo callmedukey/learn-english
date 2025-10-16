@@ -146,7 +146,7 @@ const TimeframeConfigClient: React.FC<TimeframeConfigClientProps> = ({
     <div className="space-y-4">
       <div className="flex items-center justify-between">
         <div>
-          <p className="text-sm text-gray-600">
+          <p className="text-base text-gray-600">
             {timeframes.length} timeframe{timeframes.length !== 1 ? "s" : ""}{" "}
             configured
           </p>
@@ -184,7 +184,7 @@ const TimeframeConfigClient: React.FC<TimeframeConfigClientProps> = ({
                   required
                   placeholder="e.g., 2025"
                 />
-                <p className="text-xs text-gray-500">
+                <p className="text-sm text-gray-500">
                   The year this timeframe represents
                 </p>
               </div>
@@ -202,7 +202,7 @@ const TimeframeConfigClient: React.FC<TimeframeConfigClientProps> = ({
                   }
                   required
                 />
-                <p className="text-xs text-gray-500">
+                <p className="text-sm text-gray-500">
                   When this timeframe begins (first day of the month)
                 </p>
               </div>
@@ -220,14 +220,14 @@ const TimeframeConfigClient: React.FC<TimeframeConfigClientProps> = ({
                   }
                   required
                 />
-                <p className="text-xs text-gray-500">
+                <p className="text-sm text-gray-500">
                   When this timeframe ends (last day of the month)
                 </p>
               </div>
 
               {/* Semester Date Ranges */}
               <div className="space-y-4 border-t pt-4">
-                <h3 className="text-sm font-medium">Semester Date Ranges</h3>
+                <h3 className="text-base font-medium">Semester Date Ranges</h3>
 
                 {/* Spring */}
                 <div className="grid grid-cols-2 gap-2">
@@ -327,7 +327,7 @@ const TimeframeConfigClient: React.FC<TimeframeConfigClientProps> = ({
 
       {timeframes.length === 0 ? (
         <div className="rounded-lg border border-dashed p-8 text-center">
-          <p className="text-sm text-gray-500">
+          <p className="text-base text-gray-500">
             No timeframes configured yet. Create one to get started.
           </p>
         </div>
@@ -360,11 +360,11 @@ const TimeframeConfigClient: React.FC<TimeframeConfigClientProps> = ({
                     </TableCell>
                     <TableCell>
                       {timeframe.isActive ? (
-                        <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                        <span className="rounded-full bg-green-100 px-2 py-1 text-sm font-medium text-green-800">
                           Active
                         </span>
                       ) : (
-                        <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
+                        <span className="rounded-full bg-gray-100 px-2 py-1 text-sm font-medium text-gray-600">
                           Inactive
                         </span>
                       )}
@@ -376,11 +376,11 @@ const TimeframeConfigClient: React.FC<TimeframeConfigClientProps> = ({
                       {format(end, "MMM yyyy")}
                     </TableCell>
                     <TableCell>
-                      <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
+                      <span className="rounded-full bg-blue-100 px-2 py-1 text-sm font-medium text-blue-800">
                         {durationDays} days
                       </span>
                     </TableCell>
-                    <TableCell className="text-sm text-gray-500">
+                    <TableCell className="text-base text-gray-500">
                       {format(new Date(timeframe.createdAt), "yyyy/MM/dd")}
                     </TableCell>
                     <TableCell className="text-right">

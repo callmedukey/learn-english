@@ -1,7 +1,10 @@
 "use client";
 
-import { Crown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Crown } from "lucide-react";
+import { useEffect, useState } from "react";
 
+import { UserStatsPopover } from "@/components/leaderboard/user-stats-popover";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -26,8 +29,45 @@ export function BPASemesterLeaderboard({
   defaultLevel,
   bpaLevels,
 }: BPASemesterLeaderboardProps) {
-  // Determine the initial tab value: user's assigned level or default to first level
-  const initialLevel = defaultLevel || (bpaLevels.length > 0 ? bpaLevels[0].id : "");
+  // Find the initial level index
+  const initialLevelIndex = defaultLevel
+    ? bpaLevels.findIndex((level) => level.id === defaultLevel)
+    : 0;
+  const validInitialIndex = initialLevelIndex >= 0 ? initialLevelIndex : 0;
+
+  // State to track current level
+  const [currentLevelIndex, setCurrentLevelIndex] = useState(validInitialIndex);
+  const currentLevel = bpaLevels[currentLevelIndex];
+
+  // Reset to defaultLevel when timeframeId or defaultLevel changes
+  useEffect(() => {
+    if (defaultLevel) {
+      const newIndex = bpaLevels.findIndex((level) => level.id === defaultLevel);
+      if (newIndex >= 0) {
+        setCurrentLevelIndex(newIndex);
+      }
+    }
+  }, [defaultLevel, timeframeId, bpaLevels]);
+
+  // Navigation handlers
+  const handlePrevLevel = () => {
+    if (currentLevelIndex > 0) {
+      setCurrentLevelIndex(currentLevelIndex - 1);
+    }
+  };
+
+  const handleNextLevel = () => {
+    if (currentLevelIndex < bpaLevels.length - 1) {
+      setCurrentLevelIndex(currentLevelIndex + 1);
+    }
+  };
+
+  const handleTabChange = (value: string) => {
+    const index = bpaLevels.findIndex((level) => level.id === value);
+    if (index >= 0) {
+      setCurrentLevelIndex(index);
+    }
+  };
 
   return (
     <Card className="h-full gap-0 bg-white py-0 shadow-lg">
@@ -37,9 +77,35 @@ export function BPASemesterLeaderboard({
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
-        <Tabs defaultValue={initialLevel} className="w-full">
+        {/* Mobile Navigation - visible on mobile/tablet */}
+        <div className="flex items-center justify-between border-b bg-gray-200 px-4 py-3 md:hidden">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handlePrevLevel}
+            disabled={currentLevelIndex === 0}
+            className="h-8 w-8 p-0 disabled:opacity-30"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <div className="text-center font-semibold text-gray-900">
+            {currentLevel?.name || ""}
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleNextLevel}
+            disabled={currentLevelIndex === bpaLevels.length - 1}
+            className="h-8 w-8 p-0 disabled:opacity-30"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
+        </div>
+
+        <Tabs value={currentLevel?.id || ""} onValueChange={handleTabChange} className="w-full">
+          {/* Desktop Tabs - hidden on mobile/tablet */}
           <TabsList
-            className="grid w-full rounded-none bg-gray-200"
+            className="hidden w-full rounded-none bg-gray-200 md:grid"
             style={{ gridTemplateColumns: `repeat(${bpaLevels.length}, minmax(0, 1fr))` }}
           >
             {bpaLevels.map((level) => (
@@ -127,46 +193,54 @@ function RankingDisplay({ timeframeId, season, levelId }: RankingDisplayProps) {
                 ) : (
                   <>
                     {rankings.map((item) => (
-                      <div
-                        key={item.id}
-                        className="flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-50"
-                      >
-                        {/* Rank */}
-                        <div className="flex w-6 items-center justify-center">
-                          <span className="font-bold text-gray-600">
-                            {item.rank}
-                          </span>
-                        </div>
-
-                        {/* User Info */}
-                        <div className="flex min-w-0 flex-1 items-center gap-2">
-                          {/* Nickname with Crown */}
-                          <div className="flex min-w-0 items-center gap-1">
-                            <span className="truncate font-medium text-gray-900">
-                              {item.nickname}
+                      <UserStatsPopover key={item.id} userId={item.id}>
+                        <div
+                          className="flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-50"
+                        >
+                          {/* Rank */}
+                          <div className="flex w-6 items-center justify-center">
+                            <span className="font-bold text-gray-600">
+                              {item.rank}
                             </span>
-                            {item.rank === 1 && (
-                              <Crown className="h-4 w-4 flex-shrink-0 fill-amber-400 text-amber-400" />
-                            )}
-                            {item.rank === 2 && (
-                              <Crown className="h-4 w-4 flex-shrink-0 fill-gray-400 text-gray-400" />
-                            )}
-                            {item.rank === 3 && (
-                              <Crown className="h-4 w-4 flex-shrink-0 fill-amber-700 text-amber-700" />
-                            )}
+                          </div>
+
+                          {/* User Info */}
+                          <div className="flex min-w-0 flex-1 items-center gap-2">
+                            {/* Nickname with Crown and Campus */}
+                            <div className="flex min-w-0 flex-col gap-0.5">
+                              <div className="flex items-center gap-1">
+                                <span className={`truncate font-medium ${item.campusId ? 'text-primary italic' : 'text-gray-900'}`}>
+                                  {item.nickname}
+                                </span>
+                                {item.rank === 1 && (
+                                  <Crown className="h-4 w-4 flex-shrink-0 fill-amber-400 text-amber-400" />
+                                )}
+                                {item.rank === 2 && (
+                                  <Crown className="h-4 w-4 flex-shrink-0 fill-gray-400 text-gray-400" />
+                                )}
+                                {item.rank === 3 && (
+                                  <Crown className="h-4 w-4 flex-shrink-0 fill-amber-700 text-amber-700" />
+                                )}
+                              </div>
+                              {item.campusName && (
+                                <span className="truncate text-xs text-primary">
+                                  {item.campusName}
+                                </span>
+                              )}
+                            </div>
+                          </div>
+
+                          {/* Grade */}
+                          <div className="w-12 whitespace-nowrap text-center font-semibold text-gray-700">
+                            {item.grade}
+                          </div>
+
+                          {/* Score */}
+                          <div className="w-16 text-right font-bold text-amber-700">
+                            {item.score.toLocaleString()}
                           </div>
                         </div>
-
-                        {/* Grade */}
-                        <div className="w-12 whitespace-nowrap text-center font-semibold text-gray-700">
-                          {item.grade}
-                        </div>
-
-                        {/* Score */}
-                        <div className="w-16 text-right font-bold text-amber-700">
-                          {item.score.toLocaleString()}
-                        </div>
-                      </div>
+                      </UserStatsPopover>
                     ))}
 
                     {/* Fill empty slots only up to 5 if less than 5 rankings */}

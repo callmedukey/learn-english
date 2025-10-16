@@ -84,20 +84,20 @@ export default function BPALevelDefaultsFormClient({
         <table className="w-full border-collapse">
           <thead>
             <tr className="border-b border-gray-200">
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Level</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Description</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Stars</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Default Timer (seconds)</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Default Score</th>
-              <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">Actions</th>
+              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">Level</th>
+              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">Description</th>
+              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">Stars</th>
+              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">Default Timer (seconds)</th>
+              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">Default Score</th>
+              <th className="px-4 py-2 text-left text-base font-medium text-gray-700">Actions</th>
             </tr>
           </thead>
           <tbody>
             {bpaLevels.map((level) => (
               <tr key={level.id} className="border-b border-gray-100 hover:bg-gray-50">
-                <td className="px-4 py-3 text-sm font-medium text-gray-900">{level.name}</td>
-                <td className="px-4 py-3 text-sm text-gray-600">{level.description || "-"}</td>
-                <td className="px-4 py-3 text-sm text-gray-600">{level.stars} ⭐</td>
+                <td className="px-4 py-3 text-base font-medium text-gray-900">{level.name}</td>
+                <td className="px-4 py-3 text-base text-gray-600">{level.description || "-"}</td>
+                <td className="px-4 py-3 text-base text-gray-600">{level.stars} ⭐</td>
                 <td className="px-4 py-3">
                   {editingLevelId === level.id ? (
                     <form action={handleSubmit} className="flex items-center gap-2">
@@ -108,12 +108,12 @@ export default function BPALevelDefaultsFormClient({
                         min="0"
                         value={levelDefaults[level.id]?.timer || 30}
                         onChange={(e) => handleInputChange(level.id, 'timer', e.target.value)}
-                        className="w-20 rounded border border-gray-300 px-2 py-1 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                        className="w-20 rounded border border-gray-300 px-2 py-1 text-base focus:ring-2 focus:ring-amber-500 focus:outline-none"
                         disabled={isPending}
                       />
                     </form>
                   ) : (
-                    <span className="text-sm text-gray-700">
+                    <span className="text-base text-gray-700">
                       {levelDefaults[level.id]?.timer || 30}s
                     </span>
                   )}
@@ -127,12 +127,12 @@ export default function BPALevelDefaultsFormClient({
                         min="0"
                         value={levelDefaults[level.id]?.score || 100}
                         onChange={(e) => handleInputChange(level.id, 'score', e.target.value)}
-                        className="w-20 rounded border border-gray-300 px-2 py-1 text-sm focus:ring-2 focus:ring-amber-500 focus:outline-none"
+                        className="w-20 rounded border border-gray-300 px-2 py-1 text-base focus:ring-2 focus:ring-amber-500 focus:outline-none"
                         disabled={isPending}
                       />
                     </form>
                   ) : (
-                    <span className="text-sm text-gray-700">
+                    <span className="text-base text-gray-700">
                       {levelDefaults[level.id]?.score || 100} pts
                     </span>
                   )}
@@ -147,7 +147,7 @@ export default function BPALevelDefaultsFormClient({
                         <button
                           type="submit"
                           disabled={isPending}
-                          className="rounded bg-green-500 px-3 py-1 text-xs text-white hover:bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-1 focus:outline-none disabled:opacity-50"
+                          className="rounded bg-green-500 px-3 py-1 text-sm text-white hover:bg-green-600 focus:ring-2 focus:ring-green-500 focus:ring-offset-1 focus:outline-none disabled:opacity-50"
                         >
                           {isPending ? "Saving..." : "Save"}
                         </button>
@@ -155,7 +155,7 @@ export default function BPALevelDefaultsFormClient({
                       <button
                         onClick={handleCancel}
                         disabled={isPending}
-                        className="rounded bg-gray-500 px-3 py-1 text-xs text-white hover:bg-gray-600 focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 focus:outline-none disabled:opacity-50"
+                        className="rounded bg-gray-500 px-3 py-1 text-sm text-white hover:bg-gray-600 focus:ring-2 focus:ring-gray-500 focus:ring-offset-1 focus:outline-none disabled:opacity-50"
                       >
                         Cancel
                       </button>
@@ -163,7 +163,7 @@ export default function BPALevelDefaultsFormClient({
                   ) : (
                     <button
                       onClick={() => handleEdit(level.id)}
-                      className="rounded bg-amber-500 px-3 py-1 text-xs text-white hover:bg-amber-600 focus:ring-2 focus:ring-amber-500 focus:ring-offset-1 focus:outline-none"
+                      className="rounded bg-amber-500 px-3 py-1 text-sm text-white hover:bg-amber-600 focus:ring-2 focus:ring-amber-500 focus:ring-offset-1 focus:outline-none"
                     >
                       Edit
                     </button>
@@ -177,7 +177,7 @@ export default function BPALevelDefaultsFormClient({
 
       {state && (
         <div
-          className={`rounded-md p-3 text-sm ${
+          className={`rounded-md p-3 text-base ${
             state.success
               ? "border border-green-200 bg-green-50 text-green-800"
               : "border border-red-200 bg-red-50 text-red-800"

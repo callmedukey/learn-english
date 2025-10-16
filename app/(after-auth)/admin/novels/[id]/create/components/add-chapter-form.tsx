@@ -52,7 +52,7 @@ const AddChapterForm: React.FC<AddChapterFormProps> = ({
   return (
     <div className="space-y-6">
       <div className="text-center">
-        <h2 className="text-xl font-semibold">Add Chapters</h2>
+        <h2 className="text-2xl font-semibold">Add Chapters</h2>
         <p className="text-gray-600">
           {chapters.length > 0
             ? `${chapters.length} chapter${chapters.length > 1 ? "s" : ""} created`
@@ -118,10 +118,10 @@ const AddChapterForm: React.FC<AddChapterFormProps> = ({
       {chapters.length > 0 && (
         <div className="mx-auto max-w-md">
           <h3 className="mb-2 font-medium text-gray-700">Created Chapters:</h3>
-          <ul className="space-y-1 text-sm text-gray-600">
+          <ul className="space-y-1 text-base text-gray-600">
             {chapters.map((chapterId, index) => (
               <li key={chapterId} className="flex items-center">
-                <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-xs text-green-600">
+                <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-sm text-green-600">
                   ✓
                 </span>
                 Chapter {index + 1}

@@ -86,7 +86,7 @@ export default function MoveKeywordDialog({
         <form action={formAction}>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <label htmlFor="rc-level" className="text-sm font-medium">
+              <label htmlFor="rc-level" className="text-base font-medium">
                 Select New RC Level
               </label>
               <Select
@@ -101,12 +101,12 @@ export default function MoveKeywordDialog({
                     <SelectItem key={rc.id} value={rc.id}>
                       <div className="flex w-full items-center justify-between">
                         <span>Level {rc.level}</span>
-                        <span className="ml-2 text-xs text-gray-500">
+                        <span className="ml-2 text-sm text-gray-500">
                           {"★".repeat(rc.stars)}
                         </span>
                       </div>
                       {rc.description && (
-                        <div className="mt-1 text-xs text-gray-500">
+                        <div className="mt-1 text-sm text-gray-500">
                           {rc.description}
                         </div>
                       )}
@@ -115,7 +115,7 @@ export default function MoveKeywordDialog({
                 </SelectContent>
               </Select>
               {state?.error && (
-                <p className="text-sm text-red-600">{state.error}</p>
+                <p className="text-base text-red-600">{state.error}</p>
               )}
             </div>
           </div>

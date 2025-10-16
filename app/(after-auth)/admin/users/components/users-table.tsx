@@ -55,29 +55,30 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
     <Table>
       <TableHeader>
         <TableRow>
+          <TableHead className="text-left">Actions</TableHead>
           <TableHead>Nickname</TableHead>
-          <TableHead>Email</TableHead>
-          <TableHead>Birthday</TableHead>
-          <TableHead>Grade</TableHead>
-          <TableHead>Gender</TableHead>
-          <TableHead>Country</TableHead>
+          <TableHead>Student Name</TableHead>
           <TableHead>Campus</TableHead>
+          <TableHead>Grade</TableHead>
+          <TableHead>Birthday</TableHead>
+          <TableHead>Role</TableHead>
           <TableHead>Parent Name</TableHead>
           <TableHead>Parent Phone</TableHead>
-          <TableHead>Student Name</TableHead>
           <TableHead>Student Phone</TableHead>
-          <TableHead>Role</TableHead>
           <TableHead>Subscription Status</TableHead>
-          <TableHead>Plan</TableHead>
-          <TableHead>Start Date</TableHead>
-          <TableHead>End Date</TableHead>
+          <TableHead>Gender</TableHead>
           <TableHead>Referred By</TableHead>
-          <TableHead className="text-center">Actions</TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {users.map((user) => (
           <TableRow key={user.id}>
+            <TableCell className="text-left">
+              <ScoreLogDialog
+                userId={user.id}
+                userNickname={user.nickname || user.name || "Anonymous"}
+              />
+            </TableCell>
             <TableCell>
               <button
                 type="button"
@@ -87,94 +88,36 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
                 {user.nickname || "N/A"}
               </button>
             </TableCell>
-            <TableCell>{user.email}</TableCell>
-            <TableCell>{user.birthday || "N/A"}</TableCell>
-            <TableCell>{user.grade}</TableCell>
-            <TableCell>{user.gender || "N/A"}</TableCell>
-            <TableCell>{user.country?.name || "N/A"}</TableCell>
-            <TableCell>{user.campus?.name || "N/A"}</TableCell>
-            <TableCell>{user.parentName || "N/A"}</TableCell>
-            <TableCell>{user.parentPhone || "N/A"}</TableCell>
             <TableCell>{user.studentName || "N/A"}</TableCell>
-            <TableCell>{user.studentPhone || "N/A"}</TableCell>
+            <TableCell>{user.campus?.name || "N/A"}</TableCell>
+            <TableCell>{user.grade}</TableCell>
+            <TableCell>{user.birthday || "N/A"}</TableCell>
             <TableCell>
               {currentUserRole === Role.ADMIN ? (
                 <RoleChangeDropdown userId={user.id} currentRole={user.role} />
               ) : (
-                <span className="text-sm">{user.role}</span>
+                <span className="text-base">{user.role}</span>
               )}
             </TableCell>
+            <TableCell>{user.parentName || "N/A"}</TableCell>
+            <TableCell>{user.parentPhone || "N/A"}</TableCell>
+            <TableCell>{user.studentPhone || "N/A"}</TableCell>
             <TableCell>
               {user.hasActiveSubscription ? (
-                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-medium text-green-800">
                   Active
                 </span>
               ) : (
-                <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
                   No Active Sub
                 </span>
               )}
             </TableCell>
-            <TableCell>
-              {user.activeSubscription ? (
-                <div className="text-sm">
-                  <div className="font-medium">
-                    {user.activeSubscription.planName}
-                  </div>
-                  <div className="text-gray-500">
-                    ₩{user.activeSubscription.planPrice.toLocaleString()}
-                  </div>
-                </div>
-              ) : (
-                "N/A"
-              )}
-            </TableCell>
-            <TableCell>
-              {user.activeSubscription
-                ? format(
-                    new Date(user.activeSubscription.startDate),
-                    "yyyy/MM/dd",
-                  )
-                : "N/A"}
-            </TableCell>
-            <TableCell>
-              {user.activeSubscription ? (
-                <div className="text-sm">
-                  <div>
-                    {format(
-                      new Date(user.activeSubscription.endDate),
-                      "yyyy/MM/dd",
-                    )}
-                  </div>
-                  <div className="text-gray-500">
-                    {new Date(user.activeSubscription.endDate) > new Date() ? (
-                      <span className="text-green-600">
-                        {Math.ceil(
-                          (new Date(user.activeSubscription.endDate).getTime() -
-                            new Date().getTime()) /
-                            (1000 * 60 * 60 * 24),
-                        )}{" "}
-                        days left
-                      </span>
-                    ) : (
-                      <span className="text-red-600">Expired</span>
-                    )}
-                  </div>
-                </div>
-              ) : (
-                "N/A"
-              )}
-            </TableCell>
+            <TableCell>{user.gender || "N/A"}</TableCell>
             <TableCell>
               {user.isReferred
                 ? user.referrerNickname || "N/A (Referred)"
                 : "Not Referred"}
-            </TableCell>
-            <TableCell className="text-center">
-              <ScoreLogDialog
-                userId={user.id}
-                userNickname={user.nickname || user.name || "Anonymous"}
-              />
             </TableCell>
           </TableRow>
         ))}

@@ -51,7 +51,7 @@ const CreateKeywordForm: React.FC<CreateKeywordFormProps> = ({ rcLevelId }) => {
             required
             disabled={isPending}
           />
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-base text-gray-500">
             The name of the reading comprehension keyword or skill
           </p>
         </div>
@@ -65,7 +65,7 @@ const CreateKeywordForm: React.FC<CreateKeywordFormProps> = ({ rcLevelId }) => {
             rows={4}
             disabled={isPending}
           />
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-base text-gray-500">
             Optional description of this keyword and its learning objectives
           </p>
         </div>

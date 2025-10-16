@@ -70,7 +70,7 @@ const DeleteChapterDialog: React.FC<DeleteChapterDialogProps> = ({
         </AlertDialogHeader>
 
         <div className="my-4 space-y-2">
-          <Label htmlFor="confirmation" className="text-sm font-medium">
+          <Label htmlFor="confirmation" className="text-base font-medium">
             Type <span className="font-semibold">delete</span> to confirm
           </Label>
           <Input

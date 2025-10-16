@@ -34,6 +34,16 @@
             "date": 1760527063871,
             "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2025-10-15.log",
             "hash": "8b4ed70b9a47b6ccc86e2349076875c1f6f009e9aa8ded604086b499d7acefd3"
+        },
+        {
+            "date": 1760621696774,
+            "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2025-10-16.log",
+            "hash": "321ad476a7cfde1ae7164c6b4bd3fa475f153f3eed8aa692138ae066367d4ad9"
+        },
+        {
+            "date": 1760627840394,
+            "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2025-10-17.log",
+            "hash": "d584890efe59a81eb3f7bd578474e3d0acacab2e544a17fc511e8ec97223b636"
         }
     ],
     "hashType": "sha256"

@@ -63,40 +63,33 @@ const BPAPage = async () => {
     );
   }
 
-  // Fetch the latest timeframe to get user's level assignments
-  const latestTimeframe = await prisma.bPATimeframe.findFirst({
-    orderBy: { startDate: "desc" },
-    select: { id: true },
+  // Fetch user's level assignments for ALL timeframes
+  const assignments = await prisma.bPAUserLevelAssignment.findMany({
+    where: {
+      userId: session.user.id,
+    },
+    select: {
+      timeframeId: true,
+      season: true,
+      bpaLevelId: true,
+    },
   });
 
-  // Fetch user's level assignments for the latest timeframe
-  let userLevelAssignments: Record<string, string> = {};
+  // Convert to a mapping of timeframeId -> season -> bpaLevelId
+  const userLevelAssignments: Record<string, Record<string, string>> = {};
 
-  if (latestTimeframe) {
-    const assignments = await prisma.bPAUserLevelAssignment.findMany({
-      where: {
-        userId: session.user.id,
-        timeframeId: latestTimeframe.id,
-      },
-      select: {
-        season: true,
-        bpaLevelId: true,
-      },
-    });
+  assignments.forEach((assignment) => {
+    if (!userLevelAssignments[assignment.timeframeId]) {
+      userLevelAssignments[assignment.timeframeId] = {};
+    }
 
-    // Convert to a mapping of season -> bpaLevelId
-    userLevelAssignments = assignments.reduce(
-      (acc, assignment) => {
-        // Convert SPRING -> Spring, SUMMER -> Summer, etc.
-        const seasonKey =
-          assignment.season.charAt(0).toUpperCase() +
-          assignment.season.slice(1).toLowerCase();
-        acc[seasonKey] = assignment.bpaLevelId;
-        return acc;
-      },
-      {} as Record<string, string>
-    );
-  }
+    // Convert SPRING -> Spring, SUMMER -> Summer, etc.
+    const seasonKey =
+      assignment.season.charAt(0).toUpperCase() +
+      assignment.season.slice(1).toLowerCase();
+
+    userLevelAssignments[assignment.timeframeId][seasonKey] = assignment.bpaLevelId;
+  });
 
   // Fetch BPA levels from database
   const bpaLevels = await prisma.bPALevel.findMany({

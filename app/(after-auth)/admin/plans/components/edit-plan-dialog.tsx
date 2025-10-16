@@ -167,12 +167,12 @@ export default function EditPlanDialog({ plan }: EditPlanDialogProps) {
                   placeholder="9,900"
                   required
                 />
-                <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-500">
+                <span className="absolute top-1/2 right-3 -translate-y-1/2 text-base text-gray-500">
                   원
                 </span>
               </div>
               {hasPaymentsOrSubscriptions && (
-                <p className="text-xs text-amber-600">
+                <p className="text-sm text-amber-600">
                   ⚠️ Changing price affects new purchases only
                 </p>
               )}
@@ -190,7 +190,7 @@ export default function EditPlanDialog({ plan }: EditPlanDialogProps) {
                 required
               />
               {hasPaymentsOrSubscriptions && (
-                <p className="text-xs text-amber-600">
+                <p className="text-sm text-amber-600">
                   ⚠️ Changing duration affects new purchases only
                 </p>
               )}
@@ -209,15 +209,15 @@ export default function EditPlanDialog({ plan }: EditPlanDialogProps) {
                 onChange={handleInputChange}
                 placeholder="9.99"
               />
-              <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-500">
+              <span className="absolute top-1/2 right-3 -translate-y-1/2 text-base text-gray-500">
                 $
               </span>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Leave empty if you don&apos;t want to accept international payments
             </p>
             {hasPaymentsOrSubscriptions && (
-              <p className="text-xs text-amber-600">
+              <p className="text-sm text-amber-600">
                 ⚠️ Changing USD price affects new purchases only
               </p>
             )}

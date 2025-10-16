@@ -192,7 +192,7 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
     <div className="space-y-6">
       {/* Filter Controls */}
       <div className="rounded-lg border p-4 space-y-4">
-        <h2 className="text-lg font-semibold">Filter & Search</h2>
+        <h2 className="text-xl font-semibold">Filter & Search</h2>
 
         <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
           {/* Search */}
@@ -363,11 +363,11 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
                   onCheckedChange={handleSelectAll}
                 />
               </TableHead>
+              <TableHead className="text-left">Actions</TableHead>
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Nickname</TableHead>
               <TableHead>All Assignments</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -391,6 +391,37 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
                         handleSelectStudent(student.id, checked === true)
                       }
                     />
+                  </TableCell>
+                  <TableCell className="text-left">
+                    <div className="flex justify-start space-x-2">
+                      <StudentHistoryButton
+                        studentId={student.id}
+                        studentName={student.name || student.email}
+                        campusId={campusId}
+                        student={student}
+                        onEditAssignment={handleEditAssignment}
+                      />
+                      <AssignLevelDialog
+                        studentId={student.id}
+                        studentName={student.name || student.email}
+                        campusId={campusId}
+                        mode="create"
+                        editingAssignment={null}
+                        allStudentAssignments={student.allAssignments.map((a) => ({
+                          timeframeId: a.timeframeId,
+                          season: a.season,
+                        }))}
+                        bpaLevels={bpaLevels}
+                        timeframes={timeframes}
+                        selectedTimeframeId={selectedTimeframe}
+                        selectedSeason={selectedSeason as BPASeason}
+                        adminUserId={adminUserId}
+                      >
+                        <Button variant="outline" size="sm">
+                          Assign
+                        </Button>
+                      </AssignLevelDialog>
+                    </div>
                   </TableCell>
                   <TableCell className="font-medium">
                     {student.name || "-"}
@@ -424,44 +455,13 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
                             </div>
                           )}
                           {pastYearCount > 0 && (
-                            <div className="text-xs text-gray-500 mt-1">
+                            <div className="text-sm text-gray-500 mt-1">
                               +{pastYearCount} from previous years
                             </div>
                           )}
                         </>
                       );
                     })()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex justify-end space-x-2">
-                      <StudentHistoryButton
-                        studentId={student.id}
-                        studentName={student.name || student.email}
-                        campusId={campusId}
-                        student={student}
-                        onEditAssignment={handleEditAssignment}
-                      />
-                      <AssignLevelDialog
-                        studentId={student.id}
-                        studentName={student.name || student.email}
-                        campusId={campusId}
-                        mode="create"
-                        editingAssignment={null}
-                        allStudentAssignments={student.allAssignments.map((a) => ({
-                          timeframeId: a.timeframeId,
-                          season: a.season,
-                        }))}
-                        bpaLevels={bpaLevels}
-                        timeframes={timeframes}
-                        selectedTimeframeId={selectedTimeframe}
-                        selectedSeason={selectedSeason as BPASeason}
-                        adminUserId={adminUserId}
-                      >
-                        <Button variant="outline" size="sm">
-                          Assign
-                        </Button>
-                      </AssignLevelDialog>
-                    </div>
                   </TableCell>
                 </TableRow>
               ))
@@ -509,7 +509,7 @@ const AssignmentBadge: React.FC<AssignmentBadgeProps> = ({
   return (
     <Badge
       variant="secondary"
-      className="text-xs cursor-pointer hover:bg-secondary/80 transition-colors"
+      className="text-sm cursor-pointer hover:bg-secondary/80 transition-colors"
       onClick={() => onEdit(student, assignment)}
       title={semesterInfo} // Show full date range on hover
     >

@@ -216,7 +216,7 @@ const EnhancedKeywordCreationWorkflow: React.FC<EnhancedKeywordCreationWorkflowP
             className={`flex items-center ${currentStep === "keyword" ? "text-slate-700" : "text-slate-500"}`}
           >
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium text-white ${
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-base font-medium text-white ${
                 currentStep === "keyword" ? "bg-slate-600" : "bg-slate-400"
               }`}
             >
@@ -233,7 +233,7 @@ const EnhancedKeywordCreationWorkflow: React.FC<EnhancedKeywordCreationWorkflowP
             className={`flex items-center ${currentStep === "content" ? "text-slate-700" : "text-slate-400"}`}
           >
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium text-white ${
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-base font-medium text-white ${
                 currentStep === "content" ? "bg-slate-600" : "bg-slate-300"
               }`}
             >
@@ -255,7 +255,7 @@ const EnhancedKeywordCreationWorkflow: React.FC<EnhancedKeywordCreationWorkflowP
       {currentStep === "content" && createdKeywordId && (
         <div className="mx-auto max-w-4xl space-y-6">
           <div className="text-center">
-            <h2 className="text-xl font-semibold">Add Reading Passage & Questions</h2>
+            <h2 className="text-2xl font-semibold">Add Reading Passage & Questions</h2>
             <p className="text-gray-600">
               Create a reading passage and add comprehension questions
             </p>
@@ -305,7 +305,7 @@ const EnhancedKeywordCreationWorkflow: React.FC<EnhancedKeywordCreationWorkflowP
                     placeholder={defaultTimer.toString()}
                     min="10"
                   />
-                  <p className="mt-1 text-sm text-gray-500">
+                  <p className="mt-1 text-base text-gray-500">
                     Default time limit for this passage
                   </p>
                 </div>
@@ -492,7 +492,7 @@ const EnhancedKeywordCreationWorkflow: React.FC<EnhancedKeywordCreationWorkflowP
                     {question.choices.map((choice, choiceIndex) => (
                       <div
                         key={choiceIndex}
-                        className={`flex rounded p-1 text-sm ${
+                        className={`flex rounded p-1 text-base ${
                           choice === question.answer
                             ? "bg-green-100 font-medium text-green-800"
                             : "bg-gray-50"
@@ -510,7 +510,7 @@ const EnhancedKeywordCreationWorkflow: React.FC<EnhancedKeywordCreationWorkflowP
                     ))}
                   </div>
                   
-                  <div className="text-sm text-gray-600">
+                  <div className="text-base text-gray-600">
                     <strong>Score:</strong> {question.score} • <strong>Time:</strong> {question.timeLimit}s
                   </div>
                 </div>

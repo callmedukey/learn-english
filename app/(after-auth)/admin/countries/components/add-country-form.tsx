@@ -86,7 +86,7 @@ const AddCountryForm: React.FC<AddCountryFormProps> = ({
         />
         {iconPreview && (
           <div className="mt-2">
-            <p className="text-sm text-gray-500">Icon Preview:</p>
+            <p className="text-base text-gray-500">Icon Preview:</p>
             <Image
               src={iconPreview}
               alt="Icon Preview"

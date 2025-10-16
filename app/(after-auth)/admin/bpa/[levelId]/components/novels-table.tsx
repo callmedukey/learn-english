@@ -21,6 +21,7 @@ import { Role } from "@/prisma/generated/prisma";
 
 import { BulkToggleComingSoonDialog } from "./bulk-toggle-coming-soon-dialog";
 import { BulkToggleHiddenDialog } from "./bulk-toggle-hidden-dialog";
+import CopyNovelDialog from "./copy-novel-dialog";
 import DeleteNovelAlert from "./delete-novel-alert";
 import MoveNovelDialog from "./move-novel-dialog";
 import { toggleBPANovelLock } from "../../actions/bpa-novel.actions";
@@ -89,7 +90,7 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, bpaLevels, userRole }
       {/* Bulk Actions */}
       {userRole === Role.ADMIN && selectedNovels.length > 0 && (
         <div className="flex items-center justify-between rounded-lg border bg-gray-50 p-4">
-          <p className="text-sm font-medium">
+          <p className="text-base font-medium">
             {selectedNovels.length} novel
             {selectedNovels.length !== 1 ? "s" : ""} selected
           </p>
@@ -123,6 +124,9 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, bpaLevels, userRole }
                   />
                 </TableHead>
               )}
+              {(canEditBPANovel(userRole) || canDeleteBPANovel(userRole)) && (
+                <TableHead className="text-left">Actions</TableHead>
+              )}
               <TableHead>Title</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Status</TableHead>
@@ -130,9 +134,6 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, bpaLevels, userRole }
               <TableHead>Chapters</TableHead>
               <TableHead>Free Chapters</TableHead>
               <TableHead>Created At</TableHead>
-              {(canEditBPANovel(userRole) || canDeleteBPANovel(userRole)) && (
-                <TableHead className="text-right">Actions</TableHead>
-              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -154,6 +155,43 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, bpaLevels, userRole }
                       />
                     </TableCell>
                   )}
+                  {(canEditBPANovel(userRole, novel.locked) || canDeleteBPANovel(userRole)) && (
+                    <TableCell className="text-left">
+                      <div className="flex items-center justify-start space-x-2">
+                        {canEditBPANovel(userRole, novel.locked) && (
+                          <Button variant="outline" size="sm">
+                            <Link
+                              href={`/admin/bpa/${novel.bpaLevel?.id}/${novel.id}/edit`}
+                            >
+                              <Edit className="h-4 w-4" />
+                            </Link>
+                          </Button>
+                        )}
+                        {canDeleteBPANovel(userRole) && novel.bpaLevel && (
+                          <>
+                            <MoveNovelDialog
+                              novelId={novel.id}
+                              novelTitle={novel.title}
+                              currentLevelId={novel.bpaLevel.id}
+                              bpaLevels={bpaLevels}
+                            />
+                            <CopyNovelDialog
+                              novelId={novel.id}
+                              novelTitle={novel.title}
+                              currentLevelId={novel.bpaLevel.id}
+                              bpaLevels={bpaLevels}
+                            />
+                          </>
+                        )}
+                        {canDeleteBPANovel(userRole) && (
+                          <DeleteNovelAlert
+                            novelId={novel.id}
+                            title={novel.title}
+                          />
+                        )}
+                      </div>
+                    </TableCell>
+                  )}
                   <TableCell className="font-medium">
                     <div className="flex items-center gap-2">
                       {novel.title}
@@ -170,18 +208,18 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, bpaLevels, userRole }
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {novel.hidden ? (
-                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
                           <EyeOff className="mr-1 h-3 w-3" />
                           Hidden
                         </span>
                       ) : (
-                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-sm font-medium text-blue-800">
                           <Eye className="mr-1 h-3 w-3" />
                           Visible
                         </span>
                       )}
                       {novel.comingSoon && (
-                        <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
+                        <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-sm font-medium text-amber-800">
                           Coming Next Month
                         </span>
                       )}
@@ -205,58 +243,29 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, bpaLevels, userRole }
                   )}
                   <TableCell>
                     {novel.chapters.length > 0 ? (
-                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-sm font-medium text-blue-800">
                         {novel.chapters.length} chapters
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
                         No chapters
                       </span>
                     )}
                   </TableCell>
                   <TableCell>
                     {freeChaptersCount > 0 ? (
-                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-medium text-green-800">
                         {freeChaptersCount} free
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-500">
                         None
                       </span>
                     )}
                   </TableCell>
-                  <TableCell className="text-sm text-gray-500">
+                  <TableCell className="text-base text-gray-500">
                     {format(new Date(novel.createdAt), "yyyy/MM/dd")}
                   </TableCell>
-                  {(canEditBPANovel(userRole, novel.locked) || canDeleteBPANovel(userRole)) && (
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end space-x-2">
-                        {canEditBPANovel(userRole, novel.locked) && (
-                          <Button variant="outline" size="sm">
-                            <Link
-                              href={`/admin/bpa/${novel.bpaLevel?.id}/${novel.id}/edit`}
-                            >
-                              <Edit className="h-4 w-4" />
-                            </Link>
-                          </Button>
-                        )}
-                        {canDeleteBPANovel(userRole) && novel.bpaLevel && (
-                          <MoveNovelDialog
-                            novelId={novel.id}
-                            novelTitle={novel.title}
-                            currentLevelId={novel.bpaLevel.id}
-                            bpaLevels={bpaLevels}
-                          />
-                        )}
-                        {canDeleteBPANovel(userRole) && (
-                          <DeleteNovelAlert
-                            novelId={novel.id}
-                            title={novel.title}
-                          />
-                        )}
-                      </div>
-                    </TableCell>
-                  )}
                 </TableRow>
               );
             })}

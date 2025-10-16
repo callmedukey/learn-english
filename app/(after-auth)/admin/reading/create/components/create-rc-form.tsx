@@ -71,7 +71,7 @@ const CreateRCForm = () => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               The reading comprehension level (e.g., Beginner, Intermediate,
               Advanced)
             </p>
@@ -87,7 +87,7 @@ const CreateRCForm = () => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               Target grades for this RC level
             </p>
           </div>
@@ -106,7 +106,7 @@ const CreateRCForm = () => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               Difficulty rating (1 = easiest, 5 = hardest)
             </p>
           </div>
@@ -122,7 +122,7 @@ const CreateRCForm = () => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               Total number of questions for this level
             </p>
           </div>
@@ -141,7 +141,7 @@ const CreateRCForm = () => {
                 <SelectItem value="XLARGE">Extra Large</SelectItem>
               </SelectContent>
             </Select>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               Default font size for this RC level
             </p>
           </div>
@@ -155,14 +155,14 @@ const CreateRCForm = () => {
             rows={4}
             disabled={isPending}
           />
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-base text-gray-500">
             Optional description of this RC level
           </p>
         </div>
 
         <div>
-          <Label className="text-base font-semibold">Monthly Challenge Settings</Label>
-          <p className="mb-3 text-sm text-gray-500">
+          <Label className="text-lg font-semibold">Monthly Challenge Settings</Label>
+          <p className="mb-3 text-base text-gray-500">
             Optionally create a monthly challenge for this RC level
           </p>
           <ChallengeControls

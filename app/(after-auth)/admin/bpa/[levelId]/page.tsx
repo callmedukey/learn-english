@@ -45,7 +45,7 @@ const BPALevelPage = async ({ params }: PageProps) => {
             <h1 className="text-2xl font-bold">
               Novels - {bpaLevel.name}
             </h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-gray-600">
               {bpaLevel.description} • {novels.length} novel
               {novels.length !== 1 ? "s" : ""}
             </p>
@@ -65,19 +65,19 @@ const BPALevelPage = async ({ params }: PageProps) => {
       <div className="rounded-lg border bg-card p-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div>
-            <p className="text-sm font-medium text-gray-500">Level</p>
-            <p className="text-lg font-semibold">{bpaLevel.name}</p>
+            <p className="text-base font-medium text-gray-500">Level</p>
+            <p className="text-xl font-semibold">{bpaLevel.name}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Order</p>
-            <p className="text-lg font-semibold">{bpaLevel.orderNumber}</p>
+            <p className="text-base font-medium text-gray-500">Order</p>
+            <p className="text-xl font-semibold">{bpaLevel.orderNumber}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Difficulty</p>
+            <p className="text-base font-medium text-gray-500">Difficulty</p>
             <div className="flex items-center">
               {"★".repeat(bpaLevel.stars)}
               {"☆".repeat(5 - bpaLevel.stars)}
-              <span className="ml-1 text-sm text-gray-500">
+              <span className="ml-1 text-base text-gray-500">
                 ({bpaLevel.stars}/5)
               </span>
             </div>

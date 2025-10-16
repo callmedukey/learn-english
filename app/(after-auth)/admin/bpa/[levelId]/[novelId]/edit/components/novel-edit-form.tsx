@@ -244,7 +244,7 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
 
       {/* Basic Information */}
       <div className="rounded-lg border p-6">
-        <h2 className="mb-4 text-xl font-semibold">Basic Information</h2>
+        <h2 className="mb-4 text-2xl font-semibold">Basic Information</h2>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="space-y-4">
             <div>
@@ -311,8 +311,8 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
 
       {/* Semester Assignment */}
       <div className="rounded-lg border p-6">
-        <h2 className="mb-4 text-xl font-semibold">Semester Assignment</h2>
-        <p className="mb-4 text-sm text-muted-foreground">
+        <h2 className="mb-4 text-2xl font-semibold">Semester Assignment</h2>
+        <p className="mb-4 text-base text-muted-foreground">
           Assign this novel to specific semesters (timeframe + season). Users can
           only access novels assigned to the current semester.
         </p>
@@ -320,7 +320,7 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
         <div className="space-y-6">
           {/* Add Semester Section */}
           <div className="space-y-4">
-            <Label className="text-sm font-medium">Add Semester</Label>
+            <Label className="text-base font-medium">Add Semester</Label>
             <div className="flex flex-wrap gap-3">
               <Select
                 value={selectedTimeframe}
@@ -367,11 +367,11 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
 
           {/* Current Assignments */}
           <div className="space-y-3">
-            <Label className="text-sm font-medium">
+            <Label className="text-base font-medium">
               Assigned Semesters ({selectedSemesters.length})
             </Label>
             {selectedSemesters.length === 0 ? (
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 No semesters assigned. This novel will be &quot;Coming Soon&quot; for all users.
               </p>
             ) : (

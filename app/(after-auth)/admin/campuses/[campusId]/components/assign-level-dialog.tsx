@@ -227,16 +227,16 @@ const AssignLevelDialog: React.FC<AssignLevelDialogProps> = ({
           {/* Editing Assignment Info */}
           {mode === "edit" && editingAssignment && (
             <div className="rounded-lg border p-3 bg-blue-50 space-y-1">
-              <p className="text-sm font-medium text-blue-900">
+              <p className="text-base font-medium text-blue-900">
                 Editing: {editingAssignment.timeframe.year}{" "}
                 {editingAssignment.season.charAt(0) +
                   editingAssignment.season.slice(1).toLowerCase()}
               </p>
-              <p className="text-sm text-blue-700">
+              <p className="text-base text-blue-700">
                 Current Level: <span className="font-medium">{editingAssignment.bpaLevel.name}</span>{" "}
                 ({editingAssignment.bpaLevel.stars} ⭐)
               </p>
-              <p className="text-xs text-blue-600">
+              <p className="text-sm text-blue-600">
                 Assigned on {format(new Date(editingAssignment.assignedAt), "MMM dd, yyyy")}
               </p>
             </div>
@@ -245,10 +245,10 @@ const AssignLevelDialog: React.FC<AssignLevelDialogProps> = ({
           {/* Duplicate Warning */}
           {mode === "create" && isDuplicate && duplicateAssignment && (
             <div className="rounded-lg border border-yellow-300 bg-yellow-50 p-3">
-              <p className="text-sm font-medium text-yellow-900">
+              <p className="text-base font-medium text-yellow-900">
                 ⚠️ Assignment Already Exists
               </p>
-              <p className="text-sm text-yellow-700">
+              <p className="text-base text-yellow-700">
                 This student already has an assignment for{" "}
                 {duplicateAssignment.year}{" "}
                 {(duplicateAssignment.season as string).charAt(0) +
@@ -279,7 +279,7 @@ const AssignLevelDialog: React.FC<AssignLevelDialogProps> = ({
               </SelectContent>
             </Select>
             {mode === "edit" && (
-              <p className="text-xs text-gray-500">
+              <p className="text-sm text-gray-500">
                 Timeframe cannot be changed in edit mode
               </p>
             )}
@@ -305,7 +305,7 @@ const AssignLevelDialog: React.FC<AssignLevelDialogProps> = ({
               </SelectContent>
             </Select>
             {mode === "edit" && (
-              <p className="text-xs text-gray-500">
+              <p className="text-sm text-gray-500">
                 Season cannot be changed in edit mode
               </p>
             )}

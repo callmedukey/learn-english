@@ -8,7 +8,7 @@ import CountriesTable from "./components/countries-table";
 const PageLoading = () => {
   return (
     <div className="flex h-32 items-center justify-center">
-      <p className="text-lg text-gray-500">Loading countries...</p>
+      <p className="text-xl text-gray-500">Loading countries...</p>
     </div>
   );
 };

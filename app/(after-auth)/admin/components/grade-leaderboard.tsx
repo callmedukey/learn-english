@@ -50,7 +50,7 @@ export default function GradeLeaderboard({
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-4">
-        <label htmlFor="grade-selector" className="text-sm font-medium">
+        <label htmlFor="grade-selector" className="text-base font-medium">
           Select Grade:
         </label>
         <Select value={selectedGrade} onValueChange={onGradeChange}>
@@ -65,7 +65,7 @@ export default function GradeLeaderboard({
             ))}
           </SelectContent>
         </Select>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base text-muted-foreground">
           {gradeData.total} student{gradeData.total !== 1 ? "s" : ""} in {selectedGrade}
         </p>
       </div>

@@ -67,7 +67,7 @@ export default function SemesterSelector({
     <div className="space-y-4">
       {/* Timeframe Selector */}
       <div className="flex items-center gap-2">
-        <label htmlFor="timeframe-select" className="text-sm font-medium">
+        <label htmlFor="timeframe-select" className="text-base font-medium">
           Timeframe:
         </label>
         <Select
@@ -111,7 +111,7 @@ export default function SemesterSelector({
               >
                 <div className="flex flex-col items-center">
                   <span className="font-semibold">{SEASON_DISPLAY[semester.season]}</span>
-                  <span className="text-xs text-gray-500">
+                  <span className="text-sm text-gray-500">
                     {formatDateRange(semester.startDate, semester.endDate)}
                   </span>
                 </div>
@@ -128,7 +128,7 @@ export default function SemesterSelector({
       )}
 
       {!selectedTimeframe && (
-        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center text-sm text-gray-600">
+        <div className="rounded-lg border border-gray-200 bg-gray-50 p-4 text-center text-base text-gray-600">
           Please select a timeframe to view semesters
         </div>
       )}

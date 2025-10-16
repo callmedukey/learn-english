@@ -108,12 +108,12 @@ const StudentAssignmentHistoryDialog: React.FC<
                       <div className="flex flex-col">
                         <span className="font-medium">{record.timeframe.year}</span>
                         {record.semester ? (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-sm text-gray-500">
                             {format(new Date(record.semester.startDate), "MMM d")} -{" "}
                             {format(new Date(record.semester.endDate), "MMM d, yyyy")}
                           </span>
                         ) : (
-                          <span className="text-xs text-gray-500">
+                          <span className="text-sm text-gray-500">
                             {format(new Date(record.timeframe.startDate), "MMM yyyy")} -{" "}
                             {format(new Date(record.timeframe.endDate), "MMM yyyy")}
                           </span>
@@ -130,11 +130,11 @@ const StudentAssignmentHistoryDialog: React.FC<
                         {record.bpaLevel.name} ({record.bpaLevel.stars} ⭐)
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-sm">
+                    <TableCell className="text-base">
                       {record.assignedByUser ? (
                         <div className="flex flex-col">
                           <span>{record.assignedByUser.name || "-"}</span>
-                          <span className="text-xs text-gray-500">
+                          <span className="text-sm text-gray-500">
                             {record.assignedByUser.email}
                           </span>
                         </div>
@@ -142,7 +142,7 @@ const StudentAssignmentHistoryDialog: React.FC<
                         <span className="text-gray-400">System</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-sm text-gray-500">
+                    <TableCell className="text-base text-gray-500">
                       {format(new Date(record.createdAt), "yyyy/MM/dd HH:mm")}
                     </TableCell>
                     {onEditAssignment && (

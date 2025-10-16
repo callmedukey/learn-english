@@ -88,7 +88,7 @@ const OverridePointsDialog: React.FC<OverridePointsDialogProps> = ({
               disabled={isPending}
               autoFocus
             />
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               This will affect all questions across all novels and chapters in
               this level.
             </p>

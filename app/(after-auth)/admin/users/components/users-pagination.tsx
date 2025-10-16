@@ -44,7 +44,7 @@ function PaginationComponent({
 
   return (
     <div className="mt-6 flex flex-col items-center justify-between space-y-2 md:flex-row md:space-y-0">
-      <div className="text-sm text-muted-foreground">
+      <div className="text-base text-muted-foreground">
         Showing <strong>{startItem}</strong>-<strong>{endItem}</strong> of{" "}
         <strong>{totalUsers}</strong> users
       </div>
@@ -67,7 +67,7 @@ function PaginationComponent({
         >
           <ChevronLeft className="h-4 w-4" />
         </Button>
-        <span className="text-sm">
+        <span className="text-base">
           Page {currentPage} of {totalPages}
         </span>
         <Button

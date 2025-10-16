@@ -92,8 +92,8 @@ export function UnitsWithChaptersSection({
       <div className="rounded-lg border p-6">
         <div className="mb-4 flex items-center justify-between">
           <div>
-            <h2 className="text-xl font-semibold">Units & Chapters</h2>
-            <p className="text-sm text-gray-600">
+            <h2 className="text-2xl font-semibold">Units & Chapters</h2>
+            <p className="text-base text-gray-600">
               Organize chapters into units
             </p>
           </div>
@@ -101,7 +101,7 @@ export function UnitsWithChaptersSection({
         </div>
         <div className="py-12 text-center text-gray-500">
           <div className="mb-4 text-4xl">📚</div>
-          <h3 className="mb-2 text-lg font-medium">No Units Yet</h3>
+          <h3 className="mb-2 text-xl font-medium">No Units Yet</h3>
           <p className="mb-4">
             Create your first unit to organize chapters within this novel.
           </p>
@@ -114,8 +114,8 @@ export function UnitsWithChaptersSection({
     <div className="rounded-lg border p-6">
       <div className="mb-4 flex items-center justify-between">
         <div>
-          <h2 className="text-xl font-semibold">Units & Chapters</h2>
-          <p className="text-sm text-gray-600">
+          <h2 className="text-2xl font-semibold">Units & Chapters</h2>
+          <p className="text-base text-gray-600">
             {units.length} unit{units.length !== 1 ? "s" : ""} •{" "}
             {units.reduce((sum, unit) => sum + unit.chapters.length, 0)}{" "}
             total chapters
@@ -149,7 +149,7 @@ export function UnitsWithChaptersSection({
                     </CollapsibleTrigger>
                     <div className="flex-1">
                       <div className="flex items-center gap-3">
-                        <h3 className="font-semibold text-lg">{unit.name}</h3>
+                        <h3 className="font-semibold text-xl">{unit.name}</h3>
                         <Badge variant="outline">
                           {unit.chapters.length} chapter
                           {unit.chapters.length !== 1 ? "s" : ""}
@@ -157,7 +157,7 @@ export function UnitsWithChaptersSection({
                       </div>
                       {unit.description && (
                         <div
-                          className="text-sm text-gray-600 mt-1"
+                          className="text-base text-gray-600 mt-1"
                           dangerouslySetInnerHTML={{
                             __html: DOMPurify.sanitize(unit.description),
                           }}

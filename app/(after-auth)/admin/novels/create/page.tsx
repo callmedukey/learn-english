@@ -28,7 +28,7 @@ const CreateARPage = async () => {
           </Link>
           <div>
             <h1 className="text-2xl font-bold">Create Lexile Level</h1>
-            <p className="text-sm text-gray-600">Add a new Lexile Level</p>
+            <p className="text-base text-gray-600">Add a new Lexile Level</p>
           </div>
         </div>
       </div>

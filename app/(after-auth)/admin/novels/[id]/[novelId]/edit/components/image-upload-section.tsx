@@ -105,14 +105,14 @@ const ImageUploadSection: React.FC<ImageUploadSectionProps> = ({
             <Upload className="mr-2 h-4 w-4" />
             {currentImage ? "Change Image" : "Upload Image"}
           </Button>
-          <p className="text-xs text-gray-500">
+          <p className="text-sm text-gray-500">
             Recommended: 300x400px, max 5MB
           </p>
         </div>
 
         {/* Image Info */}
         {currentImage && !previewUrl && (
-          <div className="text-xs text-gray-500">
+          <div className="text-sm text-gray-500">
             <p>
               Current: {currentImage.width}x{currentImage.height}px
             </p>

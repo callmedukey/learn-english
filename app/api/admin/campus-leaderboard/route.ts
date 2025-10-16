@@ -17,12 +17,13 @@ export async function GET(request: NextRequest) {
       campusId: searchParams.get("campusId") || undefined,
       bpaLevelId: searchParams.get("bpaLevelId") || undefined,
       unitId: searchParams.get("unitId") || undefined,
+      grade: searchParams.get("grade") || undefined,
     };
 
     // Parse pagination
     const pagination: PaginationParams = {
-      page: Number(searchParams.get("page")) || 1,
-      pageSize: Number(searchParams.get("pageSize")) || 20,
+      page: Number(searchParams.get("campusPage")) || Number(searchParams.get("page")) || 1,
+      pageSize: Number(searchParams.get("campusPageSize")) || Number(searchParams.get("pageSize")) || 20,
     };
 
     // Fetch campus leaderboard data

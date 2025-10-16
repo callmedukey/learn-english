@@ -139,13 +139,13 @@ export default function ScoreLogDialog({
                 )}
 
                 {!data && isError && (
-                  <div className="flex h-[500px] items-center justify-center text-center text-sm text-destructive">
+                  <div className="flex h-[500px] items-center justify-center text-center text-base text-destructive">
                     Failed to load score log. Please try again.
                   </div>
                 )}
 
                 {data && data.logs.length === 0 && !isLoading && (
-                  <div className="flex h-[500px] items-center justify-center text-center text-sm text-muted-foreground">
+                  <div className="flex h-[500px] items-center justify-center text-center text-base text-muted-foreground">
                     No score history found for this user.
                   </div>
                 )}
@@ -175,7 +175,7 @@ export default function ScoreLogDialog({
                             <div className="flex-1 space-y-1">
                               <div className="flex items-center gap-2 flex-wrap">
                                 <span
-                                  className={`inline-flex rounded-full px-2 py-0.5 text-xs font-semibold ${
+                                  className={`inline-flex rounded-full px-2 py-0.5 text-sm font-semibold ${
                                     log.source === "RC"
                                       ? "bg-blue-100 text-blue-800"
                                       : log.source === "Novel"
@@ -185,43 +185,43 @@ export default function ScoreLogDialog({
                                 >
                                   {log.source}
                                 </span>
-                                <span className="text-sm font-medium text-primary">
+                                <span className="text-base font-medium text-primary">
                                   +{log.score} points
                                 </span>
 
                                 {/* Legacy record indicator */}
                                 {isLegacyRecord && (
-                                  <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-xs font-semibold text-gray-600">
+                                  <span className="inline-flex rounded-full bg-gray-100 px-2 py-0.5 text-sm font-semibold text-gray-600">
                                     Legacy Record
                                   </span>
                                 )}
 
                                 {/* Status badges - only for non-legacy records or if we can infer status */}
                                 {!isLegacyRecord && log.isRetry && (
-                                  <span className="inline-flex rounded-full bg-orange-100 px-2 py-0.5 text-xs font-semibold text-orange-800">
+                                  <span className="inline-flex rounded-full bg-orange-100 px-2 py-0.5 text-sm font-semibold text-orange-800">
                                     Retry
                                   </span>
                                 )}
                                 {!isLegacyRecord && log.isTimedOut && (
-                                  <span className="inline-flex rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800">
+                                  <span className="inline-flex rounded-full bg-red-100 px-2 py-0.5 text-sm font-semibold text-red-800">
                                     Timed Out
                                   </span>
                                 )}
                                 {log.isCorrect && (
-                                  <span className="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-xs font-semibold text-green-800">
+                                  <span className="inline-flex rounded-full bg-green-100 px-2 py-0.5 text-sm font-semibold text-green-800">
                                     {isLegacyRecord ? "Correct (inferred)" : "Correct"}
                                   </span>
                                 )}
                                 {!log.isCorrect && !isLegacyRecord && !log.isTimedOut && (
-                                  <span className="inline-flex rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-800">
+                                  <span className="inline-flex rounded-full bg-red-100 px-2 py-0.5 text-sm font-semibold text-red-800">
                                     Incorrect
                                   </span>
                                 )}
                               </div>
-                              <p className="text-sm text-muted-foreground">
+                              <p className="text-base text-muted-foreground">
                                 {log.sourceDetails}
                               </p>
-                              <p className="text-xs text-muted-foreground">
+                              <p className="text-sm text-muted-foreground">
                                 {format(new Date(log.createdAt), "PPp")}
                               </p>
                             </div>
@@ -248,11 +248,11 @@ export default function ScoreLogDialog({
                           {isExpanded && !isLegacyRecord && (
                             <div className="border-t bg-muted/30 p-3 space-y-3">
                               <div>
-                                <p className="text-xs font-semibold text-muted-foreground mb-1">
+                                <p className="text-sm font-semibold text-muted-foreground mb-1">
                                   Question
                                 </p>
                                 <div
-                                  className="text-sm whitespace-pre-wrap"
+                                  className="text-base whitespace-pre-wrap"
                                   dangerouslySetInnerHTML={{
                                     __html: DOMPurify.sanitize(log.questionText),
                                   }}
@@ -261,12 +261,12 @@ export default function ScoreLogDialog({
 
                               <div className="grid grid-cols-2 gap-3">
                                 <div>
-                                  <p className="text-xs font-semibold text-muted-foreground mb-1">
+                                  <p className="text-sm font-semibold text-muted-foreground mb-1">
                                     User&apos;s Answer
                                   </p>
                                   {log.selectedAnswer ? (
                                     <div
-                                      className={`text-sm whitespace-pre-wrap ${
+                                      className={`text-base whitespace-pre-wrap ${
                                         log.isCorrect
                                           ? "text-green-700 font-medium"
                                           : "text-red-700 font-medium"
@@ -277,7 +277,7 @@ export default function ScoreLogDialog({
                                     />
                                   ) : (
                                     <p
-                                      className={`text-sm ${
+                                      className={`text-base ${
                                         log.isCorrect
                                           ? "text-green-700 font-medium"
                                           : "text-red-700 font-medium"
@@ -290,11 +290,11 @@ export default function ScoreLogDialog({
 
                                 {!log.isCorrect && (
                                   <div>
-                                    <p className="text-xs font-semibold text-muted-foreground mb-1">
+                                    <p className="text-sm font-semibold text-muted-foreground mb-1">
                                       Correct Answer
                                     </p>
                                     <div
-                                      className="text-sm text-green-700 font-medium whitespace-pre-wrap"
+                                      className="text-base text-green-700 font-medium whitespace-pre-wrap"
                                       dangerouslySetInnerHTML={{
                                         __html: DOMPurify.sanitize(log.correctAnswer),
                                       }}
@@ -304,11 +304,11 @@ export default function ScoreLogDialog({
                               </div>
 
                               <div>
-                                <p className="text-xs font-semibold text-muted-foreground mb-1">
+                                <p className="text-sm font-semibold text-muted-foreground mb-1">
                                   Explanation
                                 </p>
                                 <div
-                                  className="text-sm text-muted-foreground whitespace-pre-wrap"
+                                  className="text-base text-muted-foreground whitespace-pre-wrap"
                                   dangerouslySetInnerHTML={{
                                     __html: DOMPurify.sanitize(log.explanation),
                                   }}
@@ -329,7 +329,7 @@ export default function ScoreLogDialog({
           {/* Pagination */}
           {data && data.totalPages > 1 && (
             <div className="flex items-center justify-between border-t pt-4">
-              <p className="text-sm text-muted-foreground">
+              <p className="text-base text-muted-foreground">
                 Page {data.page} of {data.totalPages} ({data.total} total
                 entries)
               </p>

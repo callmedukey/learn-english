@@ -53,7 +53,7 @@ export async function GET(request: NextRequest) {
       orderBy: {
         score: "desc",
       },
-      take: 100, // Limit to top 100 for performance
+      // No limit - show all students
     });
 
     // Fetch user details separately for each score
@@ -64,6 +64,12 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             nickname: true,
+            campusId: true,
+            campus: {
+              select: {
+                name: true,
+              },
+            },
           },
         });
 
@@ -73,6 +79,8 @@ export async function GET(request: NextRequest) {
           nickname: user?.nickname || "Anonymous",
           grade: "N/A", // BPA users don't have grades in the schema yet
           score: scoreRecord.score,
+          campusId: user?.campusId || null,
+          campusName: user?.campus?.name,
         };
       })
     );

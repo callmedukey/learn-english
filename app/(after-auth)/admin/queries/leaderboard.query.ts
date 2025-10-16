@@ -20,6 +20,7 @@ export interface LeaderboardUser {
   } | null;
   parentName: string | null;
   studentName: string | null;
+  currentBPALevel: string | null;
   rank: number;
   totalScore: number;
   arScores: number;
@@ -78,6 +79,50 @@ function getGradeOrder(grade: string): number {
     return 13 - parseInt(match[1]); // Grade 12 = 1, Grade 11 = 2, ..., Grade 1 = 12
   }
   return 999; // Unknown grades go last
+}
+
+// Helper function to find the current active semester based on today's date
+async function getCurrentSemester() {
+  const today = new Date();
+
+  const currentSemester = await prisma.bPASemester.findFirst({
+    where: {
+      startDate: {
+        lte: today,
+      },
+      endDate: {
+        gte: today,
+      },
+    },
+    select: {
+      id: true,
+    },
+  });
+
+  return currentSemester;
+}
+
+// Helper function to get current BPA level for a user
+async function getCurrentBPALevelForUser(userId: string, currentSemesterId: string | null): Promise<string | null> {
+  if (!currentSemesterId) {
+    return null;
+  }
+
+  const assignment = await prisma.bPAUserLevelAssignment.findFirst({
+    where: {
+      userId,
+      semesterId: currentSemesterId,
+    },
+    include: {
+      bpaLevel: {
+        select: {
+          name: true,
+        },
+      },
+    },
+  });
+
+  return assignment?.bpaLevel.name || null;
 }
 
 // Helper function to get today's scores by grade
@@ -226,6 +271,9 @@ export async function getLeaderboardData(
   filters: LeaderboardFilters = {},
   pagination: PaginationParams = { page: 1, pageSize: 50 }
 ): Promise<LeaderboardResult> {
+  // Get current semester
+  const currentSemester = await getCurrentSemester();
+
   // Get ALL users to calculate proper ranks
   const users = await prisma.user.findMany({
     include: {
@@ -252,6 +300,28 @@ export async function getLeaderboardData(
     },
   });
 
+  // Fetch all current BPA level assignments in one query
+  let levelAssignmentsMap = new Map<string, string>();
+  if (currentSemester) {
+    const assignments = await prisma.bPAUserLevelAssignment.findMany({
+      where: {
+        semesterId: currentSemester.id,
+      },
+      select: {
+        userId: true,
+        bpaLevel: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    levelAssignmentsMap = new Map(
+      assignments.map((a) => [a.userId, a.bpaLevel.name])
+    );
+  }
+
   // Map and calculate additional scores
   const mappedUsers = users.map((user) => {
     const totalScore = user.score?.score || 0;
@@ -270,6 +340,7 @@ export async function getLeaderboardData(
       campus: user.campus,
       parentName: user.parentName,
       studentName: user.studentName,
+      currentBPALevel: levelAssignmentsMap.get(user.id) || null,
       totalScore,
       arScores,
       rcScores,
@@ -467,6 +538,9 @@ export async function getGradeLeaderboardData(
   filters: LeaderboardFilters = {},
   pagination: PaginationParams = { page: 1, pageSize: 100 }
 ): Promise<LeaderboardResult> {
+  // Get current semester
+  const currentSemester = await getCurrentSemester();
+
   // Get ALL users to calculate proper ranks
   const users = await prisma.user.findMany({
     include: {
@@ -493,6 +567,28 @@ export async function getGradeLeaderboardData(
     },
   });
 
+  // Fetch all current BPA level assignments in one query
+  let levelAssignmentsMap = new Map<string, string>();
+  if (currentSemester) {
+    const assignments = await prisma.bPAUserLevelAssignment.findMany({
+      where: {
+        semesterId: currentSemester.id,
+      },
+      select: {
+        userId: true,
+        bpaLevel: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    levelAssignmentsMap = new Map(
+      assignments.map((a) => [a.userId, a.bpaLevel.name])
+    );
+  }
+
   // Map and calculate additional scores
   const mappedUsers = users.map((user) => {
     const totalScore = user.score?.score || 0;
@@ -511,6 +607,7 @@ export async function getGradeLeaderboardData(
       campus: user.campus,
       parentName: user.parentName,
       studentName: user.studentName,
+      currentBPALevel: levelAssignmentsMap.get(user.id) || null,
       totalScore,
       arScores,
       rcScores,
@@ -698,6 +795,9 @@ export async function getMonthlyLeaderboardData(
   const targetYear = year || now.getFullYear();
   const targetMonth = month || now.getMonth() + 1; // getMonth() returns 0-11
 
+  // Get current semester
+  const currentSemester = await getCurrentSemester();
+
   // Get ALL users with their monthly scores to calculate proper ranks
   const users = await prisma.user.findMany({
     include: {
@@ -728,6 +828,28 @@ export async function getMonthlyLeaderboardData(
     },
   });
 
+  // Fetch all current BPA level assignments in one query
+  let levelAssignmentsMap = new Map<string, string>();
+  if (currentSemester) {
+    const assignments = await prisma.bPAUserLevelAssignment.findMany({
+      where: {
+        semesterId: currentSemester.id,
+      },
+      select: {
+        userId: true,
+        bpaLevel: {
+          select: {
+            name: true,
+          },
+        },
+      },
+    });
+
+    levelAssignmentsMap = new Map(
+      assignments.map((a) => [a.userId, a.bpaLevel.name])
+    );
+  }
+
   // Map and calculate monthly scores
   const mappedUsers = users
     .map((user) => {
@@ -747,6 +869,7 @@ export async function getMonthlyLeaderboardData(
         campus: user.campus,
         parentName: user.parentName,
         studentName: user.studentName,
+        currentBPALevel: levelAssignmentsMap.get(user.id) || null,
         totalScore,
         arScores,
         rcScores,

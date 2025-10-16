@@ -89,7 +89,7 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
   return (
     <div className="mx-auto max-w-2xl space-y-6">
       <div className="text-center">
-        <h2 className="text-xl font-semibold">Add Reading Passage</h2>
+        <h2 className="text-2xl font-semibold">Add Reading Passage</h2>
         <p className="text-gray-600">
           Create a reading passage for students to practice comprehension
           skills. You can skip this step and add it later.
@@ -100,7 +100,7 @@ const AddReadingPassageForm: React.FC<AddReadingPassageFormProps> = ({
         {passages.map((passage, index) => (
           <div key={index} className="rounded-lg border bg-white p-6 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-medium">
+              <h3 className="text-xl font-medium">
                 Reading Passage {index + 1}
               </h3>
               {passages.length > 1 && (

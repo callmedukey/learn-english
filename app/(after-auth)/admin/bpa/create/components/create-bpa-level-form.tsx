@@ -53,7 +53,7 @@ const CreateBPALevelForm = () => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               The level name (e.g., Level 2, Level 3)
             </p>
           </div>
@@ -69,7 +69,7 @@ const CreateBPALevelForm = () => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               Display order (lower numbers appear first)
             </p>
           </div>
@@ -88,7 +88,7 @@ const CreateBPALevelForm = () => {
             disabled={isPending}
             className="max-w-xs"
           />
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-base text-gray-500">
             Difficulty rating (1 = easiest, 5 = hardest)
           </p>
         </div>
@@ -105,7 +105,7 @@ const CreateBPALevelForm = () => {
               <SelectItem value="XLARGE">Extra Large</SelectItem>
             </SelectContent>
           </Select>
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-base text-gray-500">
             Default font size for this BPA level
           </p>
         </div>
@@ -119,7 +119,7 @@ const CreateBPALevelForm = () => {
             rows={4}
             disabled={isPending}
           />
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-base text-gray-500">
             Optional description of this BPA level
           </p>
         </div>

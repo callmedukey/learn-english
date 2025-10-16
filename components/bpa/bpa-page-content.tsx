@@ -9,7 +9,7 @@ import { BPASemesterSelector } from "./bpa-semester-selector";
 import { useBPASemesters } from "./queries/bpa.query";
 
 interface BPAPageContentProps {
-  userLevelAssignments: Record<string, string>; // { Spring: "lv2", Summer: "lv3", ... }
+  userLevelAssignments: Record<string, Record<string, string>>; // { [timeframeId]: { Spring: "lv2", Summer: "lv3", ... } }
   bpaLevels: Array<{
     id: string;
     name: string;
@@ -69,7 +69,7 @@ export function BPAPageContent({
           <BPASemesterLeaderboard
             season="Spring"
             timeframeId={selectedTimeframe}
-            defaultLevel={userLevelAssignments.Spring}
+            defaultLevel={selectedTimeframe ? userLevelAssignments[selectedTimeframe]?.Spring : undefined}
             bpaLevels={bpaLevels.map((level) => ({
               id: level.id,
               name: level.name,
@@ -78,7 +78,7 @@ export function BPAPageContent({
           <BPASemesterLeaderboard
             season="Summer"
             timeframeId={selectedTimeframe}
-            defaultLevel={userLevelAssignments.Summer}
+            defaultLevel={selectedTimeframe ? userLevelAssignments[selectedTimeframe]?.Summer : undefined}
             bpaLevels={bpaLevels.map((level) => ({
               id: level.id,
               name: level.name,
@@ -87,7 +87,7 @@ export function BPAPageContent({
           <BPASemesterLeaderboard
             season="Fall"
             timeframeId={selectedTimeframe}
-            defaultLevel={userLevelAssignments.Fall}
+            defaultLevel={selectedTimeframe ? userLevelAssignments[selectedTimeframe]?.Fall : undefined}
             bpaLevels={bpaLevels.map((level) => ({
               id: level.id,
               name: level.name,
@@ -96,7 +96,7 @@ export function BPAPageContent({
           <BPASemesterLeaderboard
             season="Winter"
             timeframeId={selectedTimeframe}
-            defaultLevel={userLevelAssignments.Winter}
+            defaultLevel={selectedTimeframe ? userLevelAssignments[selectedTimeframe]?.Winter : undefined}
             bpaLevels={bpaLevels.map((level) => ({
               id: level.id,
               name: level.name,

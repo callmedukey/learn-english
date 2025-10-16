@@ -34,7 +34,7 @@ export default function PasswordResetForm({ userId }: PasswordResetFormProps) {
       <div>
         <label
           htmlFor="currentPassword"
-          className="mb-1 block text-sm font-medium text-gray-700"
+          className="mb-1 block text-base font-medium text-gray-700"
         >
           Current Password
         </label>
@@ -51,7 +51,7 @@ export default function PasswordResetForm({ userId }: PasswordResetFormProps) {
       <div>
         <label
           htmlFor="newPassword"
-          className="mb-1 block text-sm font-medium text-gray-700"
+          className="mb-1 block text-base font-medium text-gray-700"
         >
           New Password
         </label>
@@ -69,7 +69,7 @@ export default function PasswordResetForm({ userId }: PasswordResetFormProps) {
       <div>
         <label
           htmlFor="confirmPassword"
-          className="mb-1 block text-sm font-medium text-gray-700"
+          className="mb-1 block text-base font-medium text-gray-700"
         >
           Confirm New Password
         </label>
@@ -86,7 +86,7 @@ export default function PasswordResetForm({ userId }: PasswordResetFormProps) {
 
       {state && (
         <div
-          className={`rounded-md p-3 text-sm ${
+          className={`rounded-md p-3 text-base ${
             state.success
               ? "border border-green-200 bg-green-50 text-green-800"
               : "border border-red-200 bg-red-50 text-red-800"

@@ -191,7 +191,7 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
 
       {/* Basic Information */}
       <div className="rounded-lg border p-6">
-        <h2 className="mb-4 text-xl font-semibold">Basic Information</h2>
+        <h2 className="mb-4 text-2xl font-semibold">Basic Information</h2>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
           <div className="space-y-4">
             <div>
@@ -258,12 +258,12 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
 
       {/* Challenge Participation */}
       <div className="rounded-lg border p-6">
-        <h2 className="mb-4 text-xl font-semibold">Challenge Participation</h2>
+        <h2 className="mb-4 text-2xl font-semibold">Challenge Participation</h2>
         <div className="space-y-4">
           {/* Show current challenge participation */}
           {challenges.length > 0 && (
             <div>
-              <Label className="mb-2 block text-sm font-medium">
+              <Label className="mb-2 block text-base font-medium">
                 Challenge History
               </Label>
               <div className="flex flex-wrap gap-2">
@@ -277,7 +277,7 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
           {/* Current month challenge toggle */}
           {currentMonthChallenge && (
             <div className="space-y-2">
-              <Label className="text-sm font-medium">
+              <Label className="text-base font-medium">
                 Current Month Challenge
               </Label>
               <div className="flex items-center space-x-2">
@@ -292,7 +292,7 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
                 />
                 <Label
                   htmlFor="includeInChallenge"
-                  className="text-sm font-normal"
+                  className="text-base font-normal"
                 >
                   Include in{" "}
                   {new Date().toLocaleString("default", { month: "long" })}{" "}
@@ -300,7 +300,7 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
                 </Label>
               </div>
               {!isInCurrentChallenge && currentMonthChallenge && (
-                <p className="ml-6 text-xs text-muted-foreground">
+                <p className="ml-6 text-sm text-muted-foreground">
                   This novel is not currently part of the active monthly
                   challenge
                 </p>
@@ -309,7 +309,7 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
           )}
 
           {!currentMonthChallenge && novel.ARId && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               No challenge exists for this AR level in the current month.
               <Link
                 href={`/admin/challenges/challenges?levelType=AR&levelId=${novel.ARId}`}
@@ -321,7 +321,7 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
           )}
 
           {!novel.ARId && (
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               Select a Lexile level to manage challenge participation
             </p>
           )}
@@ -333,8 +333,8 @@ const NovelEditForm: React.FC<NovelEditFormProps> = ({
       {/* Chapters Section */}
       <div className="rounded-lg border p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h2 className="text-xl font-semibold">Chapters & Questions</h2>
-          <p className="text-sm text-gray-600">
+          <h2 className="text-2xl font-semibold">Chapters & Questions</h2>
+          <p className="text-base text-gray-600">
             Manage chapters and their associated question sets
           </p>
         </div>

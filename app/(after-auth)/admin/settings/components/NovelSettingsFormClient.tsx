@@ -30,7 +30,7 @@ export default function NovelSettingsFormClient({
         <div>
           <label
             htmlFor="novelTimer"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1 block text-base font-medium text-gray-700"
           >
             Default Timer (seconds)
           </label>
@@ -49,7 +49,7 @@ export default function NovelSettingsFormClient({
         <div>
           <label
             htmlFor="novelScore"
-            className="mb-1 block text-sm font-medium text-gray-700"
+            className="mb-1 block text-base font-medium text-gray-700"
           >
             Default Score
           </label>
@@ -68,7 +68,7 @@ export default function NovelSettingsFormClient({
 
       {state && (
         <div
-          className={`rounded-md p-3 text-sm ${
+          className={`rounded-md p-3 text-base ${
             state.success
               ? "border border-green-200 bg-green-50 text-green-800"
               : "border border-red-200 bg-red-50 text-red-800"

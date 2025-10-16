@@ -229,6 +229,15 @@ export const completeBPAQuestionAction = async (
         // Use the user's actual assigned timeframe, not the latest one
         const userTimeframe = levelAssignment.timeframe;
 
+        // Look up the semester based on timeframe + season
+        const semester = await tx.bPASemester.findFirst({
+          where: {
+            timeframeId: userTimeframe.id,
+            season: levelAssignment.season,
+          },
+          select: { id: true },
+        });
+
         // Update BPA score with timeframe and season
         const existingBPAScore = await tx.bPAScore.findFirst({
           where: {
@@ -246,6 +255,8 @@ export const completeBPAQuestionAction = async (
               score: {
                 increment: pointsAwarded,
               },
+              // Backfill semesterId if not set
+              ...(semester?.id && !existingBPAScore.semesterId ? { semesterId: semester.id } : {}),
             },
           });
         } else {
@@ -255,6 +266,7 @@ export const completeBPAQuestionAction = async (
               bpaLevelId: levelId,
               timeframeId: userTimeframe.id,
               season: levelAssignment.season,
+              semesterId: semester?.id || null,
               score: pointsAwarded,
             },
           });

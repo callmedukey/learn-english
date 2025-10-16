@@ -17,7 +17,7 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
         {/* Total Users */}
         <Card>
           <CardContent className="p-6">
-            <p className="text-sm font-medium text-muted-foreground">
+            <p className="text-base font-medium text-muted-foreground">
               Total Users
             </p>
             <p className="text-2xl font-semibold">{totalUsers}</p>
@@ -27,14 +27,14 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
         {/* User Count by Country */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-base font-medium text-muted-foreground">
               User Count by Country
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="max-h-[300px] space-y-2 overflow-y-auto">
               {topCountries.map(([country, count]) => (
-                <div key={country} className="flex justify-between text-sm">
+                <div key={country} className="flex justify-between text-base">
                   <span>{country}</span>
                   <span className="font-medium text-muted-foreground">
                     {count}
@@ -48,14 +48,14 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
         {/* User Count by Grade */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-base font-medium text-muted-foreground">
               User Count by Grade
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="max-h-[300px] space-y-2 overflow-y-auto">
               {topGrades.map(([grade, count]) => (
-                <div key={grade} className="flex justify-between text-sm">
+                <div key={grade} className="flex justify-between text-base">
                   <span>{grade}</span>
                   <span className="font-medium text-muted-foreground">
                     {count}
@@ -69,14 +69,14 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
         {/* User Count by Campus */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-base font-medium text-muted-foreground">
               User Count by Campus
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="max-h-[300px] space-y-2 overflow-y-auto">
               {topCampuses.map(([campus, count]) => (
-                <div key={campus} className="flex justify-between text-sm">
+                <div key={campus} className="flex justify-between text-base">
                   <span>{campus}</span>
                   <span className="font-medium text-muted-foreground">
                     {count}
@@ -93,14 +93,14 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
         {/* Total Scores by Grade */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-base font-medium text-muted-foreground">
               Total Scores by Grade
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="max-h-[300px] space-y-2 overflow-y-auto">
               {totalScoresByGrade.map(([grade, totalScore]) => (
-                <div key={grade} className="flex justify-between text-sm">
+                <div key={grade} className="flex justify-between text-base">
                   <span>{grade}</span>
                   <span className="font-medium text-muted-foreground">
                     {totalScore.toLocaleString()}
@@ -114,14 +114,14 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
         {/* Total Scores by Campus */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-base font-medium text-muted-foreground">
               Total Scores by Campus
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-0">
             <div className="max-h-[300px] space-y-2 overflow-y-auto">
               {totalScoresByCampus.map(([campus, totalScore]) => (
-                <div key={campus} className="flex justify-between text-sm">
+                <div key={campus} className="flex justify-between text-base">
                   <span>{campus}</span>
                   <span className="font-medium text-muted-foreground">
                     {totalScore.toLocaleString()}
@@ -138,7 +138,7 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
         {/* Today's Scores by Grade */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-base font-medium text-muted-foreground">
               Today&apos;s Scores by Grade
             </CardTitle>
           </CardHeader>
@@ -146,7 +146,7 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
             <div className="max-h-[300px] space-y-2 overflow-y-auto">
               {todayScoresByGrade.length > 0 ? (
                 todayScoresByGrade.map(([grade, todayScore]) => (
-                  <div key={grade} className="flex justify-between text-sm">
+                  <div key={grade} className="flex justify-between text-base">
                     <span>{grade}</span>
                     <span className="font-medium text-muted-foreground">
                       {todayScore.toLocaleString()}
@@ -154,7 +154,7 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground">No scores today yet</p>
+                <p className="text-base text-muted-foreground">No scores today yet</p>
               )}
             </div>
           </CardContent>
@@ -163,7 +163,7 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
         {/* Today's Scores by Campus */}
         <Card>
           <CardHeader className="pb-3">
-            <CardTitle className="text-sm font-medium text-muted-foreground">
+            <CardTitle className="text-base font-medium text-muted-foreground">
               Today&apos;s Scores by Campus
             </CardTitle>
           </CardHeader>
@@ -171,7 +171,7 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
             <div className="max-h-[300px] space-y-2 overflow-y-auto">
               {todayScoresByCampus.length > 0 ? (
                 todayScoresByCampus.map(([campus, todayScore]) => (
-                  <div key={campus} className="flex justify-between text-sm">
+                  <div key={campus} className="flex justify-between text-base">
                     <span>{campus}</span>
                     <span className="font-medium text-muted-foreground">
                       {todayScore.toLocaleString()}
@@ -179,7 +179,7 @@ export default function LeaderboardStats({ totalUsers, stats }: LeaderboardStats
                   </div>
                 ))
               ) : (
-                <p className="text-sm text-muted-foreground">No scores today yet</p>
+                <p className="text-base text-muted-foreground">No scores today yet</p>
               )}
             </div>
           </CardContent>

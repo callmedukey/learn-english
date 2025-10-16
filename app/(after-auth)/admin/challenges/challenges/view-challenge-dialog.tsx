@@ -131,10 +131,10 @@ export default function ViewChallengeDialog({
               {/* Basic Information */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base">Basic Information</CardTitle>
+                  <CardTitle className="text-lg">Basic Information</CardTitle>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div className="grid grid-cols-2 gap-4 text-base">
                     <div>
                       <span className="text-muted-foreground">Period: </span>
                       <span className="font-medium">
@@ -172,7 +172,7 @@ export default function ViewChallengeDialog({
               {/* Selected Content */}
               <Card>
                 <CardHeader>
-                  <CardTitle className="text-base flex items-center gap-2">
+                  <CardTitle className="text-lg flex items-center gap-2">
                     {challenge.levelType === "AR" ? (
                       <>
                         <BookOpen className="h-4 w-4" />
@@ -191,7 +191,7 @@ export default function ViewChallengeDialog({
                     {details.content.map((item, index) => (
                       <div
                         key={item.id}
-                        className="flex items-center gap-2 text-sm"
+                        className="flex items-center gap-2 text-base"
                       >
                         <span className="text-muted-foreground">{index + 1}.</span>
                         <span>{item.title || item.name}</span>
@@ -205,7 +205,7 @@ export default function ViewChallengeDialog({
               {details.leaderboard && details.leaderboard.finalized && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">Medal Winners</CardTitle>
+                    <CardTitle className="text-lg">Medal Winners</CardTitle>
                     <CardDescription>
                       Final results for this challenge
                     </CardDescription>
@@ -220,7 +220,7 @@ export default function ViewChallengeDialog({
                               {details.leaderboard.goldUser.nickname}
                             </span>
                           </div>
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-base text-muted-foreground">
                             {details.leaderboard.goldScore} points
                           </span>
                         </div>
@@ -233,7 +233,7 @@ export default function ViewChallengeDialog({
                               {details.leaderboard.silverUser.nickname}
                             </span>
                           </div>
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-base text-muted-foreground">
                             {details.leaderboard.silverScore} points
                           </span>
                         </div>
@@ -246,7 +246,7 @@ export default function ViewChallengeDialog({
                               {details.leaderboard.bronzeUser.nickname}
                             </span>
                           </div>
-                          <span className="text-sm text-muted-foreground">
+                          <span className="text-base text-muted-foreground">
                             {details.leaderboard.bronzeScore} points
                           </span>
                         </div>
@@ -260,7 +260,7 @@ export default function ViewChallengeDialog({
               {details.topScores && details.topScores.length > 0 && !details.leaderboard?.finalized && (
                 <Card>
                   <CardHeader>
-                    <CardTitle className="text-base">Current Top Participants</CardTitle>
+                    <CardTitle className="text-lg">Current Top Participants</CardTitle>
                     <CardDescription>
                       Rankings are not yet finalized
                     </CardDescription>
@@ -270,7 +270,7 @@ export default function ViewChallengeDialog({
                       {details.topScores.slice(0, 5).map((score: any, index: number) => (
                         <div
                           key={score.id}
-                          className="flex items-center justify-between text-sm"
+                          className="flex items-center justify-between text-base"
                         >
                           <div className="flex items-center gap-2">
                             <span className="text-muted-foreground w-6">

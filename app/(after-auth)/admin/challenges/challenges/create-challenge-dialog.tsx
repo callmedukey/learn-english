@@ -291,7 +291,7 @@ export default function CreateChallengeDialog() {
                             field.onChange(updated);
                           }}
                         />
-                        <label className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
+                        <label className="text-base font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                           {item.title || item.name}
                         </label>
                       </div>

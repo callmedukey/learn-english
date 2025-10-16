@@ -37,7 +37,7 @@ const KeywordCreationWorkflow: React.FC<KeywordCreationWorkflowProps> = ({
             className={`flex items-center ${currentStep === "keyword" ? "text-slate-700" : "text-slate-500"}`}
           >
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium text-white ${
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-base font-medium text-white ${
                 currentStep === "keyword" ? "bg-slate-600" : "bg-slate-400"
               }`}
             >
@@ -54,7 +54,7 @@ const KeywordCreationWorkflow: React.FC<KeywordCreationWorkflowProps> = ({
             className={`flex items-center ${currentStep === "passage" ? "text-slate-700" : "text-slate-400"}`}
           >
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium text-white ${
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-base font-medium text-white ${
                 currentStep === "passage" ? "bg-slate-600" : "bg-slate-300"
               }`}
             >

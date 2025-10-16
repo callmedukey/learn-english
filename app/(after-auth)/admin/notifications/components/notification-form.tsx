@@ -56,7 +56,7 @@ export default function NotificationForm() {
           <div className="space-y-2">
             <Label
               htmlFor="title"
-              className="text-sm font-medium text-gray-700"
+              className="text-base font-medium text-gray-700"
             >
               Announcement Title
             </Label>
@@ -70,7 +70,7 @@ export default function NotificationForm() {
               required
             />
             {state.errors?.title && (
-              <p className="text-sm text-red-600">{state.errors.title[0]}</p>
+              <p className="text-base text-red-600">{state.errors.title[0]}</p>
             )}
           </div>
 
@@ -78,7 +78,7 @@ export default function NotificationForm() {
           <div className="space-y-2">
             <Label
               htmlFor="message"
-              className="text-sm font-medium text-gray-700"
+              className="text-base font-medium text-gray-700"
             >
               Announcement Message
             </Label>
@@ -91,7 +91,7 @@ export default function NotificationForm() {
               required
             />
             {state.errors?.message && (
-              <p className="text-sm text-red-600">{state.errors.message[0]}</p>
+              <p className="text-base text-red-600">{state.errors.message[0]}</p>
             )}
           </div>
 
@@ -123,7 +123,7 @@ export default function NotificationForm() {
                   : "border border-red-200 bg-red-50 text-red-800"
               }`}
             >
-              <p className="text-sm font-medium">{state.message}</p>
+              <p className="text-base font-medium">{state.message}</p>
             </div>
           )}
         </form>

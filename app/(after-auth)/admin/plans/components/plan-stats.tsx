@@ -35,10 +35,10 @@ export default function PlanStatsComponent({ stats }: PlanStatsProps) {
           </div>
           <div className="ml-5 w-0 flex-1">
             <dl>
-              <dt className="truncate text-sm font-medium text-gray-500">
+              <dt className="truncate text-base font-medium text-gray-500">
                 Total Plans
               </dt>
-              <dd className="text-lg font-medium text-gray-900">
+              <dd className="text-xl font-medium text-gray-900">
                 {stats.totalPlans}
               </dd>
             </dl>
@@ -67,10 +67,10 @@ export default function PlanStatsComponent({ stats }: PlanStatsProps) {
           </div>
           <div className="ml-5 w-0 flex-1">
             <dl>
-              <dt className="truncate text-sm font-medium text-gray-500">
+              <dt className="truncate text-base font-medium text-gray-500">
                 Active Plans
               </dt>
-              <dd className="text-lg font-medium text-gray-900">
+              <dd className="text-xl font-medium text-gray-900">
                 {stats.activePlans}
               </dd>
             </dl>
@@ -99,10 +99,10 @@ export default function PlanStatsComponent({ stats }: PlanStatsProps) {
           </div>
           <div className="ml-5 w-0 flex-1">
             <dl>
-              <dt className="truncate text-sm font-medium text-gray-500">
+              <dt className="truncate text-base font-medium text-gray-500">
                 Inactive Plans
               </dt>
-              <dd className="text-lg font-medium text-gray-900">
+              <dd className="text-xl font-medium text-gray-900">
                 {stats.inactivePlans}
               </dd>
             </dl>
@@ -131,10 +131,10 @@ export default function PlanStatsComponent({ stats }: PlanStatsProps) {
           </div>
           <div className="ml-5 w-0 flex-1">
             <dl>
-              <dt className="truncate text-sm font-medium text-gray-500">
+              <dt className="truncate text-base font-medium text-gray-500">
                 Total Revenue
               </dt>
-              <dd className="text-lg font-medium text-gray-900">
+              <dd className="text-xl font-medium text-gray-900">
                 {formatCurrency(stats.totalRevenue)}
               </dd>
             </dl>

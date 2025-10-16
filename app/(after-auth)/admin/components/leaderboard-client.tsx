@@ -272,10 +272,10 @@ export default function LeaderboardClient({
       {/* Header with filter controls */}
       <div className="flex flex-col gap-4">
         <div>
-          <h2 className="text-xl font-semibold text-gray-900">
+          <h2 className="text-2xl font-semibold text-gray-900">
             User Leaderboard
           </h2>
-          <p className="text-sm text-gray-600">
+          <p className="text-base text-gray-600">
             Showing {allTimeData.total} total users
             {selectedCountry && (
               <span>
@@ -363,7 +363,7 @@ export default function LeaderboardClient({
 
         <TabsContent value="monthly" className="mt-6">
           <div className="mb-4">
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-gray-600">
               Showing rankings for{" "}
               {new Date().toLocaleDateString("en-US", {
                 month: "long",

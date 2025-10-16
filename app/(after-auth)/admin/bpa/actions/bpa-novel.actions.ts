@@ -201,3 +201,184 @@ export async function deleteBPANovel(novelId: string) {
     return { error: "Failed to delete novel" };
   }
 }
+
+export async function copyBPANovelToLevel(novelId: string, newLevelId: string) {
+  const session = await auth();
+  if (!canDeleteBPANovel(session?.user?.role as Role | undefined)) {
+    return { error: "You don't have permission to copy BPA novels" };
+  }
+
+  try {
+    // Get the source novel with all its units, chapters, and question sets
+    const sourceNovel = await prisma.bPANovel.findUnique({
+      where: {
+        id: novelId,
+      },
+      include: {
+        units: {
+          include: {
+            chapters: {
+              include: {
+                questionSet: {
+                  include: {
+                    questions: true,
+                  },
+                },
+              },
+              orderBy: {
+                orderNumber: "asc",
+              },
+            },
+          },
+          orderBy: {
+            orderNumber: "asc",
+          },
+        },
+        chapters: {
+          where: {
+            unitId: null, // Only get legacy chapters without units
+          },
+          include: {
+            questionSet: {
+              include: {
+                questions: true,
+              },
+            },
+          },
+          orderBy: {
+            orderNumber: "asc",
+          },
+        },
+      },
+    });
+
+    if (!sourceNovel) {
+      return { success: false, error: "Novel not found" };
+    }
+
+    // Use a transaction to create the novel and all nested data
+    const copiedNovel = await prisma.$transaction(async (tx) => {
+      // First, create the novel
+      const newNovel = await tx.bPANovel.create({
+        data: {
+          title: sourceNovel.title,
+          description: sourceNovel.description,
+          hidden: sourceNovel.hidden,
+          comingSoon: sourceNovel.comingSoon,
+          locked: sourceNovel.locked,
+          bpaLevelId: newLevelId,
+        },
+        include: {
+          bpaLevel: true,
+        },
+      });
+
+      // Create units with their chapters
+      for (const unit of sourceNovel.units) {
+        const newUnit = await tx.bPAUnit.create({
+          data: {
+            name: unit.name,
+            description: unit.description,
+            orderNumber: unit.orderNumber,
+            novelId: newNovel.id,
+          },
+        });
+
+        // Create chapters for this unit
+        for (const chapter of unit.chapters) {
+          const newChapter = await tx.bPAChapter.create({
+            data: {
+              orderNumber: chapter.orderNumber,
+              title: chapter.title,
+              description: chapter.description,
+              isFree: chapter.isFree,
+              unitId: newUnit.id,
+              novelId: newNovel.id,
+            },
+          });
+
+          // Create question set if exists
+          if (chapter.questionSet) {
+            const newQuestionSet = await tx.bPAQuestionSet.create({
+              data: {
+                instructions: chapter.questionSet.instructions,
+                active: chapter.questionSet.active,
+                chapterId: newChapter.id,
+              },
+            });
+
+            // Create questions
+            for (const question of chapter.questionSet.questions) {
+              await tx.bPAQuestion.create({
+                data: {
+                  orderNumber: question.orderNumber,
+                  question: question.question,
+                  choices: question.choices,
+                  answer: question.answer,
+                  explanation: question.explanation,
+                  score: question.score,
+                  timeLimit: question.timeLimit,
+                  questionSetId: newQuestionSet.id,
+                },
+              });
+            }
+          }
+        }
+      }
+
+      // Create legacy chapters without units
+      for (const chapter of sourceNovel.chapters) {
+        const newChapter = await tx.bPAChapter.create({
+          data: {
+            orderNumber: chapter.orderNumber,
+            title: chapter.title,
+            description: chapter.description,
+            isFree: chapter.isFree,
+            novelId: newNovel.id,
+          },
+        });
+
+        // Create question set if exists
+        if (chapter.questionSet) {
+          const newQuestionSet = await tx.bPAQuestionSet.create({
+            data: {
+              instructions: chapter.questionSet.instructions,
+              active: chapter.questionSet.active,
+              chapterId: newChapter.id,
+            },
+          });
+
+          // Create questions
+          for (const question of chapter.questionSet.questions) {
+            await tx.bPAQuestion.create({
+              data: {
+                orderNumber: question.orderNumber,
+                question: question.question,
+                choices: question.choices,
+                answer: question.answer,
+                explanation: question.explanation,
+                score: question.score,
+                timeLimit: question.timeLimit,
+                questionSetId: newQuestionSet.id,
+              },
+            });
+          }
+        }
+      }
+
+      return newNovel;
+    });
+
+    // Revalidate the relevant pages
+    if (sourceNovel.bpaLevelId) {
+      revalidatePath(`/admin/bpa/${sourceNovel.bpaLevelId}`);
+    }
+    revalidatePath(`/admin/bpa/${newLevelId}`);
+    revalidatePath("/admin/bpa");
+
+    return { success: true, novel: copiedNovel };
+  } catch (error) {
+    console.error("Failed to copy BPA novel:", error);
+    return { success: false, error: "Failed to copy novel" };
+  }
+}

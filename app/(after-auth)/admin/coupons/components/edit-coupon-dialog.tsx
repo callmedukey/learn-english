@@ -138,7 +138,7 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
         <form onSubmit={handleSubmit} className="space-y-4">
           {/* Coupon type indicator */}
           <div className={`rounded-md p-3 ${isOneTimeCoupon ? "bg-blue-50" : "bg-green-50"}`}>
-            <p className={`text-sm ${isOneTimeCoupon ? "text-blue-800" : "text-green-800"}`}>
+            <p className={`text-base ${isOneTimeCoupon ? "text-blue-800" : "text-green-800"}`}>
               {isOneTimeCoupon 
                 ? "💡 One-time payment coupon - For international users. Discount in USD only."
                 : "💡 Recurring payment coupon - For Korean users with auto-renewal. Discount in KRW only."}
@@ -156,7 +156,7 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
               disabled={isPending}
               className="uppercase"
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-sm text-gray-500">
               Use uppercase letters, numbers, hyphens, and underscores only
             </p>
           </div>
@@ -199,7 +199,7 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
                   required
                   disabled={isPending}
                 />
-                <p className="text-xs text-gray-500">Enter 1-100%</p>
+                <p className="text-sm text-gray-500">Enter 1-100%</p>
               </div>
             ) : (
               <div className="space-y-2">
@@ -217,7 +217,7 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
                   required
                   disabled={isPending}
                 />
-                <p className="text-xs text-gray-500">
+                <p className="text-sm text-gray-500">
                   Amount in {isOneTimeCoupon ? "US Dollars" : "Korean Won"}
                 </p>
               </div>
@@ -238,7 +238,7 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
               placeholder="Leave empty for unlimited"
               disabled={isPending}
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-sm text-gray-500">
               {isOneTimeCoupon 
                 ? "Maximum total times this coupon can be used"
                 : "Maximum customers who can start subscriptions with this coupon"}
@@ -258,7 +258,7 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
                 placeholder="Leave empty for unlimited"
                 disabled={isPending}
               />
-              <p className="text-xs text-gray-500">
+              <p className="text-sm text-gray-500">
                 How many months the discount lasts (empty = forever)
               </p>
             </div>
@@ -285,7 +285,7 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
           {/* Usage warnings */}
           {coupon._count.payments > 0 && (
             <div className="rounded-md bg-yellow-50 p-3">
-              <p className="text-sm text-yellow-800">
+              <p className="text-base text-yellow-800">
                 ⚠️ This coupon has been used {coupon._count.payments} time(s).
                 Changes may affect existing usage records.
               </p>
@@ -294,7 +294,7 @@ export default function EditCouponDialog({ coupon }: EditCouponDialogProps) {
 
           {coupon._count.couponApplications > 0 && (
             <div className="rounded-md bg-orange-50 p-3">
-              <p className="text-sm text-orange-800">
+              <p className="text-base text-orange-800">
                 ⚠️ This coupon has {coupon._count.couponApplications} active
                 recurring application(s). Changes to recurring settings will
                 affect future payments.

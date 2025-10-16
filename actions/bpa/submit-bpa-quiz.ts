@@ -242,6 +242,15 @@ export async function submitBPAAnswer(
         // 2. Update BPAScore (timeframe + season + level specific)
         // Only update if we have a valid timeframe and season
         if (timeframeId && season) {
+          // Look up the semester based on timeframe + season
+          const semester = await tx.bPASemester.findFirst({
+            where: {
+              timeframeId: timeframeId,
+              season: season,
+            },
+            select: { id: true },
+          });
+
           const existingBPAScore = await tx.bPAScore.findFirst({
             where: {
               userId: session.user.id,
@@ -258,6 +267,8 @@ export async function submitBPAAnswer(
                 score: {
                   increment: pointsAwarded,
                 },
+                // Update semesterId if we found a semester and it's not set
+                ...(semester?.id && !existingBPAScore.semesterId ? { semesterId: semester.id } : {}),
               },
             });
           } else {
@@ -267,6 +278,7 @@ export async function submitBPAAnswer(
                 bpaLevelId: levelId,
                 timeframeId: timeframeId,
                 season: season,
+                semesterId: semester?.id || null,
                 score: pointsAwarded,
               },
             });

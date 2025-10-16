@@ -67,7 +67,7 @@ const DeleteRCDialog: React.FC<DeleteRCDialogProps> = ({
         </AlertDialogHeader>
         {keywordCount === 0 && (
           <div className="py-4">
-            <Label htmlFor="confirm-delete" className="text-sm font-medium">
+            <Label htmlFor="confirm-delete" className="text-base font-medium">
               Type &quot;delete&quot; to confirm
             </Label>
             <Input

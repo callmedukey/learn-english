@@ -94,7 +94,7 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
       {/* Bulk Actions */}
       {userRole === Role.ADMIN && selectedKeywords.length > 0 && (
         <div className="flex items-center justify-between rounded-lg border bg-gray-50 p-4">
-          <p className="text-sm font-medium">
+          <p className="text-base font-medium">
             {selectedKeywords.length} keyword
             {selectedKeywords.length !== 1 ? "s" : ""} selected
           </p>
@@ -128,6 +128,9 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                   />
                 </TableHead>
               )}
+              {(canEditKeyword(userRole) || canDeleteKeyword(userRole)) && (
+                <TableHead className="text-left">Actions</TableHead>
+              )}
               <TableHead>Name</TableHead>
               <TableHead>Description</TableHead>
               <TableHead>Paid/Free</TableHead>
@@ -137,9 +140,6 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
               <TableHead>Questions</TableHead>
               <TableHead>Challenge</TableHead>
               <TableHead>Created At</TableHead>
-              {(canEditKeyword(userRole) || canDeleteKeyword(userRole)) && (
-                <TableHead className="text-right">Actions</TableHead>
-              )}
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -156,97 +156,9 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                     />
                   </TableCell>
                 )}
-                <TableCell className="font-medium">
-                  <div className="flex items-center gap-2">
-                    {keyword.name}
-                    {keyword.locked && (
-                      <span title="Locked - Only admins can edit">
-                        <Lock className="h-4 w-4 text-amber-600" />
-                      </span>
-                    )}
-                  </div>
-                </TableCell>
-                <TableCell className="max-w-xs truncate">
-                  {keyword.description || "No description"}
-                </TableCell>
-                <TableCell>
-                  {keyword.isFree ? (
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      Free
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-xs font-medium text-orange-800">
-                      Paid
-                    </span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {keyword.hidden ? (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                        <EyeOff className="mr-1 h-3 w-3" />
-                        Hidden
-                      </span>
-                    ) : (
-                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                        <Eye className="mr-1 h-3 w-3" />
-                        Visible
-                      </span>
-                    )}
-                    {keyword.comingSoon && (
-                      <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
-                        Coming Next Month
-                      </span>
-                    )}
-                  </div>
-                </TableCell>
-                {canLockKeyword(userRole) && (
-                  <TableCell>
-                    <Button
-                      variant={keyword.locked ? "secondary" : "ghost"}
-                      size="sm"
-                      onClick={() => handleLockToggle(keyword.id)}
-                      disabled={isPending && lockingKeywordId === keyword.id}
-                    >
-                      {keyword.locked ? (
-                        <Lock className="h-4 w-4 text-amber-600" />
-                      ) : (
-                        <LockOpen className="h-4 w-4" />
-                      )}
-                    </Button>
-                  </TableCell>
-                )}
-                <TableCell>
-                  {keyword.RCQuestionSet ? (
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      Has question set
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                      No question set
-                    </span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  {keyword.RCQuestionSet?.RCQuestion.length ? (
-                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
-                      {keyword.RCQuestionSet.RCQuestion.length} questions
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                      No questions
-                    </span>
-                  )}
-                </TableCell>
-                <TableCell>
-                  <ChallengeBadge challenges={keyword.challenges || []} />
-                </TableCell>
-                <TableCell className="text-sm text-gray-500">
-                  {format(new Date(keyword.createdAt), "yyyy/MM/dd")}
-                </TableCell>
                 {(canEditKeyword(userRole, keyword.locked) || canDeleteKeyword(userRole)) && (
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end space-x-2">
+                  <TableCell className="text-left">
+                    <div className="flex items-center justify-start space-x-2">
                       {canEditKeyword(userRole, keyword.locked) && (
                         <Button variant="outline" size="sm" asChild>
                           <Link
@@ -273,6 +185,94 @@ const KeywordsTable: React.FC<KeywordsTableProps> = ({
                     </div>
                   </TableCell>
                 )}
+                <TableCell className="font-medium">
+                  <div className="flex items-center gap-2">
+                    {keyword.name}
+                    {keyword.locked && (
+                      <span title="Locked - Only admins can edit">
+                        <Lock className="h-4 w-4 text-amber-600" />
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
+                <TableCell className="max-w-xs truncate">
+                  {keyword.description || "No description"}
+                </TableCell>
+                <TableCell>
+                  {keyword.isFree ? (
+                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-medium text-green-800">
+                      Free
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full bg-orange-100 px-2.5 py-0.5 text-sm font-medium text-orange-800">
+                      Paid
+                    </span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <div className="flex flex-wrap gap-1">
+                    {keyword.hidden ? (
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
+                        <EyeOff className="mr-1 h-3 w-3" />
+                        Hidden
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-sm font-medium text-blue-800">
+                        <Eye className="mr-1 h-3 w-3" />
+                        Visible
+                      </span>
+                    )}
+                    {keyword.comingSoon && (
+                      <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-sm font-medium text-amber-800">
+                        Coming Next Month
+                      </span>
+                    )}
+                  </div>
+                </TableCell>
+                {canLockKeyword(userRole) && (
+                  <TableCell>
+                    <Button
+                      variant={keyword.locked ? "secondary" : "ghost"}
+                      size="sm"
+                      onClick={() => handleLockToggle(keyword.id)}
+                      disabled={isPending && lockingKeywordId === keyword.id}
+                    >
+                      {keyword.locked ? (
+                        <Lock className="h-4 w-4 text-amber-600" />
+                      ) : (
+                        <LockOpen className="h-4 w-4" />
+                      )}
+                    </Button>
+                  </TableCell>
+                )}
+                <TableCell>
+                  {keyword.RCQuestionSet ? (
+                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-medium text-green-800">
+                      Has question set
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
+                      No question set
+                    </span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  {keyword.RCQuestionSet?.RCQuestion.length ? (
+                    <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-sm font-medium text-blue-800">
+                      {keyword.RCQuestionSet.RCQuestion.length} questions
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
+                      No questions
+                    </span>
+                  )}
+                </TableCell>
+                <TableCell>
+                  <ChallengeBadge challenges={keyword.challenges || []} />
+                </TableCell>
+                <TableCell className="text-base text-gray-500">
+                  {format(new Date(keyword.createdAt), "yyyy/MM/dd")}
+                </TableCell>
               </TableRow>
             ))}
           </TableBody>

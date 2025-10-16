@@ -110,7 +110,7 @@ export default function PlansTable({ plans }: PlansTableProps) {
               />
             </svg>
           </div>
-          <h3 className="text-lg font-medium text-gray-900">No plans found</h3>
+          <h3 className="text-xl font-medium text-gray-900">No plans found</h3>
           <p className="mt-1 text-gray-500">
             Get started by creating your first subscription plan.
           </p>
@@ -124,6 +124,7 @@ export default function PlansTable({ plans }: PlansTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="w-[100px]">Actions</TableHead>
             <TableHead>Plan Name</TableHead>
             <TableHead>Price</TableHead>
             <TableHead>Duration</TableHead>
@@ -132,63 +133,11 @@ export default function PlansTable({ plans }: PlansTableProps) {
             <TableHead>Subscriptions</TableHead>
             <TableHead>Sort Order</TableHead>
             <TableHead>Created</TableHead>
-            <TableHead className="w-[100px]">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {plans.map((plan) => (
             <TableRow key={plan.id}>
-              <TableCell>
-                <div>
-                  <div className="font-medium text-gray-900">{plan.name}</div>
-                  {plan.description && (
-                    <div className="text-sm text-gray-500">
-                      {plan.description}
-                    </div>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell>
-                <div className="space-y-1">
-                  <div className="font-medium">{formatCurrency(plan.price)}</div>
-                  {plan.priceUSD && (
-                    <div className="text-sm text-gray-500">
-                      ${plan.priceUSD.toFixed(2)} USD
-                    </div>
-                  )}
-                </div>
-              </TableCell>
-              <TableCell>{formatDuration(plan.duration)}</TableCell>
-              <TableCell>
-                <Badge
-                  variant={plan.isActive ? "default" : "secondary"}
-                  className={
-                    plan.isActive
-                      ? "bg-green-100 text-green-800"
-                      : "bg-gray-100 text-gray-800"
-                  }
-                >
-                  {plan.isActive ? "Active" : "Inactive"}
-                </Badge>
-              </TableCell>
-              <TableCell>
-                <span className="text-sm text-gray-600">
-                  {plan._count.payments}
-                </span>
-              </TableCell>
-              <TableCell>
-                <span className="text-sm text-gray-600">
-                  {plan._count.subscriptions}
-                </span>
-              </TableCell>
-              <TableCell>
-                <span className="text-sm text-gray-600">{plan.sortOrder}</span>
-              </TableCell>
-              <TableCell>
-                <span className="text-sm text-gray-600">
-                  {format(plan.createdAt, "yyyy-MM-dd")}
-                </span>
-              </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
                   <EditPlanDialog plan={plan} />
@@ -231,6 +180,57 @@ export default function PlansTable({ plans }: PlansTableProps) {
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
+              </TableCell>
+              <TableCell>
+                <div>
+                  <div className="font-medium text-gray-900">{plan.name}</div>
+                  {plan.description && (
+                    <div className="text-base text-gray-500">
+                      {plan.description}
+                    </div>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>
+                <div className="space-y-1">
+                  <div className="font-medium">{formatCurrency(plan.price)}</div>
+                  {plan.priceUSD && (
+                    <div className="text-base text-gray-500">
+                      ${plan.priceUSD.toFixed(2)} USD
+                    </div>
+                  )}
+                </div>
+              </TableCell>
+              <TableCell>{formatDuration(plan.duration)}</TableCell>
+              <TableCell>
+                <Badge
+                  variant={plan.isActive ? "default" : "secondary"}
+                  className={
+                    plan.isActive
+                      ? "bg-green-100 text-green-800"
+                      : "bg-gray-100 text-gray-800"
+                  }
+                >
+                  {plan.isActive ? "Active" : "Inactive"}
+                </Badge>
+              </TableCell>
+              <TableCell>
+                <span className="text-base text-gray-600">
+                  {plan._count.payments}
+                </span>
+              </TableCell>
+              <TableCell>
+                <span className="text-base text-gray-600">
+                  {plan._count.subscriptions}
+                </span>
+              </TableCell>
+              <TableCell>
+                <span className="text-base text-gray-600">{plan.sortOrder}</span>
+              </TableCell>
+              <TableCell>
+                <span className="text-base text-gray-600">
+                  {format(plan.createdAt, "yyyy-MM-dd")}
+                </span>
               </TableCell>
             </TableRow>
           ))}

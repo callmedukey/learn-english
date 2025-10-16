@@ -114,12 +114,12 @@ export default function UploadMedalImageDialog({
               accept="image/*"
               onChange={(e) => setFile(e.target.files?.[0] || null)}
             />
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               Recommended size: 256x256px, PNG with transparency
             </p>
           </div>
           {file && (
-            <div className="text-sm">
+            <div className="text-base">
               <p>Selected: {file.name}</p>
               <p className="text-muted-foreground">
                 Size: {(file.size / 1024).toFixed(2)} KB

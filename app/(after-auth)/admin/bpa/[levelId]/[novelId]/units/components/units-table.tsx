@@ -44,16 +44,26 @@ export function UnitsTable({ units, onReorder }: UnitsTableProps) {
       <Table>
         <TableHeader>
           <TableRow>
+            <TableHead className="text-left">Actions</TableHead>
             <TableHead className="w-[50px]">Order</TableHead>
             <TableHead>Name</TableHead>
             <TableHead>Description</TableHead>
             <TableHead>Chapters</TableHead>
-            <TableHead className="text-right">Actions</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {units.map((unit) => (
             <TableRow key={unit.id}>
+              <TableCell className="text-left">
+                <div className="flex items-center justify-start gap-2">
+                  <EditUnitDialog unit={unit} onSuccess={onReorder} />
+                  <DeleteUnitDialog
+                    unit={unit}
+                    availableUnits={units}
+                    onSuccess={onReorder}
+                  />
+                </div>
+              </TableCell>
               <TableCell>
                 <div className="flex items-center gap-2">
                   <GripVertical className="h-4 w-4 text-gray-400 cursor-grab" />
@@ -76,18 +86,8 @@ export function UnitsTable({ units, onReorder }: UnitsTableProps) {
                 {unit.chapterCount > 0 ? (
                   <Badge variant="outline">{unit.chapterCount} chapters</Badge>
                 ) : (
-                  <span className="text-gray-400 text-sm">No chapters</span>
+                  <span className="text-gray-400 text-base">No chapters</span>
                 )}
-              </TableCell>
-              <TableCell className="text-right">
-                <div className="flex items-center justify-end gap-2">
-                  <EditUnitDialog unit={unit} onSuccess={onReorder} />
-                  <DeleteUnitDialog
-                    unit={unit}
-                    availableUnits={units}
-                    onSuccess={onReorder}
-                  />
-                </div>
               </TableCell>
             </TableRow>
           ))}

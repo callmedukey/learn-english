@@ -138,7 +138,7 @@ const ChapterSection: React.FC<ChapterSectionProps> = ({
     <div className="space-y-6">
       {/* Add New Chapter Button */}
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-medium">Chapters ({chapters.length})</h3>
+        <h3 className="text-xl font-medium">Chapters ({chapters.length})</h3>
         <Button
           onClick={() => setShowNewChapterForm(true)}
           size="sm"
@@ -321,26 +321,26 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
                     Chapter {chapter.orderNumber}: {chapter.title}
                   </h4>
                   {chapter.isFree ? (
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
+                    <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-sm font-medium text-green-800">
                       Free
                     </span>
                   ) : (
-                    <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-1 text-xs font-medium text-orange-800">
+                    <span className="inline-flex items-center rounded-full bg-orange-100 px-2 py-1 text-sm font-medium text-orange-800">
                       Paid
                     </span>
                   )}
                   {chapter.questionSet &&
                     (chapter.questionSet.active ? (
-                      <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-xs font-medium text-primary">
+                      <span className="inline-flex items-center rounded-full bg-primary/10 px-2 py-1 text-sm font-medium text-primary">
                         Quiz Active
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-600">
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2 py-1 text-sm font-medium text-gray-600">
                         Quiz Inactive
                       </span>
                     ))}
                 </div>
-                <div className="text-sm text-gray-600">
+                <div className="text-base text-gray-600">
                   {chapter.description ? (
                     <span
                       dangerouslySetInnerHTML={{
@@ -572,7 +572,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
               checked={active}
               onCheckedChange={(checked) => setActive(checked as boolean)}
             />
-            <Label htmlFor="create-active" className="text-sm">
+            <Label htmlFor="create-active" className="text-base">
               Active (users can access this quiz)
             </Label>
           </div>
@@ -597,11 +597,11 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
           <h5 className="font-medium">Question Set</h5>
           <div className="flex items-center space-x-2">
             {questionSet?.active ? (
-              <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+              <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-medium text-green-800">
                 Active
               </span>
             ) : (
-              <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+              <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
                 Inactive
               </span>
             )}
@@ -647,7 +647,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
                 checked={active}
                 onCheckedChange={(checked) => setActive(checked as boolean)}
               />
-              <Label htmlFor="edit-active" className="text-sm">
+              <Label htmlFor="edit-active" className="text-base">
                 Active (users can access this quiz)
               </Label>
             </div>
@@ -665,7 +665,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
       ) : (
         <div className="rounded bg-gray-50 p-3">
           <div
-            className="text-sm"
+            className="text-base"
             dangerouslySetInnerHTML={{
               __html: DOMPurify.sanitize(questionSet?.instructions || ""),
             }}
@@ -871,12 +871,12 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
                 })}
               </RadioGroup>
               {!newQuestion.answer && validChoicesForButton.length > 0 && (
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-sm text-muted-foreground">
                   Please select the correct answer
                 </p>
               )}
               {validChoicesForButton.length !== 4 && (
-                <p className="mt-1 text-xs text-red-500">
+                <p className="mt-1 text-sm text-red-500">
                   You must provide exactly 4 answer choices
                 </p>
               )}
@@ -1130,12 +1130,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
               })}
             </RadioGroup>
             {!editForm.answer && validEditChoices.length > 0 && (
-              <p className="mt-1 text-xs text-muted-foreground">
+              <p className="mt-1 text-sm text-muted-foreground">
                 Please select the correct answer
               </p>
             )}
             {validEditChoices.length !== 4 && (
-              <p className="mt-1 text-xs text-red-500">
+              <p className="mt-1 text-sm text-red-500">
                 You must provide exactly 4 answer choices
               </p>
             )}
@@ -1223,11 +1223,11 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
       <div className="flex items-start justify-between">
         <div className="flex-1">
           <div className="mb-2 flex items-center space-x-2">
-            <span className="text-sm font-medium">Q{question.orderNumber}</span>
-            <span className="rounded bg-blue-100 px-2 py-1 text-xs text-blue-800">
+            <span className="text-base font-medium">Q{question.orderNumber}</span>
+            <span className="rounded bg-blue-100 px-2 py-1 text-sm text-blue-800">
               {question.score} pts
             </span>
-            <span className="rounded bg-gray-100 px-2 py-1 text-xs text-gray-800">
+            <span className="rounded bg-gray-100 px-2 py-1 text-sm text-gray-800">
               {question.timeLimit}s
             </span>
           </div>
@@ -1241,7 +1241,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
             {question.choices.map((choice, choiceIndex) => (
               <div
                 key={choiceIndex}
-                className={`flex flex-wrap gap-1 rounded p-2 text-sm ${
+                className={`flex flex-wrap gap-1 rounded p-2 text-base ${
                   choice === question.answer
                     ? "bg-green-100 font-medium text-green-800"
                     : "bg-gray-50"
@@ -1256,7 +1256,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
               </div>
             ))}
           </div>
-          <p className="text-sm text-gray-600">
+          <p className="text-base text-gray-600">
             <strong className="block">Explanation:</strong>{" "}
             <span
               dangerouslySetInnerHTML={{

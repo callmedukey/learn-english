@@ -140,7 +140,7 @@ export default function CreatePlanDialog() {
                   placeholder="9,900"
                   required
                 />
-                <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-500">
+                <span className="absolute top-1/2 right-3 -translate-y-1/2 text-base text-gray-500">
                   원
                 </span>
               </div>
@@ -172,11 +172,11 @@ export default function CreatePlanDialog() {
                 onChange={handleInputChange}
                 placeholder="9.99"
               />
-              <span className="absolute top-1/2 right-3 -translate-y-1/2 text-sm text-gray-500">
+              <span className="absolute top-1/2 right-3 -translate-y-1/2 text-base text-gray-500">
                 $
               </span>
             </div>
-            <p className="text-xs text-muted-foreground">
+            <p className="text-sm text-muted-foreground">
               Leave empty if you don&apos;t want to accept international payments
             </p>
           </div>

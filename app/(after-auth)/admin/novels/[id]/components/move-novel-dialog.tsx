@@ -86,7 +86,7 @@ export default function MoveNovelDialog({
         <form action={formAction}>
           <div className="grid gap-4 py-4">
             <div className="space-y-2">
-              <label htmlFor="ar-level" className="text-sm font-medium">
+              <label htmlFor="ar-level" className="text-base font-medium">
                 Select New Lexile Level
               </label>
               <Select value={selectedARId} onValueChange={setSelectedARId}>
@@ -98,12 +98,12 @@ export default function MoveNovelDialog({
                     <SelectItem key={ar.id} value={ar.id}>
                       <div className="flex w-full items-center justify-between">
                         <span>Level {ar.level}</span>
-                        <span className="ml-2 text-xs text-gray-500">
+                        <span className="ml-2 text-sm text-gray-500">
                           {"★".repeat(ar.stars)}
                         </span>
                       </div>
                       {ar.description && (
-                        <div className="mt-1 text-xs text-gray-500">
+                        <div className="mt-1 text-sm text-gray-500">
                           {ar.description}
                         </div>
                       )}
@@ -112,7 +112,7 @@ export default function MoveNovelDialog({
                 </SelectContent>
               </Select>
               {state?.error && (
-                <p className="text-sm text-red-600">{state.error}</p>
+                <p className="text-base text-red-600">{state.error}</p>
               )}
             </div>
           </div>

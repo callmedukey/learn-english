@@ -29,7 +29,7 @@ const CreateBPALevelPage = async () => {
           </Link>
           <div>
             <h1 className="text-2xl font-bold">Create BPA Level</h1>
-            <p className="text-sm text-gray-600">Add a new BPA Level</p>
+            <p className="text-base text-gray-600">Add a new BPA Level</p>
           </div>
         </div>
       </div>

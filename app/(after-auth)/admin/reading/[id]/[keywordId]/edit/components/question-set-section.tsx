@@ -171,7 +171,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
     return (
       <div className="rounded-lg border p-6">
         <div className="text-center">
-          <h3 className="mb-2 text-lg font-semibold">No Reading Passage</h3>
+          <h3 className="mb-2 text-xl font-semibold">No Reading Passage</h3>
           <p className="mb-4 text-gray-600">
             This keyword doesn&apos;t have a reading passage yet. Create one to
             start adding questions.
@@ -217,7 +217,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
                   placeholder={defaultTimer.toString()}
                   min="10"
                 />
-                <p className="mt-1 text-sm text-gray-500">
+                <p className="mt-1 text-base text-gray-500">
                   Default time limit for this reading passage (minimum 10
                   seconds)
                 </p>
@@ -250,7 +250,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
       {/* Reading Passage Section */}
       <div className="rounded-lg border p-6">
         <div className="mb-4 flex items-center justify-between">
-          <h3 className="text-lg font-semibold">Reading Passage</h3>
+          <h3 className="text-xl font-semibold">Reading Passage</h3>
           <div className="flex space-x-2">
             {!editingQuestionSet ? (
               <>
@@ -340,12 +340,12 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
           <div className="space-y-4">
             <div>
               <h4
-                className="text-lg font-medium"
+                className="text-xl font-medium"
                 dangerouslySetInnerHTML={{
                   __html: DOMPurify.sanitize(keyword.RCQuestionSet.title),
                 }}
               />
-              <p className="text-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 Time Limit: {keyword.RCQuestionSet.timeLimit} seconds
               </p>
             </div>
@@ -364,7 +364,7 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
       {/* Questions */}
       <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h3 className="text-lg font-semibold">
+          <h3 className="text-xl font-semibold">
             Questions ({keyword.RCQuestionSet.RCQuestion.length})
           </h3>
           <Button onClick={() => setShowAddQuestion(true)}>
@@ -443,12 +443,12 @@ const QuestionSetSection: React.FC<QuestionSetSectionProps> = ({
                 </RadioGroup>
                 {!answer &&
                   choices.filter((c) => stripHtml(c).trim()).length > 0 && (
-                    <p className="mt-1 text-sm text-muted-foreground">
+                    <p className="mt-1 text-base text-muted-foreground">
                       Please select the correct answer
                     </p>
                   )}
                 {choices.filter((c) => stripHtml(c).trim()).length !== 4 && (
-                  <p className="mt-1 text-sm text-red-500">
+                  <p className="mt-1 text-base text-red-500">
                     You must provide exactly 4 answer choices
                   </p>
                 )}
@@ -613,7 +613,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
     return (
       <Card>
         <CardHeader>
-          <CardTitle className="text-base">
+          <CardTitle className="text-lg">
             Edit Question {question.orderNumber}
           </CardTitle>
         </CardHeader>
@@ -685,12 +685,12 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             {!editForm.answer &&
               editForm.choices.filter((c) => stripHtml(c).trim()).length >
                 0 && (
-                <p className="mt-1 text-xs text-muted-foreground">
+                <p className="mt-1 text-sm text-muted-foreground">
                   Please select the correct answer
                 </p>
               )}
             {editForm.choices.filter((c) => stripHtml(c).trim()).length !== 4 && (
-              <p className="mt-1 text-xs text-red-500">
+              <p className="mt-1 text-sm text-red-500">
                 You must provide exactly 4 answer choices
               </p>
             )}
@@ -783,7 +783,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
       <CardHeader>
         <div className="flex items-start justify-between">
           <div>
-            <CardTitle className="text-base">
+            <CardTitle className="text-lg">
               Question {question.orderNumber}
             </CardTitle>
             <CardDescription>
@@ -825,7 +825,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
           {question.choices.map((choice, choiceIndex) => (
             <div
               key={choiceIndex}
-              className={`flex rounded p-2 text-sm ${
+              className={`flex rounded p-2 text-base ${
                 choice === question.answer
                   ? "bg-green-100 font-medium text-green-800"
                   : "bg-gray-50"
@@ -842,7 +842,7 @@ const QuestionCard: React.FC<QuestionCardProps> = ({
             </div>
           ))}
         </div>
-        <div className="text-sm text-gray-600">
+        <div className="text-base text-gray-600">
           <strong className="block">Explanation:</strong>{" "}
           <div
             dangerouslySetInnerHTML={{

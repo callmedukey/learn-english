@@ -62,7 +62,7 @@ const CreateBPANovelForm: React.FC<CreateBPANovelFormProps> = ({ levelId }) => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               The title of the BPA novel
             </p>
           </div>
@@ -76,7 +76,7 @@ const CreateBPANovelForm: React.FC<CreateBPANovelFormProps> = ({ levelId }) => {
               rows={4}
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               Optional description of the novel
             </p>
           </div>

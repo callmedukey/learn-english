@@ -90,7 +90,7 @@ const SearchNovelsTable: React.FC<SearchNovelsTableProps> = ({ novels, arLevels,
       {/* Bulk Actions */}
       {userRole === Role.ADMIN && selectedNovels.length > 0 && (
         <div className="flex items-center justify-between rounded-lg border bg-gray-50 p-4">
-          <p className="text-sm font-medium">
+          <p className="text-base font-medium">
             {selectedNovels.length} novel
             {selectedNovels.length !== 1 ? "s" : ""} selected
           </p>
@@ -185,18 +185,18 @@ const SearchNovelsTable: React.FC<SearchNovelsTableProps> = ({ novels, arLevels,
                   <TableCell>
                     <div className="flex flex-wrap gap-1">
                       {novel.hidden ? (
-                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                        <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
                           <EyeOff className="mr-1 h-3 w-3" />
                           Hidden
                         </span>
                       ) : (
-                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                        <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-sm font-medium text-blue-800">
                           <Eye className="mr-1 h-3 w-3" />
                           Visible
                         </span>
                       )}
                       {novel.comingSoon && (
-                        <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
+                        <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-sm font-medium text-amber-800">
                           Coming Next Month
                         </span>
                       )}
@@ -220,22 +220,22 @@ const SearchNovelsTable: React.FC<SearchNovelsTableProps> = ({ novels, arLevels,
                   )}
                   <TableCell>
                     {novel.novelChapters.length > 0 ? (
-                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-xs font-medium text-blue-800">
+                      <span className="inline-flex items-center rounded-full bg-blue-100 px-2.5 py-0.5 text-sm font-medium text-blue-800">
                         {novel.novelChapters.length} chapters
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-800">
                         No chapters
                       </span>
                     )}
                   </TableCell>
                   <TableCell>
                     {freeChaptersCount > 0 ? (
-                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                      <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-sm font-medium text-green-800">
                         {freeChaptersCount} free
                       </span>
                     ) : (
-                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-500">
+                      <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-sm font-medium text-gray-500">
                         None
                       </span>
                     )}
@@ -243,7 +243,7 @@ const SearchNovelsTable: React.FC<SearchNovelsTableProps> = ({ novels, arLevels,
                   <TableCell>
                     <ChallengeBadge challenges={novel.challenges || []} />
                   </TableCell>
-                  <TableCell className="text-sm text-gray-500">
+                  <TableCell className="text-base text-gray-500">
                     {format(new Date(novel.createdAt), "yyyy/MM/dd")}
                   </TableCell>
                   {(canEditNovel(userRole, novel.locked) || canDeleteNovel(userRole)) && (

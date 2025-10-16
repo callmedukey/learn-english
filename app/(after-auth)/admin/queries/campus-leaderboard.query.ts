@@ -8,6 +8,7 @@ export interface CampusLeaderboardFilters {
   campusId?: string;
   bpaLevelId?: string;
   unitId?: string;
+  grade?: string;
 }
 
 export interface PaginationParams {
@@ -15,16 +16,22 @@ export interface PaginationParams {
   pageSize: number;
 }
 
-export interface CampusRanking {
+export interface CampusStudent {
   id: string;
-  name: string;
-  studentCount: number;
-  totalScore: number;
+  nickname: string | null;
+  studentName: string | null;
+  email: string;
+  grade: string;
+  campus: {
+    id: string;
+    name: string;
+  };
+  bpaScore: number;
   rank: number;
 }
 
 export interface CampusLeaderboardResult {
-  campuses: CampusRanking[];
+  students: CampusStudent[];
   total: number;
   totalPages: number;
 }
@@ -36,13 +43,35 @@ export async function getCampusLeaderboardData(
   filters: CampusLeaderboardFilters,
   pagination: PaginationParams
 ): Promise<CampusLeaderboardResult> {
-  // Build where clause for BPA scores
+  // Get semester details if semesterId is provided (for backward compatibility)
+  let semesterInfo: { timeframeId: string; season: string } | null = null;
+  if (filters.semesterId) {
+    const semester = await prisma.bPASemester.findUnique({
+      where: { id: filters.semesterId },
+      select: { timeframeId: true, season: true },
+    });
+    if (semester) {
+      semesterInfo = semester;
+    }
+  }
+
+  // Build where clause for BPA scores (supports both old and new schema)
   const scoreWhere: any = {};
 
-  if (filters.semesterId) {
-    scoreWhere.semesterId = filters.semesterId;
+  if (filters.semesterId && semesterInfo) {
+    // For backward compatibility: match either semesterId OR (timeframeId + season)
+    scoreWhere.OR = [
+      { semesterId: filters.semesterId },
+      {
+        AND: [
+          { semesterId: null },
+          { timeframeId: semesterInfo.timeframeId },
+          { season: semesterInfo.season },
+        ],
+      },
+    ];
   } else if (filters.timeframeId) {
-    // If no semester specified, use timeframe
+    // If no semester specified, use timeframe only
     scoreWhere.timeframeId = filters.timeframeId;
   }
 
@@ -102,59 +131,66 @@ export async function getCampusLeaderboardData(
     });
   }
 
-  // Aggregate by campus
-  const campusMap = new Map<string, {
-    campus: { id: string; name: string };
-    studentCount: number;
-    totalScore: number;
-  }>();
+  // Map users to CampusStudent objects
+  const students: CampusStudent[] = filteredUsers.map((user) => {
+    const bpaScore = user.bpaScores.reduce((sum, score) => sum + score.score, 0);
 
-  for (const user of filteredUsers) {
-    if (!user.campus) continue;
+    // Calculate grade based on birthday
+    const calculateGrade = (birthday: Date | null): string => {
+      if (!birthday) return "N/A";
+      const today = new Date();
+      const birthDate = new Date(birthday);
+      let age = today.getFullYear() - birthDate.getFullYear();
+      const monthDiff = today.getMonth() - birthDate.getMonth();
+      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+      }
 
-    const campusId = user.campus.id;
-    const userScore = user.bpaScores.reduce((sum, score) => sum + score.score, 0);
+      if (age >= 20) return "Adult";
+      if (age < 6) return "Kinder";
+      const grade = age - 5;
+      return `Grade ${grade}`;
+    };
 
-    if (!campusMap.has(campusId)) {
-      campusMap.set(campusId, {
-        campus: { id: user.campus.id, name: user.campus.name },
-        studentCount: 0,
-        totalScore: 0,
-      });
-    }
+    return {
+      id: user.id,
+      nickname: user.nickname,
+      studentName: user.studentName,
+      email: user.email,
+      grade: calculateGrade(user.birthday),
+      campus: {
+        id: user.campus!.id,
+        name: user.campus!.name,
+      },
+      bpaScore,
+      rank: 0, // Will be assigned after sorting
+    };
+  });
 
-    const campusData = campusMap.get(campusId)!;
-    campusData.studentCount += 1;
-    campusData.totalScore += userScore;
-  }
+  // Filter by grade if specified
+  const gradeFilteredStudents = filters.grade
+    ? students.filter((student) => student.grade === filters.grade)
+    : students;
 
-  // Convert to array and calculate ranks
-  const campusArray = Array.from(campusMap.values())
-    .map((campus) => ({
-      id: campus.campus.id,
-      name: campus.campus.name,
-      studentCount: campus.studentCount,
-      totalScore: campus.totalScore,
-      rank: 0, // Will be set below
-    }))
-    .sort((a, b) => b.totalScore - a.totalScore);
+  // Sort students by BPA score (descending)
+  const sortedStudents = gradeFilteredStudents.sort((a, b) => b.bpaScore - a.bpaScore);
 
-  // Assign ranks
-  campusArray.forEach((campus, index) => {
-    campus.rank = index + 1;
+  // Assign ranks based on score
+  sortedStudents.forEach((student, index) => {
+    student.rank = index + 1;
   });
 
   // Apply pagination
-  const total = campusArray.length;
+  const total = sortedStudents.length;
   const totalPages = Math.ceil(total / pagination.pageSize);
   const startIndex = (pagination.page - 1) * pagination.pageSize;
-  const paginatedCampuses = campusArray.slice(
+  const paginatedStudents = sortedStudents.slice(
     startIndex,
     startIndex + pagination.pageSize
   );
 
   return {
-    campuses: paginatedCampuses,
+    students: paginatedStudents,
     total,
     totalPages,
   };

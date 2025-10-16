@@ -75,9 +75,9 @@ async function RCKeywords({
   const page = parseInt(searchParams.page || "1", 10);
   const perPage = 30;
 
-  // Build the orderBy clause - default to name asc
+  // Build the orderBy clause - default to name desc
   const sortBy = searchParams.sortBy || "name";
-  const sortOrder = searchParams.sortOrder || "asc";
+  const sortOrder = searchParams.sortOrder || "desc";
 
   let orderBy: any = { name: "asc" };
 
@@ -104,10 +104,8 @@ async function RCKeywords({
   // Get challenge keyword IDs for this RC level
   const challengeKeywordIds = await getActiveChallengeItems("RC", rcLevelId);
 
-  // Get all keywords without pinning
-  const skip = (page - 1) * perPage;
-
-  const allKeywords = await prisma.rCKeyword.findMany({
+  // Get all keywords (fetch all first, then sort and paginate to ensure coming soon items are last)
+  const allKeywordsFromDb = await prisma.rCKeyword.findMany({
     where: {
       rcLevelId: rcLevelId,
       hidden: false,
@@ -163,18 +161,34 @@ async function RCKeywords({
       },
     },
     orderBy,
-    skip,
-    take: perPage,
   });
 
-  // Get total count for display (only visible keywords)
-  const totalKeywordsCount = await prisma.rCKeyword.count({
-    where: {
-      rcLevelId: rcLevelId,
-      hidden: false,
-      ...searchWhere,
-    },
+  // Separate items with content from items without content (coming soon or no content)
+  const keywordsWithContent = allKeywordsFromDb.filter((k) => {
+    // Has content if: not coming soon AND has question set AND question set is active AND has questions
+    const hasQuestionSet = k.RCQuestionSet !== null;
+    const isActive = k.RCQuestionSet?.active === true;
+    const hasQuestions = (k.RCQuestionSet?.RCQuestion?.length ?? 0) > 0;
+    return !k.comingSoon && hasQuestionSet && isActive && hasQuestions;
   });
+
+  const keywordsWithoutContent = allKeywordsFromDb.filter((k) => {
+    // No content if: coming soon OR no question set OR inactive OR no questions
+    const hasQuestionSet = k.RCQuestionSet !== null;
+    const isActive = k.RCQuestionSet?.active === true;
+    const hasQuestions = (k.RCQuestionSet?.RCQuestion?.length ?? 0) > 0;
+    return k.comingSoon || !hasQuestionSet || !isActive || !hasQuestions;
+  });
+
+  // Concatenate with items without content at the end
+  const sortedAllKeywords = [...keywordsWithContent, ...keywordsWithoutContent];
+
+  // Apply pagination after sorting
+  const skip = (page - 1) * perPage;
+  const allKeywords = sortedAllKeywords.slice(skip, skip + perPage);
+
+  // Get total count from sorted keywords
+  const totalKeywordsCount = sortedAllKeywords.length;
 
   // Calculate total pages with standard pagination
   const totalPages = Math.ceil(totalKeywordsCount / perPage);

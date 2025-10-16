@@ -279,7 +279,7 @@ const EnhancedChapterCreationWorkflow: React.FC<
             className={`flex items-center ${currentStep === "novel" ? "text-slate-700" : "text-slate-500"}`}
           >
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium text-white ${
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-base font-medium text-white ${
                 currentStep === "novel" ? "bg-slate-600" : "bg-slate-400"
               }`}
             >
@@ -296,7 +296,7 @@ const EnhancedChapterCreationWorkflow: React.FC<
             className={`flex items-center ${currentStep === "chapters" ? "text-slate-700" : "text-slate-400"}`}
           >
             <div
-              className={`flex h-8 w-8 items-center justify-center rounded-full text-sm font-medium text-white ${
+              className={`flex h-8 w-8 items-center justify-center rounded-full text-base font-medium text-white ${
                 currentStep === "chapters" ? "bg-slate-600" : "bg-slate-300"
               }`}
             >
@@ -315,7 +315,7 @@ const EnhancedChapterCreationWorkflow: React.FC<
       {currentStep === "chapters" && createdNovelId && (
         <div className="mx-auto max-w-4xl space-y-6">
           <div className="text-center">
-            <h2 className="text-xl font-semibold">Add Chapters & Questions</h2>
+            <h2 className="text-2xl font-semibold">Add Chapters & Questions</h2>
             <p className="text-gray-600">
               {createdChapters.length > 0
                 ? `${createdChapters.length} chapter${createdChapters.length > 1 ? "s" : ""} created. Create another or finish.`
@@ -327,13 +327,13 @@ const EnhancedChapterCreationWorkflow: React.FC<
           {createdChapters.length > 0 && (
             <Card>
               <CardHeader>
-                <CardTitle className="text-base">Created Chapters</CardTitle>
+                <CardTitle className="text-lg">Created Chapters</CardTitle>
               </CardHeader>
               <CardContent>
                 <ul className="space-y-2">
                   {createdChapters.map((chapterId, index) => (
-                    <li key={chapterId} className="flex items-center text-sm">
-                      <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-xs text-green-600">
+                    <li key={chapterId} className="flex items-center text-base">
+                      <span className="mr-2 flex h-6 w-6 items-center justify-center rounded-full bg-green-100 text-sm text-green-600">
                         ✓
                       </span>
                       Chapter {index + 1}
@@ -363,7 +363,7 @@ const EnhancedChapterCreationWorkflow: React.FC<
                     }
                     min="1"
                   />
-                  <p className="mt-1 text-xs text-gray-500">
+                  <p className="mt-1 text-sm text-gray-500">
                     Use a unique order number for each chapter
                   </p>
                 </div>
@@ -602,7 +602,7 @@ const EnhancedChapterCreationWorkflow: React.FC<
                     {question.choices.map((choice, choiceIndex) => (
                       <div
                         key={choiceIndex}
-                        className={`flex rounded p-1 text-sm ${
+                        className={`flex rounded p-1 text-base ${
                           choice === question.answer
                             ? "bg-green-100 font-medium text-green-800"
                             : "bg-gray-50"
@@ -620,7 +620,7 @@ const EnhancedChapterCreationWorkflow: React.FC<
                     ))}
                   </div>
 
-                  <div className="text-sm text-gray-600">
+                  <div className="text-base text-gray-600">
                     <strong>Score:</strong> {question.score} •{" "}
                     <strong>Time:</strong> {question.timeLimit}s
                   </div>

@@ -38,66 +38,46 @@ const CampusesTable = async () => {
         <TableRow>
           <TableHead
             scope="col"
-            className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase"
+            className="px-6 py-3 text-left text-sm font-medium tracking-wider text-gray-500 uppercase"
+          >
+            Actions
+          </TableHead>
+          <TableHead
+            scope="col"
+            className="px-6 py-3 text-center text-sm font-medium tracking-wider text-gray-500 uppercase"
           >
             No.
           </TableHead>
           <TableHead
             scope="col"
-            className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase"
+            className="px-6 py-3 text-center text-sm font-medium tracking-wider text-gray-500 uppercase"
           >
             Campus Name
           </TableHead>
           <TableHead
             scope="col"
-            className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase"
+            className="px-6 py-3 text-center text-sm font-medium tracking-wider text-gray-500 uppercase"
           >
             User Count
           </TableHead>
           <TableHead
             scope="col"
-            className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase"
+            className="px-6 py-3 text-center text-sm font-medium tracking-wider text-gray-500 uppercase"
           >
             Created At
           </TableHead>
           <TableHead
             scope="col"
-            className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase"
+            className="px-6 py-3 text-center text-sm font-medium tracking-wider text-gray-500 uppercase"
           >
             Updated At
-          </TableHead>
-          <TableHead
-            scope="col"
-            className="px-6 py-3 text-center text-xs font-medium tracking-wider text-gray-500 uppercase"
-          >
-            Actions
           </TableHead>
         </TableRow>
       </TableHeader>
       <TableBody>
         {campuses.map((campus, index) => (
           <TableRow key={campus.id}>
-            <TableCell className="px-6 py-4 text-center text-sm font-medium whitespace-nowrap text-gray-900">
-              {index + 1}
-            </TableCell>
-            <TableCell className="px-6 py-4 text-center text-sm whitespace-nowrap text-gray-900">
-              <Link
-                href={`/admin/campuses/${campus.id}`}
-                className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
-              >
-                {campus.name}
-              </Link>
-            </TableCell>
-            <TableCell className="px-6 py-4 text-center text-sm whitespace-nowrap text-gray-500">
-              {campus._count.users}
-            </TableCell>
-            <TableCell className="px-6 py-4 text-center text-sm whitespace-nowrap text-gray-500">
-              {format(new Date(campus.createdAt), "yyyy/MM/dd")}
-            </TableCell>
-            <TableCell className="px-6 py-4 text-center text-sm whitespace-nowrap text-gray-500">
-              {format(new Date(campus.updatedAt), "yyyy/MM/dd")}
-            </TableCell>
-            <TableCell className="flex items-center justify-center space-x-2 py-4 text-sm font-medium whitespace-nowrap">
+            <TableCell className="flex items-center justify-start space-x-2 py-4 text-base font-medium whitespace-nowrap px-6">
               <UpdateCampusDialog campus={campus}>
                 <Button variant="outline" size="sm">
                   Update
@@ -112,6 +92,26 @@ const CampusesTable = async () => {
                   Delete
                 </Button>
               </DeleteCampusDialog>
+            </TableCell>
+            <TableCell className="px-6 py-4 text-center text-base font-medium whitespace-nowrap text-gray-900">
+              {index + 1}
+            </TableCell>
+            <TableCell className="px-6 py-4 text-center text-base whitespace-nowrap text-gray-900">
+              <Link
+                href={`/admin/campuses/${campus.id}`}
+                className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+              >
+                {campus.name}
+              </Link>
+            </TableCell>
+            <TableCell className="px-6 py-4 text-center text-base whitespace-nowrap text-gray-500">
+              {campus._count.users}
+            </TableCell>
+            <TableCell className="px-6 py-4 text-center text-base whitespace-nowrap text-gray-500">
+              {format(new Date(campus.createdAt), "yyyy/MM/dd")}
+            </TableCell>
+            <TableCell className="px-6 py-4 text-center text-base whitespace-nowrap text-gray-500">
+              {format(new Date(campus.updatedAt), "yyyy/MM/dd")}
             </TableCell>
           </TableRow>
         ))}

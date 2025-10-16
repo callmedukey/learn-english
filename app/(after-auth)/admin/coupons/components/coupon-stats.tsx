@@ -13,7 +13,7 @@ export default function CouponStats({ stats }: CouponStatsProps) {
       {/* Total Coupons */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
         <div>
-          <p className="text-sm font-medium text-gray-600">Total Coupons</p>
+          <p className="text-base font-medium text-gray-600">Total Coupons</p>
           <p className="text-2xl font-bold text-blue-600">
             {stats.totalCoupons.toLocaleString()}
           </p>
@@ -23,7 +23,7 @@ export default function CouponStats({ stats }: CouponStatsProps) {
       {/* Active Coupons */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
         <div>
-          <p className="text-sm font-medium text-gray-600">Active Coupons</p>
+          <p className="text-base font-medium text-gray-600">Active Coupons</p>
           <p className="text-2xl font-bold text-green-600">
             {stats.activeCoupons.toLocaleString()}
           </p>
@@ -33,7 +33,7 @@ export default function CouponStats({ stats }: CouponStatsProps) {
       {/* Used Coupons */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
         <div>
-          <p className="text-sm font-medium text-gray-600">Used Coupons</p>
+          <p className="text-base font-medium text-gray-600">Used Coupons</p>
           <p className="text-2xl font-bold text-purple-600">
             {stats.usedCoupons.toLocaleString()}
           </p>
@@ -43,7 +43,7 @@ export default function CouponStats({ stats }: CouponStatsProps) {
       {/* Unused Coupons */}
       <div className="rounded-lg border bg-white p-6 shadow-sm">
         <div>
-          <p className="text-sm font-medium text-gray-600">Unused Coupons</p>
+          <p className="text-base font-medium text-gray-600">Unused Coupons</p>
           <p className="text-2xl font-bold text-orange-600">
             {stats.unusedCoupons.toLocaleString()}
           </p>

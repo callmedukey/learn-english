@@ -52,7 +52,7 @@ export default function PaymentPagination({
 
   return (
     <div className="flex items-center justify-between border-t bg-white px-6 py-4">
-      <div className="flex items-center text-sm text-gray-500">
+      <div className="flex items-center text-base text-gray-500">
         <span>
           Showing page {currentPage} of {totalPages} ({totalCount} total
           payments)

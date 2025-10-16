@@ -23,7 +23,7 @@ export default function CountryFilter({
 }: CountryFilterProps) {
   return (
     <div className="flex items-center gap-2">
-      <label htmlFor="country-select" className="text-sm font-medium">
+      <label htmlFor="country-select" className="text-base font-medium">
         Filter by Country:
       </label>
       <Select

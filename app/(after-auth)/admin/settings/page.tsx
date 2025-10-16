@@ -20,7 +20,7 @@ export default async function SettingsPage() {
       <div className="space-y-8">
         {/* Password Reset Section */}
         <section className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+          <h2 className="mb-4 text-2xl font-semibold text-gray-800">
             Change Password
           </h2>
           <Suspense fallback={<div className="text-gray-500">Loading...</div>}>
@@ -30,10 +30,10 @@ export default async function SettingsPage() {
 
         {/* RC Settings Section */}
         <section className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+          <h2 className="mb-4 text-2xl font-semibold text-gray-800">
             Reading Comprehension Global Settings
           </h2>
-          <p className="mb-4 text-sm text-gray-600">
+          <p className="mb-4 text-base text-gray-600">
             These are fallback defaults used when level-specific defaults are not set.
           </p>
           <Suspense fallback={<div className="text-gray-500">Loading...</div>}>
@@ -43,10 +43,10 @@ export default async function SettingsPage() {
 
         {/* RC Level Defaults Section */}
         <section className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+          <h2 className="mb-4 text-2xl font-semibold text-gray-800">
             RC Level Default Settings
           </h2>
-          <p className="mb-4 text-sm text-gray-600">
+          <p className="mb-4 text-base text-gray-600">
             Set default timer and score values for each RC level. These values will automatically populate when creating new RC questions.
           </p>
           <Suspense fallback={<div className="text-gray-500">Loading...</div>}>
@@ -56,10 +56,10 @@ export default async function SettingsPage() {
 
         {/* Novel Settings Section */}
         <section className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+          <h2 className="mb-4 text-2xl font-semibold text-gray-800">
             Novel Global Settings
           </h2>
-          <p className="mb-4 text-sm text-gray-600">
+          <p className="mb-4 text-base text-gray-600">
             These are fallback defaults used when level-specific defaults are not set.
           </p>
           <Suspense fallback={<div className="text-gray-500">Loading...</div>}>
@@ -69,10 +69,10 @@ export default async function SettingsPage() {
 
         {/* Novel Level Defaults Section */}
         <section className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+          <h2 className="mb-4 text-2xl font-semibold text-gray-800">
             Novel Level Default Settings
           </h2>
-          <p className="mb-4 text-sm text-gray-600">
+          <p className="mb-4 text-base text-gray-600">
             Set default timer and score values for each Novel level. These values will automatically populate when creating new Novel questions.
           </p>
           <Suspense fallback={<div className="text-gray-500">Loading...</div>}>
@@ -82,10 +82,10 @@ export default async function SettingsPage() {
 
         {/* BPA Settings Section */}
         <section className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+          <h2 className="mb-4 text-2xl font-semibold text-gray-800">
             BPA Global Settings
           </h2>
-          <p className="mb-4 text-sm text-gray-600">
+          <p className="mb-4 text-base text-gray-600">
             These are fallback defaults used when level-specific defaults are not set.
           </p>
           <Suspense fallback={<div className="text-gray-500">Loading...</div>}>
@@ -95,10 +95,10 @@ export default async function SettingsPage() {
 
         {/* BPA Level Defaults Section */}
         <section className="rounded-lg bg-white p-6 shadow">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">
+          <h2 className="mb-4 text-2xl font-semibold text-gray-800">
             BPA Level Default Settings
           </h2>
-          <p className="mb-4 text-sm text-gray-600">
+          <p className="mb-4 text-base text-gray-600">
             Set default timer and score values for each BPA level. These values will automatically populate when creating new BPA questions.
           </p>
           <Suspense fallback={<div className="text-gray-500">Loading...</div>}>

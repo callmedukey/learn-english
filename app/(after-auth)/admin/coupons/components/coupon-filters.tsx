@@ -72,7 +72,7 @@ export default function CouponFiltersComponent({
   return (
     <div className="space-y-4 rounded-lg bg-gray-50 p-4">
       <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Filters</h3>
+        <h3 className="text-xl font-semibold">Filters</h3>
         {hasActiveFilters && (
           <Button
             variant="outline"
@@ -89,7 +89,7 @@ export default function CouponFiltersComponent({
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
         {/* Search */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Search</label>
+          <label className="text-base font-medium">Search</label>
           <div className="flex gap-2">
             <div className="relative flex-1">
               <Search className="absolute top-1/2 left-3 h-4 w-4 -translate-y-1/2 transform text-gray-400" />
@@ -109,7 +109,7 @@ export default function CouponFiltersComponent({
 
         {/* Status Filter */}
         <div className="space-y-2">
-          <label className="text-sm font-medium">Status</label>
+          <label className="text-base font-medium">Status</label>
           <Select
             value={
               filters.active === undefined ? "ALL" : filters.active.toString()

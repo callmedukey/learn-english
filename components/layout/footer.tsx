@@ -48,8 +48,7 @@ const Footer = () => {
           <div className="flex flex-col gap-2 text-left text-sm text-[#1c1b1b]">
             <p className="font-bold">(주)비피에이교육 (BPA Education)</p>
             <p>
-              <span className="font-bold">대표자</span> 김은기 (KIM DAVID
-              EUNKEE)
+              <span className="font-bold">대표자</span> KIM DAVID
             </p>
             <p>
               <span className="font-bold">사업자등록번호</span> 393-81-00352 |
@@ -62,10 +61,10 @@ const Footer = () => {
               분당구 성남대로 385, 8층
             </p>
             <p>
-              <span className="font-bold">연락처</span> +82-0507-1432-0332 |
+              <span className="font-bold">연락처</span> 031-712-0331 |
             </p>
             <p>
-              <span className="font-bold">이메일</span> readingchamp25@gmail.com
+              <span className="font-bold">이메일</span> readingchamp@readingchamp.com
             </p>
           </div>
 
@@ -120,8 +119,7 @@ const Footer = () => {
               (주)비피에이교육 (BPA EDUCATION)
             </p>
             <p>
-              <span className="font-bold">대표자</span> 김은기 (KIM DAVID
-              EUNKEE)
+              <span className="font-bold">대표자</span> KIM DAVID
             </p>
             <p>
               <span className="font-bold">사업자등록번호</span> 393-81-00352 |{" "}
@@ -132,8 +130,8 @@ const Footer = () => {
               분당구 성남대로 385, 8층
             </p>
             <p>
-              <span className="font-bold">연락처</span> +82-0507-1432-0332 |{" "}
-              <span className="font-bold">이메일</span> readingchamp25@gmail.com
+              <span className="font-bold">연락처</span> 031-712-0331 |{" "}
+              <span className="font-bold">이메일</span> readingchamp@readingchamp.com
             </p>
           </div>
 
@@ -192,7 +190,7 @@ const Footer = () => {
               <div className="space-y-2 text-lg">
                 <p>
                   <span className="font-bold">대표자</span>
-                  <span className="ml-2">김은기 (KIM DAVID EUNKEE)</span>
+                  <span className="ml-2">KIM DAVID</span>
                 </p>
                 <p>
                   <span className="font-bold">사업자등록번호</span>
@@ -209,10 +207,10 @@ const Footer = () => {
                 </p>
                 <p>
                   <span className="font-bold">연락처</span>
-                  <span className="ml-2">+82-0507-1432-0332</span>
+                  <span className="ml-2">031-712-0331</span>
                   <span className="mx-2">|</span>
                   <span className="font-bold">이메일</span>
-                  <span className="ml-2">readingchamp25@gmail.com</span>
+                  <span className="ml-2">readingchamp@readingchamp.com</span>
                 </p>
               </div>
               <Link

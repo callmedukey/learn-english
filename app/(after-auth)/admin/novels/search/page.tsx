@@ -40,7 +40,7 @@ const SearchNovelsPage = async ({ searchParams }: PageProps) => {
           <div>
             <h1 className="text-2xl font-bold">Search Novels</h1>
             {searchQuery && (
-              <p className="text-sm text-gray-600">
+              <p className="text-base text-gray-600">
                 {novels.length} result{novels.length !== 1 ? "s" : ""} found
                 {searchQuery && ` for "${searchQuery}"`}
               </p>

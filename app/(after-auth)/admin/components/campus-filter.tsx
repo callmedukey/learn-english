@@ -21,7 +21,7 @@ export default function CampusFilter({
 }: CampusFilterProps) {
   return (
     <div className="flex items-center gap-2">
-      <label htmlFor="campus-select" className="text-sm font-medium">
+      <label htmlFor="campus-select" className="text-base font-medium">
         Filter by Campus:
       </label>
       <Select

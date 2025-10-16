@@ -46,7 +46,7 @@ const NovelsListPage = async ({ params }: PageProps) => {
             <h1 className="text-2xl font-bold">
               Novels - Level {arLevel.level}
             </h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-gray-600">
               {arLevel.description} • {novels.length} novel
               {novels.length !== 1 ? "s" : ""}
             </p>
@@ -66,19 +66,19 @@ const NovelsListPage = async ({ params }: PageProps) => {
       <div className="rounded-lg border bg-card p-4">
         <div className="grid grid-cols-1 gap-4 md:grid-cols-4">
           <div>
-            <p className="text-sm font-medium text-gray-500">Level</p>
-            <p className="text-lg font-semibold">{arLevel.level}</p>
+            <p className="text-base font-medium text-gray-500">Level</p>
+            <p className="text-xl font-semibold">{arLevel.level}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Score Range</p>
-            <p className="text-lg font-semibold">{arLevel.score}</p>
+            <p className="text-base font-medium text-gray-500">Score Range</p>
+            <p className="text-xl font-semibold">{arLevel.score}</p>
           </div>
           <div>
-            <p className="text-sm font-medium text-gray-500">Difficulty</p>
+            <p className="text-base font-medium text-gray-500">Difficulty</p>
             <div className="flex items-center">
               {"★".repeat(arLevel.stars)}
               {"☆".repeat(5 - arLevel.stars)}
-              <span className="ml-1 text-sm text-gray-500">
+              <span className="ml-1 text-base text-gray-500">
                 ({arLevel.stars}/5)
               </span>
             </div>

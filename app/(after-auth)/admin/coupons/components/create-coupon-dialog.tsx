@@ -153,7 +153,7 @@ export default function CreateCouponDialog() {
               disabled={isPending}
               className="uppercase"
             />
-            <p className="text-xs text-gray-500">
+            <p className="text-sm text-gray-500">
               Use uppercase letters, numbers, hyphens, and underscores only
             </p>
           </div>
@@ -167,7 +167,7 @@ export default function CreateCouponDialog() {
             {/* One-Time Payment Tab */}
             <TabsContent value="one-time" className="space-y-4">
               <div className="rounded-md bg-blue-50 p-3">
-                <p className="text-sm text-blue-800">
+                <p className="text-base text-blue-800">
                   💡 For international users and one-time purchases. Discount in USD only.
                 </p>
               </div>
@@ -209,7 +209,7 @@ export default function CreateCouponDialog() {
                       required
                       disabled={isPending}
                     />
-                    <p className="text-xs text-gray-500">Enter 1-100%</p>
+                    <p className="text-sm text-gray-500">Enter 1-100%</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -225,7 +225,7 @@ export default function CreateCouponDialog() {
                       required
                       disabled={isPending}
                     />
-                    <p className="text-xs text-gray-500">Amount in US Dollars</p>
+                    <p className="text-sm text-gray-500">Amount in US Dollars</p>
                   </div>
                 )}
                 
@@ -240,7 +240,7 @@ export default function CreateCouponDialog() {
                     placeholder="Leave empty for unlimited"
                     disabled={isPending}
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm text-gray-500">
                     Maximum total times this coupon can be used
                   </p>
                 </div>
@@ -250,7 +250,7 @@ export default function CreateCouponDialog() {
             {/* Recurring Payment Tab */}
             <TabsContent value="recurring" className="space-y-4">
               <div className="rounded-md bg-green-50 p-3">
-                <p className="text-sm text-green-800">
+                <p className="text-base text-green-800">
                   💡 For Korean users with auto-renewal. Discount in KRW only.
                 </p>
               </div>
@@ -292,7 +292,7 @@ export default function CreateCouponDialog() {
                       required
                       disabled={isPending}
                     />
-                    <p className="text-xs text-gray-500">Enter 1-100%</p>
+                    <p className="text-sm text-gray-500">Enter 1-100%</p>
                   </div>
                 ) : (
                   <div className="space-y-2">
@@ -308,7 +308,7 @@ export default function CreateCouponDialog() {
                       required
                       disabled={isPending}
                     />
-                    <p className="text-xs text-gray-500">Amount in Korean Won</p>
+                    <p className="text-sm text-gray-500">Amount in Korean Won</p>
                   </div>
                 )}
                 
@@ -323,7 +323,7 @@ export default function CreateCouponDialog() {
                     placeholder="Leave empty for unlimited"
                     disabled={isPending}
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm text-gray-500">
                     How many months the discount lasts (empty = forever)
                   </p>
                 </div>
@@ -339,7 +339,7 @@ export default function CreateCouponDialog() {
                     placeholder="Leave empty for unlimited"
                     disabled={isPending}
                   />
-                  <p className="text-xs text-gray-500">
+                  <p className="text-sm text-gray-500">
                     Maximum customers who can start subscriptions with this coupon
                   </p>
                 </div>

@@ -74,7 +74,7 @@ const CreateARForm = () => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               The reading level (e.g., Lexile Level 9)
             </p>
           </div>
@@ -89,7 +89,7 @@ const CreateARForm = () => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">Lexile Score Range</p>
+            <p className="mt-1 text-base text-gray-500">Lexile Score Range</p>
           </div>
         </div>
 
@@ -104,7 +104,7 @@ const CreateARForm = () => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               Target grades for this Lexile level
             </p>
           </div>
@@ -121,7 +121,7 @@ const CreateARForm = () => {
               required
               disabled={isPending}
             />
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               Difficulty rating (1 = easiest, 5 = hardest)
             </p>
           </div>
@@ -140,7 +140,7 @@ const CreateARForm = () => {
                 <SelectItem value="XLARGE">Extra Large</SelectItem>
               </SelectContent>
             </Select>
-            <p className="mt-1 text-sm text-gray-500">
+            <p className="mt-1 text-base text-gray-500">
               Default font size for this Lexile level
             </p>
           </div>
@@ -155,16 +155,16 @@ const CreateARForm = () => {
             rows={4}
             disabled={isPending}
           />
-          <p className="mt-1 text-sm text-gray-500">
+          <p className="mt-1 text-base text-gray-500">
             Optional description of this Lexile level
           </p>
         </div>
 
         <div>
-          <Label className="text-base font-semibold">
+          <Label className="text-lg font-semibold">
             Monthly Challenge Settings
           </Label>
-          <p className="mb-3 text-sm text-gray-500">
+          <p className="mb-3 text-base text-gray-500">
             Optionally create a monthly challenge for this Lexile level
           </p>
           <ChallengeControls onChallengeSettingsChange={setChallengeSettings} />

@@ -12,6 +12,7 @@ export interface GradeRankingUser {
   countryIcon?: string;
   rank: number;
   campusId?: string | null;
+  campusName?: string;
 }
 
 // Helper function to extract just the number from grade
@@ -75,6 +76,7 @@ export async function getGradeRankings(
             countryIcon: true,
           },
         },
+        campus: true,
       },
       where: whereClause,
     });
@@ -94,6 +96,7 @@ export async function getGradeRankings(
           score: totalScore,
           countryIcon: user.country?.countryIcon?.iconUrl,
           campusId: user.campusId,
+          campusName: user.campus?.name,
         };
       });
 
@@ -130,6 +133,7 @@ export async function getGradeRankings(
             countryIcon: true,
           },
         },
+        campus: true,
       },
       where: whereClause,
     });
@@ -149,6 +153,7 @@ export async function getGradeRankings(
           score: totalScore,
           countryIcon: user.country?.countryIcon?.iconUrl,
           campusId: user.campusId,
+          campusName: user.campus?.name,
         };
       });
 
@@ -227,6 +232,7 @@ export async function getTotalGradeRankings(
           countryIcon: true,
         },
       },
+      campus: true,
     },
     where: whereClause,
   });
@@ -255,6 +261,7 @@ export async function getTotalGradeRankings(
         score: totalScore,
         countryIcon: user.country?.countryIcon?.iconUrl,
         campusId: user.campusId,
+        campusName: user.campus?.name,
       };
     })
     .filter((user) => user.score > 0); // Only include users with scores

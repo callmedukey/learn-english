@@ -14,6 +14,8 @@ export interface BPARanking {
   nickname: string;
   grade: string;
   score: number;
+  campusId?: string | null;
+  campusName?: string;
 }
 
 export type BPALevel = "lv2" | "lv3" | "lv4" | "lv5" | "lv6" | "lv7plus";

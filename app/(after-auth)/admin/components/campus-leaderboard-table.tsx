@@ -16,10 +16,10 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
-import type { CampusRanking } from "../queries/campus-leaderboard.query";
+import type { CampusStudent } from "../queries/campus-leaderboard.query";
 
 interface CampusLeaderboardTableProps {
-  campuses: CampusRanking[];
+  students: CampusStudent[];
   currentPage: number;
   pageSize: number;
   total: number;
@@ -29,7 +29,7 @@ interface CampusLeaderboardTableProps {
 }
 
 export default function CampusLeaderboardTable({
-  campuses,
+  students,
   currentPage,
   pageSize,
   total,
@@ -57,41 +57,52 @@ export default function CampusLeaderboardTable({
           <TableHeader>
             <TableRow>
               <TableHead className="w-16 text-center">Rank</TableHead>
-              <TableHead>Campus Name</TableHead>
-              <TableHead className="text-center">Students</TableHead>
-              <TableHead className="text-right">Total Score</TableHead>
-              <TableHead className="text-center">Actions</TableHead>
+              <TableHead>Student Name</TableHead>
+              <TableHead>Campus</TableHead>
+              <TableHead className="text-center">Grade</TableHead>
+              <TableHead className="text-right">BPA Score</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {campuses.length === 0 ? (
+            {students.length === 0 ? (
               <TableRow>
                 <TableCell colSpan={5} className="h-32 text-center text-gray-500">
-                  No campus data available for the selected filters
+                  No student data available for the selected filters
                 </TableCell>
               </TableRow>
             ) : (
-              campuses.map((campus) => (
-                <TableRow key={campus.id} className="hover:bg-gray-50">
+              students.map((student) => (
+                <TableRow key={student.id} className="hover:bg-gray-50">
                   <TableCell className="text-center font-bold">
                     <div className="flex items-center justify-center gap-1">
-                      {campus.rank}
-                      {campus.rank === 1 && <span className="text-lg">🥇</span>}
-                      {campus.rank === 2 && <span className="text-lg">🥈</span>}
-                      {campus.rank === 3 && <span className="text-lg">🥉</span>}
+                      {student.rank}
+                      {student.rank === 1 && <span className="text-xl">🥇</span>}
+                      {student.rank === 2 && <span className="text-xl">🥈</span>}
+                      {student.rank === 3 && <span className="text-xl">🥉</span>}
                     </div>
                   </TableCell>
-                  <TableCell className="font-medium">{campus.name}</TableCell>
-                  <TableCell className="text-center text-gray-700">
-                    {campus.studentCount.toLocaleString()}
+                  <TableCell>
+                    <div>
+                      <div className="font-medium">
+                        {student.nickname || student.studentName || "Anonymous"}
+                      </div>
+                      {student.studentName && student.nickname && (
+                        <div className="text-sm text-gray-500">
+                          {student.studentName}
+                        </div>
+                      )}
+                    </div>
                   </TableCell>
-                  <TableCell className="text-right font-bold text-amber-700">
-                    {campus.totalScore.toLocaleString()}
+                  <TableCell className="font-medium">
+                    {student.campus.name}
                   </TableCell>
                   <TableCell className="text-center">
-                    <button className="text-sm text-blue-600 hover:text-blue-800 hover:underline">
-                      View Students
-                    </button>
+                    <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-sm font-semibold text-blue-800">
+                      {student.grade}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right font-bold text-amber-700">
+                    {student.bpaScore.toLocaleString()}
                   </TableCell>
                 </TableRow>
               ))
@@ -105,7 +116,7 @@ export default function CampusLeaderboardTable({
         <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-white px-4 py-3 shadow-sm">
           {/* Left side - Results info and page size selector */}
           <div className="flex items-center gap-4">
-            <p className="text-sm text-gray-700">
+            <p className="text-base text-gray-700">
               Showing{" "}
               <span className="font-medium">
                 {(currentPage - 1) * pageSize + 1}
@@ -114,11 +125,11 @@ export default function CampusLeaderboardTable({
               <span className="font-medium">
                 {Math.min(currentPage * pageSize, total)}
               </span>{" "}
-              of <span className="font-medium">{total}</span> campuses
+              of <span className="font-medium">{total}</span> students
             </p>
 
             <div className="flex items-center gap-2">
-              <label className="text-sm text-gray-700">Per page:</label>
+              <label className="text-base text-gray-700">Per page:</label>
               <Select
                 value={String(pageSize)}
                 onValueChange={(value) => onPageSizeChange(Number(value))}
@@ -141,7 +152,7 @@ export default function CampusLeaderboardTable({
             <button
               onClick={handlePrevious}
               disabled={currentPage === 1}
-              className="rounded-md border border-gray-300 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-md border border-gray-300 px-3 py-1 text-base font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Previous
             </button>
@@ -164,7 +175,7 @@ export default function CampusLeaderboardTable({
                   <button
                     key={pageNumber}
                     onClick={() => onPageChange(pageNumber)}
-                    className={`rounded-md px-3 py-1 text-sm font-medium ${
+                    className={`rounded-md px-3 py-1 text-base font-medium ${
                       currentPage === pageNumber
                         ? "bg-primary text-white"
                         : "border border-gray-300 text-gray-700 hover:bg-gray-50"
@@ -179,7 +190,7 @@ export default function CampusLeaderboardTable({
             <button
               onClick={handleNext}
               disabled={currentPage === totalPages}
-              className="rounded-md border border-gray-300 px-3 py-1 text-sm font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+              className="rounded-md border border-gray-300 px-3 py-1 text-base font-medium text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
             >
               Next
             </button>

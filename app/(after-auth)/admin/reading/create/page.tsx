@@ -28,7 +28,7 @@ const CreateRCPage = async () => {
           </Link>
           <div>
             <h1 className="text-2xl font-bold">Create RC Level</h1>
-            <p className="text-sm text-gray-600">
+            <p className="text-base text-gray-600">
               Add a new Reading Comprehension Level
             </p>
           </div>

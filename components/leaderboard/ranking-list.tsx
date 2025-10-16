@@ -14,6 +14,7 @@ interface RankingItem {
   score: number;
   countryIcon?: string;
   campusId?: string | null;
+  campusName?: string;
 }
 
 interface RankingListProps {
@@ -70,19 +71,26 @@ export function RankingList({ rankings, currentUserId }: RankingListProps) {
                       <div className="h-4 w-6 flex-shrink-0 rounded-sm bg-gray-200" />
                     )}
 
-                    {/* Nickname with Medal */}
-                    <div className="flex min-w-0 items-center gap-1">
-                      <span className={`truncate font-medium ${item.campusId ? 'text-primary italic' : 'text-gray-900'}`}>
-                        {item.nickname}
-                      </span>
-                      {item.rank === 1 && (
-                        <span className="flex-shrink-0 text-base">🥇</span>
-                      )}
-                      {item.rank === 2 && (
-                        <span className="flex-shrink-0 text-base">🥈</span>
-                      )}
-                      {item.rank === 3 && (
-                        <span className="flex-shrink-0 text-base">🥉</span>
+                    {/* Nickname with Medal and Campus */}
+                    <div className="flex min-w-0 flex-col gap-0.5">
+                      <div className="flex items-center gap-1">
+                        <span className={`truncate font-medium ${item.campusId ? 'text-primary italic' : 'text-gray-900'}`}>
+                          {item.nickname}
+                        </span>
+                        {item.rank === 1 && (
+                          <span className="flex-shrink-0 text-base">🥇</span>
+                        )}
+                        {item.rank === 2 && (
+                          <span className="flex-shrink-0 text-base">🥈</span>
+                        )}
+                        {item.rank === 3 && (
+                          <span className="flex-shrink-0 text-base">🥉</span>
+                        )}
+                      </div>
+                      {item.campusName && (
+                        <span className="truncate text-xs text-primary">
+                          {item.campusName}
+                        </span>
                       )}
                     </div>
                   </div>

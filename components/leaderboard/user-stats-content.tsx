@@ -32,8 +32,14 @@ interface UserStatsData {
     score: number;
     count: number;
   }[];
+  bpaStats: {
+    level: string;
+    score: number;
+    count: number;
+  }[];
   totalArScore: number;
   totalRcScore: number;
+  totalBpaScore: number;
   ranking?: UserRankingData | null;
   medals?: {
     totalGold: number;
@@ -121,10 +127,10 @@ export function UserStatsContent({ userId }: UserStatsContentProps) {
       </div>
 
       <div className="space-y-3">
-        {/* Novel (AR) Stats */}
+        {/* Novel Stats */}
         <div>
           <div className="mb-1 text-xs font-semibold text-amber-900">
-            NOVEL (AR) - Total: {userStats.totalArScore.toLocaleString()}
+            NOVEL - Total: {userStats.totalArScore.toLocaleString()}
           </div>
           {userStats.arStats.length > 0 ? (
             <div className="space-y-0.5">
@@ -139,6 +145,27 @@ export function UserStatsContent({ userId }: UserStatsContentProps) {
             </div>
           ) : (
             <p className="text-xs text-gray-500">No AR scores yet</p>
+          )}
+        </div>
+
+        {/* VIP Scores (BPA) Stats */}
+        <div>
+          <div className="mb-1 text-xs font-semibold text-amber-900">
+            VIP SCORES (BPA) - Total: {userStats.totalBpaScore.toLocaleString()}
+          </div>
+          {userStats.bpaStats.length > 0 ? (
+            <div className="space-y-0.5">
+              {userStats.bpaStats.map((stat) => (
+                <div key={stat.level} className="flex justify-between text-xs">
+                  <span className="text-gray-700">{stat.level}</span>
+                  <span className="font-medium text-gray-900">
+                    {stat.score.toLocaleString()} ({stat.count})
+                  </span>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-gray-500">No VIP scores yet</p>
           )}
         </div>
 
@@ -170,7 +197,7 @@ export function UserStatsContent({ userId }: UserStatsContentProps) {
             <span className="text-gray-900">TOTAL SCORE</span>
             <span className="text-primary">
               {(
-                userStats.totalArScore + userStats.totalRcScore
+                userStats.totalArScore + userStats.totalBpaScore + userStats.totalRcScore
               ).toLocaleString()}
             </span>
           </div>

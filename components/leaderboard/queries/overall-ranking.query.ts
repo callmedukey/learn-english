@@ -11,6 +11,7 @@ export interface OverallRankingUser {
   countryIcon?: string;
   rank: number;
   campusId?: string | null;
+  campusName?: string;
 }
 
 // Helper function to extract just the number from grade
@@ -41,6 +42,7 @@ export async function getOverallRankings(
             countryIcon: true,
           },
         },
+        campus: true,
       },
       where: {
         ARScore: {
@@ -64,6 +66,7 @@ export async function getOverallRankings(
         score: totalScore,
         countryIcon: user.country?.countryIcon?.iconUrl,
         campusId: user.campusId,
+        campusName: user.campus?.name,
       };
     });
 
@@ -89,6 +92,7 @@ export async function getOverallRankings(
             countryIcon: true,
           },
         },
+        campus: true,
       },
       where: {
         RCScore: {
@@ -112,6 +116,7 @@ export async function getOverallRankings(
         score: totalScore,
         countryIcon: user.country?.countryIcon?.iconUrl,
         campusId: user.campusId,
+        campusName: user.campus?.name,
       };
     });
 
@@ -146,6 +151,7 @@ export async function getTotalOverallRankings(): Promise<OverallRankingUser[]> {
           countryIcon: true,
         },
       },
+      campus: true,
     },
     where: {
       OR: [
@@ -192,6 +198,7 @@ export async function getTotalOverallRankings(): Promise<OverallRankingUser[]> {
       score: totalScore,
       countryIcon: user.country?.countryIcon?.iconUrl,
       campusId: user.campusId,
+      campusName: user.campus?.name,
     };
   });
 

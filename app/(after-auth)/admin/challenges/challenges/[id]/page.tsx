@@ -103,7 +103,7 @@ export default async function EditChallengePage({
           <CardContent>
             <dl className="space-y-2">
               <div>
-                <dt className="text-sm font-medium text-muted-foreground">
+                <dt className="text-base font-medium text-muted-foreground">
                   Participants
                 </dt>
                 <dd className="text-2xl font-bold">
@@ -113,7 +113,7 @@ export default async function EditChallengePage({
                 </dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-muted-foreground">
+                <dt className="text-base font-medium text-muted-foreground">
                   Medals Awarded
                 </dt>
                 <dd className="text-2xl font-bold">
@@ -121,10 +121,10 @@ export default async function EditChallengePage({
                 </dd>
               </div>
               <div>
-                <dt className="text-sm font-medium text-muted-foreground">
+                <dt className="text-base font-medium text-muted-foreground">
                   Status
                 </dt>
-                <dd className="text-lg">
+                <dd className="text-xl">
                   {challenge.active ? "Active" : "Inactive"}
                 </dd>
               </div>

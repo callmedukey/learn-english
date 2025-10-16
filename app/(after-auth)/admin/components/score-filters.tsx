@@ -60,7 +60,7 @@ export default function ScoreFilters({
           <Filter className="mr-2 h-4 w-4" />
           Score Filters
           {hasActiveFilters && (
-            <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-xs">
+            <span className="ml-2 rounded-full bg-white/20 px-2 py-0.5 text-sm">
               Active
             </span>
           )}
@@ -70,7 +70,7 @@ export default function ScoreFilters({
         <div className="space-y-4">
           <div>
             <h4 className="mb-3 font-semibold">Filter by Score Range</h4>
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               Set minimum and maximum values to filter users by their scores.
             </p>
           </div>
@@ -78,10 +78,10 @@ export default function ScoreFilters({
           <div className="space-y-4">
             {/* Total Score Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Total Score</Label>
+              <Label className="text-base font-medium">Total Score</Label>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <Label htmlFor="totalScoreMin" className="text-xs text-muted-foreground">
+                  <Label htmlFor="totalScoreMin" className="text-sm text-muted-foreground">
                     Min
                   </Label>
                   <Input
@@ -100,7 +100,7 @@ export default function ScoreFilters({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="totalScoreMax" className="text-xs text-muted-foreground">
+                  <Label htmlFor="totalScoreMax" className="text-sm text-muted-foreground">
                     Max
                   </Label>
                   <Input
@@ -123,10 +123,10 @@ export default function ScoreFilters({
 
             {/* Lexile Score Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">Lexile Score</Label>
+              <Label className="text-base font-medium">Lexile Score</Label>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <Label htmlFor="lexileScoreMin" className="text-xs text-muted-foreground">
+                  <Label htmlFor="lexileScoreMin" className="text-sm text-muted-foreground">
                     Min
                   </Label>
                   <Input
@@ -145,7 +145,7 @@ export default function ScoreFilters({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="lexileScoreMax" className="text-xs text-muted-foreground">
+                  <Label htmlFor="lexileScoreMax" className="text-sm text-muted-foreground">
                     Max
                   </Label>
                   <Input
@@ -168,10 +168,10 @@ export default function ScoreFilters({
 
             {/* RC Score Filter */}
             <div className="space-y-2">
-              <Label className="text-sm font-medium">RC Score</Label>
+              <Label className="text-base font-medium">RC Score</Label>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <Label htmlFor="rcScoreMin" className="text-xs text-muted-foreground">
+                  <Label htmlFor="rcScoreMin" className="text-sm text-muted-foreground">
                     Min
                   </Label>
                   <Input
@@ -190,7 +190,7 @@ export default function ScoreFilters({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="rcScoreMax" className="text-xs text-muted-foreground">
+                  <Label htmlFor="rcScoreMax" className="text-sm text-muted-foreground">
                     Max
                   </Label>
                   <Input

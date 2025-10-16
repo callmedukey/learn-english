@@ -35,6 +35,9 @@ const ARTable: React.FC<ARTableProps> = ({ ars, userRole }) => {
     <Table>
       <TableHeader>
         <TableRow>
+          {userRole === Role.ADMIN && (
+            <TableHead className="text-left">Actions</TableHead>
+          )}
           <TableHead>Level</TableHead>
           <TableHead>Score</TableHead>
           <TableHead>Stars</TableHead>
@@ -43,63 +46,14 @@ const ARTable: React.FC<ARTableProps> = ({ ars, userRole }) => {
           <TableHead>Free Chapters</TableHead>
           <TableHead>Font Size</TableHead>
           <TableHead>Created At</TableHead>
-          {userRole === Role.ADMIN && (
-            <TableHead className="text-right">Actions</TableHead>
-          )}
         </TableRow>
       </TableHeader>
       <TableBody>
         {ars.map((ar) => (
           <TableRow key={ar.id}>
-            <TableCell className="font-medium">
-              <Link
-                href={`/admin/novels/${encodeURIComponent(ar.id)}`}
-                className="text-blue-600 hover:text-blue-800 hover:underline"
-              >
-                {ar.level}
-              </Link>
-            </TableCell>
-            <TableCell>{ar.score}</TableCell>
-            <TableCell>
-              <div className="flex items-center">
-                {"★".repeat(ar.stars)}
-                {"☆".repeat(5 - ar.stars)}
-                <span className="ml-1 text-sm text-gray-500">({ar.stars})</span>
-              </div>
-            </TableCell>
-            <TableCell
-              className="max-w-xs truncate"
-              title={ar?.description || ""}
-            >
-              {ar.description}
-            </TableCell>
-            <TableCell>
-              <span className="rounded-full bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800 hover:bg-blue-200">
-                {ar.novelCount}
-              </span>
-            </TableCell>
-            <TableCell>
-              {ar.freeChapterCount > 0 ? (
-                <span className="rounded-full bg-green-100 px-2 py-1 text-xs font-medium text-green-800">
-                  {ar.freeChapterCount} free
-                </span>
-              ) : (
-                <span className="rounded-full bg-gray-100 px-2 py-1 text-xs font-medium text-gray-500">
-                  None
-                </span>
-              )}
-            </TableCell>
-            <TableCell>
-              <span className="rounded-full bg-amber-100 px-2 py-1 text-xs font-medium text-amber-800">
-                {ar.ARSettings?.fontSize || "BASE"}
-              </span>
-            </TableCell>
-            <TableCell className="text-sm text-gray-500">
-              {format(new Date(ar.createdAt), "yyyy/MM/dd")}
-            </TableCell>
             {userRole === Role.ADMIN && (
-              <TableCell className="text-right">
-                <div className="flex items-center justify-end space-x-2">
+              <TableCell className="text-left">
+                <div className="flex items-center justify-start space-x-2">
                   <EditARDialog ar={ar}>
                     <Button variant="outline" size="sm">
                       <Edit className="h-4 w-4" />
@@ -135,6 +89,52 @@ const ARTable: React.FC<ARTableProps> = ({ ars, userRole }) => {
                 </div>
               </TableCell>
             )}
+            <TableCell className="font-medium">
+              <Link
+                href={`/admin/novels/${encodeURIComponent(ar.id)}`}
+                className="text-blue-600 hover:text-blue-800 hover:underline"
+              >
+                {ar.level}
+              </Link>
+            </TableCell>
+            <TableCell>{ar.score}</TableCell>
+            <TableCell>
+              <div className="flex items-center">
+                {"★".repeat(ar.stars)}
+                {"☆".repeat(5 - ar.stars)}
+                <span className="ml-1 text-base text-gray-500">({ar.stars})</span>
+              </div>
+            </TableCell>
+            <TableCell
+              className="max-w-xs truncate"
+              title={ar?.description || ""}
+            >
+              {ar.description}
+            </TableCell>
+            <TableCell>
+              <span className="rounded-full bg-blue-100 px-2 py-1 text-sm font-medium text-blue-800 hover:bg-blue-200">
+                {ar.novelCount}
+              </span>
+            </TableCell>
+            <TableCell>
+              {ar.freeChapterCount > 0 ? (
+                <span className="rounded-full bg-green-100 px-2 py-1 text-sm font-medium text-green-800">
+                  {ar.freeChapterCount} free
+                </span>
+              ) : (
+                <span className="rounded-full bg-gray-100 px-2 py-1 text-sm font-medium text-gray-500">
+                  None
+                </span>
+              )}
+            </TableCell>
+            <TableCell>
+              <span className="rounded-full bg-amber-100 px-2 py-1 text-sm font-medium text-amber-800">
+                {ar.ARSettings?.fontSize || "BASE"}
+              </span>
+            </TableCell>
+            <TableCell className="text-base text-gray-500">
+              {format(new Date(ar.createdAt), "yyyy/MM/dd")}
+            </TableCell>
           </TableRow>
         ))}
       </TableBody>

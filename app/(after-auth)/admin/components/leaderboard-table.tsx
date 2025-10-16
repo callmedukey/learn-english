@@ -99,6 +99,8 @@ export default function LeaderboardTable({
             <TableRow>
               <TableHead>Rank</TableHead>
               <TableHead>User</TableHead>
+              <TableHead>Student Name</TableHead>
+              <TableHead>Current Level</TableHead>
               <TableHead>Grade</TableHead>
               <TableHead>Country</TableHead>
               <TableHead>Campus</TableHead>
@@ -115,7 +117,7 @@ export default function LeaderboardTable({
                   <TableCell className="font-medium">
                     <div className="flex items-center">
                       {user.rank <= 3 && (
-                        <span className="mr-2 text-base">
+                        <span className="mr-2 text-lg">
                           {user.rank === 1 && "🥇"}
                           {user.rank === 2 && "🥈"}
                           {user.rank === 3 && "🥉"}
@@ -129,13 +131,23 @@ export default function LeaderboardTable({
                       <div className="font-medium">
                         {user.nickname || user.name || "Anonymous"}
                       </div>
-                      <div className="text-sm text-muted-foreground">
+                      <div className="text-base text-muted-foreground">
                         {user.email}
                       </div>
                     </div>
                   </TableCell>
+                  <TableCell>{user.studentName || "N/A"}</TableCell>
                   <TableCell>
-                    <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-xs font-semibold text-blue-800">
+                    {user.currentBPALevel ? (
+                      <span className="inline-flex rounded-full bg-purple-100 px-2 py-1 text-sm font-semibold text-purple-800">
+                        {user.currentBPALevel}
+                      </span>
+                    ) : (
+                      <span className="text-muted-foreground">Not Assigned</span>
+                    )}
+                  </TableCell>
+                  <TableCell>
+                    <span className="inline-flex rounded-full bg-blue-100 px-2 py-1 text-sm font-semibold text-blue-800">
                       {user.grade}
                     </span>
                   </TableCell>
@@ -161,11 +173,11 @@ export default function LeaderboardTable({
         {/* Pagination controls */}
         <div className="flex flex-col gap-4 border-t p-4 sm:flex-row sm:items-center sm:justify-between">
           <div className="flex items-center gap-4">
-            <p className="text-sm text-muted-foreground">
+            <p className="text-base text-muted-foreground">
               Showing {startIndex} to {endIndex} of {total} results
             </p>
             <div className="flex items-center gap-2">
-              <span className="text-sm text-muted-foreground">Show:</span>
+              <span className="text-base text-muted-foreground">Show:</span>
               <Select
                 value={String(pageSize)}
                 onValueChange={(value) => onPageSizeChange(Number(value))}
@@ -199,7 +211,7 @@ export default function LeaderboardTable({
                   return (
                     <span
                       key={`ellipsis-${index}`}
-                      className="px-2 text-sm text-muted-foreground"
+                      className="px-2 text-base text-muted-foreground"
                     >
                       ...
                     </span>

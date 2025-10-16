@@ -146,7 +146,7 @@ const EditARForm: React.FC<EditARFormProps> = ({ ar, onARUpdated }) => {
       </div>
 
       <div className="space-y-2">
-        <Label className="text-base font-semibold">Monthly Challenges</Label>
+        <Label className="text-lg font-semibold">Monthly Challenges</Label>
         <ExistingChallenges 
           challenges={challenges}
           onEditChallenge={handleEditChallenge}

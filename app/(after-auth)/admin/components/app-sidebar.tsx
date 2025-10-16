@@ -131,7 +131,7 @@ export async function AppSidebar() {
     <Sidebar>
       <SidebarContent>
         <SidebarGroup>
-          <SidebarGroupLabel className="text-lg font-bold tracking-tighter text-primary">
+          <SidebarGroupLabel className="text-xl font-bold tracking-tighter text-primary">
             READING CHAMP
           </SidebarGroupLabel>
           <SidebarGroupContent>
