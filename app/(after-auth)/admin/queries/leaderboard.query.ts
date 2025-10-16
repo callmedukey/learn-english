@@ -102,28 +102,6 @@ async function getCurrentSemester() {
   return currentSemester;
 }
 
-// Helper function to get current BPA level for a user
-async function getCurrentBPALevelForUser(userId: string, currentSemesterId: string | null): Promise<string | null> {
-  if (!currentSemesterId) {
-    return null;
-  }
-
-  const assignment = await prisma.bPAUserLevelAssignment.findFirst({
-    where: {
-      userId,
-      semesterId: currentSemesterId,
-    },
-    include: {
-      bpaLevel: {
-        select: {
-          name: true,
-        },
-      },
-    },
-  });
-
-  return assignment?.bpaLevel.name || null;
-}
 
 // Helper function to get today's scores by grade
 async function getTodayScoresByGrade(): Promise<Array<[string, number]>> {
