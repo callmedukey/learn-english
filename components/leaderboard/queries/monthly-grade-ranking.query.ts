@@ -15,6 +15,7 @@ export interface MonthlyGradeRankingUser {
   rank: number;
   medalImageUrl?: string;
   campusId?: string | null;
+  campusName?: string;
 }
 
 // Helper function to extract just the number from grade
@@ -73,6 +74,11 @@ export async function getMonthlyGradeRankings(
             countryIcon: true,
           },
         },
+        campus: {
+          select: {
+            name: true,
+          },
+        },
       },
       where: {
         monthlyARScores: {
@@ -102,6 +108,7 @@ export async function getMonthlyGradeRankings(
           score: totalScore,
           countryIcon: user.country?.countryIcon?.iconUrl,
           campusId: user.campusId,
+          campusName: user.campus?.name,
         };
       });
 
@@ -139,6 +146,11 @@ export async function getMonthlyGradeRankings(
             countryIcon: true,
           },
         },
+        campus: {
+          select: {
+            name: true,
+          },
+        },
       },
       where: {
         monthlyRCScores: {
@@ -168,6 +180,7 @@ export async function getMonthlyGradeRankings(
           score: totalScore,
           countryIcon: user.country?.countryIcon?.iconUrl,
           campusId: user.campusId,
+          campusName: user.campus?.name,
         };
       });
 
@@ -241,6 +254,11 @@ export async function getTotalMonthlyGradeRankings(
           countryIcon: true,
         },
       },
+      campus: {
+        select: {
+          name: true,
+        },
+      },
     },
     where: {
       OR: [
@@ -288,6 +306,7 @@ export async function getTotalMonthlyGradeRankings(
         score: totalScore,
         countryIcon: user.country?.countryIcon?.iconUrl,
         campusId: user.campusId,
+        campusName: user.campus?.name,
       };
     })
     .filter((user) => user.score > 0); // Only include users with scores

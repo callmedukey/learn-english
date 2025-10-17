@@ -61,6 +61,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
           <TableHead>Grade</TableHead>
           <TableHead>Birthday</TableHead>
           <TableHead>Role</TableHead>
+          <TableHead>Email</TableHead>
           <TableHead>Parent Name</TableHead>
           <TableHead>Parent Phone</TableHead>
           <TableHead>Student Phone</TableHead>
@@ -98,6 +99,7 @@ const UsersTable: React.FC<UsersTableProps> = ({ users, currentUserRole, countri
                 <span className="text-base">{user.role}</span>
               )}
             </TableCell>
+            <TableCell>{user.email}</TableCell>
             <TableCell>{user.parentName || "N/A"}</TableCell>
             <TableCell>{user.parentPhone || "N/A"}</TableCell>
             <TableCell>{user.studentPhone || "N/A"}</TableCell>

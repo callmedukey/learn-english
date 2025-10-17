@@ -424,7 +424,7 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">
-                    {student.name || "-"}
+                    {student.name || "N/A"}
                   </TableCell>
                   <TableCell>{student.email}</TableCell>
                   <TableCell>{student.nickname || "-"}</TableCell>

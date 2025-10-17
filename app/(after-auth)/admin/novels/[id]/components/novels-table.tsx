@@ -157,7 +157,7 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels, userRole })
                       />
                     </TableCell>
                   )}
-                  {(canEditNovel(userRole, novel.locked) || canDeleteNovel(userRole)) && (
+                  {(canEditNovel(userRole) || canDeleteNovel(userRole)) && (
                     <TableCell className="text-left">
                       <div className="flex items-center justify-start space-x-2">
                         {canEditNovel(userRole, novel.locked) && (

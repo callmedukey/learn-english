@@ -28,10 +28,9 @@ interface MobileMenuProps {
     isRead: boolean;
     createdAt: string;
   }>;
-  hasCampusAccess?: boolean;
 }
 
-const MobileMenu = ({ userId, notifications = [], hasCampusAccess = false }: MobileMenuProps) => {
+const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
   const [currentNotifications, setCurrentNotifications] =
     useState(notifications);
   const [showNotifications, setShowNotifications] = useState(false);
@@ -128,16 +127,14 @@ const MobileMenu = ({ userId, notifications = [], hasCampusAccess = false }: Mob
                 >
                   Reading Comprehension
                 </Link>
-                {hasCampusAccess && (
-                  <Link
-                    href="/bpa"
-                    className="flex h-10 items-center gap-2 rounded-md px-3 text-sm font-bold text-primary transition-colors hover:bg-gray-100"
-                    onClick={() => setIsOpen(false)}
-                  >
-                    VIP 회원전용
-                    <Crown className="size-4" fill="currentColor" strokeWidth={0} />
-                  </Link>
-                )}
+                <Link
+                  href="/bpa"
+                  className="flex h-10 items-center gap-2 rounded-md px-3 text-sm font-bold text-primary transition-colors hover:bg-gray-100"
+                  onClick={() => setIsOpen(false)}
+                >
+                  VIP 회원전용
+                  <Crown className="size-4" fill="currentColor" strokeWidth={0} />
+                </Link>
               </div>
             </nav>
 

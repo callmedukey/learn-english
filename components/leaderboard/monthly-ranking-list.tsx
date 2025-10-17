@@ -15,11 +15,24 @@ interface MonthlyRankingItem {
   countryIcon?: string;
   medalImageUrl?: string;
   campusId?: string | null;
+  campusName?: string;
 }
 
 interface MonthlyRankingListProps {
   rankings: MonthlyRankingItem[];
   currentUserId?: string;
+}
+
+// Helper function to get text color class based on campus name
+function getCampusColorClass(campusName?: string): string {
+  if (!campusName) return 'text-gray-900';
+
+  const campusUpper = campusName.toUpperCase();
+  if (campusUpper.includes('BUNDANG')) return 'text-blue-600';
+  if (campusUpper.includes('DONGTAN')) return 'text-emerald-600';
+  if (campusUpper.includes('GWANGGYO')) return 'text-violet-600';
+
+  return 'text-gray-900'; // fallback for other campuses
 }
 
 export function MonthlyRankingList({
@@ -96,7 +109,7 @@ export function MonthlyRankingList({
 
                     {/* Nickname with Medal */}
                     <div className="flex min-w-0 items-center gap-1">
-                      <span className={`truncate font-medium ${item.campusId ? 'text-primary italic' : 'text-gray-900'}`}>
+                      <span className={`truncate ${item.campusId ? 'font-bold' : 'font-medium'} ${getCampusColorClass(item.campusName)}`}>
                         {item.nickname}
                       </span>
                       {item.rank === 1 && !item.medalImageUrl && (

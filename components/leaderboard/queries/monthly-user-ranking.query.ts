@@ -14,6 +14,8 @@ export interface MonthlyOverallRankingUser {
   countryIcon?: string;
   rank: number;
   medalImageUrl?: string;
+  campusId?: string | null;
+  campusName?: string;
 }
 
 // Helper function to extract just the number from grade
@@ -93,6 +95,11 @@ export async function getMonthlyOverallRankings(
             countryIcon: true,
           },
         },
+        campus: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 
@@ -110,6 +117,8 @@ export async function getMonthlyOverallRankings(
         countryIcon: user?.country?.countryIcon?.iconUrl,
         rank: index + 1,
         medalImageUrl: undefined, // Placeholder
+        campusId: user?.campusId,
+        campusName: user?.campus?.name,
       };
     });
   } else {
@@ -143,6 +152,11 @@ export async function getMonthlyOverallRankings(
             countryIcon: true,
           },
         },
+        campus: {
+          select: {
+            name: true,
+          },
+        },
       },
     });
 
@@ -151,7 +165,7 @@ export async function getMonthlyOverallRankings(
     return scores.map((score, index) => {
       const user = userMap.get(score.userId);
       const userGrade = user ? calculateGrade(user.birthday) : "N/A";
-      
+
       return {
         id: score.userId,
         nickname: user?.nickname || user?.name || "Anonymous",
@@ -160,6 +174,8 @@ export async function getMonthlyOverallRankings(
         countryIcon: user?.country?.countryIcon?.iconUrl,
         rank: index + 1,
         medalImageUrl: undefined, // Placeholder
+        campusId: user?.campusId,
+        campusName: user?.campus?.name,
       };
     });
   }
@@ -240,6 +256,11 @@ export async function getTotalMonthlyOverallRankings(): Promise<MonthlyOverallRa
           countryIcon: true,
         },
       },
+      campus: {
+        select: {
+          name: true,
+        },
+      },
     },
   });
 
@@ -248,7 +269,7 @@ export async function getTotalMonthlyOverallRankings(): Promise<MonthlyOverallRa
   return topScores.map((score, index) => {
     const user = userMap.get(score.userId);
     const userGrade = user ? calculateGrade(user.birthday) : "N/A";
-    
+
     return {
       id: score.userId,
       nickname: user?.nickname || user?.name || "Anonymous",
@@ -257,6 +278,8 @@ export async function getTotalMonthlyOverallRankings(): Promise<MonthlyOverallRa
       countryIcon: user?.country?.countryIcon?.iconUrl,
       rank: index + 1,
       medalImageUrl: undefined, // Placeholder
+      campusId: user?.campusId,
+      campusName: user?.campus?.name,
     };
   });
 }

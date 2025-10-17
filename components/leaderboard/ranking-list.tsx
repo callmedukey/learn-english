@@ -22,6 +22,18 @@ interface RankingListProps {
   currentUserId?: string;
 }
 
+// Helper function to get text color class based on campus name
+function getCampusColorClass(campusName?: string): string {
+  if (!campusName) return 'text-gray-900';
+
+  const campusUpper = campusName.toUpperCase();
+  if (campusUpper.includes('BUNDANG')) return 'text-blue-600';
+  if (campusUpper.includes('DONGTAN')) return 'text-emerald-600';
+  if (campusUpper.includes('GWANGGYO')) return 'text-violet-600';
+
+  return 'text-gray-900'; // fallback for other campuses
+}
+
 export function RankingList({ rankings, currentUserId }: RankingListProps) {
   return (
     <div className="flex flex-col p-2">
@@ -71,26 +83,19 @@ export function RankingList({ rankings, currentUserId }: RankingListProps) {
                       <div className="h-4 w-6 flex-shrink-0 rounded-sm bg-gray-200" />
                     )}
 
-                    {/* Nickname with Medal and Campus */}
-                    <div className="flex min-w-0 flex-col gap-0.5">
-                      <div className="flex items-center gap-1">
-                        <span className={`truncate font-medium ${item.campusId ? 'text-primary italic' : 'text-gray-900'}`}>
-                          {item.nickname}
-                        </span>
-                        {item.rank === 1 && (
-                          <span className="flex-shrink-0 text-base">🥇</span>
-                        )}
-                        {item.rank === 2 && (
-                          <span className="flex-shrink-0 text-base">🥈</span>
-                        )}
-                        {item.rank === 3 && (
-                          <span className="flex-shrink-0 text-base">🥉</span>
-                        )}
-                      </div>
-                      {item.campusName && (
-                        <span className="truncate text-xs text-primary">
-                          {item.campusName}
-                        </span>
+                    {/* Nickname with Medal */}
+                    <div className="flex items-center gap-1">
+                      <span className={`truncate ${item.campusId ? 'font-bold' : 'font-medium'} ${getCampusColorClass(item.campusName)}`}>
+                        {item.nickname}
+                      </span>
+                      {item.rank === 1 && (
+                        <span className="flex-shrink-0 text-base">🥇</span>
+                      )}
+                      {item.rank === 2 && (
+                        <span className="flex-shrink-0 text-base">🥈</span>
+                      )}
+                      {item.rank === 3 && (
+                        <span className="flex-shrink-0 text-base">🥉</span>
                       )}
                     </div>
                   </div>
