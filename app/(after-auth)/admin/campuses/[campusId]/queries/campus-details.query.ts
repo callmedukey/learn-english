@@ -6,6 +6,7 @@ import { prisma } from "@/prisma/prisma-client";
 export interface CampusStudent {
   id: string;
   name: string | null;
+  studentName: string | null;
   email: string;
   nickname: string | null;
   role: string;
@@ -78,6 +79,7 @@ export async function getCampusWithStudents(
       select: {
         id: true,
         name: true,
+        studentName: true,
         email: true,
         nickname: true,
         role: true,
@@ -123,6 +125,7 @@ export async function getCampusWithStudents(
     const transformedStudents: CampusStudent[] = students.map((student) => ({
       id: student.id,
       name: student.name,
+      studentName: student.studentName,
       email: student.email,
       nickname: student.nickname,
       role: student.role,

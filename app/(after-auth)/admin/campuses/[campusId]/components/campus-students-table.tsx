@@ -102,6 +102,7 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
     const searchLower = searchQuery.toLowerCase();
     return (
       student.name?.toLowerCase().includes(searchLower) ||
+      student.studentName?.toLowerCase().includes(searchLower) ||
       student.email.toLowerCase().includes(searchLower) ||
       student.nickname?.toLowerCase().includes(searchLower)
     );
@@ -396,14 +397,14 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
                     <div className="flex justify-start space-x-2">
                       <StudentHistoryButton
                         studentId={student.id}
-                        studentName={student.name || student.email}
+                        studentName={student.studentName || student.name || student.email}
                         campusId={campusId}
                         student={student}
                         onEditAssignment={handleEditAssignment}
                       />
                       <AssignLevelDialog
                         studentId={student.id}
-                        studentName={student.name || student.email}
+                        studentName={student.studentName || student.name || student.email}
                         campusId={campusId}
                         mode="create"
                         editingAssignment={null}
@@ -424,7 +425,7 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">
-                    {student.name || "N/A"}
+                    {student.studentName || student.name || "N/A"}
                   </TableCell>
                   <TableCell>{student.email}</TableCell>
                   <TableCell>{student.nickname || "-"}</TableCell>
@@ -633,7 +634,7 @@ const EditAssignmentDialog: React.FC<EditAssignmentDialogProps> = ({
   return (
     <AssignLevelDialog
       studentId={student.id}
-      studentName={student.name || student.email}
+      studentName={student.studentName || student.name || student.email}
       campusId={campusId}
       mode="edit"
       editingAssignment={assignment}
