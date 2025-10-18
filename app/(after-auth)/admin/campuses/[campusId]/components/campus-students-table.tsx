@@ -30,6 +30,7 @@ import {
 import { BPASeason } from "@/prisma/generated/prisma";
 
 import AssignLevelDialog from "./assign-level-dialog";
+import RemoveUserFromCampusDialog from "./remove-user-from-campus-dialog";
 import StudentAssignmentHistoryDialog from "./student-assignment-history-dialog";
 import { bulkAssignStudentsToBPALevel } from "../actions/level-assignment.actions";
 import { AssignmentHistoryRecord } from "../queries/assignment-history.query";
@@ -422,6 +423,14 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
                           Assign
                         </Button>
                       </AssignLevelDialog>
+                      <RemoveUserFromCampusDialog
+                        userId={student.id}
+                        userName={student.studentName || student.name || student.email}
+                      >
+                        <Button variant="outline" size="sm" className="text-destructive hover:text-destructive">
+                          Remove
+                        </Button>
+                      </RemoveUserFromCampusDialog>
                     </div>
                   </TableCell>
                   <TableCell className="font-medium">

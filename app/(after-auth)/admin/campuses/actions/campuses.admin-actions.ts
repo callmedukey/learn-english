@@ -126,3 +126,41 @@ export const deleteCampusAction = async (campusId: string) => {
     };
   }
 };
+
+export const removeUserFromCampusAction = async (userId: string) => {
+  await requireAdminAccess();
+  if (!userId) {
+    return { error: "User ID is required" };
+  }
+
+  try {
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, campusId: true },
+    });
+
+    if (!user) {
+      return { error: "User not found" };
+    }
+
+    if (!user.campusId) {
+      return { error: "User is not assigned to any campus" };
+    }
+
+    // Remove user from campus
+    await prisma.user.update({
+      where: { id: userId },
+      data: { campusId: null },
+    });
+
+    revalidatePath("/admin/campuses");
+    revalidatePath("/admin/users");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to remove user from campus:", error);
+    return {
+      error: "Failed to remove user from campus. Please try again.",
+    };
+  }
+};

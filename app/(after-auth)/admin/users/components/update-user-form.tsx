@@ -129,18 +129,29 @@ export default function UpdateUserForm({
         }))}
       />
 
-      <SelectWithLabel
-        label="Campus"
-        hint="Optional"
-        placeholder="Select campus"
-        value={selectedCampus}
-        onValueChange={setSelectedCampus}
-        error={state.errors?.campusId?.[0]}
-        items={campuses.map((campus) => ({
-          label: campus.name,
-          value: campus.id,
-        }))}
-      />
+      <div className="space-y-2">
+        <SelectWithLabel
+          label="Campus"
+          hint="Optional"
+          placeholder="Select campus"
+          value={selectedCampus}
+          onValueChange={setSelectedCampus}
+          error={state.errors?.campusId?.[0]}
+          items={campuses.map((campus) => ({
+            label: campus.name,
+            value: campus.id,
+          }))}
+        />
+        {selectedCampus && (
+          <button
+            type="button"
+            onClick={() => setSelectedCampus("")}
+            className="text-sm text-muted-foreground hover:text-destructive transition-colors"
+          >
+            Remove campus assignment
+          </button>
+        )}
+      </div>
 
       <InputWithLabel
         label="Parent Name (학부모 이름)"
