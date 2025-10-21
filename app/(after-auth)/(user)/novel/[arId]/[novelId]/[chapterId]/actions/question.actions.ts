@@ -319,6 +319,39 @@ export const completeQuestionAction = async (
       }
     }
 
+    // Create score transaction for admin tracking (outside transaction)
+    if (pointsAwarded !== 0) {
+      try {
+        const chapter = question.novelQuestionSet.novelChapter;
+        const novel = chapter?.novel;
+        const ar = novel?.AR;
+
+        await prisma.scoreTransaction.create({
+          data: {
+            userId: userId,
+            source: "Novel",
+            sourceId: existingCompletion?.id || "",
+            score: pointsAwarded,
+            levelInfo: ar?.level || null,
+            novelInfo: novel?.title || null,
+            unitInfo: null,
+            chapterInfo: chapter ? `Chapter ${chapter.orderNumber}` : null,
+            keywordInfo: null,
+            questionText: question.question,
+            selectedAnswer: selectedAnswer || null,
+            correctAnswer: question.answer,
+            isCorrect: isCorrect,
+            isRetry: isRetry,
+            isTimedOut: isTimedOut,
+            explanation: question.explanation,
+          },
+        });
+      } catch (error) {
+        // Log error but don't fail the request - score is already saved
+        console.error("Failed to create score transaction:", error);
+      }
+    }
+
     // Revalidate relevant paths
     revalidatePath(
       `/novel/${question.novelQuestionSet.novelChapter?.novel.ARId}/${question.novelQuestionSet.novelChapter?.novelId}`,

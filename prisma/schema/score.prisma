@@ -71,6 +71,7 @@ model ScoreTransaction {
 
   createdAt DateTime @default(now())
 
+  @@unique([source, sourceId])
   @@index([userId, source])
   @@index([userId, createdAt])
   @@index([source, createdAt])

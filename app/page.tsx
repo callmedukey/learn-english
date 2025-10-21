@@ -11,7 +11,7 @@ import ReadingComprehensionSection from "@/components/sections/reading-comprehen
 import JsonLdScript from "@/components/seo/json-ld-script";
 
 export const metadata: Metadata = {
-  title: "우리 아이 영어독해 완성 리딩챔프 | Lexile 500-900L 맞춤학습",
+  title: "우리 아이 영어독해 완성 리딩챔프 | Lexile 500-1400L 맞춤학습",
   description:
     "리딩챔프와 함께 매일 성장하는 영어 독해 실력! Lexile 지수 기반 맞춤 도서 5단계, 수능형 RC 문제 4단계, 매월 새로운 20권의 도서와 1000문제로 체계적인 영어 학습을 시작하세요.",
   keywords:

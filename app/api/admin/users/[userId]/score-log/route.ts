@@ -3,6 +3,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { ScoreLogEntry } from "@/app/(after-auth)/admin/types/score-log.types";
 import { prisma } from "@/prisma/prisma-client";
 
+export const dynamic = "force-dynamic";
+
 export async function GET(
   request: NextRequest,
   { params }: { params: Promise<{ userId: string }> }
