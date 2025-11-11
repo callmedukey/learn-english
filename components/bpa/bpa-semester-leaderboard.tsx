@@ -208,7 +208,7 @@ function RankingDisplay({ timeframeId, season, levelId }: RankingDisplayProps) {
                           <div className="flex min-w-0 flex-1 items-center gap-2">
                             {/* Nickname with Crown and Campus */}
                             <div className="flex min-w-0 flex-col gap-0.5">
-                              <div className="flex items-center gap-1">
+                              <div className="flex min-w-0 items-center gap-1">
                                 <span className={`truncate font-medium ${item.campusId ? 'text-primary italic' : 'text-gray-900'}`}>
                                   {item.nickname}
                                 </span>

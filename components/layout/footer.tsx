@@ -64,7 +64,7 @@ const Footer = () => {
               <span className="font-bold">연락처</span> 031-712-0331 |
             </p>
             <p>
-              <span className="font-bold">이메일</span> readingchamp@readingchamp.com
+              <span className="font-bold">이메일</span> reading-champ@reading-champ.com
             </p>
           </div>
 
@@ -131,7 +131,7 @@ const Footer = () => {
             </p>
             <p>
               <span className="font-bold">연락처</span> 031-712-0331 |{" "}
-              <span className="font-bold">이메일</span> readingchamp@readingchamp.com
+              <span className="font-bold">이메일</span> reading-champ@reading-champ.com
             </p>
           </div>
 
@@ -210,7 +210,7 @@ const Footer = () => {
                   <span className="ml-2">031-712-0331</span>
                   <span className="mx-2">|</span>
                   <span className="font-bold">이메일</span>
-                  <span className="ml-2">readingchamp@readingchamp.com</span>
+                  <span className="ml-2">reading-champ@reading-champ.com</span>
                 </p>
               </div>
               <Link
