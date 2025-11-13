@@ -21,7 +21,7 @@ import { Role } from "@/prisma/generated/prisma";
 
 import { BulkToggleComingSoonDialog } from "./bulk-toggle-coming-soon-dialog";
 import { BulkToggleHiddenDialog } from "./bulk-toggle-hidden-dialog";
-import ConvertToARDialog from "./convert-to-ar-dialog";
+import ConvertToNovelLevelDialog from "./convert-to-ar-dialog";
 import CopyNovelDialog from "./copy-novel-dialog";
 import DeleteNovelAlert from "./delete-novel-alert";
 import MoveNovelDialog from "./move-novel-dialog";
@@ -36,7 +36,7 @@ interface NovelsTableProps {
     description: string | null;
     stars: number;
   }[];
-  arLevels: {
+  novelLevels: {
     id: string;
     level: string;
     description: string | null;
@@ -45,7 +45,7 @@ interface NovelsTableProps {
   userRole?: Role;
 }
 
-const NovelsTable: React.FC<NovelsTableProps> = ({ novels, bpaLevels, arLevels, userRole }) => {
+const NovelsTable: React.FC<NovelsTableProps> = ({ novels, bpaLevels, novelLevels, userRole }) => {
   const [selectedNovels, setSelectedNovels] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
   const [lockingNovelId, setLockingNovelId] = useState<string | null>(null);
@@ -188,10 +188,10 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, bpaLevels, arLevels, 
                               currentLevelId={novel.bpaLevel.id}
                               bpaLevels={bpaLevels}
                             />
-                            <ConvertToARDialog
+                            <ConvertToNovelLevelDialog
                               novelId={novel.id}
                               novelTitle={novel.title}
-                              arLevels={arLevels}
+                              novelLevels={novelLevels}
                             />
                           </>
                         )}

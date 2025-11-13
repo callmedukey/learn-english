@@ -23,8 +23,8 @@ const BPALevelPage = async ({ params }: PageProps) => {
     notFound();
   }
 
-  // Fetch novels for this level, all BPA levels, and AR levels for moving/copying novels
-  const [novels, bpaLevels, arLevels, session] = await Promise.all([
+  // Fetch novels for this level, all BPA levels, and Novel levels for moving/copying novels
+  const [novels, bpaLevels, novelLevels, session] = await Promise.all([
     getNovelsByBPALevel(levelId),
     getBPALevelsForSelection(),
     getARLevelsForSelection(),
@@ -91,7 +91,7 @@ const BPALevelPage = async ({ params }: PageProps) => {
       <Suspense
         fallback={<div className="py-8 text-center">Loading novels...</div>}
       >
-        <NovelsTable novels={novels} bpaLevels={bpaLevels} arLevels={arLevels} userRole={userRole} />
+        <NovelsTable novels={novels} bpaLevels={bpaLevels} novelLevels={novelLevels} userRole={userRole} />
       </Suspense>
     </div>
   );

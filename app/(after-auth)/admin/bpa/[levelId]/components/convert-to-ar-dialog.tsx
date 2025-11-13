@@ -25,14 +25,14 @@ import {
 } from "@/components/ui/select";
 
 import {
-  moveBPANovelToARLevel,
-  copyBPANovelToARLevel
+  moveBPANovelToNovelLevel,
+  copyBPANovelToNovelLevel
 } from "../../actions/convert-to-novel.actions";
 
-interface ConvertToARDialogProps {
+interface ConvertToNovelLevelDialogProps {
   novelId: string;
   novelTitle: string;
-  arLevels: {
+  novelLevels: {
     id: string;
     level: string;
     description: string | null;
@@ -42,29 +42,29 @@ interface ConvertToARDialogProps {
 
 type OperationType = "move" | "copy";
 
-export default function ConvertToARDialog({
+export default function ConvertToNovelLevelDialog({
   novelId,
   novelTitle,
-  arLevels,
-}: ConvertToARDialogProps) {
+  novelLevels,
+}: ConvertToNovelLevelDialogProps) {
   const [open, setOpen] = useState(false);
-  const [selectedARId, setSelectedARId] = useState("");
+  const [selectedNovelLevelId, setSelectedNovelLevelId] = useState("");
   const [operation, setOperation] = useState<OperationType>("move");
 
   const handleConvert = async () => {
-    if (!selectedARId) {
-      return { success: false, error: "Please select an AR level" };
+    if (!selectedNovelLevelId) {
+      return { success: false, error: "Please select a Novel level" };
     }
 
     const result = operation === "move"
-      ? await moveBPANovelToARLevel(novelId, selectedARId)
-      : await copyBPANovelToARLevel(novelId, selectedARId);
+      ? await moveBPANovelToNovelLevel(novelId, selectedNovelLevelId)
+      : await copyBPANovelToNovelLevel(novelId, selectedNovelLevelId);
 
     if (result.success) {
       const operationText = operation === "move" ? "moved to" : "copied to";
-      toast.success(`Novel ${operationText} AR level successfully`);
+      toast.success(`Novel ${operationText} Novel level successfully`);
       setOpen(false);
-      setSelectedARId("");
+      setSelectedNovelLevelId("");
       setOperation("move");
     } else {
       toast.error(result.error || "Failed to convert novel");
@@ -77,7 +77,7 @@ export default function ConvertToARDialog({
 
   const operationDescriptions = {
     move: "Convert and delete the source BPA novel. Units will be flattened and chapters renumbered sequentially.",
-    copy: "Convert to AR novel while keeping the source BPA novel. Units will be flattened and chapters renumbered sequentially.",
+    copy: "Convert to Novel while keeping the source BPA novel. Units will be flattened and chapters renumbered sequentially.",
   };
 
   return (
@@ -89,9 +89,9 @@ export default function ConvertToARDialog({
       </DialogTrigger>
       <DialogContent className="sm:max-w-[500px]">
         <DialogHeader>
-          <DialogTitle>Convert to AR Level</DialogTitle>
+          <DialogTitle>Convert to Novel Level</DialogTitle>
           <DialogDescription>
-            Convert &quot;{novelTitle}&quot; from BPA to a regular AR novel.
+            Convert &quot;{novelTitle}&quot; from BPA to a regular Novel.
           </DialogDescription>
         </DialogHeader>
         <form action={formAction}>
@@ -122,24 +122,24 @@ export default function ConvertToARDialog({
                       Copy
                     </Label>
                     <p className="text-sm text-gray-500">
-                      Keep BPA novel and create AR copy
+                      Keep BPA novel and create Novel copy
                     </p>
                   </div>
                 </div>
               </RadioGroup>
             </div>
 
-            {/* AR Level Selection */}
+            {/* Novel Level Selection */}
             <div className="space-y-2">
-              <Label htmlFor="ar-level" className="text-base font-medium">
-                Target AR Level
+              <Label htmlFor="novel-level" className="text-base font-medium">
+                Target Novel Level
               </Label>
-              <Select value={selectedARId} onValueChange={setSelectedARId}>
-                <SelectTrigger id="ar-level" className="w-full">
-                  <SelectValue placeholder="Choose an AR level" />
+              <Select value={selectedNovelLevelId} onValueChange={setSelectedNovelLevelId}>
+                <SelectTrigger id="novel-level" className="w-full">
+                  <SelectValue placeholder="Choose a Novel level" />
                 </SelectTrigger>
                 <SelectContent>
-                  {arLevels.map((level) => (
+                  {novelLevels.map((level) => (
                     <SelectItem key={level.id} value={level.id}>
                       <div className="flex w-full items-center justify-between">
                         <span>{level.level}</span>
@@ -175,14 +175,14 @@ export default function ConvertToARDialog({
               variant="outline"
               onClick={() => {
                 setOpen(false);
-                setSelectedARId("");
+                setSelectedNovelLevelId("");
                 setOperation("move");
               }}
             >
               Cancel
             </Button>
-            <Button type="submit" disabled={!selectedARId}>
-              {operation === "move" ? "Move to AR" : "Copy to AR"}
+            <Button type="submit" disabled={!selectedNovelLevelId}>
+              {operation === "move" ? "Move to Novel" : "Copy to Novel"}
             </Button>
           </DialogFooter>
         </form>

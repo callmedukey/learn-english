@@ -324,6 +324,19 @@ export const createQuestionAction = async (formData: FormData) => {
       return { error: "Exactly 4 answer choices are required" };
     }
 
+    // Helper function to strip HTML tags for comparison
+    const stripHtmlTags = (html: string): string => {
+      return html.replace(/<[^>]*>/g, "").trim();
+    };
+
+    // Check for duplicate choices
+    const normalizedChoices = choices.map((c) => stripHtmlTags(c));
+    const uniqueChoices = new Set(normalizedChoices);
+
+    if (uniqueChoices.size !== normalizedChoices.length) {
+      return { error: "All answer choices must be unique" };
+    }
+
     // Validate that the answer matches one of the choices exactly
     if (!choices.includes(answer)) {
       return {
@@ -415,6 +428,19 @@ export const updateQuestionAction = async (formData: FormData) => {
 
     if (!Array.isArray(choices) || choices.length !== 4) {
       return { error: "Exactly 4 answer choices are required" };
+    }
+
+    // Helper function to strip HTML tags for comparison
+    const stripHtmlTags = (html: string): string => {
+      return html.replace(/<[^>]*>/g, "").trim();
+    };
+
+    // Check for duplicate choices
+    const normalizedChoices = choices.map((c) => stripHtmlTags(c));
+    const uniqueChoices = new Set(normalizedChoices);
+
+    if (uniqueChoices.size !== normalizedChoices.length) {
+      return { error: "All answer choices must be unique" };
     }
 
     // Validate that the answer matches one of the choices exactly

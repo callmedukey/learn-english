@@ -727,13 +727,22 @@ const QuestionsSection: React.FC<QuestionsSectionProps> = ({
   const handleCreateQuestion = async () => {
     // Client-side validation
     const validChoices = newQuestion.choices.filter((c) => stripHtml(c).trim());
-    
+
     // Validate that we have exactly 4 choices
     if (validChoices.length !== 4) {
       toast.error("Please provide exactly 4 answer choices");
       return;
     }
-    
+
+    // Check for duplicate choices
+    const normalizedChoices = validChoices.map((c) => stripHtml(c).trim());
+    const uniqueChoices = new Set(normalizedChoices);
+
+    if (uniqueChoices.size !== normalizedChoices.length) {
+      toast.error("All answer choices must be unique. Please remove duplicates.");
+      return;
+    }
+
     if (!isAnswerValid(newQuestion.answer, newQuestion.choices)) {
       toast.error(
         "The correct answer must exactly match one of the provided choices",
@@ -1014,13 +1023,22 @@ const QuestionCard: React.FC<QuestionCardProps> = ({ question, onUpdate }) => {
   const handleUpdate = async () => {
     // Client-side validation
     const validChoices = editForm.choices.filter((c) => c.trim());
-    
+
     // Validate that we have exactly 4 choices
     if (validChoices.length !== 4) {
       toast.error("Please provide exactly 4 answer choices");
       return;
     }
-    
+
+    // Check for duplicate choices
+    const normalizedChoices = validChoices.map((c) => stripHtml(c).trim());
+    const uniqueChoices = new Set(normalizedChoices);
+
+    if (uniqueChoices.size !== normalizedChoices.length) {
+      toast.error("All answer choices must be unique. Please remove duplicates.");
+      return;
+    }
+
     if (!isAnswerValid(editForm.answer, validChoices)) {
       toast.error(
         "The correct answer must exactly match one of the provided choices",

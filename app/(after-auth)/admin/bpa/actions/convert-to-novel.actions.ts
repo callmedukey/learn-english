@@ -13,12 +13,12 @@ interface ConversionResult {
 }
 
 /**
- * Converts a BPA novel to a regular AR novel
+ * Converts a BPA novel to a regular Novel
  * Flattens the unit structure and creates sequential chapters
  */
-async function convertBPANovelToARLevel(
+async function convertBPANovelToNovelLevel(
   bpaNovelId: string,
-  targetARId: string
+  targetNovelLevelId: string
 ): Promise<ConversionResult> {
   try {
     // Fetch the source BPA novel with all nested data
@@ -67,15 +67,15 @@ async function convertBPANovelToARLevel(
       };
     }
 
-    // Validate target AR level exists
-    const targetAR = await prisma.aR.findUnique({
-      where: { id: targetARId },
+    // Validate target Novel level exists
+    const targetNovelLevel = await prisma.aR.findUnique({
+      where: { id: targetNovelLevelId },
     });
 
-    if (!targetAR) {
+    if (!targetNovelLevel) {
       return {
         success: false,
-        error: "Target AR level not found",
+        error: "Target Novel level not found",
       };
     }
 
@@ -119,7 +119,7 @@ async function convertBPANovelToARLevel(
           hidden: sourceBPANovel.hidden,
           comingSoon: sourceBPANovel.comingSoon,
           locked: sourceBPANovel.locked,
-          ARId: targetARId,
+          ARId: targetNovelLevelId,
         },
       });
 
@@ -172,11 +172,11 @@ async function convertBPANovelToARLevel(
 
     return {
       success: true,
-      message: `Successfully converted BPA novel "${sourceBPANovel.title}" to AR level`,
+      message: `Successfully converted BPA novel "${sourceBPANovel.title}" to Novel level`,
       novelId: newNovel.id,
     };
   } catch (error) {
-    console.error("Error converting BPA novel to AR level:", error);
+    console.error("Error converting BPA novel to Novel level:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error occurred",
@@ -185,12 +185,12 @@ async function convertBPANovelToARLevel(
 }
 
 /**
- * Moves a BPA novel to a regular AR level
+ * Moves a BPA novel to a regular Novel level
  * Converts the novel and deletes the source BPA novel
  */
-export async function moveBPANovelToARLevel(
+export async function moveBPANovelToNovelLevel(
   bpaNovelId: string,
-  targetARId: string
+  targetNovelLevelId: string
 ): Promise<ConversionResult> {
   try {
     // Get the BPA novel's current level for revalidation
@@ -207,9 +207,9 @@ export async function moveBPANovelToARLevel(
     }
 
     // Convert the novel
-    const conversionResult = await convertBPANovelToARLevel(
+    const conversionResult = await convertBPANovelToNovelLevel(
       bpaNovelId,
-      targetARId
+      targetNovelLevelId
     );
 
     if (!conversionResult.success) {
@@ -221,9 +221,9 @@ export async function moveBPANovelToARLevel(
       where: { id: bpaNovelId },
     });
 
-    // Revalidate both source BPA level and target AR level pages
+    // Revalidate both source BPA level and target Novel level pages
     revalidatePath(`/admin/bpa/${sourceBPANovel.bpaLevelId}`);
-    revalidatePath(`/admin/novels/${targetARId}`);
+    revalidatePath(`/admin/novels/${targetNovelLevelId}`);
 
     return {
       success: true,
@@ -231,7 +231,7 @@ export async function moveBPANovelToARLevel(
       novelId: conversionResult.novelId,
     };
   } catch (error) {
-    console.error("Error moving BPA novel to AR level:", error);
+    console.error("Error moving BPA novel to Novel level:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error occurred",
@@ -240,12 +240,12 @@ export async function moveBPANovelToARLevel(
 }
 
 /**
- * Copies a BPA novel to a regular AR level
+ * Copies a BPA novel to a regular Novel level
  * Converts the novel but keeps the source BPA novel
  */
-export async function copyBPANovelToARLevel(
+export async function copyBPANovelToNovelLevel(
   bpaNovelId: string,
-  targetARId: string
+  targetNovelLevelId: string
 ): Promise<ConversionResult> {
   try {
     // Get the BPA novel's current level for revalidation
@@ -262,17 +262,17 @@ export async function copyBPANovelToARLevel(
     }
 
     // Convert the novel (source remains intact)
-    const conversionResult = await convertBPANovelToARLevel(
+    const conversionResult = await convertBPANovelToNovelLevel(
       bpaNovelId,
-      targetARId
+      targetNovelLevelId
     );
 
     if (!conversionResult.success) {
       return conversionResult;
     }
 
-    // Revalidate target AR level page
-    revalidatePath(`/admin/novels/${targetARId}`);
+    // Revalidate target Novel level page
+    revalidatePath(`/admin/novels/${targetNovelLevelId}`);
 
     return {
       success: true,
@@ -280,7 +280,7 @@ export async function copyBPANovelToARLevel(
       novelId: conversionResult.novelId,
     };
   } catch (error) {
-    console.error("Error copying BPA novel to AR level:", error);
+    console.error("Error copying BPA novel to Novel level:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error occurred",
