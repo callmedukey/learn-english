@@ -14,11 +14,9 @@ interface BPAContext {
 /**
  * Determine the current active BPA timeframe and season based on the current date.
  *
- * Season calculation:
- * - SPRING: March 1 - May 31 (months 3-5)
- * - SUMMER: June 1 - August 31 (months 6-8)
- * - FALL: September 1 - November 30 (months 9-11)
- * - WINTER: December 1 - February 28/29 (months 12, 1, 2)
+ * Season calculation is now based on admin-configured semester date ranges in the database,
+ * not hardcoded month ranges. Admins can configure custom start/end dates for each season
+ * via the BPA timeframe admin UI.
  */
 export async function getCurrentBPAContext(): Promise<BPAContext> {
   try {
@@ -44,24 +42,32 @@ export async function getCurrentBPAContext(): Promise<BPAContext> {
       };
     }
 
-    // Determine current season based on Korea timezone month
-    const month = koreaTime.getMonth() + 1; // getMonth() returns 0-11, we need 1-12
-    let season: BPASeason;
+    // Find the current semester based on admin-configured date ranges
+    const currentSemester = await prisma.bPASemester.findFirst({
+      where: {
+        timeframeId: activeTimeframe.id,
+        startDate: { lte: koreaTime },
+        endDate: { gte: koreaTime },
+      },
+      orderBy: {
+        startDate: "asc",
+      },
+    });
 
-    if (month >= 3 && month <= 5) {
-      season = BPASeason.SPRING;
-    } else if (month >= 6 && month <= 8) {
-      season = BPASeason.SUMMER;
-    } else if (month >= 9 && month <= 11) {
-      season = BPASeason.FALL;
-    } else {
-      // December (12), January (1), February (2)
-      season = BPASeason.WINTER;
+    if (!currentSemester) {
+      console.warn(
+        `No semester found for current date in timeframe ${activeTimeframe.id}. ` +
+        `Current date: ${koreaTime.toISOString()}`
+      );
+      return {
+        timeframeId: activeTimeframe.id,
+        season: null,
+      };
     }
 
     return {
       timeframeId: activeTimeframe.id,
-      season,
+      season: currentSemester.season,
     };
   } catch (error) {
     console.error("Error getting current BPA context:", error);
