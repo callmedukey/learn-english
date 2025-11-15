@@ -43,6 +43,7 @@ export async function getCurrentBPAContext(): Promise<BPAContext> {
     }
 
     // Find the current semester based on admin-configured date ranges
+    // Use desc ordering to prefer most recently started semester when ranges overlap
     const currentSemester = await prisma.bPASemester.findFirst({
       where: {
         timeframeId: activeTimeframe.id,
@@ -50,7 +51,7 @@ export async function getCurrentBPAContext(): Promise<BPAContext> {
         endDate: { gte: koreaTime },
       },
       orderBy: {
-        startDate: "asc",
+        startDate: "desc",
       },
     });
 

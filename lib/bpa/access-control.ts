@@ -1,6 +1,9 @@
 "server only";
 
+import { toZonedTime } from "date-fns-tz";
+
 import { getCurrentBPAContext } from "@/actions/bpa/get-current-bpa-context";
+import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import { BPASeason } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -118,31 +121,53 @@ export async function canUserAccessNovel(
 }
 
 /**
- * Get all novels accessible by a user in a specific level for current semester
+ * Get all novels accessible by a user in a specific level.
+ * Returns novels from ALL currently active semesters the user is assigned to.
  */
 export async function getUserAccessibleNovels(
   userId: string,
   levelId: string
 ): Promise<string[]> {
   try {
-    const currentSemester = await getCurrentBPAContext();
-    if (!currentSemester.timeframeId || !currentSemester.season) return [];
+    const now = new Date();
+    const koreaTime = toZonedTime(now, APP_TIMEZONE);
 
-    // Check if user is assigned to this level for current semester
-    const userAssigned = await isUserAssignedToLevel(
-      userId,
-      levelId,
-      currentSemester.timeframeId!,
-      currentSemester.season!
-    );
-
-    if (!userAssigned) return [];
-
-    // Get all novels assigned to current semester in this level
-    const assignments = await prisma.bPANovelSemesterAssignment.findMany({
+    // Get all user's assignments for this level
+    const userAssignments = await prisma.bPAUserLevelAssignment.findMany({
       where: {
-        timeframeId: currentSemester.timeframeId!,
-        season: currentSemester.season!,
+        userId,
+        bpaLevelId: levelId,
+      },
+      include: {
+        semester: {
+          select: {
+            startDate: true,
+            endDate: true,
+          },
+        },
+      },
+    });
+
+    if (userAssignments.length === 0) return [];
+
+    // Filter to only currently active semesters (date range contains today)
+    const activeAssignments = userAssignments.filter((assignment) => {
+      if (!assignment.semester) return false;
+      return (
+        koreaTime >= assignment.semester.startDate &&
+        koreaTime <= assignment.semester.endDate
+      );
+    });
+
+    if (activeAssignments.length === 0) return [];
+
+    // Get novels for ALL active semesters the user is assigned to
+    const novelAssignments = await prisma.bPANovelSemesterAssignment.findMany({
+      where: {
+        OR: activeAssignments.map((a) => ({
+          timeframeId: a.timeframeId,
+          season: a.season,
+        })),
         novel: {
           bpaLevelId: levelId,
           hidden: false,
@@ -151,9 +176,10 @@ export async function getUserAccessibleNovels(
       select: {
         novelId: true,
       },
+      distinct: ["novelId"], // Avoid duplicates if novel is assigned to multiple semesters
     });
 
-    return assignments.map((a) => a.novelId);
+    return novelAssignments.map((a) => a.novelId);
   } catch (error) {
     console.error("Error getting accessible novels:", error);
     return [];
