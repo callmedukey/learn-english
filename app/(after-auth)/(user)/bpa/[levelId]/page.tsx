@@ -234,7 +234,7 @@ async function BPALevelNovels({ levelId }: { levelId: string }) {
                       </p>
                     )}
                     <Button className="w-full" variant="outline" disabled>
-                      Available Next Semester
+                      Not Your Level
                     </Button>
                   </CardContent>
                 </Card>

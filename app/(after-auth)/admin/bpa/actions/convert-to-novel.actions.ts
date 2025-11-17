@@ -13,6 +13,16 @@ interface ConversionResult {
 }
 
 /**
+ * Extracts the starting page number from a chapter title
+ * Example: "Pages 6-10" → 6, "Pages 11-15" → 11
+ * Returns Infinity if no number is found (will sort to end)
+ */
+function extractStartingPage(chapterTitle: string): number {
+  const match = chapterTitle.match(/(\d+)/);
+  return match ? parseInt(match[1], 10) : Infinity;
+}
+
+/**
  * Converts a BPA novel to a regular Novel
  * Flattens the unit structure and creates sequential chapters
  */
@@ -106,8 +116,13 @@ async function convertBPANovelToNovelLevel(
     // Add legacy chapters (without units)
     allChapters.push(...sourceBPANovel.chapters);
 
-    // Sort chapters by orderNumber to ensure correct sequencing
-    allChapters.sort((a, b) => a.orderNumber - b.orderNumber);
+    // Sort chapters by extracting page numbers from chapter titles
+    // Example: "Pages 6-10" → 6, "Pages 11-15" → 11
+    allChapters.sort((a, b) => {
+      const pageA = extractStartingPage(a.title);
+      const pageB = extractStartingPage(b.title);
+      return pageA - pageB;
+    });
 
     // Create the new Novel with all nested data in a transaction
     const newNovel = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
