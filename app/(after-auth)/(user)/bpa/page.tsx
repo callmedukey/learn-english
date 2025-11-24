@@ -24,7 +24,7 @@ const BPAPage = async () => {
   if (!user?.campusId) {
     return (
       <div className="flex min-h-[calc(100vh-200px)] flex-col items-center justify-center px-4">
-        <div className="max-w-md text-center space-y-6">
+        <div className="max-w-md space-y-6 text-center">
           <div className="mx-auto flex h-20 w-20 items-center justify-center rounded-full bg-amber-100">
             <svg
               className="h-10 w-10 text-amber-600"
@@ -45,15 +45,13 @@ const BPAPage = async () => {
             <h1 className="text-3xl font-bold text-gray-900">
               접속 권한이 없습니다
             </h1>
-            <p className="text-lg text-gray-600">
-              관리자에게 문의해주세요
-            </p>
+            <p className="text-lg text-gray-600">관리자에게 문의해주세요</p>
           </div>
 
           <div className="pt-4">
             <a
               href="/dashboard"
-              className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-base font-medium text-white shadow-sm hover:bg-primary/90 transition-colors"
+              className="inline-flex items-center justify-center rounded-md bg-primary px-6 py-3 text-base font-medium text-white shadow-sm transition-colors hover:bg-primary/90"
             >
               대시보드로 돌아가기
             </a>
@@ -88,7 +86,8 @@ const BPAPage = async () => {
       assignment.season.charAt(0).toUpperCase() +
       assignment.season.slice(1).toLowerCase();
 
-    userLevelAssignments[assignment.timeframeId][seasonKey] = assignment.bpaLevelId;
+    userLevelAssignments[assignment.timeframeId][seasonKey] =
+      assignment.bpaLevelId;
   });
 
   // Fetch BPA levels from database

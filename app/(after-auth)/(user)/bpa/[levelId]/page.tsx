@@ -217,10 +217,12 @@ async function BPALevelNovels({ levelId }: { levelId: string }) {
                     </h3>
                     <div className="flex items-center gap-2">
                       <Badge variant="outline">{totalChapters} chapters</Badge>
-                      <Badge variant="secondary" className="flex items-center gap-1">
-                        <Lock className="h-3 w-3" />
-                        Coming Soon
-                      </Badge>
+                      {novel.comingSoon && (
+                        <Badge variant="secondary" className="flex items-center gap-1">
+                          <Lock className="h-3 w-3" />
+                          Coming Soon
+                        </Badge>
+                      )}
                       {novel.locked && (
                         <Badge variant="secondary">Locked</Badge>
                       )}

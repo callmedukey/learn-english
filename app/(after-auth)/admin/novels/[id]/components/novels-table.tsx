@@ -22,6 +22,7 @@ import { Role } from "@/prisma/generated/prisma";
 
 import { BulkToggleComingSoonDialog } from "./bulk-toggle-coming-soon-dialog";
 import { BulkToggleHiddenDialog } from "./bulk-toggle-hidden-dialog";
+import ConvertToBPADialog from "./convert-to-bpa-dialog";
 import CopyNovelDialog from "./copy-novel-dialog";
 import DeleteNovelAlert from "./delete-novel-alert";
 import MoveNovelDialog from "./move-novel-dialog";
@@ -36,10 +37,16 @@ interface NovelsTableProps {
     description: string | null;
     stars: number;
   }[];
+  bpaLevels: {
+    id: string;
+    name: string;
+    description: string | null;
+    stars: number;
+  }[];
   userRole?: Role;
 }
 
-const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels, userRole }) => {
+const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels, bpaLevels, userRole }) => {
   const [selectedNovels, setSelectedNovels] = useState<string[]>([]);
   const [isPending, startTransition] = useTransition();
   const [lockingNovelId, setLockingNovelId] = useState<string | null>(null);
@@ -182,6 +189,17 @@ const NovelsTable: React.FC<NovelsTableProps> = ({ novels, arLevels, userRole })
                               novelTitle={novel.title}
                               currentARId={novel.AR.id}
                               arLevels={arLevels}
+                            />
+                            <ConvertToBPADialog
+                              novelId={novel.id}
+                              novelTitle={novel.title}
+                              chapters={novel.novelChapters.map((ch) => ({
+                                id: ch.id,
+                                orderNumber: ch.orderNumber,
+                                title: ch.title,
+                                description: ch.description ?? null,
+                              }))}
+                              bpaLevels={bpaLevels}
                             />
                           </>
                         )}

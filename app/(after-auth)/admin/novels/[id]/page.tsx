@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Role } from "@/prisma/generated/prisma";
 
+import { getBPALevelsForSelection } from "../../bpa/query/bpa.query";
 import { getARLevelsForSelection } from "../query/ar.query";
 import { getARByLevel, getNovelsByARLevel } from "../query/novel.query";
 import NovelsTable from "./components/novels-table";
@@ -23,10 +24,11 @@ const NovelsListPage = async ({ params }: PageProps) => {
     notFound();
   }
 
-  // Fetch novels for this level and all AR levels for moving novels
-  const [novels, arLevels, session] = await Promise.all([
+  // Fetch novels for this level and all AR/BPA levels for moving novels
+  const [novels, arLevels, bpaLevels, session] = await Promise.all([
     getNovelsByARLevel(id),
     getARLevelsForSelection(),
+    getBPALevelsForSelection(),
     auth(),
   ]);
   const userRole = session?.user?.role as Role | undefined;
@@ -90,7 +92,12 @@ const NovelsListPage = async ({ params }: PageProps) => {
       <Suspense
         fallback={<div className="py-8 text-center">Loading novels...</div>}
       >
-        <NovelsTable novels={novels} arLevels={arLevels} userRole={userRole} />
+        <NovelsTable
+          novels={novels}
+          arLevels={arLevels}
+          bpaLevels={bpaLevels}
+          userRole={userRole}
+        />
       </Suspense>
     </div>
   );

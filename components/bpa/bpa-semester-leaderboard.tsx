@@ -42,7 +42,9 @@ export function BPASemesterLeaderboard({
   // Reset to defaultLevel when timeframeId or defaultLevel changes
   useEffect(() => {
     if (defaultLevel) {
-      const newIndex = bpaLevels.findIndex((level) => level.id === defaultLevel);
+      const newIndex = bpaLevels.findIndex(
+        (level) => level.id === defaultLevel,
+      );
       if (newIndex >= 0) {
         setCurrentLevelIndex(newIndex);
       }
@@ -102,11 +104,17 @@ export function BPASemesterLeaderboard({
           </Button>
         </div>
 
-        <Tabs value={currentLevel?.id || ""} onValueChange={handleTabChange} className="w-full">
+        <Tabs
+          value={currentLevel?.id || ""}
+          onValueChange={handleTabChange}
+          className="w-full"
+        >
           {/* Desktop Tabs - hidden on mobile/tablet */}
           <TabsList
             className="hidden w-full rounded-none bg-gray-200 md:grid"
-            style={{ gridTemplateColumns: `repeat(${bpaLevels.length}, minmax(0, 1fr))` }}
+            style={{
+              gridTemplateColumns: `repeat(${bpaLevels.length}, minmax(0, 1fr))`,
+            }}
           >
             {bpaLevels.map((level) => (
               <TabsTrigger
@@ -120,7 +128,11 @@ export function BPASemesterLeaderboard({
           </TabsList>
           {bpaLevels.map((level) => (
             <TabsContent key={level.id} value={level.id} className="mt-0">
-              <RankingDisplay timeframeId={timeframeId} season={season} levelId={level.id} />
+              <RankingDisplay
+                timeframeId={timeframeId}
+                season={season}
+                levelId={level.id}
+              />
             </TabsContent>
           ))}
         </Tabs>
@@ -136,7 +148,11 @@ interface RankingDisplayProps {
 }
 
 function RankingDisplay({ timeframeId, season, levelId }: RankingDisplayProps) {
-  const { data: rankings, isLoading, isError } = useBPARankings(timeframeId, season, levelId);
+  const {
+    data: rankings,
+    isLoading,
+    isError,
+  } = useBPARankings(timeframeId, season, levelId);
 
   return (
     <div className="flex flex-col p-2">
@@ -194,9 +210,7 @@ function RankingDisplay({ timeframeId, season, levelId }: RankingDisplayProps) {
                   <>
                     {rankings.map((item) => (
                       <UserStatsPopover key={item.id} userId={item.id}>
-                        <div
-                          className="flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-50"
-                        >
+                        <div className="flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-50">
                           {/* Rank */}
                           <div className="flex w-6 items-center justify-center">
                             <span className="font-bold text-gray-600">
@@ -209,7 +223,9 @@ function RankingDisplay({ timeframeId, season, levelId }: RankingDisplayProps) {
                             {/* Nickname with Crown and Campus */}
                             <div className="flex min-w-0 flex-col gap-0.5">
                               <div className="flex min-w-0 items-center gap-1">
-                                <span className={`truncate font-medium ${item.campusId ? 'text-primary italic' : 'text-gray-900'}`}>
+                                <span
+                                  className={`truncate font-medium ${item.campusId ? "text-primary" : "text-gray-900"}`}
+                                >
                                   {item.nickname}
                                 </span>
                                 {item.rank === 1 && (
@@ -231,7 +247,7 @@ function RankingDisplay({ timeframeId, season, levelId }: RankingDisplayProps) {
                           </div>
 
                           {/* Grade */}
-                          <div className="w-12 whitespace-nowrap text-center font-semibold text-gray-700">
+                          <div className="w-12 text-center font-semibold whitespace-nowrap text-gray-700">
                             {item.grade}
                           </div>
 
@@ -256,7 +272,9 @@ function RankingDisplay({ timeframeId, season, levelId }: RankingDisplayProps) {
                           <div className="flex min-w-0 flex-1 items-center gap-2">
                             <div className="text-gray-400">-</div>
                           </div>
-                          <div className="w-12 text-center text-gray-400">-</div>
+                          <div className="w-12 text-center text-gray-400">
+                            -
+                          </div>
                           <div className="w-16 text-right text-gray-400">-</div>
                         </div>
                       ))}

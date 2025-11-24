@@ -1,5 +1,6 @@
 "server only";
 
+import calculateGrade from "@/lib/utils/calculate-grade";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface CampusLeaderboardFilters {
@@ -134,23 +135,6 @@ export async function getCampusLeaderboardData(
   // Map users to CampusStudent objects
   const students: CampusStudent[] = filteredUsers.map((user) => {
     const bpaScore = user.bpaScores.reduce((sum, score) => sum + score.score, 0);
-
-    // Calculate grade based on birthday
-    const calculateGrade = (birthday: Date | null): string => {
-      if (!birthday) return "N/A";
-      const today = new Date();
-      const birthDate = new Date(birthday);
-      let age = today.getFullYear() - birthDate.getFullYear();
-      const monthDiff = today.getMonth() - birthDate.getMonth();
-      if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
-        age--;
-      }
-
-      if (age >= 20) return "Adult";
-      if (age < 6) return "Kinder";
-      const grade = age - 5;
-      return `Grade ${grade}`;
-    };
 
     return {
       id: user.id,

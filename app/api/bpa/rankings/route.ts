@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
+import calculateGrade from "@/lib/utils/calculate-grade";
 import { BPASeason } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -64,6 +65,7 @@ export async function GET(request: NextRequest) {
           select: {
             id: true,
             nickname: true,
+            birthday: true,
             campusId: true,
             campus: {
               select: {
@@ -77,7 +79,7 @@ export async function GET(request: NextRequest) {
           id: scoreRecord.userId,
           rank: index + 1,
           nickname: user?.nickname || "Anonymous",
-          grade: "N/A", // BPA users don't have grades in the schema yet
+          grade: calculateGrade(user?.birthday || null),
           score: scoreRecord.score,
           campusId: user?.campusId || null,
           campusName: user?.campus?.name,
