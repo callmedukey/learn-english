@@ -4,13 +4,20 @@ import { prisma } from "@/prisma/prisma-client";
 
 /**
  * GET /api/bpa/timeframes
- * Fetch all BPA timeframes ordered by start date (most recent first)
+ * Fetch all BPA timeframes with their semesters ordered by start date (most recent first)
  */
 export async function GET() {
   try {
     const timeframes = await prisma.bPATimeframe.findMany({
       orderBy: {
         startDate: "desc",
+      },
+      include: {
+        semesters: {
+          orderBy: {
+            startDate: "asc",
+          },
+        },
       },
     });
 
@@ -22,6 +29,13 @@ export async function GET() {
       endDate: timeframe.endDate.toISOString().split("T")[0],
       label: `${timeframe.startDate.toISOString().split("T")[0]} ~ ${timeframe.endDate.toISOString().split("T")[0]}`,
       isActive: timeframe.isActive,
+      semesters: timeframe.semesters.map((semester) => ({
+        id: semester.id,
+        season: semester.season,
+        startDate: semester.startDate.toISOString().split("T")[0],
+        endDate: semester.endDate.toISOString().split("T")[0],
+        timeframeId: semester.timeframeId,
+      })),
     }));
 
     return NextResponse.json({ timeframes: formattedTimeframes });

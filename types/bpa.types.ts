@@ -1,3 +1,11 @@
+export interface BPASemesterData {
+  id: string;
+  season: "SPRING" | "SUMMER" | "FALL" | "WINTER";
+  startDate: string;
+  endDate: string;
+  timeframeId: string;
+}
+
 export interface BPASemester {
   id: string;
   year: number;
@@ -6,6 +14,7 @@ export interface BPASemester {
   endDate: string;
   label: string; // e.g., "2025 Spring (05/01 ~ 01/01)"
   isActive: boolean;
+  semesters?: BPASemesterData[]; // Individual semesters within the timeframe
 }
 
 export interface BPARanking {
