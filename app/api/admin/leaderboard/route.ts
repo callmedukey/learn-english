@@ -24,11 +24,11 @@ export async function GET(request: NextRequest) {
       totalScoreMax: searchParams.get("totalScoreMax")
         ? Number(searchParams.get("totalScoreMax"))
         : undefined,
-      lexileScoreMin: searchParams.get("lexileScoreMin")
-        ? Number(searchParams.get("lexileScoreMin"))
+      novelScoreMin: searchParams.get("novelScoreMin")
+        ? Number(searchParams.get("novelScoreMin"))
         : undefined,
-      lexileScoreMax: searchParams.get("lexileScoreMax")
-        ? Number(searchParams.get("lexileScoreMax"))
+      novelScoreMax: searchParams.get("novelScoreMax")
+        ? Number(searchParams.get("novelScoreMax"))
         : undefined,
       rcScoreMin: searchParams.get("rcScoreMin")
         ? Number(searchParams.get("rcScoreMin"))

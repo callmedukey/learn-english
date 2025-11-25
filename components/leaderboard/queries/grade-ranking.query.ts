@@ -55,11 +55,20 @@ export async function getGradeRankings(
     // Calculate birth year range for the target grade
     const birthYearRange = calculateBirthYearRangeForGrade(targetGrade);
     const whereClause: any = {
-      ARScore: {
-        some: {},
-      },
+      OR: [
+        {
+          ARScore: {
+            some: {},
+          },
+        },
+        {
+          bpaScores: {
+            some: {},
+          },
+        },
+      ],
     };
-    
+
     if (birthYearRange) {
       whereClause.birthday = {
         gte: new Date(`${birthYearRange.minYear}-01-01`),
@@ -67,10 +76,11 @@ export async function getGradeRankings(
       };
     }
 
-    // Get users with AR scores filtered by grade at database level
+    // Get users with AR + BPA scores filtered by grade at database level
     const users = await prisma.user.findMany({
       include: {
         ARScore: true,
+        bpaScores: true,
         country: {
           include: {
             countryIcon: true,
@@ -81,13 +91,18 @@ export async function getGradeRankings(
       where: whereClause,
     });
 
-    // Calculate scores for users (already filtered by grade)
+    // Calculate AR + BPA scores for users (already filtered by grade)
     const userScores = users.map((user) => {
         const userGradeCalculated = calculateGrade(user.birthday);
-        const totalScore = user.ARScore.reduce(
+        const arScore = user.ARScore.reduce(
           (sum, score) => sum + score.score,
           0,
         );
+        const bpaScore = user.bpaScores.reduce(
+          (sum, score) => sum + score.score,
+          0,
+        );
+        const totalScore = arScore + bpaScore;
 
         return {
           id: user.id,

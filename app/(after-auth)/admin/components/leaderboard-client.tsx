@@ -56,11 +56,11 @@ export default function LeaderboardClient({
     totalScoreMax: searchParams.get("totalScoreMax")
       ? Number(searchParams.get("totalScoreMax"))
       : undefined,
-    lexileScoreMin: searchParams.get("lexileScoreMin")
-      ? Number(searchParams.get("lexileScoreMin"))
+    novelScoreMin: searchParams.get("novelScoreMin")
+      ? Number(searchParams.get("novelScoreMin"))
       : undefined,
-    lexileScoreMax: searchParams.get("lexileScoreMax")
-      ? Number(searchParams.get("lexileScoreMax"))
+    novelScoreMax: searchParams.get("novelScoreMax")
+      ? Number(searchParams.get("novelScoreMax"))
       : undefined,
     rcScoreMin: searchParams.get("rcScoreMin")
       ? Number(searchParams.get("rcScoreMin"))
@@ -138,10 +138,10 @@ export default function LeaderboardClient({
         queryParams.set("totalScoreMin", String(scoreFilters.totalScoreMin));
       if (scoreFilters.totalScoreMax !== undefined)
         queryParams.set("totalScoreMax", String(scoreFilters.totalScoreMax));
-      if (scoreFilters.lexileScoreMin !== undefined)
-        queryParams.set("lexileScoreMin", String(scoreFilters.lexileScoreMin));
-      if (scoreFilters.lexileScoreMax !== undefined)
-        queryParams.set("lexileScoreMax", String(scoreFilters.lexileScoreMax));
+      if (scoreFilters.novelScoreMin !== undefined)
+        queryParams.set("novelScoreMin", String(scoreFilters.novelScoreMin));
+      if (scoreFilters.novelScoreMax !== undefined)
+        queryParams.set("novelScoreMax", String(scoreFilters.novelScoreMax));
       if (scoreFilters.rcScoreMin !== undefined)
         queryParams.set("rcScoreMin", String(scoreFilters.rcScoreMin));
       if (scoreFilters.rcScoreMax !== undefined)
@@ -219,8 +219,8 @@ export default function LeaderboardClient({
       ...filters,
       totalScoreMin: filters.totalScoreMin,
       totalScoreMax: filters.totalScoreMax,
-      lexileScoreMin: filters.lexileScoreMin,
-      lexileScoreMax: filters.lexileScoreMax,
+      novelScoreMin: filters.novelScoreMin,
+      novelScoreMax: filters.novelScoreMax,
       rcScoreMin: filters.rcScoreMin,
       rcScoreMax: filters.rcScoreMax,
       allTimePage: 1,

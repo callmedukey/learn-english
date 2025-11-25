@@ -171,9 +171,6 @@ async function BPALevelNovels({ levelId }: { levelId: string }) {
                       </h3>
                       <div className="flex items-center gap-2">
                         <Badge variant="outline">{totalChapters} chapters</Badge>
-                        {novel.locked && (
-                          <Badge variant="secondary">Locked</Badge>
-                        )}
                       </div>
                       {totalChapters > 0 && (
                         <div className="mt-3">
@@ -222,9 +219,6 @@ async function BPALevelNovels({ levelId }: { levelId: string }) {
                           <Lock className="h-3 w-3" />
                           Coming Soon
                         </Badge>
-                      )}
-                      {novel.locked && (
-                        <Badge variant="secondary">Locked</Badge>
                       )}
                     </div>
                   </CardHeader>

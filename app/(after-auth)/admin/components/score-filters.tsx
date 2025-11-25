@@ -15,8 +15,8 @@ import {
 export interface ScoreFilterValues {
   totalScoreMin?: number;
   totalScoreMax?: number;
-  lexileScoreMin?: number;
-  lexileScoreMax?: number;
+  novelScoreMin?: number;
+  novelScoreMax?: number;
   rcScoreMin?: number;
   rcScoreMax?: number;
 }
@@ -121,23 +121,23 @@ export default function ScoreFilters({
               </div>
             </div>
 
-            {/* Lexile Score Filter */}
+            {/* Novel Score Filter */}
             <div className="space-y-2">
-              <Label className="text-base font-medium">Lexile Score</Label>
+              <Label className="text-base font-medium">Novel Score</Label>
               <div className="grid grid-cols-2 gap-2">
                 <div>
-                  <Label htmlFor="lexileScoreMin" className="text-sm text-muted-foreground">
+                  <Label htmlFor="novelScoreMin" className="text-sm text-muted-foreground">
                     Min
                   </Label>
                   <Input
-                    id="lexileScoreMin"
+                    id="novelScoreMin"
                     type="number"
                     placeholder="0"
-                    value={localFilters.lexileScoreMin ?? ""}
+                    value={localFilters.novelScoreMin ?? ""}
                     onChange={(e) =>
                       setLocalFilters({
                         ...localFilters,
-                        lexileScoreMin: e.target.value
+                        novelScoreMin: e.target.value
                           ? Number(e.target.value)
                           : undefined,
                       })
@@ -145,18 +145,18 @@ export default function ScoreFilters({
                   />
                 </div>
                 <div>
-                  <Label htmlFor="lexileScoreMax" className="text-sm text-muted-foreground">
+                  <Label htmlFor="novelScoreMax" className="text-sm text-muted-foreground">
                     Max
                   </Label>
                   <Input
-                    id="lexileScoreMax"
+                    id="novelScoreMax"
                     type="number"
                     placeholder="∞"
-                    value={localFilters.lexileScoreMax ?? ""}
+                    value={localFilters.novelScoreMax ?? ""}
                     onChange={(e) =>
                       setLocalFilters({
                         ...localFilters,
-                        lexileScoreMax: e.target.value
+                        novelScoreMax: e.target.value
                           ? Number(e.target.value)
                           : undefined,
                       })

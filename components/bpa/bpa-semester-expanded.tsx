@@ -1,9 +1,10 @@
 "use client";
 
-import { Crown } from "lucide-react";
+import { ChevronLeft, ChevronRight, Crown } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { UserStatsPopover } from "@/components/leaderboard/user-stats-popover";
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -48,6 +49,19 @@ export function BPASemesterExpanded({
     }
   }, [defaultLevel, timeframeId, bpaLevels]);
 
+  // Navigation handlers
+  const handlePrevLevel = () => {
+    if (currentLevelIndex > 0) {
+      setCurrentLevelIndex(currentLevelIndex - 1);
+    }
+  };
+
+  const handleNextLevel = () => {
+    if (currentLevelIndex < bpaLevels.length - 1) {
+      setCurrentLevelIndex(currentLevelIndex + 1);
+    }
+  };
+
   const handleTabChange = (value: string) => {
     const index = bpaLevels.findIndex((level) => level.id === value);
     if (index >= 0) {
@@ -63,14 +77,39 @@ export function BPASemesterExpanded({
         </CardTitle>
       </CardHeader>
       <CardContent className="p-0">
+        {/* Mobile Navigation - visible on mobile/tablet */}
+        <div className="flex items-center justify-between border-b bg-gray-200 px-4 py-3 md:hidden">
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handlePrevLevel}
+            disabled={currentLevelIndex === 0}
+            className="h-8 w-8 p-0 disabled:opacity-30"
+          >
+            <ChevronLeft className="h-5 w-5" />
+          </Button>
+          <div className="text-center font-semibold text-gray-900">
+            {currentLevel?.name || ""}
+          </div>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={handleNextLevel}
+            disabled={currentLevelIndex === bpaLevels.length - 1}
+            className="h-8 w-8 p-0 disabled:opacity-30"
+          >
+            <ChevronRight className="h-5 w-5" />
+          </Button>
+        </div>
+
         <Tabs
           value={currentLevel?.id || ""}
           onValueChange={handleTabChange}
           className="w-full"
         >
-          {/* Level Tabs */}
+          {/* Desktop Tabs - hidden on mobile/tablet */}
           <TabsList
-            className="w-full rounded-none bg-gray-200 grid"
+            className="hidden w-full rounded-none bg-gray-200 md:grid"
             style={{
               gridTemplateColumns: `repeat(${bpaLevels.length}, minmax(0, 1fr))`,
             }}
@@ -118,13 +157,13 @@ function ExpandedRankingDisplay({
   } = useBPARankings(timeframeId, season, levelId);
 
   return (
-    <div className="flex flex-col p-6">
+    <div className="flex flex-col p-2">
       {/* Header */}
-      <div className="flex items-center gap-6 px-4 pb-4 text-sm font-semibold text-gray-600">
-        <div className="w-16 text-center">RANK</div>
+      <div className="flex items-center gap-4 px-2 pb-2 text-xs font-semibold text-gray-600">
+        <div className="w-6"></div> {/* Rank column */}
         <div className="flex min-w-0 flex-1">NICKNAME</div>
-        <div className="w-20 text-center">GRADE</div>
-        <div className="w-24 text-right">POINT</div>
+        <div className="w-12 text-center">GRADE</div>
+        <div className="w-16 text-right">POINT</div>
       </div>
 
       {/* Rankings with scrollable container */}
@@ -173,36 +212,36 @@ function ExpandedRankingDisplay({
                   <>
                     {rankings.map((item) => (
                       <UserStatsPopover key={item.id} userId={item.id}>
-                        <div className="flex items-center gap-6 rounded-lg p-4 transition-colors hover:bg-gray-50">
+                        <div className="flex items-center gap-4 rounded-lg p-2 transition-colors hover:bg-gray-50">
                           {/* Rank */}
-                          <div className="flex w-16 items-center justify-center">
-                            <span className="text-xl font-bold text-gray-600">
+                          <div className="flex w-6 items-center justify-center">
+                            <span className="font-bold text-gray-600">
                               {item.rank}
                             </span>
                           </div>
 
                           {/* User Info */}
-                          <div className="flex min-w-0 flex-1 items-center gap-3">
+                          <div className="flex min-w-0 flex-1 items-center gap-2">
                             {/* Nickname with Crown and Campus */}
-                            <div className="flex min-w-0 flex-col gap-1">
-                              <div className="flex min-w-0 items-center gap-2">
+                            <div className="flex min-w-0 flex-col gap-0.5">
+                              <div className="flex min-w-0 items-center gap-1">
                                 <span
-                                  className={`truncate text-lg font-medium ${item.campusId ? "text-primary" : "text-gray-900"}`}
+                                  className={`truncate font-medium ${item.campusId ? "text-primary" : "text-gray-900"}`}
                                 >
                                   {item.nickname}
                                 </span>
                                 {item.rank === 1 && (
-                                  <Crown className="h-5 w-5 flex-shrink-0 fill-amber-400 text-amber-400" />
+                                  <Crown className="h-4 w-4 flex-shrink-0 fill-amber-400 text-amber-400" />
                                 )}
                                 {item.rank === 2 && (
-                                  <Crown className="h-5 w-5 flex-shrink-0 fill-gray-400 text-gray-400" />
+                                  <Crown className="h-4 w-4 flex-shrink-0 fill-gray-400 text-gray-400" />
                                 )}
                                 {item.rank === 3 && (
-                                  <Crown className="h-5 w-5 flex-shrink-0 fill-amber-700 text-amber-700" />
+                                  <Crown className="h-4 w-4 flex-shrink-0 fill-amber-700 text-amber-700" />
                                 )}
                               </div>
                               {item.campusName && (
-                                <span className="truncate text-sm text-primary">
+                                <span className="truncate text-xs text-primary">
                                   {item.campusName}
                                 </span>
                               )}
@@ -210,12 +249,12 @@ function ExpandedRankingDisplay({
                           </div>
 
                           {/* Grade */}
-                          <div className="w-20 text-center text-base font-semibold whitespace-nowrap text-gray-700">
+                          <div className="w-12 text-center font-semibold whitespace-nowrap text-gray-700">
                             {item.grade}
                           </div>
 
                           {/* Score */}
-                          <div className="w-24 text-right text-lg font-bold text-amber-700">
+                          <div className="w-16 text-right font-bold text-amber-700">
                             {item.score.toLocaleString()}
                           </div>
                         </div>
@@ -227,18 +266,18 @@ function ExpandedRankingDisplay({
                       Array.from({ length: 5 - rankings.length }, (_, i) => (
                         <div
                           key={`empty-${i}`}
-                          className="flex items-center gap-6 p-4 opacity-30"
+                          className="flex items-center gap-4 p-2 opacity-30"
                         >
-                          <div className="w-16 text-center text-xl font-bold text-gray-400">
+                          <div className="w-6 text-center font-bold text-gray-400">
                             {rankings.length + i + 1}
                           </div>
-                          <div className="flex min-w-0 flex-1 items-center gap-3">
-                            <div className="text-lg text-gray-400">-</div>
+                          <div className="flex min-w-0 flex-1 items-center gap-2">
+                            <div className="text-gray-400">-</div>
                           </div>
-                          <div className="w-20 text-center text-base text-gray-400">
+                          <div className="w-12 text-center text-gray-400">
                             -
                           </div>
-                          <div className="w-24 text-right text-lg text-gray-400">-</div>
+                          <div className="w-16 text-right text-gray-400">-</div>
                         </div>
                       ))}
                   </>

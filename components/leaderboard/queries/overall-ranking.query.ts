@@ -37,6 +37,7 @@ export async function getOverallRankings(
             AR: true,
           },
         },
+        bpaScores: true,
         country: {
           include: {
             countryIcon: true,
@@ -45,18 +46,32 @@ export async function getOverallRankings(
         campus: true,
       },
       where: {
-        ARScore: {
-          some: {},
-        },
+        OR: [
+          {
+            ARScore: {
+              some: {},
+            },
+          },
+          {
+            bpaScores: {
+              some: {},
+            },
+          },
+        ],
       },
     });
 
-    // Calculate total AR scores for each user
+    // Calculate total AR + BPA scores for each user
     const userScores = users.map((user) => {
-      const totalScore = user.ARScore.reduce(
+      const arScore = user.ARScore.reduce(
         (sum, score) => sum + score.score,
         0,
       );
+      const bpaScore = user.bpaScores.reduce(
+        (sum, score) => sum + score.score,
+        0,
+      );
+      const totalScore = arScore + bpaScore;
       const grade = calculateGrade(user.birthday);
 
       return {

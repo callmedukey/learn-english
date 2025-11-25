@@ -105,7 +105,7 @@ export default function LeaderboardTable({
               <TableHead>Country</TableHead>
               <TableHead>Campus</TableHead>
               <TableHead>Total Score</TableHead>
-              <TableHead>Lexile Score</TableHead>
+              <TableHead>Novel Score</TableHead>
               <TableHead>RC Score</TableHead>
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
@@ -156,7 +156,7 @@ export default function LeaderboardTable({
                   <TableCell className="font-semibold">
                     {user.totalScore.toLocaleString()}
                   </TableCell>
-                  <TableCell>{user.arScores.toLocaleString()}</TableCell>
+                  <TableCell>{user.novelScores.toLocaleString()}</TableCell>
                   <TableCell>{user.rcScores.toLocaleString()}</TableCell>
                   <TableCell className="text-center">
                     <ScoreLogDialog

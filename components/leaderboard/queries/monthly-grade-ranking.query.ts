@@ -60,10 +60,16 @@ export async function getMonthlyGradeRankings(
   }
 
   if (type === "novel") {
-    // Get all users with monthly AR scores
+    // Get all users with monthly AR + BPA scores
     const users = await prisma.user.findMany({
       include: {
         monthlyARScores: {
+          where: {
+            year,
+            month,
+          },
+        },
+        monthlyBPAScores: {
           where: {
             year,
             month,
@@ -81,25 +87,43 @@ export async function getMonthlyGradeRankings(
         },
       },
       where: {
-        monthlyARScores: {
-          some: {
-            year,
-            month,
-            score: { gt: 0 },
+        OR: [
+          {
+            monthlyARScores: {
+              some: {
+                year,
+                month,
+                score: { gt: 0 },
+              },
+            },
           },
-        },
+          {
+            monthlyBPAScores: {
+              some: {
+                year,
+                month,
+                score: { gt: 0 },
+              },
+            },
+          },
+        ],
       },
     });
 
-    // Filter users by the same grade and calculate their scores
+    // Filter users by the same grade and calculate their AR + BPA scores
     const userScores = users
       .filter((user) => calculateGrade(user.birthday) === targetGrade)
       .map((user) => {
         const userGradeCalculated = calculateGrade(user.birthday);
-        const totalScore = user.monthlyARScores.reduce(
+        const arScore = user.monthlyARScores.reduce(
           (sum, score) => sum + score.score,
           0,
         );
+        const bpaScore = user.monthlyBPAScores.reduce(
+          (sum, score) => sum + score.score,
+          0,
+        );
+        const totalScore = arScore + bpaScore;
 
         return {
           id: user.id,
@@ -234,7 +258,7 @@ export async function getTotalMonthlyGradeRankings(
     return [];
   }
 
-  // Get all users with either monthly AR or RC scores
+  // Get all users with either monthly AR, RC, or BPA scores
   const users = await prisma.user.findMany({
     include: {
       monthlyARScores: {
@@ -244,6 +268,12 @@ export async function getTotalMonthlyGradeRankings(
         },
       },
       monthlyRCScores: {
+        where: {
+          year,
+          month,
+        },
+      },
+      monthlyBPAScores: {
         where: {
           year,
           month,
@@ -280,11 +310,20 @@ export async function getTotalMonthlyGradeRankings(
             },
           },
         },
+        {
+          monthlyBPAScores: {
+            some: {
+              year,
+              month,
+              score: { gt: 0 },
+            },
+          },
+        },
       ],
     },
   });
 
-  // Filter users by the same grade and calculate their combined scores
+  // Filter users by the same grade and calculate their combined AR + RC + BPA scores
   const userScores = users
     .filter((user) => calculateGrade(user.birthday) === targetGrade)
     .map((user) => {
@@ -297,7 +336,11 @@ export async function getTotalMonthlyGradeRankings(
         (sum, score) => sum + score.score,
         0,
       );
-      const totalScore = arScore + rcScore;
+      const bpaScore = user.monthlyBPAScores.reduce(
+        (sum, score) => sum + score.score,
+        0,
+      );
+      const totalScore = arScore + rcScore + bpaScore;
 
       return {
         id: user.id,

@@ -30,8 +30,8 @@ interface PageProps {
     grade?: string;
     totalScoreMin?: string;
     totalScoreMax?: string;
-    lexileScoreMin?: string;
-    lexileScoreMax?: string;
+    novelScoreMin?: string;
+    novelScoreMax?: string;
     rcScoreMin?: string;
     rcScoreMax?: string;
     allTimePage?: string;
@@ -71,11 +71,11 @@ async function LeaderboardData({ searchParams }: PageProps) {
     totalScoreMax: params.totalScoreMax
       ? Number(params.totalScoreMax)
       : undefined,
-    lexileScoreMin: params.lexileScoreMin
-      ? Number(params.lexileScoreMin)
+    novelScoreMin: params.novelScoreMin
+      ? Number(params.novelScoreMin)
       : undefined,
-    lexileScoreMax: params.lexileScoreMax
-      ? Number(params.lexileScoreMax)
+    novelScoreMax: params.novelScoreMax
+      ? Number(params.novelScoreMax)
       : undefined,
     rcScoreMin: params.rcScoreMin ? Number(params.rcScoreMin) : undefined,
     rcScoreMax: params.rcScoreMax ? Number(params.rcScoreMax) : undefined,

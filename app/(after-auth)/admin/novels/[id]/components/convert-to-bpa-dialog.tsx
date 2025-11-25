@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRightFromLine, Plus, Trash2, Edit2, ChevronDown, ChevronRight } from "lucide-react";
+import { ArrowRightFromLine, Plus, Trash2, Edit2, ChevronDown, ChevronRight, CheckSquare } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -62,6 +62,7 @@ export default function ConvertToBPADialog({
   const [units, setUnits] = useState<UnitDefinition[]>([]);
   const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [hasConfirmedUnassigned, setHasConfirmedUnassigned] = useState(false);
 
   // Unit builder state
   const [unitName, setUnitName] = useState("");
@@ -78,6 +79,7 @@ export default function ConvertToBPADialog({
     setUnitDescription("");
     setEditingUnitId(null);
     setIsSubmitting(false);
+    setHasConfirmedUnassigned(false);
   };
 
   const handleAddOrUpdateUnit = () => {
@@ -150,6 +152,27 @@ export default function ConvertToBPADialog({
     );
   };
 
+  const handleSelectAllUnassigned = (unitId: string) => {
+    const unassignedChapters = getUnassignedChapters();
+    if (unassignedChapters.length === 0) {
+      toast.info("All chapters are already assigned");
+      return;
+    }
+
+    setUnits((prev) =>
+      prev.map((unit) => {
+        if (unit.id === unitId) {
+          return {
+            ...unit,
+            chapterIds: [...unit.chapterIds, ...unassignedChapters.map((ch) => ch.id)],
+          };
+        }
+        return unit;
+      })
+    );
+    toast.success(`Assigned ${unassignedChapters.length} unassigned chapter(s) to ${units.find(u => u.id === unitId)?.name}`);
+  };
+
   const toggleUnitExpansion = (unitId: string) => {
     setExpandedUnits((prev) => {
       const next = new Set(prev);
@@ -199,11 +222,7 @@ export default function ConvertToBPADialog({
       }
       setStep("chapters");
     } else if (step === "chapters") {
-      const unassignedChapters = getUnassignedChapters();
-      if (unassignedChapters.length > 0) {
-        toast.error(`${unassignedChapters.length} chapter(s) are not assigned to any unit`);
-        return;
-      }
+      setHasConfirmedUnassigned(false); // Reset confirmation when entering preview
       setStep("preview");
     }
   };
@@ -440,12 +459,12 @@ export default function ConvertToBPADialog({
                 const isExpanded = expandedUnits.has(unit.id);
                 return (
                   <div key={unit.id} className="rounded-lg border">
-                    <button
-                      type="button"
-                      onClick={() => toggleUnitExpansion(unit.id)}
-                      className="w-full flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
-                    >
-                      <div className="flex items-center gap-2">
+                    <div className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors">
+                      <button
+                        type="button"
+                        onClick={() => toggleUnitExpansion(unit.id)}
+                        className="flex items-center gap-2 flex-1"
+                      >
                         {isExpanded ? (
                           <ChevronDown className="h-4 w-4" />
                         ) : (
@@ -457,8 +476,23 @@ export default function ConvertToBPADialog({
                             {unit.chapterIds.length} chapter(s) assigned
                           </div>
                         </div>
-                      </div>
-                    </button>
+                      </button>
+                      {unassignedChapters.length > 0 && (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleSelectAllUnassigned(unit.id);
+                          }}
+                          className="ml-2"
+                        >
+                          <CheckSquare className="h-3 w-3 mr-1" />
+                          Select All Unassigned
+                        </Button>
+                      )}
+                    </div>
 
                     {isExpanded && (
                       <div className="border-t p-4 space-y-2 bg-gray-50">
@@ -526,11 +560,36 @@ export default function ConvertToBPADialog({
         );
 
       case "preview":
+        const assignedChapterIds = getAssignedChapterIds();
+        const unassignedChaptersInPreview = getUnassignedChapters();
+        const totalChapters = chapters.length;
+        const assignedCount = assignedChapterIds.size;
+        const unassignedCount = unassignedChaptersInPreview.length;
+
         return (
           <div className="grid gap-6 py-4 max-h-[500px] overflow-y-auto">
             <div className="space-y-4">
               <Label className="text-base font-medium">Preview Structure</Label>
 
+              {/* Summary Stats */}
+              <div className="grid grid-cols-3 gap-3">
+                <div className="rounded-lg border p-3 bg-blue-50">
+                  <div className="text-xs text-gray-600">Total Chapters</div>
+                  <div className="text-2xl font-bold text-blue-700">{totalChapters}</div>
+                </div>
+                <div className="rounded-lg border p-3 bg-green-50">
+                  <div className="text-xs text-gray-600">Assigned</div>
+                  <div className="text-2xl font-bold text-green-700">{assignedCount}</div>
+                </div>
+                <div className={`rounded-lg border p-3 ${unassignedCount > 0 ? 'bg-amber-50' : 'bg-gray-50'}`}>
+                  <div className="text-xs text-gray-600">Unassigned</div>
+                  <div className={`text-2xl font-bold ${unassignedCount > 0 ? 'text-amber-700' : 'text-gray-700'}`}>
+                    {unassignedCount}
+                  </div>
+                </div>
+              </div>
+
+              {/* Structure Preview */}
               <div className="rounded-lg border p-4 bg-gray-50">
                 <div className="font-bold text-lg mb-4">
                   {novelTitle}
@@ -566,12 +625,59 @@ export default function ConvertToBPADialog({
                 })}
               </div>
 
-              <div className="rounded-md bg-green-50 border border-green-200 p-3">
-                <p className="text-sm text-green-800">
-                  <strong>Ready to convert!</strong> This will create a BPA novel with{" "}
-                  {units.length} unit(s) and {chapters.length} chapter(s).
-                </p>
-              </div>
+              {/* Warning and Confirmation for Unassigned Chapters */}
+              {unassignedCount > 0 ? (
+                <>
+                  <div className="rounded-md bg-amber-50 border border-amber-200 p-4">
+                    <div className="flex gap-2">
+                      <div className="flex-1">
+                        <p className="text-sm font-semibold text-amber-800 mb-2">
+                          ⚠️ Warning: Unassigned Chapters
+                        </p>
+                        <p className="text-sm text-amber-700 mb-3">
+                          {unassignedCount} chapter(s) are not assigned to any unit and will NOT be included in the BPA novel:
+                        </p>
+                        <ul className="list-disc list-inside text-sm text-amber-700 space-y-1 ml-2">
+                          {unassignedChaptersInPreview.slice(0, 5).map((ch) => (
+                            <li key={ch.id}>
+                              {ch.orderNumber}. {ch.title}
+                            </li>
+                          ))}
+                          {unassignedCount > 5 && (
+                            <li className="text-amber-600 italic">
+                              ...and {unassignedCount - 5} more
+                            </li>
+                          )}
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Confirmation Checkbox */}
+                  <div className="rounded-md border border-amber-300 bg-amber-50 p-4">
+                    <div className="flex items-start space-x-3">
+                      <Checkbox
+                        id="confirm-unassigned"
+                        checked={hasConfirmedUnassigned}
+                        onCheckedChange={(checked) => setHasConfirmedUnassigned(checked === true)}
+                      />
+                      <label
+                        htmlFor="confirm-unassigned"
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                      >
+                        I understand that {unassignedCount} unassigned chapter(s) will NOT be included in the BPA novel
+                      </label>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                <div className="rounded-md bg-green-50 border border-green-200 p-3">
+                  <p className="text-sm text-green-800">
+                    <strong>Ready to convert!</strong> This will create a BPA novel with{" "}
+                    {units.length} unit(s) and {assignedCount} chapter(s).
+                  </p>
+                </div>
+              )}
             </div>
           </div>
         );
@@ -651,7 +757,7 @@ export default function ConvertToBPADialog({
               <Button
                 type="button"
                 onClick={handleSubmit}
-                disabled={isSubmitting}
+                disabled={isSubmitting || (getUnassignedChapters().length > 0 && !hasConfirmedUnassigned)}
               >
                 {isSubmitting ? "Converting..." : "Convert to BPA"}
               </Button>

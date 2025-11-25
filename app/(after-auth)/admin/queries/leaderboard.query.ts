@@ -23,7 +23,7 @@ export interface LeaderboardUser {
   currentBPALevel: string | null;
   rank: number;
   totalScore: number;
-  arScores: number;
+  novelScores: number;
   rcScores: number;
 }
 
@@ -39,8 +39,8 @@ export interface LeaderboardFilters {
   searchQuery?: string;
   totalScoreMin?: number;
   totalScoreMax?: number;
-  lexileScoreMin?: number;
-  lexileScoreMax?: number;
+  novelScoreMin?: number;
+  novelScoreMax?: number;
   rcScoreMin?: number;
   rcScoreMax?: number;
 }
@@ -270,6 +270,7 @@ export async function getLeaderboardData(
       score: true,
       ARScore: true,
       RCScore: true,
+      bpaScores: true,
     },
     orderBy: {
       score: {
@@ -304,6 +305,8 @@ export async function getLeaderboardData(
   const mappedUsers = users.map((user) => {
     const totalScore = user.score?.score || 0;
     const arScores = user.ARScore.reduce((sum, score) => sum + score.score, 0);
+    const bpaScores = user.bpaScores.reduce((sum, score) => sum + score.score, 0);
+    const novelScores = arScores + bpaScores;
     const rcScores = user.RCScore.reduce((sum, score) => sum + score.score, 0);
     const grade = calculateGrade(user.birthday);
 
@@ -320,7 +323,7 @@ export async function getLeaderboardData(
       studentName: user.studentName,
       currentBPALevel: levelAssignmentsMap.get(user.id) || null,
       totalScore,
-      arScores,
+      novelScores,
       rcScores,
     };
   });
@@ -330,8 +333,8 @@ export async function getLeaderboardData(
     if (b.totalScore !== a.totalScore) {
       return b.totalScore - a.totalScore;
     }
-    if (b.arScores !== a.arScores) {
-      return b.arScores - a.arScores;
+    if (b.novelScores !== a.novelScores) {
+      return b.novelScores - a.novelScores;
     }
     return b.rcScores - a.rcScores;
   });
@@ -455,12 +458,12 @@ export async function getLeaderboardData(
     filteredUsers = filteredUsers.filter((user) => user.totalScore <= filters.totalScoreMax!);
   }
 
-  if (filters.lexileScoreMin !== undefined) {
-    filteredUsers = filteredUsers.filter((user) => user.arScores >= filters.lexileScoreMin!);
+  if (filters.novelScoreMin !== undefined) {
+    filteredUsers = filteredUsers.filter((user) => user.novelScores >= filters.novelScoreMin!);
   }
 
-  if (filters.lexileScoreMax !== undefined) {
-    filteredUsers = filteredUsers.filter((user) => user.arScores <= filters.lexileScoreMax!);
+  if (filters.novelScoreMax !== undefined) {
+    filteredUsers = filteredUsers.filter((user) => user.novelScores <= filters.novelScoreMax!);
   }
 
   if (filters.rcScoreMin !== undefined) {
@@ -537,6 +540,7 @@ export async function getGradeLeaderboardData(
       score: true,
       ARScore: true,
       RCScore: true,
+      bpaScores: true,
     },
     orderBy: {
       score: {
@@ -571,6 +575,8 @@ export async function getGradeLeaderboardData(
   const mappedUsers = users.map((user) => {
     const totalScore = user.score?.score || 0;
     const arScores = user.ARScore.reduce((sum, score) => sum + score.score, 0);
+    const bpaScores = user.bpaScores.reduce((sum, score) => sum + score.score, 0);
+    const novelScores = arScores + bpaScores;
     const rcScores = user.RCScore.reduce((sum, score) => sum + score.score, 0);
     const userGrade = calculateGrade(user.birthday);
 
@@ -587,7 +593,7 @@ export async function getGradeLeaderboardData(
       studentName: user.studentName,
       currentBPALevel: levelAssignmentsMap.get(user.id) || null,
       totalScore,
-      arScores,
+      novelScores,
       rcScores,
     };
   });
@@ -676,8 +682,8 @@ export async function getGradeLeaderboardData(
     if (b.totalScore !== a.totalScore) {
       return b.totalScore - a.totalScore;
     }
-    if (b.arScores !== a.arScores) {
-      return b.arScores - a.arScores;
+    if (b.novelScores !== a.novelScores) {
+      return b.novelScores - a.novelScores;
     }
     return b.rcScores - a.rcScores;
   });
@@ -720,12 +726,12 @@ export async function getGradeLeaderboardData(
     filteredUsers = filteredUsers.filter((user) => user.totalScore <= filters.totalScoreMax!);
   }
 
-  if (filters.lexileScoreMin !== undefined) {
-    filteredUsers = filteredUsers.filter((user) => user.arScores >= filters.lexileScoreMin!);
+  if (filters.novelScoreMin !== undefined) {
+    filteredUsers = filteredUsers.filter((user) => user.novelScores >= filters.novelScoreMin!);
   }
 
-  if (filters.lexileScoreMax !== undefined) {
-    filteredUsers = filteredUsers.filter((user) => user.arScores <= filters.lexileScoreMax!);
+  if (filters.novelScoreMax !== undefined) {
+    filteredUsers = filteredUsers.filter((user) => user.novelScores <= filters.novelScoreMax!);
   }
 
   if (filters.rcScoreMin !== undefined) {
@@ -803,6 +809,12 @@ export async function getMonthlyLeaderboardData(
           month: targetMonth,
         },
       },
+      monthlyBPAScores: {
+        where: {
+          year: targetYear,
+          month: targetMonth,
+        },
+      },
     },
   });
 
@@ -832,8 +844,10 @@ export async function getMonthlyLeaderboardData(
   const mappedUsers = users
     .map((user) => {
       const arScores = user.monthlyARScores.reduce((sum, score) => sum + score.score, 0);
+      const bpaScores = user.monthlyBPAScores.reduce((sum, score) => sum + score.score, 0);
+      const novelScores = arScores + bpaScores;
       const rcScores = user.monthlyRCScores.reduce((sum, score) => sum + score.score, 0);
-      const totalScore = arScores + rcScores;
+      const totalScore = novelScores + rcScores;
       const grade = calculateGrade(user.birthday);
 
       return {
@@ -849,7 +863,7 @@ export async function getMonthlyLeaderboardData(
         studentName: user.studentName,
         currentBPALevel: levelAssignmentsMap.get(user.id) || null,
         totalScore,
-        arScores,
+        novelScores,
         rcScores,
       };
     })
@@ -860,8 +874,8 @@ export async function getMonthlyLeaderboardData(
     if (b.totalScore !== a.totalScore) {
       return b.totalScore - a.totalScore;
     }
-    if (b.arScores !== a.arScores) {
-      return b.arScores - a.arScores;
+    if (b.novelScores !== a.novelScores) {
+      return b.novelScores - a.novelScores;
     }
     return b.rcScores - a.rcScores;
   });
@@ -1023,12 +1037,12 @@ export async function getMonthlyLeaderboardData(
     filteredUsers = filteredUsers.filter((user) => user.totalScore <= filters.totalScoreMax!);
   }
 
-  if (filters.lexileScoreMin !== undefined) {
-    filteredUsers = filteredUsers.filter((user) => user.arScores >= filters.lexileScoreMin!);
+  if (filters.novelScoreMin !== undefined) {
+    filteredUsers = filteredUsers.filter((user) => user.novelScores >= filters.novelScoreMin!);
   }
 
-  if (filters.lexileScoreMax !== undefined) {
-    filteredUsers = filteredUsers.filter((user) => user.arScores <= filters.lexileScoreMax!);
+  if (filters.novelScoreMax !== undefined) {
+    filteredUsers = filteredUsers.filter((user) => user.novelScores <= filters.novelScoreMax!);
   }
 
   if (filters.rcScoreMin !== undefined) {
