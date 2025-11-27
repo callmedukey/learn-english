@@ -5,6 +5,8 @@ import { auth } from "@/auth";
 import { BPAPageContent } from "@/components/bpa/bpa-page-content";
 import { prisma } from "@/prisma/prisma-client";
 
+import { getCampusEventsForStudent } from "./queries/campus-events.query";
+
 export const dynamic = "force-dynamic";
 
 const BPAPage = async () => {
@@ -122,10 +124,14 @@ const BPAPage = async () => {
     novelsAvailable: level._count.novels,
   }));
 
+  // Fetch campus events for the student
+  const campusEvents = await getCampusEventsForStudent(user.campusId);
+
   return (
     <BPAPageContent
       userLevelAssignments={userLevelAssignments}
       bpaLevels={levelsWithCount}
+      campusEvents={campusEvents}
     />
   );
 };

@@ -23,6 +23,7 @@ model Campus {
   updatedAt DateTime @updatedAt
   users     User[]
   campusRequests CampusRequest[]
+  events    CampusEvent[]
 }
 
 model CampusRequest {

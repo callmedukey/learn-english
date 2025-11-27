@@ -1,0 +1,40 @@
+enum CampusEventColor {
+  sky
+  amber
+  violet
+  rose
+  emerald
+  orange
+  red
+  blue
+  green
+  yellow
+  pink
+  indigo
+  cyan
+  teal
+  lime
+  fuchsia
+  slate
+}
+
+model CampusEvent {
+  id          String            @id @default(cuid())
+  campusId    String
+  campus      Campus            @relation(fields: [campusId], references: [id], onDelete: Cascade)
+
+  title       String
+  description String?
+  location    String?
+
+  startDate   DateTime
+  endDate     DateTime
+  allDay      Boolean           @default(false)
+  color       CampusEventColor  @default(sky)
+
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+
+  @@index([campusId])
+  @@index([campusId, startDate])
+}

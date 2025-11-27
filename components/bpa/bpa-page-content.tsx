@@ -1,11 +1,11 @@
 "use client";
 
-import { LayoutGrid, Square } from "lucide-react";
-import { Trophy } from "lucide-react";
+import { CalendarDays, LayoutGrid, Square, Trophy } from "lucide-react";
 import { useEffect, useState } from "react";
 
 import { Button } from "@/components/ui/button";
 
+import { BPACampusCalendar } from "./bpa-campus-calendar";
 import { BPALevelCard } from "./bpa-level-card";
 import { BPASemesterExpanded } from "./bpa-semester-expanded";
 import { BPASemesterLeaderboard } from "./bpa-semester-leaderboard";
@@ -16,6 +16,17 @@ import {
   useSemesterViewMode,
 } from "./queries/bpa.query";
 
+interface CampusEventData {
+  id: string;
+  title: string;
+  description: string | null;
+  location: string | null;
+  startDate: Date;
+  endDate: Date;
+  allDay: boolean;
+  color: string;
+}
+
 interface BPAPageContentProps {
   userLevelAssignments: Record<string, Record<string, string>>; // { [timeframeId]: { Spring: "lv2", Summer: "lv3", ... } }
   bpaLevels: Array<{
@@ -25,11 +36,13 @@ interface BPAPageContentProps {
     stars: number;
     novelsAvailable: number;
   }>;
+  campusEvents: CampusEventData[];
 }
 
 export function BPAPageContent({
   userLevelAssignments,
   bpaLevels,
+  campusEvents,
 }: BPAPageContentProps) {
   const [selectedTimeframe, setSelectedTimeframe] = useState<string | null>(null);
   const { data: timeframes } = useBPASemesters();
@@ -189,6 +202,15 @@ export function BPAPageContent({
         {bpaLevels.map((level) => (
           <BPALevelCard key={level.id} level={level} />
         ))}
+      </div>
+
+      {/* Campus Calendar Section */}
+      <div className="mt-16">
+        <div className="mb-6 flex items-center gap-3">
+          <h2 className="text-3xl font-bold text-amber-900">Campus Calendar</h2>
+          <CalendarDays className="h-7 w-7 text-primary" />
+        </div>
+        <BPACampusCalendar events={campusEvents} />
       </div>
     </div>
   );

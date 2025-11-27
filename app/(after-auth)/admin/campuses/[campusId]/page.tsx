@@ -6,12 +6,14 @@ import React from "react";
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 
+import CampusEventCalendar from "./components/campus-event-calendar";
 import CampusStudentsTable from "./components/campus-students-table";
 import {
   getBPALevelsForAssignment,
   getCampusWithStudents,
   getTimeframesForAssignment,
 } from "./queries/campus-details.query";
+import { getCampusEvents } from "./queries/campus-events.query";
 
 interface CampusDetailsPageProps {
   params: Promise<{
@@ -42,10 +44,11 @@ const CampusDetailsPage = async ({
     return notFound();
   }
 
-  // Fetch BPA levels and timeframes for assignment
-  const [bpaLevels, timeframes] = await Promise.all([
+  // Fetch BPA levels, timeframes, and campus events
+  const [bpaLevels, timeframes, campusEvents] = await Promise.all([
     getBPALevelsForAssignment(),
     getTimeframesForAssignment(),
+    getCampusEvents(campusId),
   ]);
 
   return (
@@ -66,6 +69,12 @@ const CampusDetailsPage = async ({
             </p>
           </div>
         </div>
+      </div>
+
+      {/* Campus Calendar */}
+      <div className="rounded-lg border p-4">
+        <h2 className="text-xl font-semibold mb-4">Campus Calendar</h2>
+        <CampusEventCalendar campusId={campusId} events={campusEvents} />
       </div>
 
       {/* Campus Students Table */}
