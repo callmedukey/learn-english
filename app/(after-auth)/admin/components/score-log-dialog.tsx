@@ -27,6 +27,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 interface ScoreLogDialogProps {
   userId: string;
   userNickname: string;
+  children?: React.ReactNode;
 }
 
 async function fetchScoreLog(
@@ -58,6 +59,7 @@ async function fetchScoreLog(
 export default function ScoreLogDialog({
   userId,
   userNickname,
+  children,
 }: ScoreLogDialogProps) {
   const [open, setOpen] = useState(false);
   const [page, setPage] = useState(1);
@@ -83,10 +85,12 @@ export default function ScoreLogDialog({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-          <History className="h-4 w-4" />
-          <span className="sr-only">View score log</span>
-        </Button>
+        {children || (
+          <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+            <History className="h-4 w-4" />
+            <span className="sr-only">View score log</span>
+          </Button>
+        )}
       </DialogTrigger>
       <DialogContent className="max-h-[80vh] max-w-2xl">
         <DialogHeader>

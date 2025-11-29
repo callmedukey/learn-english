@@ -116,7 +116,7 @@ const BPAChapterCard: React.FC<BPAChapterCardProps> = ({
       <CardHeader className="pb-4">
         {/* Title first */}
         <CardTitle className="line-clamp-1 text-lg font-semibold text-card-foreground">
-          Chapter {chapter.orderNumber}: {chapter.title}
+          {chapter.title}
         </CardTitle>
 
         {/* Badges below title */}

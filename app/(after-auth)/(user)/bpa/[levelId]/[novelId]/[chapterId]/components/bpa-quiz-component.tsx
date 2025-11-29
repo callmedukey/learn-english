@@ -354,8 +354,7 @@ const BPAQuizComponent: React.FC<BPAQuizComponentProps> = ({
           <div className="mb-4 text-4xl">🎉</div>
           <div className="space-y-4">
             <p className="text-lg">
-              You&apos;ve completed Chapter {chapter.orderNumber}:{" "}
-              {chapter.title}
+              You&apos;ve completed {chapter.title}
             </p>
 
             {/* Score Display */}

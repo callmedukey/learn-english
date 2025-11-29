@@ -280,7 +280,7 @@ async function BPAChapterContent({
         <Card className="mx-auto mb-6 max-w-4xl">
           <CardHeader>
             <CardTitle>
-              Chapter {chapter.orderNumber}: {chapter.title}
+              {chapter.title}
             </CardTitle>
             <div className="flex gap-2">
               {chapter.isFree && (

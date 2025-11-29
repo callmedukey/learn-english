@@ -1,6 +1,6 @@
 "use client";
 
-import { ArrowRightFromLine, Plus, Trash2, Edit2, ChevronDown, ChevronRight, CheckSquare } from "lucide-react";
+import { ArrowRightFromLine, Plus, Trash2, Edit2, ChevronDown, ChevronRight, CheckSquare, Square } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
 
@@ -57,7 +57,7 @@ export default function ConvertToBPADialog({
 }: ConvertToBPADialogProps) {
   const [open, setOpen] = useState(false);
   const [step, setStep] = useState<ConversionStep>("config");
-  const [operation, setOperation] = useState<OperationType>("move");
+  const [operation, setOperation] = useState<OperationType>("copy");
   const [selectedBPALevelId, setSelectedBPALevelId] = useState("");
   const [units, setUnits] = useState<UnitDefinition[]>([]);
   const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
@@ -173,6 +173,28 @@ export default function ConvertToBPADialog({
     toast.success(`Assigned ${unassignedChapters.length} unassigned chapter(s) to ${units.find(u => u.id === unitId)?.name}`);
   };
 
+  const handleClearAllFromUnit = (unitId: string) => {
+    const unit = units.find((u) => u.id === unitId);
+    if (!unit || unit.chapterIds.length === 0) {
+      toast.info("No chapters to clear");
+      return;
+    }
+
+    const clearedCount = unit.chapterIds.length;
+    setUnits((prev) =>
+      prev.map((u) => {
+        if (u.id === unitId) {
+          return {
+            ...u,
+            chapterIds: [],
+          };
+        }
+        return u;
+      })
+    );
+    toast.success(`Cleared ${clearedCount} chapter(s) from ${unit.name}`);
+  };
+
   const toggleUnitExpansion = (unitId: string) => {
     setExpandedUnits((prev) => {
       const next = new Set(prev);
@@ -283,17 +305,6 @@ export default function ConvertToBPADialog({
                 className="flex flex-col space-y-2"
               >
                 <div className="flex items-start space-x-3 rounded-lg border p-3 hover:bg-gray-50">
-                  <RadioGroupItem value="move" id="move" className="mt-0.5" />
-                  <div className="flex-1">
-                    <Label htmlFor="move" className="cursor-pointer font-medium">
-                      Move
-                    </Label>
-                    <p className="text-sm text-gray-500">
-                      Convert and delete the source Novel
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-start space-x-3 rounded-lg border p-3 hover:bg-gray-50">
                   <RadioGroupItem value="copy" id="copy" className="mt-0.5" />
                   <div className="flex-1">
                     <Label htmlFor="copy" className="cursor-pointer font-medium">
@@ -301,6 +312,17 @@ export default function ConvertToBPADialog({
                     </Label>
                     <p className="text-sm text-gray-500">
                       Keep Novel and create BPA copy
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-start space-x-3 rounded-lg border p-3 hover:bg-gray-50">
+                  <RadioGroupItem value="move" id="move" className="mt-0.5" />
+                  <div className="flex-1">
+                    <Label htmlFor="move" className="cursor-pointer font-medium">
+                      Move
+                    </Label>
+                    <p className="text-sm text-gray-500">
+                      Convert and delete the source Novel
                     </p>
                   </div>
                 </div>
@@ -477,7 +499,21 @@ export default function ConvertToBPADialog({
                           </div>
                         </div>
                       </button>
-                      {unassignedChapters.length > 0 && (
+                      {unit.chapterIds.length > 0 ? (
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleClearAllFromUnit(unit.id);
+                          }}
+                          className="ml-2"
+                        >
+                          <Square className="h-3 w-3 mr-1" />
+                          Clear All
+                        </Button>
+                      ) : unassignedChapters.length > 0 ? (
                         <Button
                           type="button"
                           variant="outline"
@@ -491,7 +527,7 @@ export default function ConvertToBPADialog({
                           <CheckSquare className="h-3 w-3 mr-1" />
                           Select All Unassigned
                         </Button>
-                      )}
+                      ) : null}
                     </div>
 
                     {isExpanded && (

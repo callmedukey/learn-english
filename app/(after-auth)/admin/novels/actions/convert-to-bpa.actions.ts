@@ -162,7 +162,7 @@ async function convertNovelToBPALevel(
               novelId: bpaNovel.id,
               unitId: bpaUnit.id,
               orderNumber: chapterOrderInUnit,
-              title: sourceChapter.title,
+              title: `Chapter ${sourceChapter.orderNumber}: ${sourceChapter.title}`,
               description: sourceChapter.description,
               isFree: sourceChapter.isFree,
             },

@@ -318,7 +318,7 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
               <div className="flex-1">
                 <div className="flex items-center space-x-2">
                   <h4 className="font-medium">
-                    Chapter {chapter.orderNumber}: {chapter.title}
+                    {chapter.title}
                   </h4>
                   {chapter.isFree ? (
                     <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-1 text-sm font-medium text-green-800">

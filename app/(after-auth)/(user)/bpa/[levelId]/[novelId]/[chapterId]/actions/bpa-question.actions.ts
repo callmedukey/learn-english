@@ -335,7 +335,7 @@ export const completeBPAQuestionAction = async (
             levelInfo: level?.name || null,
             novelInfo: novel?.title || null,
             unitInfo: unit?.name || null,
-            chapterInfo: chapter ? `Chapter ${chapter.orderNumber}` : null,
+            chapterInfo: chapter?.title || null,
             keywordInfo: null,
             questionText: question.question,
             selectedAnswer: selectedAnswer || null,

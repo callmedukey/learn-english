@@ -7,6 +7,7 @@ import { useRouter } from "next/navigation";
 import React, { useMemo, useState, useTransition } from "react";
 import { toast } from "sonner";
 
+import ScoreLogDialog from "@/app/(after-auth)/admin/components/score-log-dialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -403,6 +404,14 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
                         student={student}
                         onEditAssignment={handleEditAssignment}
                       />
+                      <ScoreLogDialog
+                        userId={student.id}
+                        userNickname={student.studentName || student.name || student.email}
+                      >
+                        <Button variant="outline" size="sm">
+                          Score Log
+                        </Button>
+                      </ScoreLogDialog>
                       <AssignLevelDialog
                         studentId={student.id}
                         studentName={student.studentName || student.name || student.email}
@@ -603,7 +612,7 @@ const StudentHistoryButton: React.FC<StudentHistoryButtonProps> = ({
     >
       <Button variant="outline" size="sm" disabled={isLoading && isOpen}>
         <History className="mr-1 h-3 w-3" />
-        {isLoading && isOpen ? "Loading..." : "History"}
+        {isLoading && isOpen ? "Loading..." : "Assign History"}
       </Button>
     </StudentAssignmentHistoryDialog>
   );
