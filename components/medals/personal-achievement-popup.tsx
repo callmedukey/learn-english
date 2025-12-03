@@ -83,7 +83,7 @@ export function PersonalAchievementPopup({
 
   return (
     <Dialog open onOpenChange={() => handleDismiss(false)}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className="max-h-[85vh] w-full max-w-[calc(100%-1rem)] overflow-y-auto sm:max-w-2xl">
         <DialogHeader className="sr-only">
           <DialogTitle>Certificate of Achievement</DialogTitle>
         </DialogHeader>

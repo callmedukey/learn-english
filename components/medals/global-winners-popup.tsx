@@ -197,7 +197,7 @@ export function GlobalWinnersPopup({
 
   return (
     <Dialog open onOpenChange={() => handleDismiss(false)}>
-      <DialogContent className="max-h-[90vh] max-w-3xl overflow-y-auto">
+      <DialogContent className="max-h-[85vh] w-full max-w-[calc(100%-1rem)] overflow-y-auto sm:max-w-3xl">
         <DialogHeader>
           <DialogTitle className="text-center text-2xl font-bold">
             {title || `${monthName} ${year} Medal Winners`}
