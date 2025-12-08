@@ -2,7 +2,6 @@ import { format } from "date-fns";
 import Link from "next/link";
 import React from "react";
 
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableBody,
@@ -13,8 +12,7 @@ import {
 } from "@/components/ui/table";
 import { prisma } from "@/prisma/prisma-client";
 
-import DeleteCampusDialog from "./delete-campus-dialog";
-import UpdateCampusDialog from "./update-campus-dialog";
+import CampusActions from "./campus-actions";
 
 const CampusesTable = async () => {
   const campuses = await prisma.campus.findMany({
@@ -78,20 +76,7 @@ const CampusesTable = async () => {
         {campuses.map((campus, index) => (
           <TableRow key={campus.id}>
             <TableCell className="flex items-center justify-start space-x-2 py-4 text-base font-medium whitespace-nowrap px-6">
-              <UpdateCampusDialog campus={campus}>
-                <Button variant="outline" size="sm">
-                  Update
-                </Button>
-              </UpdateCampusDialog>
-              <DeleteCampusDialog
-                campusId={campus.id}
-                campusName={campus.name}
-                userCount={campus._count.users}
-              >
-                <Button variant="destructive" size="sm">
-                  Delete
-                </Button>
-              </DeleteCampusDialog>
+              <CampusActions campus={campus} />
             </TableCell>
             <TableCell className="px-6 py-4 text-center text-base font-medium whitespace-nowrap text-gray-900">
               {index + 1}

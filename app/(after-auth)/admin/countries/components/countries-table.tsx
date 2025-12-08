@@ -1,7 +1,6 @@
 import Image from "next/image";
 import React from "react";
 
-import { Button } from "@/components/ui/button";
 import {
   Table,
   TableHeader,
@@ -12,8 +11,7 @@ import {
 } from "@/components/ui/table";
 import { prisma } from "@/prisma/prisma-client";
 
-import DeleteCountryDialog from "./delete-country-dialog";
-import UpdateCountryDialog from "./update-country-dialog";
+import CountryActions from "./country-actions";
 
 const CountriesTable = async () => {
   const countries = await prisma.country.findMany({
@@ -63,19 +61,7 @@ const CountriesTable = async () => {
         {countries.map((country, index) => (
           <TableRow key={country.id}>
             <TableCell className="flex items-center justify-start space-x-2 py-4 text-base font-medium whitespace-nowrap px-6">
-              <UpdateCountryDialog country={country}>
-                <Button variant="outline" size="sm">
-                  Update
-                </Button>
-              </UpdateCountryDialog>
-              <DeleteCountryDialog
-                countryId={country.id}
-                countryName={country.name}
-              >
-                <Button variant="destructive" size="sm">
-                  Delete
-                </Button>
-              </DeleteCountryDialog>
+              <CountryActions country={country} />
             </TableCell>
             <TableCell className="px-6 py-4 text-center text-base font-medium whitespace-nowrap text-gray-900">
               {index + 1}
