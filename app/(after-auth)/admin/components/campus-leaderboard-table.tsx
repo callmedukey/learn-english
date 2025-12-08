@@ -16,6 +16,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 
+import ScoreLogDialog from "./score-log-dialog";
 import type { CampusStudent } from "../queries/campus-leaderboard.query";
 
 interface CampusLeaderboardTableProps {
@@ -56,6 +57,7 @@ export default function CampusLeaderboardTable({
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-16 text-center">Actions</TableHead>
               <TableHead className="w-16 text-center">Rank</TableHead>
               <TableHead>Student Name</TableHead>
               <TableHead>Campus</TableHead>
@@ -66,13 +68,19 @@ export default function CampusLeaderboardTable({
           <TableBody>
             {students.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="h-32 text-center text-gray-500">
+                <TableCell colSpan={6} className="h-32 text-center text-gray-500">
                   No student data available for the selected filters
                 </TableCell>
               </TableRow>
             ) : (
               students.map((student) => (
                 <TableRow key={student.id} className="hover:bg-gray-50">
+                  <TableCell className="text-center">
+                    <ScoreLogDialog
+                      userId={student.id}
+                      userNickname={student.nickname || student.studentName || "Anonymous"}
+                    />
+                  </TableCell>
                   <TableCell className="text-center font-bold">
                     <div className="flex items-center justify-center gap-1">
                       {student.rank}

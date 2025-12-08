@@ -11,6 +11,7 @@ export interface ConversionFormData {
   targetBPALevelId: string;
   operationType: "move" | "copy";
   units: UnitDefinition[];
+  newTitle?: string;
 }
 
 export interface ConversionResult {

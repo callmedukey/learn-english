@@ -124,7 +124,7 @@ async function convertNovelToBPALevel(
       // Create the BPA novel
       const bpaNovel = await tx.bPANovel.create({
         data: {
-          title: sourceNovel.title,
+          title: formData.newTitle || sourceNovel.title,
           description: sourceNovel.description,
           hidden: sourceNovel.hidden,
           comingSoon: sourceNovel.comingSoon,

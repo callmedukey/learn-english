@@ -59,6 +59,7 @@ export default function ConvertToBPADialog({
   const [step, setStep] = useState<ConversionStep>("config");
   const [operation, setOperation] = useState<OperationType>("copy");
   const [selectedBPALevelId, setSelectedBPALevelId] = useState("");
+  const [bpaNovelTitle, setBpaNovelTitle] = useState(novelTitle);
   const [units, setUnits] = useState<UnitDefinition[]>([]);
   const [expandedUnits, setExpandedUnits] = useState<Set<string>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -71,8 +72,9 @@ export default function ConvertToBPADialog({
 
   const resetDialog = () => {
     setStep("config");
-    setOperation("move");
+    setOperation("copy");
     setSelectedBPALevelId("");
+    setBpaNovelTitle(novelTitle);
     setUnits([]);
     setExpandedUnits(new Set());
     setUnitName("");
@@ -267,6 +269,7 @@ export default function ConvertToBPADialog({
       targetBPALevelId: selectedBPALevelId,
       operationType: operation,
       units,
+      newTitle: bpaNovelTitle !== novelTitle ? bpaNovelTitle : undefined,
     };
 
     try {
@@ -356,6 +359,24 @@ export default function ConvertToBPADialog({
                   ))}
                 </SelectContent>
               </Select>
+            </div>
+
+            {/* BPA Novel Title */}
+            <div className="space-y-2">
+              <Label htmlFor="bpa-novel-title" className="text-base font-medium">
+                BPA Novel Title
+              </Label>
+              <Input
+                id="bpa-novel-title"
+                value={bpaNovelTitle}
+                onChange={(e) => setBpaNovelTitle(e.target.value)}
+                placeholder="Enter novel title"
+              />
+              {bpaNovelTitle !== novelTitle && (
+                <p className="text-sm text-gray-500">
+                  Original: {novelTitle}
+                </p>
+              )}
             </div>
 
             <div className="rounded-md bg-blue-50 border border-blue-200 p-3">
@@ -628,10 +649,15 @@ export default function ConvertToBPADialog({
               {/* Structure Preview */}
               <div className="rounded-lg border p-4 bg-gray-50">
                 <div className="font-bold text-lg mb-4">
-                  {novelTitle}
+                  {bpaNovelTitle}
                   <span className="text-sm text-gray-500 ml-2">
                     ({operation === "move" ? "Move" : "Copy"})
                   </span>
+                  {bpaNovelTitle !== novelTitle && (
+                    <div className="text-sm font-normal text-blue-600 mt-1">
+                      Renamed from: {novelTitle}
+                    </div>
+                  )}
                 </div>
 
                 {units.map((unit) => {

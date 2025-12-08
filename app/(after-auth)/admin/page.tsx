@@ -57,7 +57,7 @@ async function LeaderboardData({ searchParams }: PageProps) {
 
   // Get current user's session to check role
   const session = await auth();
-  const isAdminOrSubAdmin = session?.user?.role === "ADMIN" || session?.user?.role === "SUB_ADMIN";
+  const isAdmin = session?.user?.role === "ADMIN";
 
   // Parse filters from search params
   const filters: LeaderboardFilters = {
@@ -135,7 +135,7 @@ async function LeaderboardData({ searchParams }: PageProps) {
 
   return (
     <div className="space-y-12">
-      {isAdminOrSubAdmin && (
+      {isAdmin && (
         <div>
           <h2 className="mb-4 text-2xl font-bold text-gray-900">User Stats</h2>
           <LeaderboardStats totalUsers={allTimeData.total} stats={allTimeData.stats} />
