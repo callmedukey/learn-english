@@ -26,22 +26,61 @@ import { EventItem } from "@/components/event-calendar/event-item";
 import { useEventVisibility } from "@/components/event-calendar/hooks/use-event-visibility";
 import type { CalendarEvent } from "@/components/event-calendar/types";
 import {
+  calculateEventLanes,
   getAllEventsForDay,
-  getEventsForDay,
-  getSpanningEventsForDay,
+  getBorderRadiusClasses,
+  getEventColorClasses,
+  getMaxLanes,
+  getMultiDayEventsForWeek,
+  getSingleDayEventsForDay,
   sortEvents,
+  type SpanningEventWithLane,
 } from "@/components/event-calendar/utils";
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
+import { cn } from "@/lib/utils";
 
 interface MonthViewProps {
   currentDate: Date;
   events: CalendarEvent[];
   onEventSelect: (event: CalendarEvent) => void;
   onEventCreate: (startTime: Date) => void;
+}
+
+interface SpanningEventProps {
+  eventWithLane: SpanningEventWithLane;
+  onEventClick: (event: CalendarEvent, e: React.MouseEvent) => void;
+}
+
+function SpanningEvent({ eventWithLane, onEventClick }: SpanningEventProps) {
+  const { event, lane, startCol, spanDays, isFirstWeek, isLastWeek } =
+    eventWithLane;
+
+  const leftPercent = (startCol / 7) * 100;
+  const widthPercent = (spanDays / 7) * 100;
+
+  return (
+    <button
+      className={cn(
+        "absolute flex h-[var(--event-height)] select-none items-center justify-center overflow-hidden px-1 text-center font-medium outline-none backdrop-blur-md transition focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 text-[10px] sm:px-2 sm:text-xs",
+        getEventColorClasses(event.color),
+        getBorderRadiusClasses(isFirstWeek, isLastWeek),
+      )}
+      onClick={(e) => onEventClick(event, e)}
+      style={{
+        left: `${leftPercent}%`,
+        width: `${widthPercent}%`,
+        top: `calc(${lane} * (var(--event-height) + var(--event-gap)))`,
+      }}
+      type="button"
+    >
+      {isFirstWeek && <span className="truncate">{event.title}</span>}
+      {!isFirstWeek && <span className="truncate opacity-70">{event.title}</span>}
+    </button>
+  );
 }
 
 export function MonthView({
@@ -67,8 +106,8 @@ export function MonthView({
   }, []);
 
   const weeks = useMemo(() => {
-    const result = [];
-    let week = [];
+    const result: Date[][] = [];
+    let week: Date[] = [];
 
     for (let i = 0; i < days.length; i++) {
       week.push(days[i]);
@@ -80,6 +119,16 @@ export function MonthView({
 
     return result;
   }, [days]);
+
+  // Pre-calculate spanning events for each week
+  const weekSpanningEvents = useMemo(() => {
+    return weeks.map((week) => {
+      const weekStart = week[0];
+      const weekEnd = week[week.length - 1];
+      const multiDayEvents = getMultiDayEventsForWeek(events, weekStart, weekEnd);
+      return calculateEventLanes(multiDayEvents, weekStart, weekEnd);
+    });
+  }, [weeks, events]);
 
   const handleEventClick = (event: CalendarEvent, e: React.MouseEvent) => {
     e.stopPropagation();
@@ -96,6 +145,7 @@ export function MonthView({
     setIsMounted(true);
   }, []);
 
+
   return (
     <div className="contents" data-slot="month-view">
       <div className="grid grid-cols-7 border-border/70 border-b">
@@ -109,162 +159,202 @@ export function MonthView({
         ))}
       </div>
       <div className="grid flex-1 auto-rows-fr">
-        {weeks.map((week, weekIndex) => (
-          <div
-            className="grid grid-cols-7 [&:last-child>*]:border-b-0"
-            key={`week-${week}`}
-          >
-            {week.map((day, dayIndex) => {
-              if (!day) return null; // Skip if day is undefined
+        {weeks.map((week, weekIndex) => {
+          const spanningEvents = weekSpanningEvents[weekIndex];
+          const lanesCount = getMaxLanes(spanningEvents);
+          const spanningHeight =
+            lanesCount > 0
+              ? `calc(${lanesCount} * (var(--event-height) + var(--event-gap)))`
+              : "0px";
 
-              const dayEvents = getEventsForDay(events, day);
-              const spanningEvents = getSpanningEventsForDay(events, day);
-              const isCurrentMonth = isSameMonth(day, currentDate);
-              const cellId = `month-cell-${day.toISOString()}`;
-              const allDayEvents = [...spanningEvents, ...dayEvents];
-              const allEvents = getAllEventsForDay(events, day);
-
-              const isReferenceCell = weekIndex === 0 && dayIndex === 0;
-              const visibleCount = isMounted
-                ? getVisibleEventCount(allDayEvents.length)
-                : undefined;
-              const hasMore =
-                visibleCount !== undefined &&
-                allDayEvents.length > visibleCount;
-              const remainingCount = hasMore
-                ? allDayEvents.length - visibleCount
-                : 0;
-
-              return (
-                <div
-                  className="group border-border/70 border-r border-b last:border-r-0 data-outside-cell:bg-muted/25 data-outside-cell:text-muted-foreground/70"
-                  data-outside-cell={!isCurrentMonth || undefined}
-                  data-today={isToday(day) || undefined}
-                  key={day.toString()}
-                >
-                  <DroppableCell
-                    date={day}
-                    id={cellId}
-                    onClick={() => {
-                      const startTime = new Date(day);
-                      startTime.setHours(DefaultStartHour, 0, 0);
-                      onEventCreate(startTime);
-                    }}
-                  >
-                    <div className="mt-1 inline-flex size-6 items-center justify-center rounded-full text-sm group-data-today:bg-primary group-data-today:text-primary-foreground">
-                      {format(day, "d")}
-                    </div>
+          return (
+            <div
+              className="flex flex-col border-border/70 border-b [&:last-child]:border-b-0"
+              key={`week-${weekIndex}`}
+            >
+              {/* Date numbers row */}
+              <div className="grid grid-cols-7">
+                {week.map((day) => {
+                  const isCurrentMonth = isSameMonth(day, currentDate);
+                  return (
                     <div
-                      className="min-h-[calc((var(--event-height)+var(--event-gap))*2)] sm:min-h-[calc((var(--event-height)+var(--event-gap))*3)] lg:min-h-[calc((var(--event-height)+var(--event-gap))*4)]"
-                      ref={isReferenceCell ? contentRef : null}
-                    >
-                      {sortEvents(allDayEvents).map((event, index) => {
-                        const eventStart = new Date(event.start);
-                        const eventEnd = new Date(event.end);
-                        const isFirstDay = isSameDay(day, eventStart);
-                        const isLastDay = isSameDay(day, eventEnd);
-
-                        const isHidden =
-                          isMounted && visibleCount && index >= visibleCount;
-
-                        if (!visibleCount) return null;
-
-                        if (!isFirstDay) {
-                          return (
-                            <div
-                              aria-hidden={isHidden ? "true" : undefined}
-                              className="aria-hidden:hidden"
-                              key={`spanning-${event.id}-${day.toISOString().slice(0, 10)}`}
-                            >
-                              <EventItem
-                                event={event}
-                                isFirstDay={isFirstDay}
-                                isLastDay={isLastDay}
-                                onClick={(e) => handleEventClick(event, e)}
-                                view="month"
-                              >
-                                <span className="truncate">{event.title}</span>
-                              </EventItem>
-                            </div>
-                          );
-                        }
-
-                        return (
-                          <div
-                            aria-hidden={isHidden ? "true" : undefined}
-                            className="aria-hidden:hidden"
-                            key={event.id}
-                          >
-                            <DraggableEvent
-                              event={event}
-                              isFirstDay={isFirstDay}
-                              isLastDay={isLastDay}
-                              onClick={(e) => handleEventClick(event, e)}
-                              view="month"
-                            />
-                          </div>
-                        );
-                      })}
-
-                      {hasMore && (
-                        <Popover modal>
-                          <PopoverTrigger asChild>
-                            <button
-                              className="mt-[var(--event-gap)] flex h-[var(--event-height)] w-full select-none items-center overflow-hidden px-1 text-left text-[10px] text-muted-foreground outline-none backdrop-blur-md transition hover:bg-muted/50 hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:px-2 sm:text-xs"
-                              onClick={(e) => e.stopPropagation()}
-                              type="button"
-                            >
-                              <span>
-                                + {remainingCount}{" "}
-                                <span className="max-sm:sr-only">more</span>
-                              </span>
-                            </button>
-                          </PopoverTrigger>
-                          <PopoverContent
-                            align="center"
-                            className="max-w-52 p-3"
-                            style={
-                              {
-                                "--event-height": `${EventHeight}px`,
-                              } as Record<string, string>
-                            }
-                          >
-                            <div className="space-y-2">
-                              <div className="font-medium text-sm">
-                                {format(day, "EEE d")}
-                              </div>
-                              <div className="space-y-1">
-                                {sortEvents(allEvents).map((event) => {
-                                  const eventStart = new Date(event.start);
-                                  const eventEnd = new Date(event.end);
-                                  const isFirstDay = isSameDay(day, eventStart);
-                                  const isLastDay = isSameDay(day, eventEnd);
-
-                                  return (
-                                    <EventItem
-                                      event={event}
-                                      isFirstDay={isFirstDay}
-                                      isLastDay={isLastDay}
-                                      key={event.id}
-                                      onClick={(e) =>
-                                        handleEventClick(event, e)
-                                      }
-                                      view="month"
-                                    />
-                                  );
-                                })}
-                              </div>
-                            </div>
-                          </PopoverContent>
-                        </Popover>
+                      className={cn(
+                        "border-border/70 border-r px-1 py-1 last:border-r-0",
+                        !isCurrentMonth && "bg-muted/25 text-muted-foreground/70",
                       )}
+                      key={`date-${day.toISOString()}`}
+                    >
+                      <span
+                        className={cn(
+                          "inline-flex size-6 items-center justify-center rounded-full text-sm",
+                          isToday(day) && "bg-primary text-primary-foreground",
+                        )}
+                      >
+                        {format(day, "d")}
+                      </span>
                     </div>
-                  </DroppableCell>
+                  );
+                })}
+              </div>
+
+              {/* Spanning events row - below dates */}
+              {lanesCount > 0 && (
+                <div
+                  className="relative grid grid-cols-7"
+                  style={{
+                    height: spanningHeight,
+                  }}
+                >
+                  {/* Grid lines for visual consistency */}
+                  {week.map((day) => (
+                    <div
+                      className={cn(
+                        "border-border/70 border-r last:border-r-0",
+                        !isSameMonth(day, currentDate) && "bg-muted/25",
+                      )}
+                      key={`grid-${day.toISOString()}`}
+                    />
+                  ))}
+                  {/* Spanning events */}
+                  {spanningEvents.map((eventWithLane) => (
+                    <SpanningEvent
+                      eventWithLane={eventWithLane}
+                      key={`spanning-${eventWithLane.event.id}-week-${weekIndex}`}
+                      onEventClick={handleEventClick}
+                    />
+                  ))}
                 </div>
-              );
-            })}
-          </div>
-        ))}
+              )}
+
+              {/* Day cells row for single-day events */}
+              <div className="grid flex-1 grid-cols-7">
+                {week.map((day, dayIndex) => {
+                  if (!day) return null;
+
+                  // Only get single-day events for each cell
+                  const dayEvents = getSingleDayEventsForDay(events, day);
+                  const isCurrentMonth = isSameMonth(day, currentDate);
+                  const cellId = `month-cell-${day.toISOString()}`;
+
+                  // For popover, show all events
+                  const allEvents = getAllEventsForDay(events, day);
+
+                  const isReferenceCell = weekIndex === 0 && dayIndex === 0;
+                  const visibleCount = isMounted
+                    ? getVisibleEventCount(dayEvents.length)
+                    : undefined;
+                  const hasMore =
+                    visibleCount !== undefined && dayEvents.length > visibleCount;
+                  const remainingCount = hasMore
+                    ? dayEvents.length - visibleCount
+                    : 0;
+
+                  return (
+                    <div
+                      className="day-cell group border-border/70 border-r last:border-r-0 data-outside-cell:bg-muted/25 data-outside-cell:text-muted-foreground/70"
+                      data-outside-cell={!isCurrentMonth || undefined}
+                      key={day.toString()}
+                    >
+                      <DroppableCell
+                        date={day}
+                        id={cellId}
+                        onClick={() => {
+                          const startTime = new Date(day);
+                          startTime.setHours(DefaultStartHour, 0, 0);
+                          onEventCreate(startTime);
+                        }}
+                      >
+                        <div
+                          className="min-h-[calc((var(--event-height)+var(--event-gap))*2)] sm:min-h-[calc((var(--event-height)+var(--event-gap))*3)] lg:min-h-[calc((var(--event-height)+var(--event-gap))*4)]"
+                          ref={isReferenceCell ? contentRef : null}
+                        >
+                          {sortEvents(dayEvents).map((event, index) => {
+                            const isHidden =
+                              isMounted && visibleCount && index >= visibleCount;
+
+                            if (!visibleCount) return null;
+
+                            return (
+                              <div
+                                aria-hidden={isHidden ? "true" : undefined}
+                                className="aria-hidden:hidden"
+                                key={event.id}
+                              >
+                                <DraggableEvent
+                                  event={event}
+                                  isFirstDay={true}
+                                  isLastDay={true}
+                                  onClick={(e) => handleEventClick(event, e)}
+                                  view="month"
+                                />
+                              </div>
+                            );
+                          })}
+
+                          {hasMore && (
+                            <Popover modal>
+                              <PopoverTrigger asChild>
+                                <button
+                                  className="mt-[var(--event-gap)] flex h-[var(--event-height)] w-full select-none items-center overflow-hidden px-1 text-left text-[10px] text-muted-foreground outline-none backdrop-blur-md transition hover:bg-muted/50 hover:text-foreground focus-visible:border-ring focus-visible:ring-[3px] focus-visible:ring-ring/50 sm:px-2 sm:text-xs"
+                                  onClick={(e) => e.stopPropagation()}
+                                  type="button"
+                                >
+                                  <span>
+                                    + {remainingCount}{" "}
+                                    <span className="max-sm:sr-only">more</span>
+                                  </span>
+                                </button>
+                              </PopoverTrigger>
+                              <PopoverContent
+                                align="center"
+                                className="max-w-52 p-3"
+                                style={
+                                  {
+                                    "--event-height": `${EventHeight}px`,
+                                  } as Record<string, string>
+                                }
+                              >
+                                <div className="space-y-2">
+                                  <div className="font-medium text-sm">
+                                    {format(day, "EEE d")}
+                                  </div>
+                                  <div className="space-y-1">
+                                    {sortEvents(allEvents).map((event) => {
+                                      const eventStart = new Date(event.start);
+                                      const eventEnd = new Date(event.end);
+                                      const isFirstDay = isSameDay(
+                                        day,
+                                        eventStart,
+                                      );
+                                      const isLastDay = isSameDay(day, eventEnd);
+
+                                      return (
+                                        <EventItem
+                                          event={event}
+                                          isFirstDay={isFirstDay}
+                                          isLastDay={isLastDay}
+                                          key={event.id}
+                                          onClick={(e) =>
+                                            handleEventClick(event, e)
+                                          }
+                                          view="month"
+                                        />
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              </PopoverContent>
+                            </Popover>
+                          )}
+                        </div>
+                      </DroppableCell>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

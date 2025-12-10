@@ -1,4 +1,4 @@
-import { isSameDay } from "date-fns";
+import { differenceInDays, isSameDay, max, min, startOfDay } from "date-fns";
 
 import type { CalendarEvent, EventColor } from "@/components/event-calendar/types";
 
@@ -172,4 +172,168 @@ export function addHoursToDate(date: Date, hours: number): Date {
   const result = new Date(date);
   result.setHours(result.getHours() + hours);
   return result;
+}
+
+/**
+ * Get multi-day events that span within a specific week
+ */
+export function getMultiDayEventsForWeek(
+  events: CalendarEvent[],
+  weekStart: Date,
+  weekEnd: Date,
+): CalendarEvent[] {
+  return events.filter((event) => {
+    if (!isMultiDayEvent(event)) return false;
+
+    const eventStart = startOfDay(new Date(event.start));
+    const eventEnd = startOfDay(new Date(event.end));
+
+    // Event overlaps with the week if it starts before/on week end AND ends on/after week start
+    return eventStart <= weekEnd && eventEnd >= weekStart;
+  });
+}
+
+/**
+ * Get single-day events for a specific day (excludes multi-day events)
+ */
+export function getSingleDayEventsForDay(
+  events: CalendarEvent[],
+  day: Date,
+): CalendarEvent[] {
+  return events.filter((event) => {
+    if (isMultiDayEvent(event)) return false;
+    const eventStart = new Date(event.start);
+    return isSameDay(day, eventStart);
+  });
+}
+
+/**
+ * Calculate the column span for an event within a specific week
+ * Returns { startCol, endCol, isFirstWeek, isLastWeek }
+ */
+export function getEventSpanForWeek(
+  event: CalendarEvent,
+  weekStart: Date,
+  weekEnd: Date,
+): {
+  startCol: number;
+  endCol: number;
+  spanDays: number;
+  isFirstWeek: boolean;
+  isLastWeek: boolean;
+} {
+  const eventStart = startOfDay(new Date(event.start));
+  const eventEnd = startOfDay(new Date(event.end));
+
+  // Clamp event to the week boundaries
+  const visibleStart = max([eventStart, weekStart]);
+  const visibleEnd = min([eventEnd, weekEnd]);
+
+  // Calculate column indices (0-6)
+  const startCol = differenceInDays(visibleStart, weekStart);
+  const endCol = differenceInDays(visibleEnd, weekStart);
+  const spanDays = endCol - startCol + 1;
+
+  return {
+    startCol,
+    endCol,
+    spanDays,
+    isFirstWeek: eventStart >= weekStart,
+    isLastWeek: eventEnd <= weekEnd,
+  };
+}
+
+/**
+ * Event with lane assignment for rendering
+ */
+export interface SpanningEventWithLane {
+  event: CalendarEvent;
+  lane: number;
+  startCol: number;
+  endCol: number;
+  spanDays: number;
+  isFirstWeek: boolean;
+  isLastWeek: boolean;
+}
+
+/**
+ * Calculate non-overlapping lanes for spanning events within a week
+ * Returns events with their assigned lane numbers
+ */
+export function calculateEventLanes(
+  events: CalendarEvent[],
+  weekStart: Date,
+  weekEnd: Date,
+): SpanningEventWithLane[] {
+  if (events.length === 0) return [];
+
+  // Sort events by start date, then by duration (longer events first)
+  const sortedEvents = [...events].sort((a, b) => {
+    const aStart = new Date(a.start).getTime();
+    const bStart = new Date(b.start).getTime();
+    if (aStart !== bStart) return aStart - bStart;
+
+    // For same start, longer events get priority (earlier lane)
+    const aDuration =
+      new Date(a.end).getTime() - new Date(a.start).getTime();
+    const bDuration =
+      new Date(b.end).getTime() - new Date(b.start).getTime();
+    return bDuration - aDuration;
+  });
+
+  const result: SpanningEventWithLane[] = [];
+  // Track which columns are occupied by which lane
+  const laneOccupancy: Map<number, Set<number>> = new Map();
+
+  for (const event of sortedEvents) {
+    const span = getEventSpanForWeek(event, weekStart, weekEnd);
+    const { startCol, endCol } = span;
+
+    // Find the first available lane for this event's column range
+    let lane = 0;
+    let laneFound = false;
+
+    while (!laneFound) {
+      const occupiedCols = laneOccupancy.get(lane) || new Set();
+      let hasConflict = false;
+
+      for (let col = startCol; col <= endCol; col++) {
+        if (occupiedCols.has(col)) {
+          hasConflict = true;
+          break;
+        }
+      }
+
+      if (!hasConflict) {
+        laneFound = true;
+      } else {
+        lane++;
+      }
+    }
+
+    // Mark columns as occupied for this lane
+    if (!laneOccupancy.has(lane)) {
+      laneOccupancy.set(lane, new Set());
+    }
+    const occupiedCols = laneOccupancy.get(lane)!;
+    for (let col = startCol; col <= endCol; col++) {
+      occupiedCols.add(col);
+    }
+
+    result.push({
+      event,
+      lane,
+      ...span,
+    });
+  }
+
+  return result;
+}
+
+/**
+ * Get maximum number of lanes used in a week
+ */
+export function getMaxLanes(eventsWithLanes: SpanningEventWithLane[]): number {
+  if (eventsWithLanes.length === 0) return 0;
+  return Math.max(...eventsWithLanes.map((e) => e.lane)) + 1;
 }
