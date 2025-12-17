@@ -75,11 +75,6 @@ export async function GET(request: Request, { params }: RouteParams) {
       ];
     }
 
-    // Get total count for pagination
-    const totalCount = await prisma.bPANovel.count({
-      where: whereClause,
-    });
-
     // Get all novels with progress data
     const allNovels = await prisma.bPANovel.findMany({
       where: whereClause,
