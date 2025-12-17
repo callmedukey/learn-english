@@ -11,6 +11,12 @@ const layout = async ({ children }: { children: React.ReactNode }) => {
   if (!session) {
     redirect("/login");
   }
+
+  // Check if social login user needs to create password
+  if (!session.user.hasPassword) {
+    redirect("/create-password");
+  }
+
   // Check if user profile is complete
   if (!session.user.profileComplete) {
     redirect(getIncompleteProfileRedirect(session.user.email));

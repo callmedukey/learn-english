@@ -8,6 +8,8 @@ import { signIn } from "@/auth";
 import { ResetPasswordEmail } from "@/components/emails/reset-password";
 import redisClient from "@/lib/redis/redis-client";
 import {
+  createPasswordSchema,
+  CreatePasswordType,
   forgotPasswordSchema,
   ForgotPasswordType,
   resetPasswordSchema,
@@ -633,4 +635,79 @@ export async function resetPasswordAction(
     message: "Password reset successfully",
     inputs,
   };
+}
+
+export async function createPasswordAction(
+  inputs: CreatePasswordType,
+): Promise<ActionResponse<CreatePasswordType>> {
+  const parsed = createPasswordSchema.safeParse(inputs);
+
+  if (!parsed.success) {
+    return {
+      success: false,
+      message: "Invalid input",
+      errors: parsed.error.flatten().fieldErrors,
+      inputs,
+    };
+  }
+
+  const { userId, password } = parsed.data;
+
+  try {
+    // Verify user exists and is a social login user without password
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        password: true,
+        accounts: true,
+      },
+    });
+
+    if (!user) {
+      return {
+        success: false,
+        message: "User not found",
+        inputs,
+      };
+    }
+
+    // Security: Prevent overwriting existing password
+    if (user.password) {
+      return {
+        success: false,
+        message: "Password already exists. Use password change instead.",
+        inputs,
+      };
+    }
+
+    // Security: Ensure user has at least one social account
+    if (user.accounts.length === 0) {
+      return {
+        success: false,
+        message: "Invalid operation",
+        inputs,
+      };
+    }
+
+    // Hash and save the password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    await prisma.user.update({
+      where: { id: userId },
+      data: { password: hashedPassword },
+    });
+
+    return {
+      success: true,
+      message: "Password created successfully!",
+    };
+  } catch (error) {
+    console.error("Error creating password:", error);
+    return {
+      success: false,
+      message: "An unexpected error occurred",
+      inputs,
+    };
+  }
 }

@@ -27,6 +27,7 @@ declare module "next-auth" {
       role: Role;
       hasPaidSubscription: boolean;
       profileComplete: boolean;
+      hasPassword: boolean;
     } & DefaultSession["user"];
   }
 
@@ -42,6 +43,7 @@ declare module "next-auth" {
     country?: string | null;
     hasPaidSubscription?: boolean;
     profileComplete?: boolean;
+    hasPassword?: boolean;
   }
 }
 
@@ -138,7 +140,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.campusId = (token.campusId as string | null) || null;
       session.user.hasPaidSubscription = (token.hasPaidSubscription as boolean) || false;
       session.user.profileComplete = (token.profileComplete as boolean) || false;
-      
+      session.user.hasPassword = (token.hasPassword as boolean) || false;
+
       return session;
     },
     async jwt({ token }) {
@@ -187,6 +190,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         
         // Check if profile is complete
         token.profileComplete = isProfileComplete(foundUser);
+
+        // Check if user has a password (for social login users)
+        token.hasPassword = !!foundUser.password;
       } catch (error) {
         console.error('Error in JWT callback:', error);
       }

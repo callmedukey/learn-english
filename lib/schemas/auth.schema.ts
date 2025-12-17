@@ -277,3 +277,16 @@ export const resetPasswordSchema = z
   });
 
 export type ResetPasswordType = z.infer<typeof resetPasswordSchema>;
+
+export const createPasswordSchema = z
+  .object({
+    userId: z.string({ required_error: "User ID is required" }),
+    password: passwordSchema,
+    confirmPassword: passwordSchema,
+  })
+  .refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+  });
+
+export type CreatePasswordType = z.infer<typeof createPasswordSchema>;
