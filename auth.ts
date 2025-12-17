@@ -9,6 +9,7 @@ import Naver from "next-auth/providers/naver";
 
 import { signInSchema } from "./lib/schemas/auth.schema";
 import { getIncompleteProfileRedirect, isProfileComplete } from "./lib/utils/profile-validation";
+import { isSuperUser } from "./lib/utils/super-user";
 import { Role, SubscriptionStatus } from "./prisma/generated/prisma";
 import { prisma } from "./prisma/prisma-client";
 
@@ -28,6 +29,8 @@ declare module "next-auth" {
       hasPaidSubscription: boolean;
       profileComplete: boolean;
       hasPassword: boolean;
+      hasSocialAccount: boolean;
+      isSuperUser: boolean;
     } & DefaultSession["user"];
   }
 
@@ -44,6 +47,8 @@ declare module "next-auth" {
     hasPaidSubscription?: boolean;
     profileComplete?: boolean;
     hasPassword?: boolean;
+    hasSocialAccount?: boolean;
+    isSuperUser?: boolean;
   }
 }
 
@@ -141,6 +146,8 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       session.user.hasPaidSubscription = (token.hasPaidSubscription as boolean) || false;
       session.user.profileComplete = (token.profileComplete as boolean) || false;
       session.user.hasPassword = (token.hasPassword as boolean) || false;
+      session.user.hasSocialAccount = (token.hasSocialAccount as boolean) || false;
+      session.user.isSuperUser = (token.isSuperUser as boolean) || false;
 
       return session;
     },
@@ -161,6 +168,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
               },
             },
             country: true,
+            accounts: true,
           },
         });
 
@@ -193,6 +201,12 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
         // Check if user has a password (for social login users)
         token.hasPassword = !!foundUser.password;
+
+        // Check if user has social accounts (OAuth providers)
+        token.hasSocialAccount = foundUser.accounts && foundUser.accounts.length > 0;
+
+        // Check if user is a super user (for testing)
+        token.isSuperUser = isSuperUser(foundUser.email);
       } catch (error) {
         console.error('Error in JWT callback:', error);
       }
@@ -229,8 +243,9 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return "/signup";
       }
 
-      // Check if existing user has this provider linked
-      if (account) {
+      // Check if existing user has this provider linked (skip for credentials login)
+      // Credentials login is already validated by the authorize function (password check)
+      if (account && account.type !== "credentials") {
         const hasProvider = foundUser.accounts.some(
           (acc) => acc.provider === account.provider
         );

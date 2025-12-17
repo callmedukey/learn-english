@@ -22,8 +22,8 @@ const BPAPage = async () => {
     select: { campusId: true },
   });
 
-  // If no campus is assigned, show access denied message
-  if (!user?.campusId) {
+  // If no campus is assigned, show access denied message (super users bypass this)
+  if (!user?.campusId && !session.user.isSuperUser) {
     return (
       <div className="flex min-h-[calc(100vh-200px)] flex-col items-center justify-center px-4">
         <div className="max-w-md space-y-6 text-center">
@@ -124,8 +124,10 @@ const BPAPage = async () => {
     novelsAvailable: level._count.novels,
   }));
 
-  // Fetch campus events for the student
-  const campusEvents = await getCampusEventsForStudent(user.campusId);
+  // Fetch campus events for the student (only if they have a campus)
+  const campusEvents = user?.campusId
+    ? await getCampusEventsForStudent(user.campusId)
+    : [];
 
   return (
     <BPAPageContent

@@ -40,7 +40,8 @@ export default async function middleware(req: NextRequest) {
     }
 
     // Social login user without password -> redirect to create-password
-    if (!token.hasPassword) {
+    // hasSocialAccount !== false handles: true (social user) and undefined (old tokens)
+    if (!token.hasPassword && token.hasSocialAccount !== false) {
       return NextResponse.redirect(new URL("/create-password", req.url));
     }
 

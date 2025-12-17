@@ -40,8 +40,8 @@ async function BPANovelContent({
     select: { campusId: true },
   });
 
-  // If no campus is assigned, redirect to dashboard
-  if (!user?.campusId) {
+  // If no campus is assigned, redirect to dashboard (super users bypass this)
+  if (!user?.campusId && !session.user.isSuperUser) {
     redirect("/dashboard");
   }
 
@@ -183,6 +183,7 @@ async function BPANovelContent({
                         levelId={levelId}
                         novelId={novelId}
                         userHasPaidSubscription={session.user.hasPaidSubscription}
+                        isSuperUser={session.user.isSuperUser}
                       />
                     ))}
                   </div>
@@ -205,6 +206,7 @@ async function BPANovelContent({
                     levelId={levelId}
                     novelId={novelId}
                     userHasPaidSubscription={session.user.hasPaidSubscription}
+                    isSuperUser={session.user.isSuperUser}
                   />
                 ))}
               </div>

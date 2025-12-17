@@ -1,13 +1,13 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { signOut } from "next-auth/react";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import { createPasswordAction } from "@/actions/auth.action";
 import ButtonWithLoading from "@/components/custom-ui/button-with-loading";
 import InputWithLabel from "@/components/custom-ui/input-with-label";
-import { Button } from "@/components/ui/button";
 
 interface CreatePasswordFormProps {
   email: string;
@@ -20,7 +20,6 @@ export default function CreatePasswordForm({
 }: CreatePasswordFormProps) {
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
-  const [isSuccess, setIsSuccess] = useState(false);
   const [error, setError] = useState<{
     password?: string[] | null;
     confirmPassword?: string[] | null;
@@ -40,8 +39,10 @@ export default function CreatePasswordForm({
       });
 
       if (result.success) {
-        setIsSuccess(true);
-        toast.success(result.message);
+        toast.success("Password created successfully! Please log in with your new password.");
+        // Sign out and redirect to login page to get fresh session
+        await signOut({ redirect: false });
+        router.push("/login?passwordCreated=true");
       } else if (result.errors) {
         setError(result.errors);
       } else {
@@ -49,24 +50,6 @@ export default function CreatePasswordForm({
       }
     });
   };
-
-  if (isSuccess) {
-    return (
-      <div className="w-full max-w-md space-y-6 text-center">
-        <div className="space-y-2">
-          <h1 className="text-2xl font-semibold text-gray-900">
-            Password Created Successfully!
-          </h1>
-          <p className="text-gray-500">
-            You can now log in with your email and password.
-          </p>
-        </div>
-        <Button className="w-full" onClick={() => router.push("/dashboard")}>
-          Go to Dashboard
-        </Button>
-      </div>
-    );
-  }
 
   return (
     <form className="w-full max-w-md space-y-4" onSubmit={handleSubmit}>

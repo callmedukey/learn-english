@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 const page = async ({
   searchParams,
 }: {
-  searchParams: Promise<{ error?: string; provider?: string }>;
+  searchParams: Promise<{ error?: string; provider?: string; passwordCreated?: string }>;
 }) => {
   const cookieStore = await cookies();
   const rememberMe = cookieStore.get("rememberMe");
@@ -44,6 +44,7 @@ const page = async ({
           previousEmail={rememberMe?.value}
           oauthError={params.error}
           originalProvider={params.provider}
+          passwordCreated={params.passwordCreated === "true"}
         />
       </div>
     </main>

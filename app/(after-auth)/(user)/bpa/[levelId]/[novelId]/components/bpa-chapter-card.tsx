@@ -44,6 +44,7 @@ interface BPAChapterCardProps {
   levelId: string;
   novelId: string;
   userHasPaidSubscription?: boolean;
+  isSuperUser?: boolean;
 }
 
 const BPAChapterCard: React.FC<BPAChapterCardProps> = ({
@@ -51,9 +52,10 @@ const BPAChapterCard: React.FC<BPAChapterCardProps> = ({
   levelId,
   novelId,
   userHasPaidSubscription = false,
+  isSuperUser = false,
 }) => {
-  // Check premium access first
-  const hasPremiumAccess = chapter.isFree || userHasPaidSubscription;
+  // Check premium access first (super users bypass this)
+  const hasPremiumAccess = chapter.isFree || userHasPaidSubscription || isSuperUser;
 
   // Can access quiz if they have premium access
   const canAccessQuiz = hasPremiumAccess;

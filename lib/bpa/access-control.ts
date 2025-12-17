@@ -4,8 +4,20 @@ import { toZonedTime } from "date-fns-tz";
 
 import { getCurrentBPAContext } from "@/actions/bpa/get-current-bpa-context";
 import { APP_TIMEZONE } from "@/lib/constants/timezone";
+import { isSuperUser } from "@/lib/utils/super-user";
 import { BPASeason } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
+
+/**
+ * Helper to check if a user is a super user by their ID
+ */
+async function isUserSuperUser(userId: string): Promise<boolean> {
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { email: true },
+  });
+  return isSuperUser(user?.email);
+}
 
 /**
  * Check if a user is assigned to a specific level for the current semester
@@ -17,6 +29,11 @@ export async function isUserAssignedToLevel(
   season?: BPASeason
 ): Promise<boolean> {
   try {
+    // Super users have access to all levels
+    if (await isUserSuperUser(userId)) {
+      return true;
+    }
+
     // If timeframe/season not provided, get current semester
     let semesterInfo = { timeframeId, season };
     if (!timeframeId || !season) {
@@ -87,6 +104,11 @@ export async function canUserAccessNovel(
   novelId: string
 ): Promise<boolean> {
   try {
+    // Super users have access to all novels
+    if (await isUserSuperUser(userId)) {
+      return true;
+    }
+
     const currentSemester = await getCurrentBPAContext();
     if (!currentSemester.timeframeId || !currentSemester.season) return false;
 
@@ -129,6 +151,18 @@ export async function getUserAccessibleNovels(
   levelId: string
 ): Promise<string[]> {
   try {
+    // Super users have access to ALL novels in the level
+    if (await isUserSuperUser(userId)) {
+      const allNovels = await prisma.bPANovel.findMany({
+        where: {
+          bpaLevelId: levelId,
+          hidden: false,
+        },
+        select: { id: true },
+      });
+      return allNovels.map((n) => n.id);
+    }
+
     const now = new Date();
     const koreaTime = toZonedTime(now, APP_TIMEZONE);
 

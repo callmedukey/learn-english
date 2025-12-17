@@ -66,8 +66,8 @@ async function BPAChapterContent({
     select: { campusId: true },
   });
 
-  // If no campus is assigned, redirect to dashboard
-  if (!user?.campusId) {
+  // If no campus is assigned, redirect to dashboard (super users bypass this)
+  if (!user?.campusId && !session.user.isSuperUser) {
     redirect("/dashboard");
   }
 
@@ -88,8 +88,8 @@ async function BPAChapterContent({
     redirect(`/bpa/${levelId}`);
   }
 
-  // Check premium access
-  const hasPremiumAccess = chapter.isFree || session.user.hasPaidSubscription;
+  // Check premium access (super users bypass this)
+  const hasPremiumAccess = chapter.isFree || session.user.hasPaidSubscription || session.user.isSuperUser;
 
   if (!hasPremiumAccess) {
     return (

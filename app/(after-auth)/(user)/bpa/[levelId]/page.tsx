@@ -28,8 +28,8 @@ async function BPALevelNovels({ levelId }: { levelId: string }) {
     select: { campusId: true },
   });
 
-  // If no campus is assigned, redirect to dashboard
-  if (!user?.campusId) {
+  // If no campus is assigned, redirect to dashboard (super users bypass this)
+  if (!user?.campusId && !session.user.isSuperUser) {
     redirect("/dashboard");
   }
 
