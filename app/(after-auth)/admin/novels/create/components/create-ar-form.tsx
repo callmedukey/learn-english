@@ -110,19 +110,27 @@ const CreateARForm = () => {
           </div>
 
           <div>
-            <Label htmlFor="stars">Stars (1-5)</Label>
-            <Input
-              id="stars"
-              name="stars"
-              type="number"
-              min="1"
-              max="5"
-              placeholder="5"
-              required
-              disabled={isPending}
-            />
+            <Label htmlFor="stars">Stars (0-5)</Label>
+            <Select name="stars" defaultValue="3" disabled={isPending}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select stars" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="0">0 Stars</SelectItem>
+                <SelectItem value="0.5">0.5 Stars</SelectItem>
+                <SelectItem value="1">1 Star</SelectItem>
+                <SelectItem value="1.5">1.5 Stars</SelectItem>
+                <SelectItem value="2">2 Stars</SelectItem>
+                <SelectItem value="2.5">2.5 Stars</SelectItem>
+                <SelectItem value="3">3 Stars</SelectItem>
+                <SelectItem value="3.5">3.5 Stars</SelectItem>
+                <SelectItem value="4">4 Stars</SelectItem>
+                <SelectItem value="4.5">4.5 Stars</SelectItem>
+                <SelectItem value="5">5 Stars</SelectItem>
+              </SelectContent>
+            </Select>
             <p className="mt-1 text-base text-gray-500">
-              Difficulty rating (1 = easiest, 5 = hardest)
+              Difficulty rating (0 = easiest, 5 = hardest)
             </p>
           </div>
         </div>

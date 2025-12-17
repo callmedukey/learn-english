@@ -84,7 +84,7 @@ const EditARForm: React.FC<EditARFormProps> = ({ ar, onARUpdated }) => {
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="stars">Stars (1-5)</Label>
+        <Label htmlFor="stars">Stars (0-5)</Label>
         <Select
           name="stars"
           defaultValue={ar.stars.toString()}
@@ -94,10 +94,16 @@ const EditARForm: React.FC<EditARFormProps> = ({ ar, onARUpdated }) => {
             <SelectValue placeholder="Select stars" />
           </SelectTrigger>
           <SelectContent>
+            <SelectItem value="0">0 Stars</SelectItem>
+            <SelectItem value="0.5">0.5 Stars</SelectItem>
             <SelectItem value="1">1 Star</SelectItem>
+            <SelectItem value="1.5">1.5 Stars</SelectItem>
             <SelectItem value="2">2 Stars</SelectItem>
+            <SelectItem value="2.5">2.5 Stars</SelectItem>
             <SelectItem value="3">3 Stars</SelectItem>
+            <SelectItem value="3.5">3.5 Stars</SelectItem>
             <SelectItem value="4">4 Stars</SelectItem>
+            <SelectItem value="4.5">4.5 Stars</SelectItem>
             <SelectItem value="5">5 Stars</SelectItem>
           </SelectContent>
         </Select>

@@ -12,9 +12,14 @@ export const metadata: Metadata = {
   description: "Login to your account",
 };
 
-const page = async () => {
+const page = async ({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string; provider?: string }>;
+}) => {
   const cookieStore = await cookies();
   const rememberMe = cookieStore.get("rememberMe");
+  const params = await searchParams;
 
   return (
     <main className="mx-auto grid min-h-[calc(100vh-6rem)] max-w-7xl gap-12 px-4 py-16 lg:grid-cols-5">
@@ -35,7 +40,11 @@ const page = async () => {
         </div>
       </div>
       <div className="col-span-2 w-full place-content-center">
-        <LoginForm previousEmail={rememberMe?.value} />
+        <LoginForm
+          previousEmail={rememberMe?.value}
+          oauthError={params.error}
+          originalProvider={params.provider}
+        />
       </div>
     </main>
   );

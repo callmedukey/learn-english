@@ -200,6 +200,7 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
 
       const foundUser = await prisma.user.findUnique({
         where: { email: user.email },
+        include: { accounts: true },
       });
 
       if (!foundUser && account) {
@@ -220,6 +221,21 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
         return getIncompleteProfileRedirect(user.email);
       } else if (!foundUser) {
         return "/signup";
+      }
+
+      // Check if existing user has this provider linked
+      if (account) {
+        const hasProvider = foundUser.accounts.some(
+          (acc) => acc.provider === account.provider
+        );
+
+        if (!hasProvider) {
+          // User exists but with different provider - block and show error
+          const originalProvider = foundUser.accounts.length > 0
+            ? foundUser.accounts[0].provider
+            : 'credentials';
+          return `/login?error=OAuthAccountNotLinked&provider=${originalProvider}`;
+        }
       }
 
       // Check if existing user has complete profile

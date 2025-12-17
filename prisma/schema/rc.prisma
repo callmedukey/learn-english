@@ -3,7 +3,7 @@ model RCLevel {
 
   level             String
   relevantGrade     String
-  stars             Int
+  stars             Float
   numberOfQuestions Int
 
   description String?

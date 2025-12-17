@@ -130,3 +130,94 @@ After modifying schemas, run `npm run db:generate` to update the Prisma client.
 - Server actions go in `/actions` directory with proper error handling
 - Use TypeScript strict mode - avoid `any` types where possible
 - IMPORTANT: Run `npx tsc --noEmit` and `npm run lint` after every work to catch errors early
+
+---
+
+## Mobile App (React Native / Expo)
+
+The mobile app lives in `/mobile` as a nested Expo project within the same repository.
+
+### Mobile Tech Stack
+- **Framework**: Expo SDK 54+ with Expo Router (file-based routing)
+- **Styling**: NativeWind (Tailwind CSS for React Native)
+- **Fonts**: Noto Sans (same as web app)
+- **State**: Zustand + TanStack Query
+- **Forms**: React Hook Form + Zod (same as web)
+- **Auth Storage**: expo-secure-store
+- **HTTP**: Axios
+
+### Mobile Commands
+```bash
+npm run mobile          # Start Expo dev server
+npm run mobile:ios      # Run on iOS simulator
+npm run mobile:android  # Run on Android emulator
+```
+
+### Shared Code (`/lib/shared/`)
+Both web and mobile apps import from `/lib/shared/`:
+- **Types**: `ActionResponse`, BPA types
+- **Utils**: `calculateGrade`, `formatCurrency`, `calculateDaysRemaining`, BPA semester utils
+- **Constants**: Timezone settings
+- **Hooks**: `useDebounce`
+
+```typescript
+// In mobile app
+import { calculateGrade } from "@shared/utils";
+import type { ActionResponse } from "@shared/types";
+
+// In web app
+import { calculateGrade } from "@/lib/shared/utils";
+```
+
+### Mobile Directory Structure
+```
+mobile/
+├── app/                    # Expo Router screens
+│   ├── (auth)/             # Auth flow (login, signup)
+│   ├── (tabs)/             # Main tab navigator
+│   └── _layout.tsx         # Root layout (loads fonts, global.css)
+├── components/             # Mobile-specific components
+├── services/api/           # API client
+├── store/                  # Zustand stores
+├── global.css              # Tailwind directives
+├── tailwind.config.js      # Tailwind config with Noto Sans
+├── metro.config.js         # Metro bundler (parent imports + NativeWind)
+├── babel.config.js         # Babel with NativeWind preset
+└── nativewind-env.d.ts     # TypeScript types for className
+```
+
+### NativeWind Usage
+```tsx
+import { View, Text } from "react-native";
+
+export default function Screen() {
+  return (
+    <View className="flex-1 items-center justify-center bg-white dark:bg-gray-900">
+      <Text className="text-2xl font-bold text-blue-600 font-sans">
+        Hello NativeWind!
+      </Text>
+    </View>
+  );
+}
+```
+
+### Font Classes (Tailwind)
+- `font-sans` → NotoSans_400Regular
+- `font-noto-sans-medium` → NotoSans_500Medium
+- `font-noto-sans-semibold` → NotoSans_600SemiBold
+- `font-noto-sans-bold` → NotoSans_700Bold
+
+### Mobile Path Aliases
+- `@/*` → `./mobile/*` (mobile-local imports)
+- `@shared/*` → `../lib/shared/*` (shared code)
+
+### API Strategy
+The Next.js web app serves as the API backend for mobile:
+```
+Mobile App → API calls → Next.js /app/api/* → Prisma → PostgreSQL
+```
+
+### Key Differences from Web
+- **Auth**: Uses `expo-secure-store` instead of NextAuth (NextAuth is web-only)
+- **Payments**: Uses Toss Payments React Native SDK (different from web SDK)
+- **Navigation**: Expo Router instead of Next.js App Router

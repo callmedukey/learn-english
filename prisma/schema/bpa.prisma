@@ -10,7 +10,7 @@ model BPALevel {
   id          String   @id @default(uuid())
   name        String   @unique // "Level 2", "Level 3", etc.
   description String?
-  stars       Int      // Difficulty 1-5
+  stars       Float    // Difficulty 0-5 (supports half stars)
   orderNumber Int      @unique // For sorting
 
   novels                   BPANovel[]

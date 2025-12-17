@@ -1,0 +1,535 @@
+import { useNavigation, useRouter } from "expo-router";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { Alert, AppState, ScrollView, Text, TouchableOpacity, View } from "react-native";
+
+import {
+  useCompleteQuestion,
+  useCompleteQuiz,
+  useMarkQuestionStarted,
+} from "@/hooks/useNovel";
+import type { ChapterQuizData, ChapterStatus, Question } from "@/types/novel";
+
+import { HtmlContent } from "./HtmlContent";
+import { QuizQuestion } from "./QuizQuestion";
+import { QuizResult } from "./QuizResult";
+import { QuizStartCard } from "./QuizStartCard";
+import { QuizTimer } from "./QuizTimer";
+
+// Static style objects to avoid re-renders
+const EXPLANATION_STYLE = { fontSize: 14, color: "#6B7280" };
+const ANSWER_STYLE = { fontSize: 14, color: "#1F2937" };
+
+interface QuizComponentProps {
+  chapter: ChapterQuizData;
+  arId: string;
+  novelId: string;
+  userHasPaidSubscription: boolean;
+}
+
+export function QuizComponent({
+  chapter,
+  arId,
+  novelId,
+  userHasPaidSubscription,
+}: QuizComponentProps) {
+  const router = useRouter();
+  const navigation = useNavigation();
+  const [quizStarted, setQuizStarted] = useState(false);
+  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
+  const [selectedAnswer, setSelectedAnswer] = useState<string | null>(null);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const [isAnswered, setIsAnswered] = useState(false);
+  const [showExplanation, setShowExplanation] = useState(false);
+  const [isCorrect, setIsCorrect] = useState(false);
+  const [pointsAwarded, setPointsAwarded] = useState(0);
+  const [quizCompleted, setQuizCompleted] = useState(false);
+  const [totalPointsEarned, setTotalPointsEarned] = useState(0);
+  const [correctAnswersCount, setCorrectAnswersCount] = useState(0);
+  const [shuffledChoices, setShuffledChoices] = useState<string[]>([]);
+  const lastQuestionIdRef = useRef<string | null>(null);
+  const appStateRef = useRef(AppState.currentState);
+
+  const [initialStatus] = useState<ChapterStatus>(chapter.status);
+
+  const markStartedMutation = useMarkQuestionStarted();
+  const completeQuestionMutation = useCompleteQuestion();
+  const completeQuizMutation = useCompleteQuiz();
+
+  const questions = useMemo(
+    () => chapter.questionSet?.questions || [],
+    [chapter.questionSet?.questions]
+  );
+
+  const canAccess = chapter.isFree || userHasPaidSubscription;
+  const currentQuestion = questions[currentQuestionIndex];
+
+  // Handle app state changes (background/foreground)
+  useEffect(() => {
+    const subscription = AppState.addEventListener("change", (nextAppState) => {
+      if (
+        appStateRef.current === "active" &&
+        nextAppState.match(/inactive|background/) &&
+        currentQuestion &&
+        !isAnswered &&
+        quizStarted
+      ) {
+        // App going to background - auto-submit
+        handleTimeUp();
+      }
+      appStateRef.current = nextAppState;
+    });
+
+    return () => {
+      subscription.remove();
+    };
+  }, [currentQuestion, isAnswered, quizStarted]);
+
+  // Handle back button / navigation gestures - auto-submit if question in progress
+  useEffect(() => {
+    const unsubscribe = navigation.addListener("beforeRemove", (e) => {
+      // Only intercept if quiz is in progress and question not answered
+      if (!quizStarted || !currentQuestion || isAnswered) {
+        return; // Allow normal navigation
+      }
+
+      // Prevent default behavior
+      e.preventDefault();
+
+      // Auto-submit as wrong and then navigate
+      const disallowPoints =
+        initialStatus === "retry" ||
+        (initialStatus === "continue" && currentQuestion.isCompleted);
+
+      completeQuestionMutation.mutate(
+        {
+          questionId: currentQuestion.id,
+          selectedAnswer: "",
+          isTimedOut: true,
+          isRetry: disallowPoints,
+        },
+        {
+          onSuccess: () => {
+            // After submission, allow navigation
+            navigation.dispatch(e.data.action);
+          },
+        }
+      );
+    });
+
+    return unsubscribe;
+  }, [quizStarted, currentQuestion, isAnswered, initialStatus, navigation, completeQuestionMutation]);
+
+  // Shuffle choices when question changes
+  useEffect(() => {
+    if (currentQuestion && quizStarted && currentQuestion.id !== lastQuestionIdRef.current) {
+      lastQuestionIdRef.current = currentQuestion.id;
+      const shuffled = [...currentQuestion.choices].sort(() => Math.random() - 0.5);
+      setShuffledChoices(shuffled);
+      setTimeLeft(currentQuestion.timeLimit);
+
+      // Mark question as started
+      markStartedMutation.mutate({
+        questionId: currentQuestion.id,
+        novelId,
+        arId,
+      });
+    }
+  }, [currentQuestion, quizStarted, novelId, arId]);
+
+  const handleTimeUp = useCallback(async () => {
+    if (!currentQuestion || isAnswered) return;
+
+    const disallowPoints =
+      initialStatus === "retry" ||
+      (initialStatus === "continue" && currentQuestion.isCompleted);
+
+    completeQuestionMutation.mutate(
+      {
+        questionId: currentQuestion.id,
+        selectedAnswer: "",
+        isTimedOut: true,
+        isRetry: disallowPoints,
+      },
+      {
+        onSuccess: (result) => {
+          setIsCorrect(false);
+          setPointsAwarded(result.pointsAwarded || 0);
+          setShowExplanation(true);
+          setIsAnswered(true);
+        },
+      }
+    );
+  }, [currentQuestion, isAnswered, initialStatus, completeQuestionMutation]);
+
+  const handleTick = useCallback(() => {
+    setTimeLeft((prev) => prev - 1);
+  }, []);
+
+  const handleStartQuiz = () => {
+    setCurrentQuestionIndex(0);
+    setSelectedAnswer(null);
+    setIsAnswered(false);
+    setShowExplanation(false);
+    setQuizCompleted(false);
+    setTotalPointsEarned(0);
+    setCorrectAnswersCount(0);
+    setQuizStarted(true);
+  };
+
+  const handleCancel = () => {
+    router.back();
+  };
+
+  const handleSelectAnswer = (answer: string) => {
+    if (!isAnswered && timeLeft > 0) {
+      setSelectedAnswer(answer);
+    }
+  };
+
+  const handleSubmitAnswer = async () => {
+    if (!currentQuestion || !selectedAnswer) return;
+
+    const disallowPoints =
+      initialStatus === "retry" ||
+      (initialStatus === "continue" && currentQuestion.isCompleted);
+
+    completeQuestionMutation.mutate(
+      {
+        questionId: currentQuestion.id,
+        selectedAnswer,
+        isTimedOut: false,
+        isRetry: disallowPoints,
+      },
+      {
+        onSuccess: (result) => {
+          setIsCorrect(result.isCorrect || false);
+          setPointsAwarded(result.pointsAwarded || 0);
+          setTotalPointsEarned((prev) => prev + (result.pointsAwarded || 0));
+          setShowExplanation(true);
+          setIsAnswered(true);
+          if (result.isCorrect) {
+            setCorrectAnswersCount((prev) => prev + 1);
+          }
+        },
+      }
+    );
+  };
+
+  const handleNextQuestion = async () => {
+    if (currentQuestionIndex < questions.length - 1) {
+      setSelectedAnswer(null);
+      setIsAnswered(false);
+      setShowExplanation(false);
+      setIsCorrect(false);
+      setPointsAwarded(0);
+      setCurrentQuestionIndex((prev) => prev + 1);
+    } else {
+      setQuizCompleted(true);
+
+      // Save quiz completion
+      if (chapter.questionSet) {
+        completeQuizMutation.mutate({
+          questionSetId: chapter.questionSet.id,
+          chapterId: chapter.id,
+          novelId,
+          arId,
+          totalQuestions: questions.length,
+          correctAnswers: correctAnswersCount + (isCorrect ? 1 : 0), // Include current
+        });
+      }
+    }
+  };
+
+  const handleRetry = () => {
+    router.replace(`/novel/${arId}/${novelId}/${chapter.id}?status=retry`);
+  };
+
+  const handleNextChapter = () => {
+    if (chapter.nextChapter) {
+      router.replace(`/novel/${arId}/${novelId}/${chapter.nextChapter.id}`);
+    }
+  };
+
+  const handleBackToNovel = useCallback(async () => {
+    // If quiz is in progress and question not answered, auto-submit as wrong
+    if (quizStarted && currentQuestion && !isAnswered) {
+      const disallowPoints =
+        initialStatus === "retry" ||
+        (initialStatus === "continue" && currentQuestion.isCompleted);
+
+      await completeQuestionMutation.mutateAsync({
+        questionId: currentQuestion.id,
+        selectedAnswer: "",
+        isTimedOut: true,
+        isRetry: disallowPoints,
+      });
+    }
+    router.replace(`/novel/${arId}/${novelId}`);
+  }, [quizStarted, currentQuestion, isAnswered, initialStatus, completeQuestionMutation, router, arId, novelId]);
+
+  // No access
+  if (!canAccess) {
+    return (
+      <View className="flex-1 items-center justify-center p-4">
+        <View className="rounded-2xl bg-white p-6 shadow-sm">
+          <View className="items-center gap-4">
+            <Text className="text-5xl">🔒</Text>
+            <Text className="text-xl font-semibold text-foreground">
+              Premium Content
+            </Text>
+            <Text className="text-center text-muted-foreground">
+              Upgrade to premium to access this chapter.
+            </Text>
+            <TouchableOpacity
+              className="mt-4 rounded-lg bg-primary px-6 py-3"
+              onPress={() => router.push("/(tabs)/profile")}
+            >
+              <Text className="font-medium text-primary-foreground">
+                Upgrade Now
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  // No questions
+  if (!chapter.questionSet || questions.length === 0) {
+    return (
+      <View className="flex-1 items-center justify-center p-4">
+        <View className="rounded-2xl bg-white p-6 shadow-sm">
+          <View className="items-center gap-4">
+            <Text className="text-5xl">📝</Text>
+            <Text className="text-xl font-semibold text-foreground">
+              No Questions Available
+            </Text>
+            <Text className="text-center text-muted-foreground">
+              This chapter doesn&apos;t have any questions yet.
+            </Text>
+            <TouchableOpacity
+              className="mt-4 rounded-lg bg-primary px-6 py-3"
+              onPress={handleCancel}
+            >
+              <Text className="font-medium text-primary-foreground">Go Back</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      </View>
+    );
+  }
+
+  // Quiz completed
+  if (quizCompleted) {
+    return (
+      <ScrollView className="flex-1 p-4">
+        <QuizResult
+          correctAnswers={correctAnswersCount}
+          totalQuestions={questions.length}
+          pointsEarned={totalPointsEarned}
+          isRetry={initialStatus === "retry"}
+          hasNextChapter={!!chapter.nextChapter}
+          onRetry={handleRetry}
+          onNextChapter={handleNextChapter}
+          onBackToNovel={handleBackToNovel}
+        />
+      </ScrollView>
+    );
+  }
+
+  // Not started
+  if (!quizStarted) {
+    return (
+      <ScrollView className="flex-1 p-4">
+        <QuizStartCard
+          questionCount={questions.length}
+          instructions={chapter.questionSet.instructions}
+          isRetry={initialStatus === "retry"}
+          onStart={handleStartQuiz}
+          onCancel={handleCancel}
+        />
+      </ScrollView>
+    );
+  }
+
+  // Quiz in progress
+  if (!currentQuestion) return null;
+
+  const progressPercentage = ((currentQuestionIndex + 1) / questions.length) * 100;
+
+  return (
+    <ScrollView className="flex-1 p-4">
+      <View className="gap-4">
+        {/* Progress Bar */}
+        <View className="rounded-2xl bg-white p-4 shadow-sm">
+          <View className="mb-2 flex-row items-center justify-between">
+            <Text className="text-sm text-muted-foreground">Progress</Text>
+            <Text className="text-sm font-medium text-foreground">
+              {currentQuestionIndex + 1} of {questions.length}
+            </Text>
+          </View>
+          <View className="h-2 w-full overflow-hidden rounded-full bg-muted">
+            <View
+              className="h-full rounded-full bg-primary"
+              style={{ width: `${progressPercentage}%` }}
+            />
+          </View>
+        </View>
+
+        {/* Question Navigation Pills */}
+        <View className="flex-row flex-wrap gap-2">
+          {questions.map((q, index) => {
+            const isCompleted = initialStatus !== "retry" && q.isCompleted;
+            const isCurrent = index === currentQuestionIndex;
+            return (
+              <View
+                key={q.id}
+                className={`h-8 w-8 items-center justify-center rounded-full ${
+                  isCurrent
+                    ? "bg-primary"
+                    : isCompleted
+                      ? "border-2 border-green-500 bg-white"
+                      : "bg-muted"
+                }`}
+              >
+                <Text
+                  className={`text-sm font-medium ${
+                    isCurrent
+                      ? "text-primary-foreground"
+                      : isCompleted
+                        ? "text-green-600"
+                        : "text-muted-foreground"
+                  }`}
+                >
+                  {index + 1}
+                </Text>
+              </View>
+            );
+          })}
+        </View>
+
+        {/* Question Card */}
+        <View className="rounded-2xl bg-white p-4 shadow-sm">
+          {/* Header with Timer */}
+          <View className="mb-4 flex-row items-center justify-between">
+            <Text className="text-lg font-semibold text-foreground">
+              Question {currentQuestion.orderNumber}
+            </Text>
+            <QuizTimer
+              timeLeft={timeLeft}
+              timeLimit={currentQuestion.timeLimit}
+              onTimeUp={handleTimeUp}
+              isPaused={isAnswered}
+              onTick={handleTick}
+            />
+          </View>
+
+          {/* Question & Choices */}
+          <QuizQuestion
+            question={currentQuestion.question}
+            choices={shuffledChoices}
+            selectedAnswer={selectedAnswer}
+            correctAnswer={showExplanation ? currentQuestion.answer : null}
+            isAnswered={isAnswered}
+            onSelectAnswer={handleSelectAnswer}
+            points={currentQuestion.score}
+          />
+
+          {/* Explanation */}
+          {showExplanation && (
+            <View className="mt-4 border-t border-border pt-4">
+              <View className="mb-3 flex-row flex-wrap gap-2">
+                <View
+                  className={`rounded-full px-3 py-1 ${
+                    isCorrect ? "bg-green-100" : "bg-red-100"
+                  }`}
+                >
+                  <Text
+                    className={`text-sm font-medium ${
+                      isCorrect ? "text-green-800" : "text-red-800"
+                    }`}
+                  >
+                    {timeLeft === 0 && !selectedAnswer
+                      ? "Time's Up!"
+                      : isCorrect
+                        ? "Correct!"
+                        : "Incorrect"}
+                  </Text>
+                </View>
+                {pointsAwarded > 0 && (
+                  <View className="rounded-full bg-amber-100 px-3 py-1">
+                    <Text className="text-sm font-medium text-amber-800">
+                      +{pointsAwarded} points
+                    </Text>
+                  </View>
+                )}
+                {initialStatus === "retry" && (
+                  <View className="rounded-full bg-gray-100 px-3 py-1">
+                    <Text className="text-sm font-medium text-gray-600">
+                      Retry Mode
+                    </Text>
+                  </View>
+                )}
+              </View>
+
+              <Text className="mb-2 font-medium text-foreground">
+                Explanation:
+              </Text>
+              <HtmlContent
+                html={currentQuestion.explanation}
+                baseStyle={EXPLANATION_STYLE}
+              />
+
+              <View className="mt-3 rounded-lg bg-muted/50 p-3">
+                <Text className="text-sm text-muted-foreground">
+                  <Text className="font-medium">Correct Answer: </Text>
+                </Text>
+                <HtmlContent
+                  html={currentQuestion.answer}
+                  baseStyle={ANSWER_STYLE}
+                />
+              </View>
+            </View>
+          )}
+
+          {/* Action Buttons */}
+          <View className="mt-4 flex-row justify-between">
+            <TouchableOpacity
+              className="rounded-lg border border-border px-4 py-3"
+              onPress={handleBackToNovel}
+            >
+              <Text className="font-medium text-foreground">Exit Quiz</Text>
+            </TouchableOpacity>
+
+            {!showExplanation && selectedAnswer && timeLeft > 0 && (
+              <TouchableOpacity
+                className="rounded-lg bg-primary px-6 py-3"
+                onPress={handleSubmitAnswer}
+                disabled={completeQuestionMutation.isPending}
+              >
+                <Text className="font-medium text-primary-foreground">
+                  {completeQuestionMutation.isPending
+                    ? "Submitting..."
+                    : "Submit Answer"}
+                </Text>
+              </TouchableOpacity>
+            )}
+
+            {showExplanation && (
+              <TouchableOpacity
+                className="rounded-lg bg-primary px-6 py-3"
+                onPress={handleNextQuestion}
+              >
+                <Text className="font-medium text-primary-foreground">
+                  {currentQuestionIndex < questions.length - 1
+                    ? "Next Question"
+                    : "Finish Quiz"}
+                </Text>
+              </TouchableOpacity>
+            )}
+          </View>
+        </View>
+      </View>
+    </ScrollView>
+  );
+}

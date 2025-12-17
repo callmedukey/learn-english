@@ -18,13 +18,38 @@ const initialState: ActionResponse<SignInType> = {
   message: "",
 };
 
-const LoginForm = ({ previousEmail }: { previousEmail?: string }) => {
+const PROVIDER_NAMES: Record<string, string> = {
+  naver: "네이버",
+  kakao: "카카오",
+  google: "Google",
+  credentials: "이메일/비밀번호",
+};
+
+const LoginForm = ({
+  previousEmail,
+  oauthError,
+  originalProvider,
+}: {
+  previousEmail?: string;
+  oauthError?: string;
+  originalProvider?: string;
+}) => {
   const [state, action, isPending] = useActionState(signInAction, initialState);
+
   useEffect(() => {
     if (state.message && !state.success) {
       toast.error(state.message);
     }
   }, [state.message, state.success]);
+
+  useEffect(() => {
+    if (oauthError === "OAuthAccountNotLinked" && originalProvider) {
+      const providerName = PROVIDER_NAMES[originalProvider] || originalProvider;
+      toast.error(
+        `이 이메일은 이미 ${providerName}(으)로 가입되어 있습니다. ${providerName}(으)로 로그인해주세요.`
+      );
+    }
+  }, [oauthError, originalProvider]);
 
   return (
     <form action={action} className="flex flex-col gap-4">

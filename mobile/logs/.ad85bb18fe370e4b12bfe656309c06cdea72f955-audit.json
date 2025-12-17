@@ -1,0 +1,15 @@
+{
+    "keep": {
+        "days": true,
+        "amount": 14
+    },
+    "auditLog": "/Users/duke/Documents/GitHub/learn-english/mobile/logs/.ad85bb18fe370e4b12bfe656309c06cdea72f955-audit.json",
+    "files": [
+        {
+            "date": 1765882400594,
+            "name": "/Users/duke/Documents/GitHub/learn-english/mobile/logs/error-2025-12-16.log",
+            "hash": "28cf6a3ff412abb815d62a2bcfddb6a614a7109a397552566be30678424fb349"
+        }
+    ],
+    "hashType": "sha256"
+}

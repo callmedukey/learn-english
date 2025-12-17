@@ -12,7 +12,7 @@ export const updateRCLevelAction = async (formData: FormData) => {
   const rcLevelId = formData.get("rcLevelId") as string;
   const level = formData.get("level") as string;
   const relevantGrade = formData.get("relevantGrade") as string;
-  const stars = parseInt(formData.get("stars") as string);
+  const stars = parseFloat(formData.get("stars") as string);
   const numberOfQuestions = parseInt(
     formData.get("numberOfQuestions") as string,
   );
@@ -31,8 +31,8 @@ export const updateRCLevelAction = async (formData: FormData) => {
     };
   }
 
-  if (stars < 1 || stars > 5) {
-    return { error: "Stars must be between 1 and 5" };
+  if (stars < 0 || stars > 5 || (stars * 2) % 1 !== 0) {
+    return { error: "Stars must be between 0 and 5 in 0.5 increments" };
   }
 
   if (numberOfQuestions < 1) {
@@ -149,7 +149,7 @@ export const deleteRCLevelAction = async (rcLevelId: string) => {
 export const createRCLevelAction = async (formData: FormData) => {
   const level = formData.get("level") as string;
   const relevantGrade = formData.get("relevantGrade") as string;
-  const stars = parseInt(formData.get("stars") as string);
+  const stars = parseFloat(formData.get("stars") as string);
   const numberOfQuestions = parseInt(
     formData.get("numberOfQuestions") as string,
   );
@@ -168,8 +168,8 @@ export const createRCLevelAction = async (formData: FormData) => {
     };
   }
 
-  if (stars < 1 || stars > 5) {
-    return { error: "Stars must be between 1 and 5" };
+  if (stars < 0 || stars > 5 || (stars * 2) % 1 !== 0) {
+    return { error: "Stars must be between 0 and 5 in 0.5 increments" };
   }
 
   if (numberOfQuestions < 1) {

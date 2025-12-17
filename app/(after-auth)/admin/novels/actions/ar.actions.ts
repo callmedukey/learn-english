@@ -12,7 +12,7 @@ export const updateARAction = async (formData: FormData) => {
   const arId = formData.get("arId") as string;
   const level = formData.get("level") as string;
   const score = formData.get("score") as string;
-  const stars = parseInt(formData.get("stars") as string);
+  const stars = parseFloat(formData.get("stars") as string);
   const description = formData.get("description") as string;
   const relevantGrade = formData.get("relevantGrade") as string;
   const fontSize = formData.get("fontSize") as string;
@@ -23,8 +23,8 @@ export const updateARAction = async (formData: FormData) => {
     };
   }
 
-  if (stars < 1 || stars > 5) {
-    return { error: "Stars must be between 1 and 5" };
+  if (stars < 0 || stars > 5 || (stars * 2) % 1 !== 0) {
+    return { error: "Stars must be between 0 and 5 in 0.5 increments" };
   }
 
   // Validate fontSize enum value
@@ -137,7 +137,7 @@ export const deleteARAction = async (arId: string) => {
 export const createARAction = async (formData: FormData) => {
   const level = formData.get("level") as string;
   const score = formData.get("score") as string;
-  const stars = parseInt(formData.get("stars") as string);
+  const stars = parseFloat(formData.get("stars") as string);
   const description = formData.get("description") as string;
   const relevantGrade = formData.get("relevantGrade") as string;
   const fontSize = formData.get("fontSize") as string;
@@ -154,8 +154,8 @@ export const createARAction = async (formData: FormData) => {
     };
   }
 
-  if (stars < 1 || stars > 5) {
-    return { error: "Stars must be between 1 and 5" };
+  if (stars < 0 || stars > 5 || (stars * 2) % 1 !== 0) {
+    return { error: "Stars must be between 0 and 5 in 0.5 increments" };
   }
 
   // Validate fontSize enum value

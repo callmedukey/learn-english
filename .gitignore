@@ -49,3 +49,11 @@ public/uploads
 
 # payment logs (sensitive information)
 /payments
+
+# Mobile (Expo/React Native)
+mobile/.expo/
+mobile/node_modules/
+mobile/ios/
+mobile/android/
+mobile/dist/
+mobile/.env*

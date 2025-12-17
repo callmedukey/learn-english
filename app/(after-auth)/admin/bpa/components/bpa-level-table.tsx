@@ -1,3 +1,5 @@
+"use client";
+
 import { format } from "date-fns";
 import Link from "next/link";
 import React from "react";
@@ -60,12 +62,23 @@ const BPALevelTable: React.FC<BPALevelTableProps> = ({ levels, userRole }) => {
               </Link>
             </TableCell>
             <TableCell>
-              <div className="flex items-center">
-                {"★".repeat(level.stars)}
-                {"☆".repeat(5 - level.stars)}
-                <span className="ml-1 text-base text-gray-500">
-                  ({level.stars})
-                </span>
+              <div className="flex items-center gap-0.5">
+                {/* Full stars */}
+                {Array.from({ length: Math.floor(level.stars) }).map((_, i) => (
+                  <span key={`full-${i}`} className="text-amber-400">★</span>
+                ))}
+                {/* Half star */}
+                {level.stars % 1 >= 0.5 && (
+                  <span className="relative inline-block">
+                    <span className="text-gray-300">★</span>
+                    <span className="absolute left-0 top-0 overflow-hidden text-amber-400" style={{ width: '0.45em' }}>★</span>
+                  </span>
+                )}
+                {/* Empty stars */}
+                {Array.from({ length: 5 - Math.floor(level.stars) - (level.stars % 1 >= 0.5 ? 1 : 0) }).map((_, i) => (
+                  <span key={`empty-${i}`} className="text-gray-300">★</span>
+                ))}
+                <span className="ml-1 text-sm text-gray-500">({level.stars})</span>
               </div>
             </TableCell>
             <TableCell

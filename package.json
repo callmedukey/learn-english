@@ -30,7 +30,10 @@
     "grant-100y-sub": "tsx scripts/grant-100-year-subscription.ts",
     "backfill-iscorrect": "tsx scripts/backfill-iscorrect.ts",
     "backfill-score-transactions": "tsx prisma/migrations/backfill-score-transactions.ts",
-    "backfill-monthly-bpa": "tsx prisma/migrations/backfill-monthly-bpa-scores.ts"
+    "backfill-monthly-bpa": "tsx prisma/migrations/backfill-monthly-bpa-scores.ts",
+    "mobile": "cd mobile && npx expo start",
+    "mobile:ios": "cd mobile && npx expo run:ios",
+    "mobile:android": "cd mobile && npx expo run:android"
   },
   "prisma": {
     "schema": "./prisma/schema",
@@ -84,6 +87,7 @@
     "embla-carousel-autoplay": "^8.6.0",
     "embla-carousel-react": "^8.6.0",
     "isomorphic-dompurify": "^2.25.0",
+    "jose": "^6.1.3",
     "lucide-react": "^0.488.0",
     "mime-types": "^3.0.1",
     "motion": "^12.23.12",

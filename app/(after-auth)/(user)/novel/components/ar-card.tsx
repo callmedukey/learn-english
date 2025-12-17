@@ -110,11 +110,28 @@ export function ARCard({ ar, userId, isUserSelectedLevel }: ARCardProps) {
                 </div>
               )}
             </div>
-            <div className="flex items-center gap-1">
-              {Array.from({ length: ar.stars }).map((_, i) => (
+            <div className="flex items-center gap-0.5">
+              {/* Full stars */}
+              {Array.from({ length: Math.floor(ar.stars) }).map((_, i) => (
                 <Star
-                  key={i}
+                  key={`full-${i}`}
                   className="h-4 w-4 fill-amber-400 text-amber-400"
+                />
+              ))}
+              {/* Half star */}
+              {ar.stars % 1 >= 0.5 && (
+                <div className="relative h-4 w-4">
+                  <Star className="absolute left-0 top-0 h-4 w-4 text-gray-300" />
+                  <div className="absolute left-0 top-0 overflow-hidden" style={{ width: '8px' }}>
+                    <Star className="h-4 w-4 fill-amber-400 text-amber-400" />
+                  </div>
+                </div>
+              )}
+              {/* Empty stars */}
+              {Array.from({ length: 5 - Math.floor(ar.stars) - (ar.stars % 1 >= 0.5 ? 1 : 0) }).map((_, i) => (
+                <Star
+                  key={`empty-${i}`}
+                  className="h-4 w-4 text-gray-300"
                 />
               ))}
             </div>

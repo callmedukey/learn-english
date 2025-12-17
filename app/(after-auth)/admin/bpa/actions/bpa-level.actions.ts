@@ -15,7 +15,7 @@ export const createBPALevelAction = async (formData: FormData) => {
 
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
-  const stars = parseInt(formData.get("stars") as string);
+  const stars = parseFloat(formData.get("stars") as string);
   const orderNumber = parseInt(formData.get("orderNumber") as string);
   const fontSize = formData.get("fontSize") as string;
 
@@ -25,8 +25,8 @@ export const createBPALevelAction = async (formData: FormData) => {
     };
   }
 
-  if (stars < 1 || stars > 5) {
-    return { error: "Stars must be between 1 and 5" };
+  if (stars < 0 || stars > 5 || (stars * 2) % 1 !== 0) {
+    return { error: "Stars must be between 0 and 5 in 0.5 increments" };
   }
 
   // Validate fontSize enum value
@@ -92,7 +92,7 @@ export const updateBPALevelAction = async (formData: FormData) => {
   const levelId = formData.get("levelId") as string;
   const name = formData.get("name") as string;
   const description = formData.get("description") as string;
-  const stars = parseInt(formData.get("stars") as string);
+  const stars = parseFloat(formData.get("stars") as string);
   const orderNumber = parseInt(formData.get("orderNumber") as string);
   const fontSize = formData.get("fontSize") as string;
 
@@ -102,8 +102,8 @@ export const updateBPALevelAction = async (formData: FormData) => {
     };
   }
 
-  if (stars < 1 || stars > 5) {
-    return { error: "Stars must be between 1 and 5" };
+  if (stars < 0 || stars > 5 || (stars * 2) % 1 !== 0) {
+    return { error: "Stars must be between 0 and 5 in 0.5 increments" };
   }
 
   // Validate fontSize enum value

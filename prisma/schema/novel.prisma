@@ -3,7 +3,7 @@ model AR {
 
   level       String
   score       String
-  stars       Int
+  stars       Float
   description String?
   relevantGrade String?
 
