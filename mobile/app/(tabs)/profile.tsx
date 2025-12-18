@@ -1,15 +1,49 @@
+import { Ionicons } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { View, Text, ScrollView, TouchableOpacity } from "react-native";
+import { useRouter } from "expo-router";
+import { View, Text, ScrollView, TouchableOpacity, Linking, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
+import { useState, useCallback } from "react";
 
 import { useAuth } from "@/hooks/useAuth";
+import { useSubscriptionStatus } from "@/services/iap";
 
 export default function ProfileScreen() {
-  const { user, signOut } = useAuth();
+  const router = useRouter();
+  const { user, signOut, refreshUser } = useAuth();
+  const [isRefreshing, setIsRefreshing] = useState(false);
+  const { hasActiveSubscription, subscription, refreshSubscription } = useSubscriptionStatus();
+
+  const onRefresh = useCallback(async () => {
+    setIsRefreshing(true);
+    await Promise.all([refreshUser?.(), refreshSubscription()]);
+    setIsRefreshing(false);
+  }, [refreshUser, refreshSubscription]);
+
+  const handleSupportPress = () => {
+    // Open support email or website
+    Linking.openURL("mailto:support@readingcamp.kr");
+  };
+
+  const formatDaysRemaining = (days: number) => {
+    if (days <= 0) return "만료됨";
+    if (days === 1) return "1일 남음";
+    return `${days}일 남음`;
+  };
 
   return (
     <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
-      <ScrollView className="flex-1 px-4 py-6">
+      <ScrollView
+        className="flex-1 px-4 py-6"
+        showsVerticalScrollIndicator={false}
+        refreshControl={
+          <RefreshControl
+            refreshing={isRefreshing}
+            onRefresh={onRefresh}
+            tintColor="#5D3A29"
+          />
+        }
+      >
         {/* User Info */}
         <View className="mb-6 items-center">
           <View className="mb-4 h-20 w-20 items-center justify-center rounded-full bg-primary">
@@ -19,7 +53,7 @@ export default function ProfileScreen() {
             {user?.nickname || user?.name || "User"}
           </Text>
           <Text className="text-muted-foreground">{user?.email}</Text>
-          {user?.hasPaidSubscription && (
+          {hasActiveSubscription && (
             <View className="mt-2 flex-row items-center gap-1 rounded-full bg-primary/10 px-3 py-1">
               <FontAwesome name="star" size={12} color="#5D3A29" />
               <Text className="text-sm font-medium text-primary">VIP Member</Text>
@@ -27,42 +61,118 @@ export default function ProfileScreen() {
           )}
         </View>
 
+        {/* Subscription Status Card */}
+        {hasActiveSubscription && subscription ? (
+          <TouchableOpacity
+            className="mb-6 rounded-2xl bg-white p-4 shadow-sm"
+            onPress={() => router.push("/profile/subscription")}
+            activeOpacity={0.7}
+          >
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center gap-3">
+                <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                  <Ionicons name="star" size={20} color="#5D3A29" />
+                </View>
+                <View>
+                  <Text className="font-semibold text-foreground">
+                    {subscription.planName}
+                  </Text>
+                  <Text className="text-sm text-muted-foreground">
+                    {subscription.isTrialPeriod
+                      ? "무료 체험 중"
+                      : formatDaysRemaining(subscription.daysRemaining)}
+                  </Text>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="#6B7280" />
+            </View>
+          </TouchableOpacity>
+        ) : (
+          <TouchableOpacity
+            className="mb-6 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-4"
+            onPress={() => router.push("/profile/subscription")}
+            activeOpacity={0.7}
+          >
+            <View className="flex-row items-center justify-between">
+              <View className="flex-row items-center gap-3">
+                <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
+                  <Ionicons name="star" size={20} color="white" />
+                </View>
+                <View>
+                  <Text className="font-semibold text-white">
+                    프리미엄 구독하기
+                  </Text>
+                  <Text className="text-sm text-white/80">
+                    7일 무료 체험 시작
+                  </Text>
+                </View>
+              </View>
+              <Ionicons name="chevron-forward" size={20} color="white" />
+            </View>
+          </TouchableOpacity>
+        )}
+
         {/* Menu Items */}
-        <View className="gap-2">
-          <TouchableOpacity className="flex-row items-center justify-between rounded-xl bg-white p-4">
+        <View className="mb-6 gap-2">
+          <TouchableOpacity
+            className="flex-row items-center justify-between rounded-xl bg-white p-4"
+            onPress={() => router.push("/profile/subscription")}
+            activeOpacity={0.7}
+          >
             <View className="flex-row items-center gap-3">
-              <FontAwesome name="cog" size={20} color="#737373" />
-              <Text className="text-base text-foreground">Settings</Text>
+              <Ionicons name="card-outline" size={22} color="#5D3A29" />
+              <Text className="text-base text-foreground">구독 관리</Text>
             </View>
-            <FontAwesome name="chevron-right" size={14} color="#737373" />
+            <Ionicons name="chevron-forward" size={18} color="#6B7280" />
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center justify-between rounded-xl bg-white p-4">
+          <TouchableOpacity
+            className="flex-row items-center justify-between rounded-xl bg-white p-4"
+            onPress={() => router.push("/profile/settings")}
+            activeOpacity={0.7}
+          >
             <View className="flex-row items-center gap-3">
-              <FontAwesome name="credit-card" size={20} color="#737373" />
-              <Text className="text-base text-foreground">Subscription</Text>
+              <Ionicons name="settings-outline" size={22} color="#5D3A29" />
+              <Text className="text-base text-foreground">계정 설정</Text>
             </View>
-            <FontAwesome name="chevron-right" size={14} color="#737373" />
+            <Ionicons name="chevron-forward" size={18} color="#6B7280" />
           </TouchableOpacity>
 
-          <TouchableOpacity className="flex-row items-center justify-between rounded-xl bg-white p-4">
+          <TouchableOpacity
+            className="flex-row items-center justify-between rounded-xl bg-white p-4"
+            onPress={() => router.push("/profile/payments")}
+            activeOpacity={0.7}
+          >
             <View className="flex-row items-center gap-3">
-              <FontAwesome name="question-circle" size={20} color="#737373" />
-              <Text className="text-base text-foreground">Help & Support</Text>
+              <Ionicons name="receipt-outline" size={22} color="#5D3A29" />
+              <Text className="text-base text-foreground">결제 내역</Text>
             </View>
-            <FontAwesome name="chevron-right" size={14} color="#737373" />
+            <Ionicons name="chevron-forward" size={18} color="#6B7280" />
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            className="flex-row items-center justify-between rounded-xl bg-white p-4"
+            onPress={handleSupportPress}
+            activeOpacity={0.7}
+          >
+            <View className="flex-row items-center gap-3">
+              <Ionicons name="help-circle-outline" size={22} color="#5D3A29" />
+              <Text className="text-base text-foreground">도움말 및 지원</Text>
+            </View>
+            <Ionicons name="open-outline" size={18} color="#6B7280" />
           </TouchableOpacity>
         </View>
 
         {/* Logout Button */}
         <TouchableOpacity
-          className="mt-8 rounded-xl bg-destructive/10 p-4"
+          className="rounded-xl bg-destructive/10 p-4"
           onPress={signOut}
           activeOpacity={0.7}
         >
-          <Text className="text-center font-semibold text-destructive">
-            Log Out
-          </Text>
+          <View className="flex-row items-center justify-center gap-2">
+            <Ionicons name="log-out-outline" size={20} color="#EF4444" />
+            <Text className="font-semibold text-destructive">로그아웃</Text>
+          </View>
         </TouchableOpacity>
 
         {/* App Version */}
