@@ -10,6 +10,7 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import { BPANovelCard, BPANovelsSkeleton } from "@/components/bpa";
+import { ErrorState } from "@/components/common";
 import { useBPANovels, type BPANovelFilterParams } from "@/hooks/useBPA";
 
 type StatusFilter = "all" | "completed" | "inProgress" | "notStarted";
@@ -61,14 +62,12 @@ export default function BPANovelsScreen() {
   if (error) {
     return (
       <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
-        <View className="flex-1 items-center justify-center px-4">
-          <Text className="mb-2 text-lg font-semibold text-destructive">
-            Unable to load
-          </Text>
-          <Text className="text-center text-muted-foreground">
-            {error.message || "Please try again later"}
-          </Text>
-        </View>
+        <ErrorState
+          title="Failed to load novels"
+          message={error.message || "Please check your connection and try again"}
+          onRetry={refetch}
+          isRetrying={refreshing}
+        />
       </SafeAreaView>
     );
   }

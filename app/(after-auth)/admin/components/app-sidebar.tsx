@@ -2,6 +2,7 @@ import {
   RiCoupon2Line,
   RiMoneyDollarCircleLine,
   RiNotificationLine,
+  RiSmartphoneLine,
 } from "@remixicon/react";
 import {
   Book,
@@ -111,6 +112,12 @@ const allItems = [
     title: "Notifications",
     url: "/admin/notifications",
     icon: RiNotificationLine,
+    permission: canAccessNotifications,
+  },
+  {
+    title: "Push Notifications",
+    url: "/admin/push-notifications",
+    icon: RiSmartphoneLine,
     permission: canAccessNotifications,
   },
   {

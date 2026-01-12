@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import { apiClient } from "../api/client";
+import { authEvents } from "./events";
 import { authStorage } from "./storage";
 
 interface User {
@@ -63,6 +64,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
     loadUser();
+  }, []);
+
+  // Listen for forced sign out (e.g., from API client on 401)
+  useEffect(() => {
+    const unsubscribe = authEvents.subscribe(() => {
+      setUser(null);
+    });
+    return unsubscribe;
   }, []);
 
   // Handle navigation based on auth state

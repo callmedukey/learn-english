@@ -28,6 +28,12 @@ enum RecurringStatus {
   PENDING_PAYMENT
 }
 
+enum PaymentSource {
+  TOSS
+  APPLE
+  GOOGLE
+}
+
 // Subscription plans with flexible pricing and duration
 model Plan {
   id          String  @id @default(cuid())
@@ -77,6 +83,11 @@ model Payment {
   isInternational  Boolean     @default(false)
   recurringCycle   Int?        // Days between payments (Korean users only)
 
+  // Payment source (Toss, Apple App Store, Google Play)
+  paymentSource         PaymentSource @default(TOSS)
+  storeTransactionId    String?       @unique // Apple/Google transaction ID - unique to prevent replay attacks
+  originalTransactionId String?       @unique // Original transaction ID for subscription tracking
+
   // Customer information
   customerEmail       String?
   customerName        String?
@@ -108,6 +119,8 @@ model Payment {
   @@index([status])
   @@index([requestedAt])
   @@index([couponId])
+  @@index([storeTransactionId])
+  @@index([originalTransactionId])
 }
 
 // User subscription status
@@ -120,6 +133,11 @@ model UserSubscription {
   status    SubscriptionStatus @default(PENDING)
   startDate DateTime
   endDate   DateTime
+
+  // Payment source and store info
+  paymentSource  PaymentSource @default(TOSS)
+  storeProductId String?       // App Store/Play Store product ID (e.g., reading_camp_1month)
+  isTrialPeriod  Boolean       @default(false)
 
   // Auto-renewal settings
   autoRenew Boolean @default(false)
@@ -160,13 +178,14 @@ model UserSubscription {
 
 // Payment webhook logs for debugging
 model PaymentWebhook {
-  id         String   @id @default(cuid())
-  eventType  String // "PAYMENT_CONFIRMED", "PAYMENT_CANCELLED", etc.
-  paymentKey String?
-  orderId    String?
-  data       Json // Full webhook payload
-  processed  Boolean  @default(false)
-  createdAt  DateTime @default(now())
+  id             String   @id @default(cuid())
+  eventType      String // "PAYMENT_CONFIRMED", "PAYMENT_CANCELLED", etc.
+  notificationId String?  @unique // Apple: notificationUUID, Google: messageId - for idempotency
+  paymentKey     String?
+  orderId        String?
+  data           Json // Full webhook payload
+  processed      Boolean  @default(false)
+  createdAt      DateTime @default(now())
 
   @@index([paymentKey])
   @@index([orderId])

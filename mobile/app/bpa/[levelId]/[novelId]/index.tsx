@@ -14,6 +14,7 @@ import {
   BPAProgressSummary,
   BPAUnitSection,
 } from "@/components/bpa";
+import { ErrorState } from "@/components/common";
 import { useAuth } from "@/hooks/useAuth";
 import { useBPANovelDetails } from "@/hooks/useBPA";
 
@@ -47,14 +48,12 @@ export default function BPANovelDetailsScreen() {
   if (error) {
     return (
       <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
-        <View className="flex-1 items-center justify-center px-4">
-          <Text className="mb-2 text-lg font-semibold text-destructive">
-            Unable to load
-          </Text>
-          <Text className="text-center text-muted-foreground">
-            {error.message || "Please try again later"}
-          </Text>
-        </View>
+        <ErrorState
+          title="Failed to load novel details"
+          message={error.message || "Please check your connection and try again"}
+          onRetry={refetch}
+          isRetrying={refreshing}
+        />
       </SafeAreaView>
     );
   }

@@ -1,0 +1,80 @@
+enum DevicePlatform {
+  IOS
+  ANDROID
+}
+
+enum PushCampaignStatus {
+  PENDING
+  SENDING
+  COMPLETED
+  FAILED
+}
+
+enum PushTargetType {
+  ALL_USERS
+  BY_GRADE
+  BY_CAMPUS
+  BY_COUNTRY
+  BY_SUBSCRIPTION
+  INDIVIDUAL
+}
+
+model DeviceToken {
+  id          String         @id @default(cuid())
+  userId      String
+  user        User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token       String         @unique
+  platform    DevicePlatform
+  deviceModel String?
+  osVersion   String?
+  appVersion  String?
+  isActive    Boolean        @default(true)
+  createdAt   DateTime       @default(now())
+  updatedAt   DateTime       @updatedAt
+  lastUsedAt  DateTime       @default(now())
+
+  @@index([userId])
+  @@index([isActive])
+}
+
+model PushCampaign {
+  id              String             @id @default(cuid())
+  title           String
+  body            String
+  imageUrl        String?
+  data            Json?
+  targetType      PushTargetType
+  targetFilters   Json?
+  targetUserIds   String[]
+  status          PushCampaignStatus @default(PENDING)
+  totalTargeted   Int                @default(0)
+  totalSent       Int                @default(0)
+  totalDelivered  Int                @default(0)
+  totalFailed     Int                @default(0)
+  createdById     String
+  createdBy       User               @relation(fields: [createdById], references: [id])
+  sentAt          DateTime?
+  completedAt     DateTime?
+  createdAt       DateTime           @default(now())
+  updatedAt       DateTime           @updatedAt
+  sendResults     PushSendResult[]
+
+  @@index([status])
+  @@index([createdAt])
+  @@index([createdById])
+}
+
+model PushSendResult {
+  id            String       @id @default(cuid())
+  campaignId    String
+  campaign      PushCampaign @relation(fields: [campaignId], references: [id], onDelete: Cascade)
+  deviceTokenId String
+  userId        String
+  success       Boolean
+  errorCode     String?
+  errorMessage  String?
+  sentAt        DateTime     @default(now())
+
+  @@index([campaignId])
+  @@index([userId])
+}

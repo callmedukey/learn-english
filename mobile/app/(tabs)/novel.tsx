@@ -2,6 +2,7 @@ import { useCallback, useState } from "react";
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
+import { ErrorState } from "@/components/common";
 import { ARCard, ARLevelsSkeleton } from "@/components/novel";
 import { useARLevels } from "@/hooks/useNovel";
 
@@ -26,14 +27,12 @@ export default function NovelScreen() {
   if (error) {
     return (
       <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
-        <View className="flex-1 items-center justify-center px-4">
-          <Text className="mb-2 text-lg font-semibold text-destructive">
-            Unable to load
-          </Text>
-          <Text className="text-center text-muted-foreground">
-            {error.message || "Please try again later"}
-          </Text>
-        </View>
+        <ErrorState
+          title="Failed to load novels"
+          message={error.message || "Please check your connection and try again"}
+          onRetry={refetch}
+          isRetrying={refreshing}
+        />
       </SafeAreaView>
     );
   }

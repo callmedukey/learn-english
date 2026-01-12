@@ -141,6 +141,10 @@ model User {
 
   // Score transaction tracking
   scoreTransactions            ScoreTransaction[]              @relation("ScoreTransactions")
+
+  // Push notification relations
+  deviceTokens                 DeviceToken[]
+  pushCampaigns                PushCampaign[]
 }
 
 model Account {

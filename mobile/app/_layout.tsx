@@ -22,7 +22,9 @@ import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useColorScheme } from "@/components/useColorScheme";
+import { usePushNotifications } from "@/hooks/usePushNotifications";
 import { AuthProvider } from "@/services/auth/context";
+import { NetworkProvider } from "@/services/network";
 
 export {
   // Catch any errors thrown by the Layout component.
@@ -74,9 +76,11 @@ export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <SafeAreaProvider>
-        <AuthProvider>
-          <RootLayoutNav />
-        </AuthProvider>
+        <NetworkProvider>
+          <AuthProvider>
+            <RootLayoutNav />
+          </AuthProvider>
+        </NetworkProvider>
       </SafeAreaProvider>
     </QueryClientProvider>
   );
@@ -84,6 +88,9 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+
+  // Initialize push notifications
+  usePushNotifications();
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>

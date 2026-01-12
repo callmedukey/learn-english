@@ -5,6 +5,8 @@ import React from "react";
 
 import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
+import { isFullAdmin } from "@/lib/utils/admin-route-protection";
+import { Role } from "@/prisma/generated/prisma";
 
 import CampusEventCalendar from "./components/campus-event-calendar";
 import CampusStudentsTable from "./components/campus-students-table";
@@ -30,16 +32,66 @@ const CampusDetailsPage = async ({
   searchParams,
 }: CampusDetailsPageProps) => {
   const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
+
+  // Allow both ADMIN and SUB_ADMIN
+  if (
+    !session?.user ||
+    (session.user.role !== Role.ADMIN && session.user.role !== Role.SUB_ADMIN)
+  ) {
     return notFound();
   }
 
+  const userIsFullAdmin = isFullAdmin(session.user.role);
   const { campusId } = await params;
   const { timeframeId, season } = await searchParams;
 
-  // Fetch campus data with students
-  const campusData = await getCampusWithStudents(campusId);
+  // Fetch campus data with students (only for full admins)
+  const campusData = userIsFullAdmin
+    ? await getCampusWithStudents(campusId)
+    : null;
 
+  // For sub-admins, just verify the campus exists
+  if (!userIsFullAdmin) {
+    const { prisma } = await import("@/prisma/prisma-client");
+    const campus = await prisma.campus.findUnique({
+      where: { id: campusId },
+      select: { id: true, name: true },
+    });
+    if (!campus) {
+      return notFound();
+    }
+
+    // Sub-admin view: Only calendar events
+    const campusEvents = await getCampusEvents(campusId);
+
+    return (
+      <div className="container mx-auto space-y-6 p-6">
+        {/* Header */}
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Link href="/admin/campuses">
+              <Button variant="outline" size="sm">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Campuses
+              </Button>
+            </Link>
+            <div>
+              <h1 className="text-3xl font-bold">{campus.name}</h1>
+              <p className="text-gray-600">Manage Campus Calendar</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Campus Calendar - Only section available to sub-admins */}
+        <div className="rounded-lg border p-4">
+          <h2 className="mb-4 text-xl font-semibold">Campus Calendar</h2>
+          <CampusEventCalendar campusId={campusId} events={campusEvents} />
+        </div>
+      </div>
+    );
+  }
+
+  // Full admin view
   if (!campusData) {
     return notFound();
   }
@@ -52,7 +104,7 @@ const CampusDetailsPage = async ({
   ]);
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto space-y-6 p-6">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center space-x-4">
@@ -65,7 +117,8 @@ const CampusDetailsPage = async ({
           <div>
             <h1 className="text-3xl font-bold">{campusData.campus.name}</h1>
             <p className="text-gray-600">
-              {campusData.campus.studentCount} students • Manage BPA Level Assignments
+              {campusData.campus.studentCount} students • Manage BPA Level
+              Assignments
             </p>
           </div>
         </div>
@@ -73,7 +126,7 @@ const CampusDetailsPage = async ({
 
       {/* Campus Calendar */}
       <div className="rounded-lg border p-4">
-        <h2 className="text-xl font-semibold mb-4">Campus Calendar</h2>
+        <h2 className="mb-4 text-xl font-semibold">Campus Calendar</h2>
         <CampusEventCalendar campusId={campusId} events={campusEvents} />
       </div>
 

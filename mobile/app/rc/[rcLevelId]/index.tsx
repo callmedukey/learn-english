@@ -3,8 +3,7 @@ import { useCallback, useRef, useState } from "react";
 import { FlatList, RefreshControl, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
-import { Pagination } from "@/components/common";
-
+import { ErrorState, Pagination } from "@/components/common";
 import {
   RCFilters,
   RCKeywordCard,
@@ -52,14 +51,12 @@ export default function RCKeywordsScreen() {
   if (error) {
     return (
       <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
-        <View className="flex-1 items-center justify-center px-4">
-          <Text className="mb-2 text-lg font-semibold text-destructive">
-            Unable to load
-          </Text>
-          <Text className="text-center text-muted-foreground">
-            {error.message || "Please try again later"}
-          </Text>
-        </View>
+        <ErrorState
+          title="Failed to load keywords"
+          message={error.message || "Please check your connection and try again"}
+          onRetry={refetch}
+          isRetrying={refreshing}
+        />
       </SafeAreaView>
     );
   }

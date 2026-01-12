@@ -1,0 +1,12 @@
+{"level":"info","message":"Logger initialized","service":"grep-app-server","timestamp":"2026-01-02 07:53:56"}
+{"level":"info","message":"Starting FastMCP server in stdio mode","service":"grep-app-server","timestamp":"2026-01-02 07:53:56"}
+{"level":"info","message":"Logger initialized","service":"grep-app-server","timestamp":"2026-01-02 07:53:56"}
+{"level":"info","message":"Starting FastMCP server in stdio mode","service":"grep-app-server","timestamp":"2026-01-02 07:53:56"}
+{"level":"info","message":"Client connected via stdio","service":"grep-app-server","sessionIdentifier":"kjejrk44","timestamp":"2026-01-02 07:53:56"}
+{"level":"info","message":"FastMCP server started successfully in stdio mode","service":"grep-app-server","timestamp":"2026-01-02 07:53:56"}
+{"level":"info","message":"Client connected via stdio","service":"grep-app-server","sessionIdentifier":"mji0lprk","timestamp":"2026-01-02 07:53:56"}
+{"level":"info","message":"FastMCP server started successfully in stdio mode","service":"grep-app-server","timestamp":"2026-01-02 07:53:56"}
+{"level":"info","message":"Logger initialized","service":"grep-app-server","timestamp":"2026-01-02 07:53:57"}
+{"level":"info","message":"Starting FastMCP server in stdio mode","service":"grep-app-server","timestamp":"2026-01-02 07:53:57"}
+{"level":"info","message":"Client connected via stdio","service":"grep-app-server","sessionIdentifier":"dx8hz7lh","timestamp":"2026-01-02 07:53:57"}
+{"level":"info","message":"FastMCP server started successfully in stdio mode","service":"grep-app-server","timestamp":"2026-01-02 07:53:57"}

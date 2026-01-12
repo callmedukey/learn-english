@@ -1,7 +1,14 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { useRouter } from "expo-router";
 import { useState } from "react";
-import { View, Text, ScrollView, RefreshControl } from "react-native";
+import {
+  View,
+  Text,
+  ScrollView,
+  RefreshControl,
+  TouchableOpacity,
+  ActivityIndicator,
+} from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
@@ -59,6 +66,20 @@ export default function DashboardScreen() {
           <Text className="mt-2 text-center text-muted-foreground">
             {error.message || "Please check your connection and try again"}
           </Text>
+          <TouchableOpacity
+            className="mt-6 flex-row items-center rounded-lg bg-primary px-6 py-3"
+            onPress={() => refetch()}
+            disabled={isRefetching}
+          >
+            {isRefetching ? (
+              <ActivityIndicator size="small" color="#FFFFFF" />
+            ) : (
+              <>
+                <FontAwesome name="refresh" size={16} color="#FFFFFF" />
+                <Text className="ml-2 font-semibold text-white">Try Again</Text>
+              </>
+            )}
+          </TouchableOpacity>
         </View>
       </SafeAreaView>
     );

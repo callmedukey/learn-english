@@ -1,7 +1,20 @@
 import { Platform } from "react-native";
-import * as RNIap from "react-native-iap";
+import Constants from "expo-constants";
 
 import { ALL_PRODUCT_IDS, getPlatform } from "./productIds";
+
+// Check if running in Expo Go
+const isExpoGo = Constants.appOwnership === "expo";
+
+// Conditionally import react-native-iap (only works in dev builds)
+let RNIap: any = null;
+if (!isExpoGo) {
+  try {
+    RNIap = require("react-native-iap");
+  } catch (e) {
+    console.warn("[IAP] react-native-iap not available");
+  }
+}
 
 export interface SubscriptionOfferDetails {
   offerId: string | null;
@@ -41,9 +54,21 @@ class IAPService {
   private purchaseErrorSubscription: any = null;
 
   /**
+   * Check if IAP is supported (not in Expo Go)
+   */
+  isSupported(): boolean {
+    return !isExpoGo && RNIap !== null;
+  }
+
+  /**
    * Initialize the IAP connection
    */
   async init(): Promise<boolean> {
+    if (!this.isSupported()) {
+      console.warn("[IAP] Not supported in Expo Go. Use a development build.");
+      return false;
+    }
+
     if (this.isInitialized) {
       return true;
     }
@@ -64,6 +89,8 @@ class IAPService {
    * End IAP connection (call on unmount)
    */
   async endConnection(): Promise<void> {
+    if (!this.isSupported()) return;
+
     try {
       if (this.purchaseUpdateSubscription) {
         this.purchaseUpdateSubscription.remove();
@@ -85,6 +112,11 @@ class IAPService {
    * Get available subscription products
    */
   async getSubscriptions(): Promise<IAPProduct[]> {
+    if (!this.isSupported()) {
+      console.warn("[IAP] Returning mock products for Expo Go");
+      return this.getMockProducts();
+    }
+
     try {
       await this.init();
 
@@ -116,6 +148,38 @@ class IAPService {
   }
 
   /**
+   * Get mock products for Expo Go development
+   */
+  private getMockProducts(): IAPProduct[] {
+    return [
+      {
+        productId: "reading_camp_1month",
+        title: "1 Month Subscription",
+        description: "Monthly access to all content",
+        price: "9900",
+        currency: "KRW",
+        localizedPrice: "₩9,900",
+      },
+      {
+        productId: "reading_camp_3months",
+        title: "3 Month Subscription",
+        description: "Quarterly access to all content",
+        price: "26900",
+        currency: "KRW",
+        localizedPrice: "₩26,900",
+      },
+      {
+        productId: "reading_camp_12months",
+        title: "12 Month Subscription",
+        description: "Annual access to all content",
+        price: "99000",
+        currency: "KRW",
+        localizedPrice: "₩99,000",
+      },
+    ];
+  }
+
+  /**
    * Clean up existing purchase listeners to prevent duplicates
    */
   private cleanupPurchaseListeners(): void {
@@ -142,6 +206,10 @@ class IAPService {
     onPurchaseUpdate?: (purchase: IAPPurchase) => void,
     onPurchaseError?: (error: any) => void
   ): Promise<void> {
+    if (!this.isSupported()) {
+      throw new Error("In-app purchases are not available in Expo Go. Please use a development build.");
+    }
+
     try {
       await this.init();
 
@@ -173,7 +241,7 @@ class IAPService {
       );
 
       this.purchaseErrorSubscription = RNIap.purchaseErrorListener(
-        (error) => {
+        (error: any) => {
           console.error("[IAP] Purchase error:", error);
           if (onPurchaseError) {
             onPurchaseError(error);
@@ -230,6 +298,8 @@ class IAPService {
     transactionId: string,
     isConsumable: boolean = false
   ): Promise<void> {
+    if (!this.isSupported()) return;
+
     try {
       if (Platform.OS === "ios") {
         await RNIap.finishTransaction({
@@ -250,6 +320,10 @@ class IAPService {
    * Restore previous purchases
    */
   async restorePurchases(): Promise<IAPPurchase[]> {
+    if (!this.isSupported()) {
+      throw new Error("In-app purchases are not available in Expo Go. Please use a development build.");
+    }
+
     try {
       await this.init();
 
@@ -276,6 +350,10 @@ class IAPService {
    * Check if IAP is available on this device
    */
   async isAvailable(): Promise<boolean> {
+    if (!this.isSupported()) {
+      return false;
+    }
+
     try {
       await this.init();
       return true;

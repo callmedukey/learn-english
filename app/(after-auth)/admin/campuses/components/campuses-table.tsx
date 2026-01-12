@@ -14,7 +14,11 @@ import { prisma } from "@/prisma/prisma-client";
 
 import CampusActions from "./campus-actions";
 
-const CampusesTable = async () => {
+interface CampusesTableProps {
+  showActions: boolean;
+}
+
+const CampusesTable = async ({ showActions }: CampusesTableProps) => {
   const campuses = await prisma.campus.findMany({
     include: {
       _count: {
@@ -34,39 +38,41 @@ const CampusesTable = async () => {
     <Table className="mx-auto max-w-screen-lg">
       <TableHeader>
         <TableRow>
+          {showActions && (
+            <TableHead
+              scope="col"
+              className="px-6 py-3 text-left text-sm font-medium uppercase tracking-wider text-gray-500"
+            >
+              Actions
+            </TableHead>
+          )}
           <TableHead
             scope="col"
-            className="px-6 py-3 text-left text-sm font-medium tracking-wider text-gray-500 uppercase"
-          >
-            Actions
-          </TableHead>
-          <TableHead
-            scope="col"
-            className="px-6 py-3 text-center text-sm font-medium tracking-wider text-gray-500 uppercase"
+            className="px-6 py-3 text-center text-sm font-medium uppercase tracking-wider text-gray-500"
           >
             No.
           </TableHead>
           <TableHead
             scope="col"
-            className="px-6 py-3 text-center text-sm font-medium tracking-wider text-gray-500 uppercase"
+            className="px-6 py-3 text-center text-sm font-medium uppercase tracking-wider text-gray-500"
           >
             Campus Name
           </TableHead>
           <TableHead
             scope="col"
-            className="px-6 py-3 text-center text-sm font-medium tracking-wider text-gray-500 uppercase"
+            className="px-6 py-3 text-center text-sm font-medium uppercase tracking-wider text-gray-500"
           >
             User Count
           </TableHead>
           <TableHead
             scope="col"
-            className="px-6 py-3 text-center text-sm font-medium tracking-wider text-gray-500 uppercase"
+            className="px-6 py-3 text-center text-sm font-medium uppercase tracking-wider text-gray-500"
           >
             Created At
           </TableHead>
           <TableHead
             scope="col"
-            className="px-6 py-3 text-center text-sm font-medium tracking-wider text-gray-500 uppercase"
+            className="px-6 py-3 text-center text-sm font-medium uppercase tracking-wider text-gray-500"
           >
             Updated At
           </TableHead>
@@ -75,27 +81,29 @@ const CampusesTable = async () => {
       <TableBody>
         {campuses.map((campus, index) => (
           <TableRow key={campus.id}>
-            <TableCell className="flex items-center justify-start space-x-2 py-4 text-base font-medium whitespace-nowrap px-6">
-              <CampusActions campus={campus} />
-            </TableCell>
-            <TableCell className="px-6 py-4 text-center text-base font-medium whitespace-nowrap text-gray-900">
+            {showActions && (
+              <TableCell className="flex items-center justify-start space-x-2 whitespace-nowrap px-6 py-4 text-base font-medium">
+                <CampusActions campus={campus} />
+              </TableCell>
+            )}
+            <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base font-medium text-gray-900">
               {index + 1}
             </TableCell>
-            <TableCell className="px-6 py-4 text-center text-base whitespace-nowrap text-gray-900">
+            <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base text-gray-900">
               <Link
                 href={`/admin/campuses/${campus.id}`}
-                className="text-blue-600 hover:text-blue-800 hover:underline font-medium"
+                className="font-medium text-blue-600 hover:text-blue-800 hover:underline"
               >
                 {campus.name}
               </Link>
             </TableCell>
-            <TableCell className="px-6 py-4 text-center text-base whitespace-nowrap text-gray-500">
+            <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base text-gray-500">
               {campus._count.users}
             </TableCell>
-            <TableCell className="px-6 py-4 text-center text-base whitespace-nowrap text-gray-500">
+            <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base text-gray-500">
               {format(new Date(campus.createdAt), "yyyy/MM/dd")}
             </TableCell>
-            <TableCell className="px-6 py-4 text-center text-base whitespace-nowrap text-gray-500">
+            <TableCell className="whitespace-nowrap px-6 py-4 text-center text-base text-gray-500">
               {format(new Date(campus.updatedAt), "yyyy/MM/dd")}
             </TableCell>
           </TableRow>

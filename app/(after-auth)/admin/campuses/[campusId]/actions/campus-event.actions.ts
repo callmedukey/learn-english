@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
+import { requireAdminOrSubAdminAccess } from "@/lib/utils/admin-route-protection";
 import { CampusEventColor } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -34,7 +34,7 @@ export async function createCampusEvent(
   input: CreateEventInput
 ): Promise<EventActionResult> {
   try {
-    await requireAdminAccess();
+    await requireAdminOrSubAdminAccess();
 
     // Verify campus exists
     const campus = await prisma.campus.findUnique({
@@ -73,7 +73,7 @@ export async function updateCampusEvent(
   input: UpdateEventInput
 ): Promise<EventActionResult> {
   try {
-    await requireAdminAccess();
+    await requireAdminOrSubAdminAccess();
 
     // Verify event exists and belongs to the campus
     const existingEvent = await prisma.campusEvent.findUnique({
@@ -117,7 +117,7 @@ export async function deleteCampusEvent(
   campusId: string
 ): Promise<EventActionResult> {
   try {
-    await requireAdminAccess();
+    await requireAdminOrSubAdminAccess();
 
     // Verify event exists and belongs to the campus
     const existingEvent = await prisma.campusEvent.findUnique({

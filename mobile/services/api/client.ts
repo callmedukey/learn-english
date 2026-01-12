@@ -1,5 +1,6 @@
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 
+import { authEvents } from "../auth/events";
 import { authStorage } from "../auth/storage";
 
 const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || "http://localhost:3000";
@@ -55,9 +56,9 @@ apiClient.interceptors.response.use(
         originalRequest.headers.Authorization = `Bearer ${accessToken}`;
         return apiClient(originalRequest);
       } catch {
-        // Refresh failed, clear auth and redirect to login
+        // Refresh failed, clear auth and notify context
         await authStorage.clearAll();
-        // Navigation to login handled by auth context
+        authEvents.emitSignOut();
         return Promise.reject(error);
       }
     }
