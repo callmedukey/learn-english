@@ -93,7 +93,9 @@ export const canAccessNotifications = (role: Role | undefined): boolean => {
 
 // Campus Management Permissions
 export const canAccessCampusManagement = (role: Role | undefined): boolean => {
-  return role === Role.ADMIN;
+  // Both ADMIN and SUB_ADMIN can access campus management
+  // SUB_ADMIN has limited view (calendar only), enforced at route level
+  return role === Role.ADMIN || role === Role.SUB_ADMIN;
 };
 
 export const canManageCampusStudents = (role: Role | undefined): boolean => {
