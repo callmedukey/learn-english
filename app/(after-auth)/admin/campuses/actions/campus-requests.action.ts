@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
+import { requireAdminOrSubAdminAccess } from "@/lib/utils/admin-route-protection";
 import { prisma } from "@/prisma/prisma-client";
 
 export const approveCampusRequestAction = async (requestId: string) => {
@@ -11,7 +11,7 @@ export const approveCampusRequestAction = async (requestId: string) => {
   }
 
   try {
-    await requireAdminAccess();
+    const session = await requireAdminOrSubAdminAccess();
 
     // Get the request
     const request = await prisma.campusRequest.findUnique({
@@ -37,6 +37,7 @@ export const approveCampusRequestAction = async (requestId: string) => {
         data: {
           status: "APPROVED",
           reviewedAt: new Date(),
+          reviewedBy: session.user.id,
         },
       }),
       prisma.user.update({
@@ -66,7 +67,7 @@ export const rejectCampusRequestAction = async (requestId: string) => {
   }
 
   try {
-    await requireAdminAccess();
+    const session = await requireAdminOrSubAdminAccess();
 
     // Get the request
     const request = await prisma.campusRequest.findUnique({
@@ -91,6 +92,7 @@ export const rejectCampusRequestAction = async (requestId: string) => {
       data: {
         status: "REJECTED",
         reviewedAt: new Date(),
+        reviewedBy: session.user.id,
       },
     });
 

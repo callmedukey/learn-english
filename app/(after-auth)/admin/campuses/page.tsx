@@ -23,9 +23,8 @@ const Page = async () => {
   const session = await requireAdminOrSubAdminAccess();
   const userIsFullAdmin = isFullAdmin(session.user.role);
 
-  const pendingCount = userIsFullAdmin
-    ? await getPendingCampusRequestsCount()
-    : 0;
+  // Both admins and sub-admins can view and manage pending requests
+  const pendingCount = await getPendingCampusRequestsCount();
 
   return (
     <div className="px-1 py-4">
@@ -36,39 +35,31 @@ const Page = async () => {
         {userIsFullAdmin && <AddCampusDialog />}
       </div>
 
-      {userIsFullAdmin ? (
-        <Tabs defaultValue="campuses" className="w-full">
-          <TabsList className="mx-auto grid w-full max-w-md grid-cols-2">
-            <TabsTrigger value="campuses">Campuses</TabsTrigger>
-            <TabsTrigger value="requests" className="relative">
-              Pending Requests
-              {pendingCount > 0 && (
-                <span className="ml-2 inline-flex items-center justify-center rounded-full bg-red-600 px-2 py-0.5 text-sm font-bold leading-none text-white">
-                  {pendingCount}
-                </span>
-              )}
-            </TabsTrigger>
-          </TabsList>
+      <Tabs defaultValue="campuses" className="w-full">
+        <TabsList className="mx-auto grid w-full max-w-md grid-cols-2">
+          <TabsTrigger value="campuses">Campuses</TabsTrigger>
+          <TabsTrigger value="requests" className="relative">
+            Pending Requests
+            {pendingCount > 0 && (
+              <span className="ml-2 inline-flex items-center justify-center rounded-full bg-red-600 px-2 py-0.5 text-sm font-bold leading-none text-white">
+                {pendingCount}
+              </span>
+            )}
+          </TabsTrigger>
+        </TabsList>
 
-          <TabsContent value="campuses" className="mt-6">
-            <Suspense fallback={<PageLoading />}>
-              <CampusesTable showActions={true} />
-            </Suspense>
-          </TabsContent>
-
-          <TabsContent value="requests" className="mt-6">
-            <Suspense fallback={<PageLoading />}>
-              <CampusRequestsTable />
-            </Suspense>
-          </TabsContent>
-        </Tabs>
-      ) : (
-        <div className="mt-6">
+        <TabsContent value="campuses" className="mt-6">
           <Suspense fallback={<PageLoading />}>
-            <CampusesTable showActions={false} />
+            <CampusesTable showActions={userIsFullAdmin} />
           </Suspense>
-        </div>
-      )}
+        </TabsContent>
+
+        <TabsContent value="requests" className="mt-6">
+          <Suspense fallback={<PageLoading />}>
+            <CampusRequestsTable />
+          </Suspense>
+        </TabsContent>
+      </Tabs>
     </div>
   );
 };
