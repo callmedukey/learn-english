@@ -13,10 +13,17 @@ expo-env.d.ts
 .kotlin/
 *.orig.*
 *.jks
+*.keystore
 *.p8
 *.p12
 *.key
 *.mobileprovision
+
+# Firebase config files (contain sensitive project info)
+google-services.json
+GoogleService-Info.plist
+*service-account*.json
+firebase-*.json
 
 # Metro
 .metro-health-check*
