@@ -1,6 +1,7 @@
 import * as Device from "expo-device";
 import * as Notifications from "expo-notifications";
 import { Platform } from "react-native";
+import messaging from "@react-native-firebase/messaging";
 
 import { apiClient } from "../api/client";
 
@@ -10,6 +11,8 @@ Notifications.setNotificationHandler({
     shouldShowAlert: true,
     shouldPlaySound: true,
     shouldSetBadge: true,
+    shouldShowBanner: true,
+    shouldShowList: true,
   }),
 });
 
@@ -20,6 +23,7 @@ export interface PushNotificationResult {
 
 /**
  * Request notification permissions and get FCM token
+ * Uses Firebase Cloud Messaging to get proper FCM tokens on both iOS and Android
  */
 export async function registerForPushNotifications(): Promise<PushNotificationResult> {
   let token: string | null = null;
@@ -32,25 +36,23 @@ export async function registerForPushNotifications(): Promise<PushNotificationRe
   }
 
   try {
-    // Check existing permissions
-    const { status: existingStatus } =
-      await Notifications.getPermissionsAsync();
-    let finalStatus = existingStatus;
+    // Request Firebase messaging permission (required for iOS)
+    const authStatus = await messaging().requestPermission();
+    const enabled =
+      authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
+      authStatus === messaging.AuthorizationStatus.PROVISIONAL;
 
-    // Request permissions if not already granted
-    if (existingStatus !== "granted") {
-      const { status } = await Notifications.requestPermissionsAsync();
-      finalStatus = status;
-    }
-
-    if (finalStatus !== "granted") {
+    if (!enabled) {
       error = "Push notification permission not granted";
       return { token, error };
     }
 
-    // Get device push token (FCM token on Android, APNs token on iOS)
-    const devicePushToken = await Notifications.getDevicePushTokenAsync();
-    token = devicePushToken.data;
+    // Get FCM token (works on both iOS and Android)
+    // On iOS, Firebase automatically handles APNs token -> FCM token conversion
+    token = await messaging().getToken();
+
+    // Also request Expo notification permissions for foreground handling
+    await Notifications.requestPermissionsAsync();
 
     // Configure Android notification channel
     if (Platform.OS === "android") {
@@ -96,15 +98,17 @@ export async function unregisterTokenFromServer(token: string): Promise<void> {
 }
 
 /**
- * Add listener for push token refresh
+ * Add listener for FCM token refresh
+ * Firebase will automatically refresh tokens when needed
  */
 export function addTokenRefreshListener(
   callback: (token: string) => void
 ): () => void {
-  const subscription = Notifications.addPushTokenListener((tokenData) => {
-    callback(tokenData.data);
+  // Firebase messaging token refresh listener
+  const unsubscribe = messaging().onTokenRefresh((newToken) => {
+    callback(newToken);
   });
-  return () => subscription.remove();
+  return unsubscribe;
 }
 
 /**
