@@ -64,14 +64,7 @@
           "color": "#fcf3e6"
         }
       ],
-      [
-        "expo-build-properties",
-        {
-          "ios": {
-            "useFrameworks": "dynamic"
-          }
-        }
-      ],
+      "./plugins/withModularHeaders.js",
       "@react-native-firebase/app",
       "@react-native-firebase/messaging"
     ],
