@@ -283,35 +283,33 @@ async function handleCompleteQuestion(
     }
   }
 
-  // Create score transaction
-  if (pointsAwarded !== 0) {
-    try {
-      const keyword = question.RCQuestionSet?.RCKeyword;
-      const rcLevel = keyword?.RCLevel;
+  // Always create score transaction for admin tracking (including incorrect/retry attempts)
+  try {
+    const keyword = question.RCQuestionSet?.RCKeyword;
+    const rcLevel = keyword?.RCLevel;
 
-      await prisma.scoreTransaction.create({
-        data: {
-          userId: userId,
-          source: "RC",
-          sourceId: existingCompletion?.id || "",
-          score: pointsAwarded,
-          levelInfo: rcLevel?.level || null,
-          keywordInfo: keyword?.name || null,
-          novelInfo: null,
-          unitInfo: null,
-          chapterInfo: null,
-          questionText: question.question,
-          selectedAnswer: selectedAnswer || null,
-          correctAnswer: question.answer,
-          isCorrect: isCorrect,
-          isRetry: isRetry,
-          isTimedOut: isTimedOut,
-          explanation: question.explanation,
-        },
-      });
-    } catch (error) {
-      console.error("Failed to create score transaction:", error);
-    }
+    await prisma.scoreTransaction.create({
+      data: {
+        userId: userId,
+        source: "RC",
+        sourceId: existingCompletion?.id || "",
+        score: pointsAwarded,
+        levelInfo: rcLevel?.level || null,
+        keywordInfo: keyword?.name || null,
+        novelInfo: null,
+        unitInfo: null,
+        chapterInfo: null,
+        questionText: question.question,
+        selectedAnswer: selectedAnswer || null,
+        correctAnswer: question.answer,
+        isCorrect: isCorrect,
+        isRetry: isRetry,
+        isTimedOut: isTimedOut,
+        explanation: question.explanation,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to create score transaction:", error);
   }
 
   return NextResponse.json({

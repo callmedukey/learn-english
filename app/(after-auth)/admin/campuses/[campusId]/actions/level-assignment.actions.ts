@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 
-import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
+import { requireAdminOrSubAdminAccess } from "@/lib/utils/admin-route-protection";
 import { BPAAssignmentAction, BPASeason } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -27,7 +27,7 @@ export async function assignStudentToBPALevel(
   adminUserId: string
 ): Promise<AssignmentResult> {
   try {
-    await requireAdminAccess();
+    await requireAdminOrSubAdminAccess();
     // Verify student belongs to campus
     const student = await prisma.user.findUnique({
       where: { id: userId },
@@ -158,7 +158,7 @@ export async function bulkAssignStudentsToBPALevel(
   adminUserId: string
 ): Promise<AssignmentResult> {
   try {
-    await requireAdminAccess();
+    await requireAdminOrSubAdminAccess();
     if (userIds.length === 0) {
       return { success: false, error: "No students selected" };
     }
@@ -351,7 +351,7 @@ export async function removeStudentBPALevelAssignment(
   season: BPASeason
 ): Promise<AssignmentResult> {
   try {
-    await requireAdminAccess();
+    await requireAdminOrSubAdminAccess();
     // Verify assignment exists
     const assignment = await prisma.bPAUserLevelAssignment.findUnique({
       where: {

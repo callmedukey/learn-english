@@ -382,36 +382,34 @@ export async function submitRCAnswer(
       }
     }
 
-    // Create score transaction for admin tracking (outside transaction)
-    if (pointsAwarded !== 0) {
-      try {
-        const keyword = question.RCQuestionSet?.RCKeyword;
-        const level = keyword?.RCLevel;
+    // Always create score transaction for admin tracking (including incorrect/retry attempts)
+    try {
+      const keyword = question.RCQuestionSet?.RCKeyword;
+      const level = keyword?.RCLevel;
 
-        await prisma.scoreTransaction.create({
-          data: {
-            userId: session.user.id,
-            source: "RC",
-            sourceId: existingCompletion?.id || "",
-            score: pointsAwarded,
-            levelInfo: level?.level || null,
-            novelInfo: null,
-            unitInfo: null,
-            chapterInfo: null,
-            keywordInfo: keyword?.name || null,
-            questionText: question.question,
-            selectedAnswer: answer || null,
-            correctAnswer: question.answer,
-            isCorrect: isCorrect,
-            isRetry: isRetry,
-            isTimedOut: isTimedOut,
-            explanation: question.explanation,
-          },
-        });
-      } catch (error) {
-        // Log error but don't fail the request - score is already saved
-        console.error("Failed to create score transaction:", error);
-      }
+      await prisma.scoreTransaction.create({
+        data: {
+          userId: session.user.id,
+          source: "RC",
+          sourceId: existingCompletion?.id || "",
+          score: pointsAwarded,
+          levelInfo: level?.level || null,
+          novelInfo: null,
+          unitInfo: null,
+          chapterInfo: null,
+          keywordInfo: keyword?.name || null,
+          questionText: question.question,
+          selectedAnswer: answer || null,
+          correctAnswer: question.answer,
+          isCorrect: isCorrect,
+          isRetry: isRetry,
+          isTimedOut: isTimedOut,
+          explanation: question.explanation,
+        },
+      });
+    } catch (error) {
+      // Log error but don't fail the request - score is already saved
+      console.error("Failed to create score transaction:", error);
     }
 
     // Revalidate the current page to update the UI

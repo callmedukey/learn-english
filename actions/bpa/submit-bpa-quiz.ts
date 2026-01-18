@@ -135,6 +135,7 @@ export async function submitBPAAnswer(
           include: {
             chapter: {
               include: {
+                unit: true,
                 novel: {
                   include: {
                     bpaLevel: true,
@@ -341,6 +342,38 @@ export async function submitBPAAnswer(
       // TODO: Implement BPA-specific ranking notifications
       // For now, BPA doesn't have notification support
       // The notification service would need to be extended to support BPA leaderboards
+    }
+
+    // Always create score transaction for admin tracking (including incorrect/retry attempts)
+    try {
+      const chapter = question.questionSet?.chapter;
+      const unit = chapter?.unit;
+      const novel = chapter?.novel;
+      const level = novel?.bpaLevel;
+
+      await prisma.scoreTransaction.create({
+        data: {
+          userId: session.user.id,
+          source: "BPA",
+          sourceId: existingCompletion?.id || "",
+          score: pointsAwarded,
+          levelInfo: level?.name || null,
+          novelInfo: novel?.title || null,
+          unitInfo: unit?.name || null,
+          chapterInfo: chapter?.title || null,
+          keywordInfo: null,
+          questionText: question.question,
+          selectedAnswer: answer || null,
+          correctAnswer: question.answer,
+          isCorrect: isCorrect,
+          isRetry: isRetry,
+          isTimedOut: isTimedOut,
+          explanation: question.explanation,
+        },
+      });
+    } catch (error) {
+      // Log error but don't fail the request - score is already saved
+      console.error("Failed to create score transaction:", error);
     }
 
     // Revalidate the current page to update the UI

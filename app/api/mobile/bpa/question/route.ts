@@ -303,37 +303,35 @@ async function handleCompleteQuestion(
     });
   }
 
-  // Create score transaction
-  if (pointsAwarded !== 0) {
-    try {
-      const chapter = question.questionSet.chapter;
-      const unit = chapter?.unit;
-      const novel = chapter?.novel;
-      const level = novel?.bpaLevel;
+  // Always create score transaction for admin tracking (including incorrect/retry attempts)
+  try {
+    const chapter = question.questionSet.chapter;
+    const unit = chapter?.unit;
+    const novel = chapter?.novel;
+    const level = novel?.bpaLevel;
 
-      await prisma.scoreTransaction.create({
-        data: {
-          userId: userId,
-          source: "BPA",
-          sourceId: existingCompletion?.id || "",
-          score: pointsAwarded,
-          levelInfo: level?.name || null,
-          novelInfo: novel?.title || null,
-          unitInfo: unit?.name || null,
-          chapterInfo: chapter?.title || null,
-          keywordInfo: null,
-          questionText: question.question,
-          selectedAnswer: selectedAnswer || null,
-          correctAnswer: question.answer,
-          isCorrect: isCorrect,
-          isRetry: isRetry,
-          isTimedOut: isTimedOut,
-          explanation: question.explanation,
-        },
-      });
-    } catch (error) {
-      console.error("Failed to create score transaction:", error);
-    }
+    await prisma.scoreTransaction.create({
+      data: {
+        userId: userId,
+        source: "BPA",
+        sourceId: existingCompletion?.id || "",
+        score: pointsAwarded,
+        levelInfo: level?.name || null,
+        novelInfo: novel?.title || null,
+        unitInfo: unit?.name || null,
+        chapterInfo: chapter?.title || null,
+        keywordInfo: null,
+        questionText: question.question,
+        selectedAnswer: selectedAnswer || null,
+        correctAnswer: question.answer,
+        isCorrect: isCorrect,
+        isRetry: isRetry,
+        isTimedOut: isTimedOut,
+        explanation: question.explanation,
+      },
+    });
+  } catch (error) {
+    console.error("Failed to create score transaction:", error);
   }
 
   return NextResponse.json({
