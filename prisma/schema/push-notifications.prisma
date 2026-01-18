@@ -41,7 +41,6 @@ model PushCampaign {
   id              String             @id @default(cuid())
   title           String
   body            String
-  imageUrl        String?
   data            Json?
   targetType      PushTargetType
   targetFilters   Json?

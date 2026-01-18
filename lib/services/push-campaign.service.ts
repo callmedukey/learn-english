@@ -22,7 +22,6 @@ export interface CreateCampaignInput {
   title: string;
   body: string;
   data?: Record<string, string>;
-  imageUrl?: string;
   targetType: PushTargetType;
   targetFilters?: TargetFilters;
   targetUserIds?: string[];
@@ -182,7 +181,6 @@ export async function createAndSendCampaign(
       title: input.title,
       body: input.body,
       data: input.data || {},
-      imageUrl: input.imageUrl,
       targetType: input.targetType,
       targetFilters: input.targetFilters
         ? (input.targetFilters as unknown as Prisma.InputJsonValue)
@@ -227,7 +225,6 @@ export async function createAndSendCampaign(
       title: input.title,
       body: input.body,
       data: input.data,
-      imageUrl: input.imageUrl,
     });
 
     // Store individual results for tracking

@@ -63,7 +63,6 @@ export default function PushNotificationForm({
   // Form state
   const [title, setTitle] = useState("");
   const [body, setBody] = useState("");
-  const [imageUrl, setImageUrl] = useState("");
   const [targetType, setTargetType] = useState<PushTargetType>(
     PushTargetType.ALL_USERS
   );
@@ -137,7 +136,6 @@ export default function PushNotificationForm({
       const result = await sendPushNotificationAction({
         title: title.trim(),
         body: body.trim(),
-        imageUrl: imageUrl.trim() || undefined,
         targetType,
         grades: selectedGrades,
         campusIds: selectedCampuses,
@@ -151,7 +149,6 @@ export default function PushNotificationForm({
         // Reset form
         setTitle("");
         setBody("");
-        setImageUrl("");
         setTargetType(PushTargetType.ALL_USERS);
         resetFilters();
       } else {
@@ -204,20 +201,6 @@ export default function PushNotificationForm({
               required
             />
             <p className="text-xs text-gray-500">{body.length}/500</p>
-          </div>
-
-          {/* Image URL (optional) */}
-          <div className="space-y-2">
-            <Label htmlFor="imageUrl" className="text-base font-medium">
-              Image URL (optional)
-            </Label>
-            <Input
-              id="imageUrl"
-              value={imageUrl}
-              onChange={(e) => setImageUrl(e.target.value)}
-              placeholder="https://example.com/image.png"
-              type="url"
-            />
           </div>
 
           {/* Target Type */}

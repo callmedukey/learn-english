@@ -33,7 +33,6 @@ export interface SendPushOptions {
   title: string;
   body: string;
   data?: Record<string, string>;
-  imageUrl?: string;
 }
 
 export interface SendResult {
@@ -69,7 +68,6 @@ export async function sendPushNotifications(
     notification: {
       title: options.title,
       body: options.body,
-      ...(options.imageUrl && { imageUrl: options.imageUrl }),
     },
     data: options.data || {},
     android: {

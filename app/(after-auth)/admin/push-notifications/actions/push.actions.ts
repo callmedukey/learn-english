@@ -16,7 +16,6 @@ import { ActionResponse } from "@/types/actions";
 const sendPushSchema = z.object({
   title: z.string().min(1, "Title is required").max(100, "Title too long"),
   body: z.string().min(1, "Message is required").max(500, "Message too long"),
-  imageUrl: z.string().url("Invalid URL").optional().or(z.literal("")),
   targetType: z.nativeEnum(PushTargetType),
   grades: z.array(z.string()).optional(),
   campusIds: z.array(z.string()).optional(),
@@ -57,7 +56,6 @@ export async function sendPushNotificationAction(
     const result = await createAndSendCampaign({
       title: parsed.data.title,
       body: parsed.data.body,
-      imageUrl: parsed.data.imageUrl || undefined,
       targetType: parsed.data.targetType,
       targetFilters,
       targetUserIds: parsed.data.userIds,
