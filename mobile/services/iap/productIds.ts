@@ -2,9 +2,10 @@ import { Platform } from "react-native";
 
 // Product IDs must match App Store Connect / Google Play Console
 export const SUBSCRIPTION_PRODUCT_IDS = {
-  MONTHLY: "reading_camp_1month",
-  QUARTERLY: "reading_camp_3months",
-  YEARLY: "reading_camp_12months",
+  MONTHLY: "reading_champ_1month",
+  QUARTERLY: "reading_champ_3months",
+  SEMIANNUAL: "reading_champ_6months",
+  YEARLY: "reading_champ_12months",
 } as const;
 
 export const ALL_PRODUCT_IDS = Object.values(SUBSCRIPTION_PRODUCT_IDS);
@@ -30,6 +31,12 @@ export const PRODUCT_METADATA: Record<
     name: "3개월 구독",
     duration: 90,
     durationLabel: "3개월",
+    trialDays: 7,
+  },
+  [SUBSCRIPTION_PRODUCT_IDS.SEMIANNUAL]: {
+    name: "6개월 구독",
+    duration: 180,
+    durationLabel: "6개월",
     badge: "인기",
     trialDays: 7,
   },

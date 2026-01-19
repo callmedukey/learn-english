@@ -136,7 +136,7 @@ model UserSubscription {
 
   // Payment source and store info
   paymentSource  PaymentSource @default(TOSS)
-  storeProductId String?       // App Store/Play Store product ID (e.g., reading_camp_1month)
+  storeProductId String?       // App Store/Play Store product ID (e.g., reading_champ_1month)
   isTrialPeriod  Boolean       @default(false)
 
   // Auto-renewal settings

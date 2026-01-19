@@ -110,9 +110,10 @@ GOOGLE_PUBSUB_SUBSCRIPTION=        # Optional
 | Task | Status |
 |------|--------|
 | Create subscription group "Reading Camp Premium" | [ ] Pending |
-| Create product: `reading_camp_1month` | [ ] Pending |
-| Create product: `reading_camp_3months` | [ ] Pending |
-| Create product: `reading_camp_12months` | [ ] Pending |
+| Create product: `reading_champ_1month` | [ ] Pending |
+| Create product: `reading_champ_3months` | [ ] Pending |
+| Create product: `reading_champ_6months` | [ ] Pending |
+| Create product: `reading_champ_12months` | [ ] Pending |
 | Configure Server Notifications V2 | [ ] Pending |
 | Set webhook URL: `https://yourdomain.com/api/webhooks/apple` | [ ] Pending |
 | Generate In-App Purchase API key (.p8) | [ ] Pending |
@@ -125,9 +126,10 @@ GOOGLE_PUBSUB_SUBSCRIPTION=        # Optional
 
 | Task | Status |
 |------|--------|
-| Create subscription: `reading_camp_1month` | [ ] Pending |
-| Create subscription: `reading_camp_3months` | [ ] Pending |
-| Create subscription: `reading_camp_12months` | [ ] Pending |
+| Create subscription: `reading_champ_1month` | [ ] Pending |
+| Create subscription: `reading_champ_3months` | [ ] Pending |
+| Create subscription: `reading_champ_6months` | [ ] Pending |
+| Create subscription: `reading_champ_12months` | [ ] Pending |
 | Create Cloud Pub/Sub topic | [ ] Pending |
 | Configure RTDN with webhook URL | [ ] Pending |
 | Create service account with roles | [ ] Pending |

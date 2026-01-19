@@ -321,9 +321,10 @@ export class GoogleIAPService {
    */
   static getProductDuration(productId: string): number {
     const durations: Record<string, number> = {
-      reading_camp_1month: 30,
-      reading_camp_3months: 90,
-      reading_camp_12months: 365,
+      reading_champ_1month: 30,
+      reading_champ_3months: 90,
+      reading_champ_6months: 180,
+      reading_champ_12months: 365,
     };
     return durations[productId] || 30;
   }

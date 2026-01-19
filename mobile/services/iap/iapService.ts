@@ -153,7 +153,7 @@ class IAPService {
   private getMockProducts(): IAPProduct[] {
     return [
       {
-        productId: "reading_camp_1month",
+        productId: "reading_champ_1month",
         title: "1 Month Subscription",
         description: "Monthly access to all content",
         price: "9900",
@@ -161,7 +161,7 @@ class IAPService {
         localizedPrice: "₩9,900",
       },
       {
-        productId: "reading_camp_3months",
+        productId: "reading_champ_3months",
         title: "3 Month Subscription",
         description: "Quarterly access to all content",
         price: "26900",
@@ -169,7 +169,15 @@ class IAPService {
         localizedPrice: "₩26,900",
       },
       {
-        productId: "reading_camp_12months",
+        productId: "reading_champ_6months",
+        title: "6 Month Subscription",
+        description: "Semi-annual access to all content",
+        price: "49900",
+        currency: "KRW",
+        localizedPrice: "₩49,900",
+      },
+      {
+        productId: "reading_champ_12months",
         title: "12 Month Subscription",
         description: "Annual access to all content",
         price: "99000",
