@@ -68,12 +68,20 @@ const Footer = () => {
             </p>
           </div>
 
-          <Link
-            href="/refund-policy"
-            className="text-sm text-[#1c1b1b] underline hover:text-[#671420]"
-          >
-            [환불정책]
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/refund-policy"
+              className="text-sm text-[#1c1b1b] underline hover:text-[#671420]"
+            >
+              [환불정책]
+            </Link>
+            <Link
+              href="/privacy"
+              className="text-sm text-[#1c1b1b] underline hover:text-[#671420]"
+            >
+              [개인정보처리방침]
+            </Link>
+          </div>
         </div>
 
         {/* Tablet Layout */}
@@ -135,12 +143,20 @@ const Footer = () => {
             </p>
           </div>
 
-          <Link
-            href="/refund-policy"
-            className="text-base text-[#1c1b1b] underline hover:text-[#671420]"
-          >
-            [환불정책]
-          </Link>
+          <div className="flex items-center gap-4">
+            <Link
+              href="/refund-policy"
+              className="text-base text-[#1c1b1b] underline hover:text-[#671420]"
+            >
+              [환불정책]
+            </Link>
+            <Link
+              href="/privacy"
+              className="text-base text-[#1c1b1b] underline hover:text-[#671420]"
+            >
+              [개인정보처리방침]
+            </Link>
+          </div>
         </div>
 
         {/* Desktop Layout */}
@@ -213,12 +229,20 @@ const Footer = () => {
                   <span className="ml-2">reading-champ@reading-champ.com</span>
                 </p>
               </div>
-              <Link
-                href="/refund-policy"
-                className="mt-2 inline-block text-lg text-[#1c1b1b] underline hover:text-[#671420]"
-              >
-                [환불정책]
-              </Link>
+              <div className="mt-2 flex items-center gap-4">
+                <Link
+                  href="/refund-policy"
+                  className="text-lg text-[#1c1b1b] underline hover:text-[#671420]"
+                >
+                  [환불정책]
+                </Link>
+                <Link
+                  href="/privacy"
+                  className="text-lg text-[#1c1b1b] underline hover:text-[#671420]"
+                >
+                  [개인정보처리방침]
+                </Link>
+              </div>
             </div>
           </div>
         </div>
