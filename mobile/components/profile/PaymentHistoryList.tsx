@@ -27,7 +27,7 @@ export function PaymentHistoryList({
 }: PaymentHistoryListProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("ko-KR", {
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "short",
       day: "numeric",
@@ -45,7 +45,7 @@ export function PaymentHistoryList({
     switch (status) {
       case "PAID":
         return {
-          label: "결제 완료",
+          label: "Paid",
           bgColor: "bg-green-100",
           textColor: "text-green-700",
           icon: "checkmark-circle" as const,
@@ -53,7 +53,7 @@ export function PaymentHistoryList({
         };
       case "WAIVED":
         return {
-          label: "무료",
+          label: "Free",
           bgColor: "bg-blue-100",
           textColor: "text-blue-700",
           icon: "gift" as const,
@@ -61,7 +61,7 @@ export function PaymentHistoryList({
         };
       case "REFUNDED":
         return {
-          label: "환불됨",
+          label: "Refunded",
           bgColor: "bg-red-100",
           textColor: "text-red-700",
           icon: "arrow-undo" as const,
@@ -148,7 +148,7 @@ export function PaymentHistoryList({
       <View className="items-center justify-center py-8">
         <Ionicons name="receipt-outline" size={48} color="#9CA3AF" />
         <Text className="mt-3 text-center text-muted-foreground">
-          결제 내역이 없습니다
+          No payment history
         </Text>
       </View>
     );

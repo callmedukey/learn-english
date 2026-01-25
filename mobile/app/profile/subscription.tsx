@@ -36,7 +36,7 @@ export default function SubscriptionScreen() {
       <View className="flex-1 items-center justify-center bg-background px-4">
         <Ionicons name="alert-circle-outline" size={48} color="#EF4444" />
         <Text className="mt-3 text-center text-foreground">
-          구독 정보를 불러오는데 실패했습니다
+          Failed to load subscription information
         </Text>
       </View>
     );
@@ -60,7 +60,7 @@ export default function SubscriptionScreen() {
           {/* Current Subscription */}
           <View className="mb-6">
             <Text className="mb-3 text-lg font-semibold text-foreground">
-              현재 구독
+              Current Subscription
             </Text>
             <SubscriptionCard
               subscription={subscription}
@@ -71,7 +71,7 @@ export default function SubscriptionScreen() {
           {/* Benefits */}
           <View className="mb-6 rounded-2xl bg-white p-4 shadow-sm">
             <Text className="mb-3 text-base font-semibold text-foreground">
-              구독 혜택
+              Subscription Benefits
             </Text>
             <View className="gap-3">
               <View className="flex-row items-center gap-3">
@@ -79,7 +79,7 @@ export default function SubscriptionScreen() {
                   <Ionicons name="book" size={16} color="#22C55E" />
                 </View>
                 <Text className="text-sm text-foreground">
-                  모든 소설 무제한 이용
+                  Unlimited access to all novels
                 </Text>
               </View>
               <View className="flex-row items-center gap-3">
@@ -87,7 +87,7 @@ export default function SubscriptionScreen() {
                   <Ionicons name="document-text" size={16} color="#2563EB" />
                 </View>
                 <Text className="text-sm text-foreground">
-                  RC 연습 무제한
+                  Unlimited RC practice
                 </Text>
               </View>
               <View className="flex-row items-center gap-3">
@@ -95,7 +95,7 @@ export default function SubscriptionScreen() {
                   <Ionicons name="trophy" size={16} color="#F59E0B" />
                 </View>
                 <Text className="text-sm text-foreground">
-                  월간 리더보드 참여
+                  Monthly leaderboard access
                 </Text>
               </View>
             </View>
@@ -104,13 +104,13 @@ export default function SubscriptionScreen() {
           {/* Cancellation Info */}
           <View className="rounded-xl bg-muted p-4">
             <Text className="text-sm text-muted-foreground">
-              구독 취소 및 환불은{" "}
+              Subscription cancellation and refunds can be managed in{" "}
               {subscription.paymentSource === "APPLE"
                 ? "App Store"
                 : subscription.paymentSource === "GOOGLE"
                 ? "Google Play"
-                : "토스 결제"}{" "}
-              설정에서 관리할 수 있습니다.
+                : "Toss Payments"}{" "}
+              settings.
             </Text>
           </View>
         </>
@@ -119,10 +119,10 @@ export default function SubscriptionScreen() {
           {/* No Subscription - Show Plans */}
           <View className="mb-4">
             <Text className="mb-2 text-xl font-bold text-foreground">
-              프리미엄 구독
+              Premium Subscription
             </Text>
             <Text className="text-muted-foreground">
-              무제한 학습으로 영어 실력을 키워보세요
+              Boost your English skills with unlimited learning
             </Text>
           </View>
 

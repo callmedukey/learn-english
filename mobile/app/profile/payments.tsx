@@ -25,9 +25,9 @@ interface PaymentHistoryResponse {
 type DateFilter = "30d" | "90d" | "all";
 
 const DATE_FILTER_OPTIONS: { value: DateFilter; label: string }[] = [
-  { value: "30d", label: "최근 30일" },
-  { value: "90d", label: "최근 90일" },
-  { value: "all", label: "전체" },
+  { value: "30d", label: "Last 30 days" },
+  { value: "90d", label: "Last 90 days" },
+  { value: "all", label: "All" },
 ];
 
 async function fetchPaymentHistory(
@@ -73,7 +73,7 @@ export default function PaymentsScreen() {
       <View className="flex-1 items-center justify-center bg-background px-4">
         <Ionicons name="alert-circle-outline" size={48} color="#EF4444" />
         <Text className="mt-3 text-center text-foreground">
-          결제 내역을 불러오는데 실패했습니다
+          Failed to load payment history
         </Text>
       </View>
     );
@@ -108,7 +108,7 @@ export default function PaymentsScreen() {
       {data && data.payments.length > 0 && (
         <View className="mx-4 mb-3 rounded-lg bg-muted p-3">
           <Text className="text-sm text-muted-foreground">
-            총 {data.total}건의 결제 내역
+            {data.total} payment{data.total !== 1 ? "s" : ""} total
           </Text>
         </View>
       )}

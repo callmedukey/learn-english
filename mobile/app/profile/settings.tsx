@@ -46,7 +46,7 @@ export default function SettingsScreen() {
       <View className="flex-1 items-center justify-center bg-background px-4">
         <Ionicons name="alert-circle-outline" size={48} color="#EF4444" />
         <Text className="mt-3 text-center text-foreground">
-          설정 정보를 불러오는데 실패했습니다
+          Failed to load settings
         </Text>
       </View>
     );
@@ -64,19 +64,19 @@ export default function SettingsScreen() {
       {/* Account Info */}
       <View className="mt-8 rounded-xl bg-muted p-4">
         <Text className="mb-2 text-sm font-medium text-foreground">
-          계정 정보
+          Account Information
         </Text>
         <Text className="text-xs text-muted-foreground">
-          • 닉네임은 리더보드와 프로필에 표시됩니다{"\n"}
-          • 생년월일은 학년 계산에 사용됩니다{"\n"}
-          • 이메일은 로그인에 사용되며 변경할 수 없습니다
+          • Nickname is displayed on leaderboard and profile{"\n"}
+          • Birthday is used for grade calculation{"\n"}
+          • Email is used for login and cannot be changed
         </Text>
       </View>
 
       {/* Delete Account */}
       <View className="mt-6 items-center">
         <Text className="text-xs text-muted-foreground">
-          계정 삭제는 웹사이트에서 가능합니다
+          Account deletion is available on the website
         </Text>
       </View>
     </ScrollView>

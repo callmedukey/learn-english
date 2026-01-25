@@ -120,14 +120,26 @@ class IAPService {
     try {
       await this.init();
 
+      console.log("[IAP] Fetching products with IDs:", ALL_PRODUCT_IDS);
+
       const products = await RNIap.fetchProducts({
         skus: ALL_PRODUCT_IDS,
         type: "subs",
       });
 
-      if (!products) {
+      console.log("[IAP] Fetched products count:", products?.length ?? 0);
+
+      if (!products || products.length === 0) {
+        console.warn("[IAP] No products returned from StoreKit. Possible causes:");
+        console.warn("  1. Products not yet approved in App Store Connect (must be 'Ready to Submit')");
+        console.warn("  2. Product IDs don't match App Store Connect configuration");
+        console.warn("  3. App not signed with correct provisioning profile");
+        console.warn("  4. Sandbox account not configured on device");
+        console.warn("  Product IDs requested:", ALL_PRODUCT_IDS);
         return [];
       }
+
+      console.log("[IAP] Products fetched successfully:", products.map((p: any) => p.productId));
 
       return products.map((product: any) => ({
         productId: product.productId,
@@ -141,9 +153,14 @@ class IAPService {
           ? product.subscriptionOfferDetails
           : undefined,
       }));
-    } catch (error) {
+    } catch (error: any) {
       console.error("[IAP] Failed to get subscriptions:", error);
-      return [];
+      console.error("[IAP] StoreKit error details:", {
+        code: error?.code,
+        message: error?.message,
+        userInfo: error?.userInfo,
+      });
+      throw error; // Re-throw to let useIAP handle with specific error messages
     }
   }
 

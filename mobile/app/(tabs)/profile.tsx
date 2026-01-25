@@ -26,9 +26,9 @@ export default function ProfileScreen() {
   };
 
   const formatDaysRemaining = (days: number) => {
-    if (days <= 0) return "만료됨";
-    if (days === 1) return "1일 남음";
-    return `${days}일 남음`;
+    if (days <= 0) return "Expired";
+    if (days === 1) return "1 day remaining";
+    return `${days} days remaining`;
   };
 
   return (
@@ -79,7 +79,7 @@ export default function ProfileScreen() {
                   </Text>
                   <Text className="text-sm text-muted-foreground">
                     {subscription.isTrialPeriod
-                      ? "무료 체험 중"
+                      ? "Free trial active"
                       : formatDaysRemaining(subscription.daysRemaining)}
                   </Text>
                 </View>
@@ -89,7 +89,7 @@ export default function ProfileScreen() {
           </TouchableOpacity>
         ) : (
           <TouchableOpacity
-            className="mb-6 rounded-2xl bg-gradient-to-r from-primary to-primary/80 p-4"
+            className="mb-6 rounded-2xl bg-primary p-4"
             onPress={() => router.push("/profile/subscription")}
             activeOpacity={0.7}
           >
@@ -100,10 +100,10 @@ export default function ProfileScreen() {
                 </View>
                 <View>
                   <Text className="font-semibold text-white">
-                    프리미엄 구독하기
+                    Subscribe to Premium
                   </Text>
                   <Text className="text-sm text-white/80">
-                    7일 무료 체험 시작
+                    Start 7-day free trial
                   </Text>
                 </View>
               </View>
@@ -121,7 +121,7 @@ export default function ProfileScreen() {
           >
             <View className="flex-row items-center gap-3">
               <Ionicons name="card-outline" size={22} color="#5D3A29" />
-              <Text className="text-base text-foreground">구독 관리</Text>
+              <Text className="text-base text-foreground">Subscription</Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color="#6B7280" />
           </TouchableOpacity>
@@ -133,7 +133,7 @@ export default function ProfileScreen() {
           >
             <View className="flex-row items-center gap-3">
               <Ionicons name="settings-outline" size={22} color="#5D3A29" />
-              <Text className="text-base text-foreground">계정 설정</Text>
+              <Text className="text-base text-foreground">Account Settings</Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color="#6B7280" />
           </TouchableOpacity>
@@ -145,7 +145,7 @@ export default function ProfileScreen() {
           >
             <View className="flex-row items-center gap-3">
               <Ionicons name="receipt-outline" size={22} color="#5D3A29" />
-              <Text className="text-base text-foreground">결제 내역</Text>
+              <Text className="text-base text-foreground">Payment History</Text>
             </View>
             <Ionicons name="chevron-forward" size={18} color="#6B7280" />
           </TouchableOpacity>
@@ -157,7 +157,7 @@ export default function ProfileScreen() {
           >
             <View className="flex-row items-center gap-3">
               <Ionicons name="help-circle-outline" size={22} color="#5D3A29" />
-              <Text className="text-base text-foreground">도움말 및 지원</Text>
+              <Text className="text-base text-foreground">Help & Support</Text>
             </View>
             <Ionicons name="open-outline" size={18} color="#6B7280" />
           </TouchableOpacity>
@@ -171,7 +171,7 @@ export default function ProfileScreen() {
         >
           <View className="flex-row items-center justify-center gap-2">
             <Ionicons name="log-out-outline" size={20} color="#EF4444" />
-            <Text className="font-semibold text-destructive">로그아웃</Text>
+            <Text className="font-semibold text-destructive">Log Out</Text>
           </View>
         </TouchableOpacity>
 

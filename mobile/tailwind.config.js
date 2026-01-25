@@ -20,7 +20,7 @@ module.exports = {
           DEFAULT: "#5D3A29", // oklch(0.35 0.0943 18.12) - brownish-red
           foreground: "#F9F5F0",
         },
-        background: "#F9F5F0", // cream white
+        background: "#fcf4e9", // cream white
         foreground: "#4A5568", // blue-gray text
         muted: {
           DEFAULT: "#F5F5F5",

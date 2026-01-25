@@ -30,7 +30,7 @@ export function SubscriptionPlans({
       <View className="items-center justify-center py-8">
         <ActivityIndicator size="large" color="#5D3A29" />
         <Text className="mt-2 text-sm text-muted-foreground">
-          상품 정보 불러오는 중...
+          Loading products...
         </Text>
       </View>
     );
@@ -48,7 +48,7 @@ export function SubscriptionPlans({
     return (
       <View className="items-center justify-center py-8">
         <Text className="text-center text-sm text-muted-foreground">
-          이용 가능한 구독 상품이 없습니다.
+          No subscription products available.
         </Text>
       </View>
     );
@@ -75,16 +75,17 @@ export function SubscriptionPlans({
         disabled={isLoading}
       >
         <Text className="text-sm text-muted-foreground underline">
-          이전 구매 복원
+          Restore previous purchases
         </Text>
       </TouchableOpacity>
 
       {/* Terms */}
       <View className="mt-2">
         <Text className="text-center text-xs text-muted-foreground">
-          구독은 확인 시 청구되며, 현재 기간이 끝나기 최소 24시간 전에 취소하지
-          않으면 자동으로 갱신됩니다. 구독은 구매 후 계정 설정에서 관리할 수
-          있습니다.
+          Subscription will be charged upon confirmation and will automatically
+          renew unless canceled at least 24 hours before the end of the current
+          period. Subscriptions can be managed in your account settings after
+          purchase.
         </Text>
       </View>
     </View>

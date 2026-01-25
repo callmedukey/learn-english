@@ -52,12 +52,10 @@ export function PlanCard({
         </Text>
         {metadata && (
           <Text className="text-xs text-muted-foreground">
-            월{" "}
-            {Math.round(
+            ₩{Math.round(
               parseInt(product.price.replace(/[^0-9]/g, ""), 10) /
                 (metadata.duration / 30)
-            ).toLocaleString()}
-            원
+            ).toLocaleString()}/month
           </Text>
         )}
       </View>
@@ -66,7 +64,7 @@ export function PlanCard({
       <View className="mb-4 flex-row items-center gap-2 rounded-lg bg-blue-50 p-3">
         <Ionicons name="gift-outline" size={18} color="#2563EB" />
         <Text className="text-sm text-blue-700">
-          {trialDays}일 무료 체험 포함
+          Includes {trialDays}-day free trial
         </Text>
       </View>
 
@@ -74,15 +72,15 @@ export function PlanCard({
       <View className="mb-4 gap-2">
         <View className="flex-row items-center gap-2">
           <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
-          <Text className="text-sm text-foreground">모든 소설 무제한 이용</Text>
+          <Text className="text-sm text-foreground">Unlimited access to all novels</Text>
         </View>
         <View className="flex-row items-center gap-2">
           <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
-          <Text className="text-sm text-foreground">RC 연습 무제한</Text>
+          <Text className="text-sm text-foreground">Unlimited RC practice</Text>
         </View>
         <View className="flex-row items-center gap-2">
           <Ionicons name="checkmark-circle" size={18} color="#22C55E" />
-          <Text className="text-sm text-foreground">월간 리더보드 참여</Text>
+          <Text className="text-sm text-foreground">Monthly leaderboard access</Text>
         </View>
       </View>
 
@@ -104,7 +102,7 @@ export function PlanCard({
                 isCurrentPlan ? "text-gray-500" : "text-white"
               }`}
             >
-              {isCurrentPlan ? "현재 구독 중" : "무료 체험 시작"}
+              {isCurrentPlan ? "Current Plan" : "Start Free Trial"}
             </Text>
             {!isCurrentPlan && (
               <Ionicons name="arrow-forward" size={18} color="white" />

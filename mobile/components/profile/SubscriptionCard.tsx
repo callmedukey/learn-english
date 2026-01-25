@@ -22,7 +22,7 @@ export function SubscriptionCard({
 }: SubscriptionCardProps) {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
-    return date.toLocaleDateString("ko-KR", {
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -36,7 +36,7 @@ export function SubscriptionCard({
       case "GOOGLE":
         return "Google Play";
       case "TOSS":
-        return "토스 결제";
+        return "Toss Payments";
       default:
         return source;
     }
@@ -65,7 +65,7 @@ export function SubscriptionCard({
           <View className="flex-row items-center gap-2">
             <Ionicons name="gift" size={18} color="#2563EB" />
             <Text className="text-sm text-blue-700">
-              7일 무료 체험 기간 중입니다
+              You are in a 7-day free trial period
             </Text>
           </View>
         </View>
@@ -75,7 +75,7 @@ export function SubscriptionCard({
       <View className="mb-4 gap-3">
         {/* End Date */}
         <View className="flex-row items-center justify-between">
-          <Text className="text-sm text-muted-foreground">만료일</Text>
+          <Text className="text-sm text-muted-foreground">Expires</Text>
           <Text className="text-sm font-medium text-foreground">
             {formatDate(subscription.endDate)}
           </Text>
@@ -83,15 +83,15 @@ export function SubscriptionCard({
 
         {/* Days Remaining */}
         <View className="flex-row items-center justify-between">
-          <Text className="text-sm text-muted-foreground">남은 기간</Text>
+          <Text className="text-sm text-muted-foreground">Days Remaining</Text>
           <Text className="text-sm font-medium text-foreground">
-            {subscription.daysRemaining}일
+            {subscription.daysRemaining} days
           </Text>
         </View>
 
         {/* Auto Renewal */}
         <View className="flex-row items-center justify-between">
-          <Text className="text-sm text-muted-foreground">자동 갱신</Text>
+          <Text className="text-sm text-muted-foreground">Auto Renewal</Text>
           <View className="flex-row items-center gap-1">
             <Ionicons
               name={subscription.autoRenew ? "checkmark-circle" : "close-circle"}
@@ -103,14 +103,14 @@ export function SubscriptionCard({
                 subscription.autoRenew ? "text-green-600" : "text-red-600"
               }`}
             >
-              {subscription.autoRenew ? "켜짐" : "꺼짐"}
+              {subscription.autoRenew ? "On" : "Off"}
             </Text>
           </View>
         </View>
 
         {/* Payment Source */}
         <View className="flex-row items-center justify-between">
-          <Text className="text-sm text-muted-foreground">결제 경로</Text>
+          <Text className="text-sm text-muted-foreground">Payment Method</Text>
           <Text className="text-sm font-medium text-foreground">
             {getPaymentSourceLabel(subscription.paymentSource)}
           </Text>
@@ -125,7 +125,7 @@ export function SubscriptionCard({
           onPress={onManagePress}
           activeOpacity={0.7}
         >
-          <Text className="text-sm font-medium text-primary">구독 관리</Text>
+          <Text className="text-sm font-medium text-primary">Manage Subscription</Text>
           <Ionicons name="open-outline" size={16} color="#5D3A29" />
         </TouchableOpacity>
       )}
@@ -134,7 +134,7 @@ export function SubscriptionCard({
       {!subscription.autoRenew && subscription.status === "ACTIVE" && (
         <View className="mt-3 rounded-lg bg-amber-50 p-3">
           <Text className="text-xs text-amber-700">
-            자동 갱신이 꺼져 있습니다. 만료일 이후에는 구독이 종료됩니다.
+            Auto renewal is off. Your subscription will end after the expiration date.
           </Text>
         </View>
       )}

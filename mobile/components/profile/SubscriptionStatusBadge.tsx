@@ -14,7 +14,7 @@ export function SubscriptionStatusBadge({
   const getStatusConfig = () => {
     if (isTrialPeriod) {
       return {
-        label: "무료 체험 중",
+        label: "Free Trial",
         bgColor: "bg-blue-100",
         textColor: "text-blue-700",
       };
@@ -22,7 +22,7 @@ export function SubscriptionStatusBadge({
 
     if (daysRemaining && daysRemaining <= 3) {
       return {
-        label: "곧 만료",
+        label: "Expiring Soon",
         bgColor: "bg-amber-100",
         textColor: "text-amber-700",
       };
@@ -31,25 +31,25 @@ export function SubscriptionStatusBadge({
     switch (status) {
       case "ACTIVE":
         return {
-          label: "활성",
+          label: "Active",
           bgColor: "bg-green-100",
           textColor: "text-green-700",
         };
       case "EXPIRED":
         return {
-          label: "만료됨",
+          label: "Expired",
           bgColor: "bg-red-100",
           textColor: "text-red-700",
         };
       case "CANCELLED":
         return {
-          label: "취소됨",
+          label: "Cancelled",
           bgColor: "bg-gray-100",
           textColor: "text-gray-700",
         };
       case "PENDING":
         return {
-          label: "대기 중",
+          label: "Pending",
           bgColor: "bg-yellow-100",
           textColor: "text-yellow-700",
         };

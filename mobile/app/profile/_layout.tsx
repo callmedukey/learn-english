@@ -26,19 +26,19 @@ export default function ProfileLayout() {
       <Stack.Screen
         name="subscription"
         options={{
-          title: "구독 관리",
+          title: "Subscription",
         }}
       />
       <Stack.Screen
         name="settings"
         options={{
-          title: "계정 설정",
+          title: "Account Settings",
         }}
       />
       <Stack.Screen
         name="payments"
         options={{
-          title: "결제 내역",
+          title: "Payment History",
         }}
       />
     </Stack>

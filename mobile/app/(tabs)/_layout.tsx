@@ -71,7 +71,7 @@ export default function TabLayout() {
               <TabBarIcon name="star" color={color} />
             </View>
           ),
-          headerTitle: "VIP 회원전용",
+          headerTitle: "VIP Members Only",
         }}
       />
       <Tabs.Screen

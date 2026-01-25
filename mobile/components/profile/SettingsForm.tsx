@@ -45,7 +45,7 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
     if (!regex.test(value)) {
       setErrors((prev) => ({
         ...prev,
-        nickname: "닉네임은 3-8자의 소문자와 숫자만 가능합니다",
+        nickname: "Nickname must be 3-8 lowercase letters and numbers only",
       }));
       return false;
     }
@@ -60,12 +60,12 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
     try {
       setIsLoading(true);
       await apiClient.patch("/api/mobile/user/nickname", { nickname });
-      Alert.alert("성공", "닉네임이 변경되었습니다.");
+      Alert.alert("Success", "Nickname has been changed.");
       onUpdate?.();
     } catch (error: any) {
       Alert.alert(
-        "오류",
-        error.response?.data?.error || "닉네임 변경에 실패했습니다."
+        "Error",
+        error.response?.data?.error || "Failed to change nickname."
       );
     } finally {
       setIsLoading(false);
@@ -80,12 +80,12 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
       setIsLoading(true);
       await apiClient.patch("/api/mobile/user/gender", { gender: newGender });
       setGender(newGender);
-      Alert.alert("성공", "성별이 변경되었습니다.");
+      Alert.alert("Success", "Gender has been updated.");
       onUpdate?.();
     } catch (error: any) {
       Alert.alert(
-        "오류",
-        error.response?.data?.error || "성별 변경에 실패했습니다."
+        "Error",
+        error.response?.data?.error || "Failed to update gender."
       );
     } finally {
       setIsLoading(false);
@@ -101,12 +101,12 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
         birthday: date.toISOString(),
       });
       setBirthday(date);
-      Alert.alert("성공", "생년월일이 설정되었습니다.");
+      Alert.alert("Success", "Birthday has been set.");
       onUpdate?.();
     } catch (error: any) {
       Alert.alert(
-        "오류",
-        error.response?.data?.error || "생년월일 변경에 실패했습니다."
+        "Error",
+        error.response?.data?.error || "Failed to update birthday."
       );
     } finally {
       setIsLoading(false);
@@ -115,8 +115,8 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
   };
 
   const formatBirthday = (date: Date | null) => {
-    if (!date) return "설정되지 않음";
-    return date.toLocaleDateString("ko-KR", {
+    if (!date) return "Not set";
+    return date.toLocaleDateString("en-US", {
       year: "numeric",
       month: "long",
       day: "numeric",
@@ -127,7 +127,7 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
     <View className="gap-6">
       {/* Nickname */}
       <View>
-        <Text className="mb-2 text-sm font-medium text-foreground">닉네임</Text>
+        <Text className="mb-2 text-sm font-medium text-foreground">Nickname</Text>
         <View className="flex-row items-center gap-2">
           <TextInput
             className="flex-1 rounded-lg border border-border bg-white px-4 py-3 text-foreground"
@@ -136,7 +136,7 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
               setNickname(text.toLowerCase());
               validateNickname(text.toLowerCase());
             }}
-            placeholder="닉네임 입력"
+            placeholder="Enter nickname"
             autoCapitalize="none"
             autoCorrect={false}
             maxLength={8}
@@ -149,7 +149,7 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
             {isLoading ? (
               <ActivityIndicator size="small" color="white" />
             ) : (
-              <Text className="font-medium text-white">저장</Text>
+              <Text className="font-medium text-white">Save</Text>
             )}
           </TouchableOpacity>
         </View>
@@ -157,13 +157,13 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
           <Text className="mt-1 text-xs text-red-500">{errors.nickname}</Text>
         )}
         <Text className="mt-1 text-xs text-muted-foreground">
-          3-8자의 영문 소문자와 숫자만 사용 가능
+          3-8 lowercase letters and numbers only
         </Text>
       </View>
 
       {/* Email (Read Only) */}
       <View>
-        <Text className="mb-2 text-sm font-medium text-foreground">이메일</Text>
+        <Text className="mb-2 text-sm font-medium text-foreground">Email</Text>
         <View className="flex-row items-center rounded-lg border border-border bg-muted px-4 py-3">
           <Ionicons name="mail-outline" size={18} color="#6B7280" />
           <Text className="ml-2 text-muted-foreground">
@@ -175,9 +175,9 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
       {/* Gender */}
       <View>
         <View className="mb-2 flex-row items-center justify-between">
-          <Text className="text-sm font-medium text-foreground">성별</Text>
+          <Text className="text-sm font-medium text-foreground">Gender</Text>
           {!canEditGender && (
-            <Text className="text-xs text-muted-foreground">변경 불가</Text>
+            <Text className="text-xs text-muted-foreground">Cannot change</Text>
           )}
         </View>
         <View className="flex-row gap-2">
@@ -197,11 +197,7 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
                   gender === option ? "text-primary" : "text-foreground"
                 }`}
               >
-                {option === "Male"
-                  ? "남성"
-                  : option === "Female"
-                  ? "여성"
-                  : "기타"}
+                {option}
               </Text>
             </TouchableOpacity>
           ))}
@@ -211,10 +207,10 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
       {/* Birthday */}
       <View>
         <View className="mb-2 flex-row items-center justify-between">
-          <Text className="text-sm font-medium text-foreground">생년월일</Text>
+          <Text className="text-sm font-medium text-foreground">Birthday</Text>
           {!canEditBirthday && (
             <Text className="text-xs text-muted-foreground">
-              한 번만 설정 가능
+              Can only be set once
             </Text>
           )}
         </View>
@@ -237,7 +233,7 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
         </TouchableOpacity>
         {canEditBirthday && (
           <Text className="mt-1 text-xs text-amber-600">
-            ⚠️ 생년월일은 한 번 설정하면 변경할 수 없습니다
+            Warning: Birthday cannot be changed once set
           </Text>
         )}
 
@@ -265,7 +261,7 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
                     className="rounded-lg px-4 py-2"
                     onPress={() => setShowDatePicker(false)}
                   >
-                    <Text className="text-muted-foreground">취소</Text>
+                    <Text className="text-muted-foreground">Cancel</Text>
                   </TouchableOpacity>
                 </View>
               </View>
@@ -295,15 +291,15 @@ export function SettingsForm({ initialSettings, onUpdate }: SettingsFormProps) {
             className="flex-row items-center justify-between rounded-lg border border-border bg-white px-4 py-4"
             onPress={() => {
               Alert.alert(
-                "비밀번호 변경",
-                "비밀번호 변경은 웹사이트에서 가능합니다."
+                "Change Password",
+                "Password changes are available on the website."
               );
             }}
           >
             <View className="flex-row items-center">
               <Ionicons name="lock-closed-outline" size={20} color="#5D3A29" />
               <Text className="ml-3 font-medium text-foreground">
-                비밀번호 변경
+                Change Password
               </Text>
             </View>
             <Ionicons name="chevron-forward" size={20} color="#6B7280" />

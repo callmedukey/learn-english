@@ -64,8 +64,23 @@ export function useIAP(onSubscriptionChange?: () => void): UseIAPResult {
         }
       } catch (err: any) {
         console.error("[useIAP] Error loading products:", err);
+        console.error("[useIAP] Error details:", {
+          code: err?.code,
+          message: err?.message,
+          userInfo: err?.userInfo,
+          nativeStackIOS: err?.nativeStackIOS,
+        });
         if (mounted) {
-          setError("Failed to load product information");
+          // Provide more specific error messages based on error type
+          let errorMessage = "Failed to load product information";
+          if (err?.code === "E_SERVICE_ERROR") {
+            errorMessage = "App Store service unavailable. Please try again later.";
+          } else if (err?.code === "E_UNKNOWN") {
+            errorMessage = "Products may not be configured in App Store Connect.";
+          } else if (err?.message?.includes("sandbox")) {
+            errorMessage = "Sandbox account not configured. Sign in via Settings > App Store.";
+          }
+          setError(errorMessage);
         }
       } finally {
         if (mounted) {
