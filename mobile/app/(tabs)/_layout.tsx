@@ -2,6 +2,8 @@ import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
 import { View } from "react-native";
 
+import { usePushNotifications } from "@/hooks/usePushNotifications";
+
 function TabBarIcon(props: {
   name: React.ComponentProps<typeof FontAwesome>["name"];
   color: string;
@@ -10,6 +12,9 @@ function TabBarIcon(props: {
 }
 
 export default function TabLayout() {
+  // Initialize push notifications (must be inside navigation context)
+  usePushNotifications();
+
   return (
     <Tabs
       screenOptions={{

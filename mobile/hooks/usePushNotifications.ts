@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { AppState, AppStateStatus } from "react-native";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 
 import { useAuth } from "@/services/auth/context";
 import {
@@ -64,7 +64,6 @@ function validateDeepLink(url: unknown): string | null {
 
 export function usePushNotifications() {
   const { user } = useAuth();
-  const router = useRouter();
   const [pushToken, setPushToken] = useState<string | null>(null);
   const [permissionStatus, setPermissionStatus] = useState<
     "granted" | "denied" | "pending"
@@ -188,7 +187,7 @@ export function usePushNotifications() {
     checkInitialNotification();
 
     return unsubscribeResponse;
-  }, [router]);
+  }, []);
 
   return {
     pushToken,

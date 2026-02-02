@@ -1,6 +1,6 @@
 import { Ionicons } from "@expo/vector-icons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
-import { useRouter } from "expo-router";
+import { router } from "expo-router";
 import { View, Text, ScrollView, TouchableOpacity, Linking, RefreshControl } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { useState, useCallback } from "react";
@@ -9,10 +9,12 @@ import { useAuth } from "@/hooks/useAuth";
 import { useSubscriptionStatus } from "@/services/iap";
 
 export default function ProfileScreen() {
-  const router = useRouter();
   const { user, signOut, refreshUser } = useAuth();
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const { hasActiveSubscription, subscription, refreshSubscription } = useSubscriptionStatus();
+  const { hasActiveSubscription, subscription, refreshSubscription, isFetched } = useSubscriptionStatus();
+
+  // Wait for subscription data to load before rendering subscription-related UI
+  const subscriptionReady = isFetched;
 
   const onRefresh = useCallback(async () => {
     setIsRefreshing(true);
@@ -61,55 +63,57 @@ export default function ProfileScreen() {
           )}
         </View>
 
-        {/* Subscription Status Card */}
-        {hasActiveSubscription && subscription ? (
-          <TouchableOpacity
-            className="mb-6 rounded-2xl bg-white p-4 shadow-sm"
-            onPress={() => router.push("/profile/subscription")}
-            activeOpacity={0.7}
-          >
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center gap-3">
-                <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
-                  <Ionicons name="star" size={20} color="#5D3A29" />
+        {/* Subscription Status Card - only render after data loads */}
+        {subscriptionReady && (
+          hasActiveSubscription && subscription ? (
+            <TouchableOpacity
+              className="mb-6 rounded-2xl bg-white p-4 shadow-sm"
+              onPress={() => router.push("/profile/subscription")}
+              activeOpacity={0.7}
+            >
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-3">
+                  <View className="h-10 w-10 items-center justify-center rounded-full bg-primary/10">
+                    <Ionicons name="star" size={20} color="#5D3A29" />
+                  </View>
+                  <View>
+                    <Text className="font-semibold text-foreground">
+                      {subscription.planName}
+                    </Text>
+                    <Text className="text-sm text-muted-foreground">
+                      {subscription.isTrialPeriod
+                        ? "Free trial active"
+                        : formatDaysRemaining(subscription.daysRemaining)}
+                    </Text>
+                  </View>
                 </View>
-                <View>
-                  <Text className="font-semibold text-foreground">
-                    {subscription.planName}
-                  </Text>
-                  <Text className="text-sm text-muted-foreground">
-                    {subscription.isTrialPeriod
-                      ? "Free trial active"
-                      : formatDaysRemaining(subscription.daysRemaining)}
-                  </Text>
-                </View>
+                <Ionicons name="chevron-forward" size={20} color="#6B7280" />
               </View>
-              <Ionicons name="chevron-forward" size={20} color="#6B7280" />
-            </View>
-          </TouchableOpacity>
-        ) : (
-          <TouchableOpacity
-            className="mb-6 rounded-2xl bg-primary p-4"
-            onPress={() => router.push("/profile/subscription")}
-            activeOpacity={0.7}
-          >
-            <View className="flex-row items-center justify-between">
-              <View className="flex-row items-center gap-3">
-                <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
-                  <Ionicons name="star" size={20} color="white" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              className="mb-6 rounded-2xl bg-primary p-4"
+              onPress={() => router.push("/profile/subscription")}
+              activeOpacity={0.7}
+            >
+              <View className="flex-row items-center justify-between">
+                <View className="flex-row items-center gap-3">
+                  <View className="h-10 w-10 items-center justify-center rounded-full bg-white/20">
+                    <Ionicons name="star" size={20} color="white" />
+                  </View>
+                  <View>
+                    <Text className="font-semibold text-white">
+                      Subscribe to Premium
+                    </Text>
+                    <Text className="text-sm text-white/80">
+                      Start 7-day free trial
+                    </Text>
+                  </View>
                 </View>
-                <View>
-                  <Text className="font-semibold text-white">
-                    Subscribe to Premium
-                  </Text>
-                  <Text className="text-sm text-white/80">
-                    Start 7-day free trial
-                  </Text>
-                </View>
+                <Ionicons name="chevron-forward" size={20} color="white" />
               </View>
-              <Ionicons name="chevron-forward" size={20} color="white" />
-            </View>
-          </TouchableOpacity>
+            </TouchableOpacity>
+          )
         )}
 
         {/* Menu Items */}

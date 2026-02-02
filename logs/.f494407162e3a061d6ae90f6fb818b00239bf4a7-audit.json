@@ -6,29 +6,9 @@
     "auditLog": "/Users/duke/Documents/GitHub/learn-english/logs/.f494407162e3a061d6ae90f6fb818b00239bf4a7-audit.json",
     "files": [
         {
-            "date": 1768056284752,
-            "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2026-01-10.log",
-            "hash": "e26d7efb1777bfb29819b9d37fada71e14acd8dc9d4a43ea4b91e5787eb166a6"
-        },
-        {
-            "date": 1768172649522,
-            "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2026-01-12.log",
-            "hash": "cf3ffc4696785888d080a9906129adc90c43b65ae5d6eb7eac044680452ec543"
-        },
-        {
-            "date": 1768441868392,
-            "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2026-01-15.log",
-            "hash": "c6305b8632a99b0a9f4b4b93033805adb1b5b3f7fbf9f6dcef61fa6c1a64dd38"
-        },
-        {
-            "date": 1768545741844,
-            "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2026-01-16.log",
-            "hash": "d27b8d4e803eefb67e33ce2a10bdc8511c88c63996eb81613aa032ba8234a2f6"
-        },
-        {
-            "date": 1768724580516,
-            "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2026-01-18.log",
-            "hash": "07957b937f9b8190088f6f22cae868f75abb18bedceded7a25bcd1c091caecce"
+            "date": 1770024123139,
+            "name": "/Users/duke/Documents/GitHub/learn-english/logs/application-2026-02-02.log",
+            "hash": "a86dbb1799e12cd85297bae7aa89b49eb10723129426e9ee3116903fe7287b66"
         }
     ],
     "hashType": "sha256"

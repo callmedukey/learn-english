@@ -1,4 +1,3 @@
-import { useRouter, useSegments } from "expo-router";
 import {
   createContext,
   useContext,
@@ -37,8 +36,6 @@ const AuthContext = createContext<AuthContextType | null>(null);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const router = useRouter();
-  const segments = useSegments();
 
   // Check auth state on mount
   useEffect(() => {
@@ -73,24 +70,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
     return unsubscribe;
   }, []);
-
-  // Handle navigation based on auth state
-  useEffect(() => {
-    if (isLoading) return;
-
-    // Check if on an auth screen (login, signup, forgot-password)
-    const authRoutes = ["login", "signup", "forgot-password"];
-    const currentRoute = segments[segments.length - 1];
-    const inAuthGroup = authRoutes.includes(currentRoute as string);
-
-    if (!user && !inAuthGroup) {
-      // Not logged in, redirect to login
-      router.replace("/login");
-    } else if (user && inAuthGroup) {
-      // Logged in but on auth screen, redirect to app
-      router.replace("/");
-    }
-  }, [user, segments, isLoading, router]);
 
   const signIn = async (email: string, password: string) => {
     const response = await apiClient.post("/api/mobile-auth/login", {

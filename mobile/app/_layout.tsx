@@ -22,7 +22,7 @@ import "react-native-reanimated";
 import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useColorScheme } from "@/components/useColorScheme";
-import { usePushNotifications } from "@/hooks/usePushNotifications";
+// usePushNotifications moved to (tabs)/_layout.tsx - requires navigation context
 import { AuthProvider } from "@/services/auth/context";
 import { NetworkProvider } from "@/services/network";
 
@@ -88,9 +88,6 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
-
-  // Initialize push notifications
-  usePushNotifications();
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>

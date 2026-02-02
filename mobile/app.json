@@ -4,7 +4,7 @@
     "slug": "reading-champ",
     "version": "1.0.0",
     "orientation": "portrait",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/app.png",
     "scheme": "readingchamp",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
@@ -32,7 +32,7 @@
       "versionCode": 1,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/adaptive-icon.png",
+        "foregroundImage": "./assets/images/app.png",
         "backgroundColor": "#fcf4e9"
       },
       "splash": {
@@ -54,9 +54,11 @@
       "favicon": "./assets/images/favicon.png"
     },
     "plugins": [
+      "expo-dev-client",
       "expo-router",
       "expo-secure-store",
       "expo-font",
+      "react-native-iap",
       [
         "expo-notifications",
         {
