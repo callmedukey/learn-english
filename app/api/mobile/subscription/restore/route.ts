@@ -114,7 +114,23 @@ export async function POST(request: Request): Promise<NextResponse<RestoreRespon
           console.log("[Restore] Using transaction ID:", actualTransactionId);
           const result = await appleIAPService.getSubscriptionStatus(actualTransactionId);
 
-          if (!result.success || !result.subscription) continue;
+          console.log("[Restore] Apple API result:", {
+            success: result.success,
+            hasSubscription: !!result.subscription,
+            error: result.error,
+            subscription: result.subscription ? {
+              isValid: result.subscription.isValid,
+              isActive: result.subscription.isActive,
+              productId: result.subscription.productId,
+              expiresDate: result.subscription.expiresDate,
+              environment: result.subscription.environment,
+            } : null,
+          });
+
+          if (!result.success || !result.subscription) {
+            console.warn("[Restore] Skipping - API failed or no subscription data");
+            continue;
+          }
 
           isValid = result.subscription.isValid;
           isActive = result.subscription.isActive;
@@ -149,14 +165,27 @@ export async function POST(request: Request): Promise<NextResponse<RestoreRespon
           }
         }
 
-        if (!isValid || !isActive || !expiresDate) continue;
+        if (!isValid || !isActive || !expiresDate) {
+          console.warn("[Restore] Skipping - subscription not valid/active:", {
+            isValid,
+            isActive,
+            hasExpiresDate: !!expiresDate,
+            productId: purchase.productId,
+          });
+          continue;
+        }
 
         // Get matching plan
         const planId = platform === "ios"
           ? await AppleIAPService.getMatchingPlanId(purchase.productId)
           : await GoogleIAPService.getMatchingPlanId(purchase.productId);
 
-        if (!planId) continue;
+        console.log("[Restore] Plan lookup:", { productId: purchase.productId, planId });
+
+        if (!planId) {
+          console.warn("[Restore] Skipping - no matching plan for productId:", purchase.productId);
+          continue;
+        }
 
         const plan = await prisma.plan.findUnique({ where: { id: planId } });
         if (!plan) continue;

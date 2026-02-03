@@ -12,8 +12,7 @@ module.exports = {
       min_uptime: "10s",
       max_restarts: 10,
       env: {
-        NODE_ENV: "production",
-        APPLE_USE_SANDBOX: "true",     
+        NODE_ENV: "production"
       },
       error_file: "logs/app-error.log",
       out_file: "logs/app-out.log",
