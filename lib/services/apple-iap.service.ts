@@ -13,7 +13,10 @@ const APPLE_ISSUER_ID = process.env.APPLE_ISSUER_ID!;
 // Handle escaped newlines in env var (common in PM2/Docker)
 const APPLE_PRIVATE_KEY = (process.env.APPLE_PRIVATE_KEY || "").replace(/\\n/g, "\n");
 const APPLE_BUNDLE_ID = process.env.APPLE_BUNDLE_ID!;
-const IS_PRODUCTION = process.env.NODE_ENV === "production";
+// Use APPLE_USE_SANDBOX=true to force sandbox API (for testing)
+// Otherwise, uses production API when NODE_ENV=production
+const USE_SANDBOX = process.env.APPLE_USE_SANDBOX === "true";
+const IS_PRODUCTION = process.env.NODE_ENV === "production" && !USE_SANDBOX;
 
 // Cache for Apple's JWKS
 let cachedJWKS: jose.JWTVerifyGetKey | null = null;
