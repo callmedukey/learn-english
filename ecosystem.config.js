@@ -13,6 +13,7 @@ module.exports = {
       max_restarts: 10,
       env: {
         NODE_ENV: "production",
+        APPLE_USE_SANDBOX: "true",     
       },
       error_file: "logs/app-error.log",
       out_file: "logs/app-out.log",
