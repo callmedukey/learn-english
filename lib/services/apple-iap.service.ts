@@ -79,7 +79,7 @@ export class AppleIAPService {
   }
 
   /**
-   * Get Apple's JWKS for verifying signed data
+   * Get Apple's JWKS for verifying webhook notifications
    * Caches the result for 1 hour
    */
   private async getAppleJWKS(): Promise<jose.JWTVerifyGetKey> {
@@ -94,15 +94,28 @@ export class AppleIAPService {
   }
 
   /**
-   * Verify and decode a JWS from Apple
-   * SECURITY: Always verify signatures - never decode without verification
+   * Verify and decode a JWS from Apple App Store Server API
+   * Uses x5c certificate chain embedded in the JWS header
+   * SECURITY: Verifies signature using the leaf certificate from Apple's chain
    */
   private async verifyAndDecodeJWS<T>(jws: string, description: string): Promise<T | null> {
     try {
-      const jwks = await this.getAppleJWKS();
+      // Decode header to get x5c certificate chain
+      const header = jose.decodeProtectedHeader(jws);
 
-      // Verify the JWS signature using Apple's public keys
-      const { payload } = await jose.jwtVerify(jws, jwks, {
+      if (!header.x5c || header.x5c.length === 0) {
+        console.error(`[AppleIAP] No x5c certificate chain in ${description}`);
+        return null;
+      }
+
+      // The first certificate in x5c is the leaf certificate (signer)
+      const leafCertPem = `-----BEGIN CERTIFICATE-----\n${header.x5c[0]}\n-----END CERTIFICATE-----`;
+
+      // Import the public key from the certificate
+      const x509 = await jose.importX509(leafCertPem, "ES256");
+
+      // Verify the JWS signature using the extracted public key
+      const { payload } = await jose.jwtVerify(jws, x509, {
         algorithms: ["ES256"],
       });
 

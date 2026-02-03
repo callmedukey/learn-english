@@ -190,16 +190,26 @@ export function useIAP(onSubscriptionChange?: () => void): UseIAPResult {
             (purchaseError) => {
               clearTimeout(timeoutId);
               purchaseCompleted = true;
-              console.error("[useIAP] Purchase error:", purchaseError);
 
-              if (purchaseError.code !== "E_USER_CANCELLED") {
-                setError("An error occurred during purchase");
-                Alert.alert(
-                  "Purchase Failed",
-                  "An error occurred while processing your purchase. Please try again.",
-                  [{ text: "OK" }]
-                );
+              // Handle user cancellation gracefully (multiple possible codes)
+              const isCancelled =
+                purchaseError.code === "E_USER_CANCELLED" ||
+                purchaseError.code === "user-cancelled" ||
+                purchaseError.message?.toLowerCase().includes("cancel");
+
+              if (isCancelled) {
+                console.log("[useIAP] User cancelled purchase");
+                resolve(false);
+                return;
               }
+
+              console.error("[useIAP] Purchase error:", purchaseError);
+              setError("An error occurred during purchase");
+              Alert.alert(
+                "Purchase Failed",
+                "An error occurred while processing your purchase. Please try again.",
+                [{ text: "OK" }]
+              );
               resolve(false);
             }
           ).catch((err) => {

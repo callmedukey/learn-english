@@ -336,13 +336,18 @@ class IAPService {
         });
       }
     } catch (error: any) {
-      console.error("[IAP] Purchase request failed:", error);
+      // Handle user cancellation gracefully
+      const isCancelled =
+        error.code === "E_USER_CANCELLED" ||
+        error.code === "user-cancelled" ||
+        error.message?.toLowerCase().includes("cancel");
 
-      // Handle user cancellation
-      if (error.code === "E_USER_CANCELLED") {
+      if (isCancelled) {
+        console.log("[IAP] User cancelled purchase");
         throw new Error("Purchase cancelled");
       }
 
+      console.error("[IAP] Purchase request failed:", error);
       throw error;
     }
   }
