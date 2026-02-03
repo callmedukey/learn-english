@@ -123,13 +123,12 @@ export class AppleIAPService {
 
     const privateKey = await jose.importPKCS8(APPLE_PRIVATE_KEY, "ES256");
 
-    const jwt = await new jose.SignJWT({})
+    const jwt = await new jose.SignJWT({ bid: APPLE_BUNDLE_ID })
       .setProtectedHeader({ alg: "ES256", kid: APPLE_KEY_ID, typ: "JWT" })
       .setIssuer(APPLE_ISSUER_ID)
       .setIssuedAt()
       .setExpirationTime("1h")
       .setAudience("appstoreconnect-v1")
-      .setSubject(APPLE_BUNDLE_ID)
       .sign(privateKey);
 
     return jwt;
