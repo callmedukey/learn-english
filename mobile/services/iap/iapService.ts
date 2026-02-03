@@ -388,7 +388,15 @@ class IAPService {
     try {
       await this.init();
 
+      console.log("[IAP] Fetching available purchases...");
       const purchases = await RNIap.getAvailablePurchases();
+      console.log("[IAP] Available purchases count:", purchases?.length ?? 0);
+      console.log("[IAP] Available purchases:", JSON.stringify(purchases, null, 2));
+
+      if (!purchases || purchases.length === 0) {
+        console.log("[IAP] No purchases found. Note: Sandbox subscriptions expire quickly.");
+        return [];
+      }
 
       return purchases.map((purchase: any) => ({
         productId: purchase.productId,

@@ -17,6 +17,45 @@ const restoreRequestSchema = z.object({
   })),
 });
 
+/**
+ * Decode JWS token to extract transaction ID
+ * StoreKit 2 returns JWS tokens that contain the actual transaction ID in the payload
+ */
+function extractTransactionIdFromJWS(jwsOrId: string): string | null {
+  // If it doesn't look like a JWS (starts with "eyJ"), return as-is
+  if (!jwsOrId.startsWith("eyJ")) {
+    return jwsOrId;
+  }
+
+  try {
+    // JWS format: header.payload.signature (base64url encoded)
+    const parts = jwsOrId.split(".");
+    if (parts.length !== 3) {
+      console.warn("[Restore] Invalid JWS format");
+      return null;
+    }
+
+    // Decode the payload (second part) - base64url to JSON
+    const payloadBase64 = parts[1];
+    // Convert base64url to standard base64
+    const base64 = payloadBase64.replace(/-/g, "+").replace(/_/g, "/");
+    // Decode and parse
+    const payload = JSON.parse(Buffer.from(base64, "base64").toString("utf-8"));
+
+    console.log("[Restore] Decoded JWS payload:", {
+      transactionId: payload.transactionId,
+      originalTransactionId: payload.originalTransactionId,
+      productId: payload.productId,
+    });
+
+    // Return the transaction ID from the payload
+    return payload.transactionId || payload.originalTransactionId || null;
+  } catch (error) {
+    console.error("[Restore] Failed to decode JWS:", error);
+    return null;
+  }
+}
+
 interface RestoreResponse {
   success: boolean;
   restoredCount: number;
@@ -65,7 +104,15 @@ export async function POST(request: Request): Promise<NextResponse<RestoreRespon
         if (platform === "ios") {
           if (!purchase.transactionId) continue;
 
-          const result = await appleIAPService.getSubscriptionStatus(purchase.transactionId);
+          // Extract actual transaction ID from JWS if needed (StoreKit 2 sends JWS tokens)
+          const actualTransactionId = extractTransactionIdFromJWS(purchase.transactionId);
+          if (!actualTransactionId) {
+            console.warn("[Restore] Could not extract transaction ID from:", purchase.transactionId.substring(0, 50));
+            continue;
+          }
+
+          console.log("[Restore] Using transaction ID:", actualTransactionId);
+          const result = await appleIAPService.getSubscriptionStatus(actualTransactionId);
 
           if (!result.success || !result.subscription) continue;
 

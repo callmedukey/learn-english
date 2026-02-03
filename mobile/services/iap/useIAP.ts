@@ -158,6 +158,7 @@ export function useIAP(onSubscriptionChange?: () => void): UseIAPResult {
 
         let purchaseSuccess = false;
         let purchaseCompleted = false;
+        let purchaseHandledByUpdate = false;
 
         // Create a promise that resolves when purchase completes or rejects on timeout
         const purchasePromise = new Promise<boolean>((resolve, reject) => {
@@ -172,7 +173,22 @@ export function useIAP(onSubscriptionChange?: () => void): UseIAPResult {
             productId,
             offerToken, // Pass offerToken for Android
             async (purchaseData) => {
+              // Mark that we received a valid purchase update
+              purchaseHandledByUpdate = true;
               clearTimeout(timeoutId);
+
+              if (purchaseCompleted) {
+                // Already resolved by error handler, but we got valid data
+                // Try to validate anyway (fire and forget)
+                console.log("[useIAP] Late purchase update received, validating...");
+                validatePurchase(purchaseData).then((validated) => {
+                  if (validated && onSubscriptionChange) {
+                    onSubscriptionChange();
+                  }
+                });
+                return;
+              }
+
               purchaseCompleted = true;
               // Purchase completed, validate with server
               const validated = await validatePurchase(purchaseData);
@@ -188,8 +204,11 @@ export function useIAP(onSubscriptionChange?: () => void): UseIAPResult {
               resolve(purchaseSuccess);
             },
             (purchaseError) => {
-              clearTimeout(timeoutId);
-              purchaseCompleted = true;
+              // Skip if purchase was already handled successfully
+              if (purchaseHandledByUpdate || purchaseCompleted) {
+                console.log("[useIAP] Ignoring error - purchase already handled:", purchaseError.code);
+                return;
+              }
 
               // Handle user cancellation gracefully (multiple possible codes)
               const isCancelled =
@@ -198,11 +217,42 @@ export function useIAP(onSubscriptionChange?: () => void): UseIAPResult {
                 purchaseError.message?.toLowerCase().includes("cancel");
 
               if (isCancelled) {
+                clearTimeout(timeoutId);
+                purchaseCompleted = true;
                 console.log("[useIAP] User cancelled purchase");
                 resolve(false);
                 return;
               }
 
+              // Handle already owned - wait briefly for purchase update to fire
+              const isAlreadyOwned =
+                purchaseError.code === "already-owned" ||
+                purchaseError.code === "E_ALREADY_OWNED" ||
+                purchaseError.message?.toLowerCase().includes("already owned");
+
+              if (isAlreadyOwned) {
+                console.log("[useIAP] Item already owned, waiting for purchase update...");
+                // Wait a moment for purchaseUpdatedListener to fire with valid data
+                setTimeout(() => {
+                  if (purchaseHandledByUpdate || purchaseCompleted) {
+                    // Purchase update handler got it, or already resolved
+                    console.log("[useIAP] Already-owned timeout: purchase was handled, skipping error");
+                    return;
+                  }
+                  clearTimeout(timeoutId);
+                  purchaseCompleted = true;
+                  Alert.alert(
+                    "Already Subscribed",
+                    "You already have an active subscription. Use 'Restore Purchases' to sync it with your account.",
+                    [{ text: "OK" }]
+                  );
+                  resolve(false);
+                }, 2000); // Wait 2 seconds for purchase update
+                return;
+              }
+
+              clearTimeout(timeoutId);
+              purchaseCompleted = true;
               console.error("[useIAP] Purchase error:", purchaseError);
               setError("An error occurred during purchase");
               Alert.alert(

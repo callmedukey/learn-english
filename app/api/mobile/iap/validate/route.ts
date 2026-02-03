@@ -17,6 +17,45 @@ const validateRequestSchema = z.object({
   purchaseToken: z.string().optional(),
 });
 
+/**
+ * Decode JWS token to extract transaction ID
+ * StoreKit 2 returns JWS tokens that contain the actual transaction ID in the payload
+ */
+function extractTransactionIdFromJWS(jwsOrId: string): string | null {
+  // If it doesn't look like a JWS (starts with "eyJ"), return as-is
+  if (!jwsOrId.startsWith("eyJ")) {
+    return jwsOrId;
+  }
+
+  try {
+    // JWS format: header.payload.signature (base64url encoded)
+    const parts = jwsOrId.split(".");
+    if (parts.length !== 3) {
+      console.warn("[Validate] Invalid JWS format");
+      return null;
+    }
+
+    // Decode the payload (second part) - base64url to JSON
+    const payloadBase64 = parts[1];
+    // Convert base64url to standard base64
+    const base64 = payloadBase64.replace(/-/g, "+").replace(/_/g, "/");
+    // Decode and parse
+    const payload = JSON.parse(Buffer.from(base64, "base64").toString("utf-8"));
+
+    console.log("[Validate] Decoded JWS payload:", {
+      transactionId: payload.transactionId,
+      originalTransactionId: payload.originalTransactionId,
+      productId: payload.productId,
+    });
+
+    // Return the transaction ID from the payload
+    return payload.transactionId || payload.originalTransactionId || null;
+  } catch (error) {
+    console.error("[Validate] Failed to decode JWS:", error);
+    return null;
+  }
+}
+
 interface SubscriptionResponse {
   success: boolean;
   subscription: {
@@ -61,10 +100,21 @@ export async function POST(request: Request): Promise<NextResponse<SubscriptionR
 
     // Validate with the appropriate store
     if (platform === "ios") {
-      const result = await appleIAPService.getSubscriptionStatus(transactionId);
+      // Extract actual transaction ID from JWS if needed (StoreKit 2 sends JWS tokens)
+      const actualTransactionId = extractTransactionIdFromJWS(transactionId);
+      if (!actualTransactionId) {
+        console.warn(`[SECURITY] Could not extract transaction ID from JWS for user ${userId}`);
+        return NextResponse.json(
+          { success: false, subscription: null, error: "Invalid transaction format" },
+          { status: 400 }
+        );
+      }
+
+      console.log("[Validate] Using transaction ID:", actualTransactionId);
+      const result = await appleIAPService.getSubscriptionStatus(actualTransactionId);
 
       if (!result.success || !result.subscription) {
-        console.warn(`[SECURITY] Apple validation failed for user ${userId}, transactionId: ${transactionId}, error: ${result.error}`);
+        console.warn(`[SECURITY] Apple validation failed for user ${userId}, transactionId: ${actualTransactionId}, error: ${result.error}`);
         return NextResponse.json(
           { success: false, subscription: null, error: result.error || "Apple validation failed" },
           { status: 400 }
