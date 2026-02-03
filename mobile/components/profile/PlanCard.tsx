@@ -3,6 +3,34 @@ import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
 
 import { IAPProduct, PRODUCT_METADATA } from "@/services/iap";
 
+/**
+ * Safely calculate monthly price from product price data
+ * Handles cases where price may be number, string, or undefined in StoreKit 2
+ */
+function getMonthlyPrice(
+  price: string | number | undefined,
+  localizedPrice: string,
+  durationDays: number
+): string {
+  // Handle numeric price directly
+  if (typeof price === "number" && price > 0) {
+    const monthlyPrice = Math.round(price / (durationDays / 30));
+    return `₩${monthlyPrice.toLocaleString()}`;
+  }
+
+  // Try to parse from string price, then fallback to localizedPrice
+  const priceStr = String(price || localizedPrice || "");
+  const numericStr = priceStr.replace(/[^0-9]/g, "");
+  const numericValue = parseInt(numericStr, 10);
+
+  if (isNaN(numericValue) || numericValue === 0) {
+    return "-";
+  }
+
+  const monthlyPrice = Math.round(numericValue / (durationDays / 30));
+  return `₩${monthlyPrice.toLocaleString()}`;
+}
+
 interface PlanCardProps {
   product: IAPProduct;
   onPurchase: (productId: string) => void;
@@ -52,10 +80,7 @@ export function PlanCard({
         </Text>
         {metadata && (
           <Text className="text-xs text-muted-foreground">
-            ₩{Math.round(
-              parseInt(product.price.replace(/[^0-9]/g, ""), 10) /
-                (metadata.duration / 30)
-            ).toLocaleString()}/month
+            {getMonthlyPrice(product.price, product.localizedPrice, metadata.duration)}/month
           </Text>
         )}
       </View>

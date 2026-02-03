@@ -10,7 +10,8 @@ const APPLE_JWKS_URL = "https://appleid.apple.com/auth/keys";
 // Environment variables
 const APPLE_KEY_ID = process.env.APPLE_KEY_ID!;
 const APPLE_ISSUER_ID = process.env.APPLE_ISSUER_ID!;
-const APPLE_PRIVATE_KEY = process.env.APPLE_PRIVATE_KEY!;
+// Handle escaped newlines in env var (common in PM2/Docker)
+const APPLE_PRIVATE_KEY = (process.env.APPLE_PRIVATE_KEY || "").replace(/\\n/g, "\n");
 const APPLE_BUNDLE_ID = process.env.APPLE_BUNDLE_ID!;
 const IS_PRODUCTION = process.env.NODE_ENV === "production";
 
@@ -114,6 +115,12 @@ export class AppleIAPService {
    * Generate JWT token for Apple App Store Server API authentication
    */
   private async generateToken(): Promise<string> {
+    if (!APPLE_PRIVATE_KEY || !APPLE_PRIVATE_KEY.includes("-----BEGIN PRIVATE KEY-----")) {
+      console.error("[AppleIAP] Invalid APPLE_PRIVATE_KEY format. Expected PKCS#8 with BEGIN/END headers.");
+      console.error("[AppleIAP] Key starts with:", APPLE_PRIVATE_KEY?.substring(0, 50));
+      throw new Error("APPLE_PRIVATE_KEY is not properly configured");
+    }
+
     const privateKey = await jose.importPKCS8(APPLE_PRIVATE_KEY, "ES256");
 
     const jwt = await new jose.SignJWT({})

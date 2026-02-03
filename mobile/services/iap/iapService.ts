@@ -50,6 +50,7 @@ export interface IAPPurchase {
 
 class IAPService {
   private isInitialized: boolean = false;
+  private initPromise: Promise<boolean> | null = null;
   private purchaseUpdateSubscription: any = null;
   private purchaseErrorSubscription: any = null;
 
@@ -62,6 +63,7 @@ class IAPService {
 
   /**
    * Initialize the IAP connection
+   * Uses a singleton promise to prevent race conditions
    */
   async init(): Promise<boolean> {
     if (!this.isSupported()) {
@@ -73,14 +75,25 @@ class IAPService {
       return true;
     }
 
+    // If initialization is already in progress, wait for it
+    if (this.initPromise) {
+      return this.initPromise;
+    }
+
+    // Start initialization and store the promise
+    this.initPromise = this.doInit();
+    return this.initPromise;
+  }
+
+  private async doInit(): Promise<boolean> {
     try {
       await RNIap.initConnection();
       this.isInitialized = true;
       console.log("[IAP] Connection initialized");
-
       return true;
     } catch (error) {
       console.error("[IAP] Failed to initialize:", error);
+      this.initPromise = null; // Allow retry on failure
       return false;
     }
   }
@@ -102,6 +115,7 @@ class IAPService {
       }
       await RNIap.endConnection();
       this.isInitialized = false;
+      this.initPromise = null; // Reset promise so init can be called again
       console.log("[IAP] Connection ended");
     } catch (error) {
       console.error("[IAP] Error ending connection:", error);
@@ -128,6 +142,7 @@ class IAPService {
       });
 
       console.log("[IAP] Fetched products count:", products?.length ?? 0);
+      console.log("[IAP] Raw products response:", JSON.stringify(products, null, 2));
 
       if (!products || products.length === 0) {
         console.warn("[IAP] No products returned from StoreKit. Possible causes:");
@@ -139,15 +154,31 @@ class IAPService {
         return [];
       }
 
-      console.log("[IAP] Products fetched successfully:", products.map((p: any) => p.productId));
+      // Filter out any undefined/null products
+      // Note: react-native-iap v14 uses 'id' instead of 'productId'
+      const validProducts = products.filter((p: any) => p && (p.id || p.productId));
 
-      return products.map((product: any) => ({
-        productId: product.productId,
-        title: product.title || product.name || "",
+      if (validProducts.length === 0) {
+        console.warn("[IAP] Products returned but all are invalid/undefined");
+        console.warn("[IAP] This may indicate a StoreKit configuration issue");
+        return [];
+      }
+
+      console.log("[IAP] Products fetched successfully:", validProducts.map((p: any) => p.id || p.productId));
+
+      return validProducts.map((product: any) => ({
+        // v14 uses 'id', fallback to 'productId' for backwards compatibility
+        productId: product.id || product.productId,
+        title: product.title || product.displayName || product.name || "",
         description: product.description || "",
-        price: product.price || "",
+        // v14 returns price as number, convert to string for consistency
+        price: product.price != null
+          ? String(product.price)
+          : (product.displayPrice || product.localizedPrice || "")
+              .replace(/[^0-9]/g, "") || "",
         currency: product.currency || "",
-        localizedPrice: product.localizedPrice || product.price || "",
+        // v14 uses 'displayPrice' for localized price
+        localizedPrice: product.displayPrice || product.localizedPrice || product.price || "",
         // Android: Include subscription offer details for offerToken
         subscriptionOfferDetails: Platform.OS === "android"
           ? product.subscriptionOfferDetails
