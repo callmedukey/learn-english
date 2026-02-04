@@ -1,6 +1,7 @@
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import { Tabs } from "expo-router";
-import { View } from "react-native";
+import { Platform, View } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { usePushNotifications } from "@/hooks/usePushNotifications";
 
@@ -14,6 +15,11 @@ function TabBarIcon(props: {
 export default function TabLayout() {
   // Initialize push notifications (must be inside navigation context)
   usePushNotifications();
+  const insets = useSafeAreaInsets();
+
+  // Calculate tab bar height based on safe area
+  const tabBarPaddingBottom = Platform.OS === "android" ? Math.max(insets.bottom, 12) : 28;
+  const tabBarHeight = 57 + tabBarPaddingBottom;
 
   return (
     <Tabs
@@ -23,22 +29,27 @@ export default function TabLayout() {
         tabBarStyle: {
           backgroundColor: "#FFFFFF",
           borderTopColor: "#E5E5E5",
-          height: 85,
+          height: tabBarHeight,
           paddingTop: 8,
-          paddingBottom: 28,
+          paddingBottom: tabBarPaddingBottom,
         },
         tabBarLabelStyle: {
           fontSize: 11,
           fontWeight: "500",
         },
         headerStyle: {
-          backgroundColor: "#F9F5F0",
+          backgroundColor: "#5D3A29",
+          ...(Platform.OS === "android" && {
+            height: 56 + insets.top,
+            paddingTop: insets.top,
+          }),
         },
         headerTitleStyle: {
-          color: "#4A5568",
+          color: "#FFFFFF",
           fontWeight: "600",
         },
         headerShadowVisible: false,
+        headerStatusBarHeight: Platform.OS === "android" ? insets.top : undefined,
       }}
     >
       <Tabs.Screen

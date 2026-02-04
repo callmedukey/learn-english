@@ -25,6 +25,7 @@
     "reset-scores": "tsx scripts/reset-scores.ts",
     "reset-user-scores": "tsx scripts/reset-user-scores.ts",
     "reset-payments": "tsx scripts/reset-payments.ts",
+    "clear-push-data": "tsx scripts/clear-push-data.ts",
     "restore-backup": "tsx scripts/restore-backup.ts",
     "setup-test-accounts": "tsx scripts/setup-test-accounts-maintenance.ts",
     "grant-100y-sub": "tsx scripts/grant-100-year-subscription.ts",

@@ -1,17 +1,38 @@
-import { Stack } from "expo-router";
+import { Ionicons } from "@expo/vector-icons";
+import { Stack, useRouter } from "expo-router";
+import { Platform, TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function BPALayout() {
+  const router = useRouter();
+  const insets = useSafeAreaInsets();
+
   return (
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#F9F5F0",
+          backgroundColor: "#5D3A29",
+          ...(Platform.OS === "android" && {
+            height: 56 + insets.top,
+            paddingTop: insets.top,
+          }),
         },
-        headerTintColor: "#4A5568",
+        headerTintColor: "#FFFFFF",
         headerTitleStyle: {
+          color: "#FFFFFF",
           fontWeight: "600",
         },
+        headerShadowVisible: false,
         headerBackTitle: "Back",
+        headerLeft: () => (
+          <TouchableOpacity
+            onPress={() => router.back()}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            style={{ justifyContent: "center", alignItems: "center" }}
+          >
+            <Ionicons name="chevron-back" size={28} color="#FFFFFF" />
+          </TouchableOpacity>
+        ),
       }}
     >
       <Stack.Screen
@@ -30,7 +51,7 @@ export default function BPALayout() {
         name="[levelId]/[novelId]/[chapterId]/index"
         options={{
           title: "Quiz",
-          headerBackVisible: false,
+          headerLeft: () => null,
         }}
       />
     </Stack>

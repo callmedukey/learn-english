@@ -32,7 +32,7 @@
       "versionCode": 1,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
-        "foregroundImage": "./assets/images/app.png",
+        "foregroundImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#fcf4e9"
       },
       "splash": {

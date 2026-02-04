@@ -15,7 +15,7 @@ import {
 } from "@react-navigation/native";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { useFonts } from "expo-font";
-import { Stack } from "expo-router";
+import { Stack, useRouter, useSegments } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
 import { useEffect } from "react";
 import "react-native-reanimated";
@@ -23,7 +23,7 @@ import { SafeAreaProvider } from "react-native-safe-area-context";
 
 import { useColorScheme } from "@/components/useColorScheme";
 // usePushNotifications moved to (tabs)/_layout.tsx - requires navigation context
-import { AuthProvider } from "@/services/auth/context";
+import { AuthProvider, useAuth } from "@/services/auth/context";
 import { NetworkProvider } from "@/services/network";
 
 export {
@@ -88,12 +88,33 @@ export default function RootLayout() {
 
 function RootLayoutNav() {
   const colorScheme = useColorScheme();
+  const { user, isLoading } = useAuth();
+  const segments = useSegments();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    const inAuthGroup = segments[0] === "(auth)";
+
+    if (!user && !inAuthGroup) {
+      // Redirect to login if not authenticated
+      router.replace("/(auth)/login");
+    } else if (user && inAuthGroup) {
+      // Redirect to tabs if authenticated but on auth screen
+      router.replace("/(tabs)");
+    }
+  }, [user, isLoading, segments]);
 
   return (
     <ThemeProvider value={colorScheme === "dark" ? DarkTheme : DefaultTheme}>
       <Stack>
         <Stack.Screen name="(auth)" options={{ headerShown: false }} />
         <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+        <Stack.Screen name="novel" options={{ headerShown: false }} />
+        <Stack.Screen name="rc" options={{ headerShown: false }} />
+        <Stack.Screen name="bpa" options={{ headerShown: false }} />
+        <Stack.Screen name="profile" options={{ headerShown: false }} />
         <Stack.Screen name="modal" options={{ presentation: "modal" }} />
       </Stack>
       <PortalHost />

@@ -1,24 +1,35 @@
 import { Ionicons } from "@expo/vector-icons";
 import { Stack, useRouter } from "expo-router";
-import { TouchableOpacity } from "react-native";
+import { Platform, TouchableOpacity } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function ProfileLayout() {
   const router = useRouter();
+  const insets = useSafeAreaInsets();
 
   return (
     <Stack
       screenOptions={{
         headerStyle: {
-          backgroundColor: "#FFFFFF",
+          backgroundColor: "#5D3A29",
+          ...(Platform.OS === "android" && {
+            height: 56 + insets.top,
+            paddingTop: insets.top,
+          }),
         },
-        headerTintColor: "#5D3A29",
+        headerTintColor: "#FFFFFF",
         headerTitleStyle: {
+          color: "#FFFFFF",
           fontWeight: "600",
         },
         headerShadowVisible: false,
         headerLeft: () => (
-          <TouchableOpacity onPress={() => router.back()} className="mr-2">
-            <Ionicons name="arrow-back" size={24} color="#5D3A29" />
+          <TouchableOpacity
+            onPress={() => router.back()}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            style={{ justifyContent: "center", alignItems: "center" }}
+          >
+            <Ionicons name="chevron-back" size={28} color="#FFFFFF" />
           </TouchableOpacity>
         ),
       }}

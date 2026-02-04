@@ -180,8 +180,9 @@ class IAPService {
         // v14 uses 'displayPrice' for localized price
         localizedPrice: product.displayPrice || product.localizedPrice || product.price || "",
         // Android: Include subscription offer details for offerToken
+        // Note: react-native-iap v14 uses 'subscriptionOfferDetailsAndroid'
         subscriptionOfferDetails: Platform.OS === "android"
-          ? product.subscriptionOfferDetails
+          ? product.subscriptionOfferDetailsAndroid
           : undefined,
       }));
     } catch (error: any) {
