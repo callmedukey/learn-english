@@ -1,7 +1,6 @@
 "use client";
 
 import DOMPurify from "isomorphic-dompurify";
-import { CheckCircle } from "lucide-react";
 import { useRouter } from "next/navigation";
 import React, {
   useCallback,
@@ -559,7 +558,6 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
       {/* Question Navigation */}
       <div className="flex flex-wrap gap-2">
         {questions.map((question, index) => {
-          const completed = initialStatus !== "retry" && question.isCompleted;
           const isCurrent = index === currentQuestionIndex;
           return (
             <div
@@ -568,12 +566,9 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
                 isCurrent
                   ? "bg-primary text-primary-foreground shadow-xs"
                   : "border bg-background shadow-xs"
-              } ${completed && !isCurrent ? "border-green-500" : ""}`}
+              }`}
             >
               {index + 1}
-              {completed && (
-                <CheckCircle className="absolute -top-1 -right-1 h-3 w-3 text-green-600" />
-              )}
             </div>
           );
         })}

@@ -32,8 +32,6 @@ interface QuestionProps {
   isCorrect: boolean;
   pointsAwarded: number;
   isSubmitting: boolean;
-  questionCompleted: boolean;
-  completedScore: number;
   onAnswerSelect: (answer: string) => void;
   onSubmitAnswer: () => void;
   onNextQuestion: () => void;
@@ -53,8 +51,6 @@ export function RCQuizQuestion({
   isCorrect,
   pointsAwarded,
   isSubmitting,
-  questionCompleted,
-  completedScore,
   onAnswerSelect,
   onSubmitAnswer,
   onNextQuestion,
@@ -90,16 +86,6 @@ export function RCQuizQuestion({
                   {timeLeft}s
                 </span>
               </div>
-            )}
-            {/* Show completed badge only after answering in current session */}
-            {(isAnswered || showExplanation) && questionCompleted && (
-              <Badge
-                variant="secondary"
-                className="border-green-200 bg-green-100 text-green-800"
-              >
-                <CheckCircle className="mr-1 h-3 w-3" />
-                Completed ({completedScore}/{question.score})
-              </Badge>
             )}
             {/* Show timeout message if time ran out */}
             {!isAnswered && !showExplanation && timeLeft === 0 && (

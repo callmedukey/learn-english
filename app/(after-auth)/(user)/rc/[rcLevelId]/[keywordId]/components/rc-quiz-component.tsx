@@ -106,15 +106,6 @@ export function RCQuizComponent({
 
   const currentQuestion = questions[currentQuestionIndex];
 
-  // Get completed score for a question
-  const getCompletedScore = (questionId: string) => {
-    const question = questions.find((q) => q.id === questionId);
-    const completed = question?.RCQuestionCompleted.find(
-      (completed) => completed.userId === userId,
-    );
-    return completed?.score || 0;
-  };
-
   // Reset quiz state when starting
   const handleStartQuiz = () => {
     resetQuiz();
@@ -417,14 +408,6 @@ export function RCQuizComponent({
     return null;
   }
 
-  const questionCompleted =
-    initialStatus !== "retry" &&
-    currentQuestion.RCQuestionCompleted.some(
-      (completed) => completed.userId === userId && completed.score >= 0,
-    ) &&
-    getCompletedScore(currentQuestion.id) > 0; // Only consider it truly completed if they've submitted an answer
-  const completedScore = getCompletedScore(currentQuestion.id);
-
   return (
     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
       {/* Left side - Passage */}
@@ -455,8 +438,6 @@ export function RCQuizComponent({
           isCorrect={isCorrect}
           pointsAwarded={pointsAwarded}
           isSubmitting={isSubmitting}
-          questionCompleted={questionCompleted}
-          completedScore={completedScore}
           onAnswerSelect={handleAnswerSelect}
           onSubmitAnswer={handleSubmitAnswer}
           onNextQuestion={handleNextQuestion}
