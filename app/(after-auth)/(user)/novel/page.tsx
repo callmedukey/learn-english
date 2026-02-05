@@ -11,8 +11,16 @@ async function ARChoices() {
   const session = await auth();
   const userId = session?.user?.id;
 
+  // Fetch global novel settings as fallback for defaultScore
+  const globalNovelSettings = await prisma.novelSettings.findFirst({
+    select: { defaultScore: true },
+  });
+
   const arChoices = await prisma.aR.findMany({
     include: {
+      ARSettings: {
+        select: { defaultScore: true },
+      },
       novels: {
         where: {
           hidden: false,
@@ -82,10 +90,11 @@ async function ARChoices() {
     medalImageMap.get(key)!.push(medalImage);
   });
 
-  // Add medal images to each AR choice
+  // Add medal images and resolved defaultScore to each AR choice
   const arChoicesWithMedals = arChoices.map((ar) => ({
     ...ar,
     medalImages: medalImageMap.get(ar.id) || [],
+    defaultScore: ar.ARSettings?.defaultScore ?? globalNovelSettings?.defaultScore ?? 0,
   }));
 
   // Get user's level lock for AR if they're logged in
@@ -110,6 +119,7 @@ async function ARChoices() {
             ar={ar}
             userId={userId}
             isUserSelectedLevel={false}
+            defaultScore={ar.defaultScore}
           />
         ))}
       </div>

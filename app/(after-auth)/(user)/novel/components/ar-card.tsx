@@ -48,9 +48,10 @@ interface ARCardProps {
   };
   userId?: string;
   isUserSelectedLevel?: boolean;
+  defaultScore?: number;
 }
 
-export function ARCard({ ar, userId, isUserSelectedLevel }: ARCardProps) {
+export function ARCard({ ar, userId, isUserSelectedLevel, defaultScore }: ARCardProps) {
   // Calculate first try statistics across all novels and chapters
   let totalChaptersAttempted = 0;
   let firstTryCorrect = 0;
@@ -143,6 +144,14 @@ export function ARCard({ ar, userId, isUserSelectedLevel }: ARCardProps) {
             >
               {ar.score}
             </Badge>
+            {defaultScore != null && defaultScore > 0 && (
+              <Badge
+                variant="outline"
+                className="border-amber-500/30 bg-amber-500/10 text-amber-700"
+              >
+                {defaultScore} pts / quiz
+              </Badge>
+            )}
             {isUserSelectedLevel && (
               <Badge
                 variant="secondary"

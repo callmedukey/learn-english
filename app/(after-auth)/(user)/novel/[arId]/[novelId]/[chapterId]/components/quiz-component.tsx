@@ -698,15 +698,17 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
                     </Badge>
                   )}
                 </div>
-                <div>
-                  <h4 className="mb-2 font-medium">Explanation:</h4>
-                  <p
-                    className="text-gray-700"
-                    dangerouslySetInnerHTML={{
-                      __html: DOMPurify.sanitize(currentQuestion.explanation),
-                    }}
-                  />
-                </div>
+                {timeLeft > 0 && (
+                  <div>
+                    <h4 className="mb-2 font-medium">Explanation:</h4>
+                    <p
+                      className="text-gray-700"
+                      dangerouslySetInnerHTML={{
+                        __html: DOMPurify.sanitize(currentQuestion.explanation),
+                      }}
+                    />
+                  </div>
+                )}
                 <div className="text-sm text-gray-600">
                   <p>
                     <strong>Correct Answer:</strong>{" "}

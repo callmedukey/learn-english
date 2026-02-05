@@ -504,13 +504,17 @@ export function RCQuizComponent({
                 )}
               </View>
 
-              <Text className="mb-2 font-medium text-foreground">
-                Explanation:
-              </Text>
-              <HtmlContent
-                html={currentQuestion.explanation}
-                baseStyle={EXPLANATION_STYLE}
-              />
+              {timeLeft > 0 && (
+                <>
+                  <Text className="mb-2 font-medium text-foreground">
+                    Explanation:
+                  </Text>
+                  <HtmlContent
+                    html={currentQuestion.explanation}
+                    baseStyle={EXPLANATION_STYLE}
+                  />
+                </>
+              )}
 
               <View className="mt-3 rounded-lg bg-muted/50 p-3">
                 <Text className="text-sm text-muted-foreground">

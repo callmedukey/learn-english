@@ -35,6 +35,7 @@ interface BPAPageContentProps {
     description: string | null;
     stars: number;
     novelsAvailable: number;
+    defaultScore?: number;
   }>;
   campusEvents: CampusEventData[];
 }

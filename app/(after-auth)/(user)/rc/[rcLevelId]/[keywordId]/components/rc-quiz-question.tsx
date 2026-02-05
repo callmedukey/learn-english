@@ -204,14 +204,18 @@ export function RCQuizQuestion({
         {/* Explanation */}
         {showExplanation && (
           <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
-            <h4 className="mb-2 font-semibold text-amber-800">Explanation</h4>
-            <p
-              className={`text-amber-700 ${fontSizeClasses}`}
-              dangerouslySetInnerHTML={{
-                __html: DOMPurify.sanitize(question.explanation),
-              }}
-            />
-            <p className="mt-2 text-sm text-amber-600">
+            {timeLeft > 0 && (
+              <>
+                <h4 className="mb-2 font-semibold text-amber-800">Explanation</h4>
+                <p
+                  className={`text-amber-700 ${fontSizeClasses}`}
+                  dangerouslySetInnerHTML={{
+                    __html: DOMPurify.sanitize(question.explanation),
+                  }}
+                />
+              </>
+            )}
+            <p className={`${timeLeft > 0 ? "mt-2" : ""} text-sm text-amber-600`}>
               {isCorrect
                 ? pointsAwarded > 0
                   ? `Correct! +${pointsAwarded} points`

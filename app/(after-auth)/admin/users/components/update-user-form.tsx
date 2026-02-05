@@ -76,7 +76,7 @@ export default function UpdateUserForm({
       nickname: nickname || undefined,
       ...(date && { birthday: date.toISOString() }),
       ...(selectedCountry && { countryId: selectedCountry }),
-      campusId: selectedCampus || undefined,
+      campusId: selectedCampus,
       parentName: parentName || undefined,
       parentPhone: parentPhone || undefined,
       studentName: studentName || undefined,

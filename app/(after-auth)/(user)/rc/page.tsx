@@ -11,8 +11,16 @@ async function RCLevels() {
   const session = await auth();
   const userId = session?.user?.id;
 
+  // Fetch global RC settings as fallback for defaultScore
+  const globalRCSettings = await prisma.rCSettings.findFirst({
+    select: { defaultScore: true },
+  });
+
   const rcLevels = await prisma.rCLevel.findMany({
     include: {
+      RCLevelSettings: {
+        select: { defaultScore: true },
+      },
       RCKeyword: {
         where: {
           hidden: false,
@@ -90,10 +98,11 @@ async function RCLevels() {
     medalImageMap.get(key)!.push(medalImage);
   });
 
-  // Add medal images to each RC level
+  // Add medal images and resolved defaultScore to each RC level
   const rcLevelsWithMedals = rcLevels.map((rc) => ({
     ...rc,
     medalImages: medalImageMap.get(rc.id) || [],
+    defaultScore: rc.RCLevelSettings?.defaultScore ?? globalRCSettings?.defaultScore ?? 0,
   }));
 
   // Get user's level lock for RC if they're logged in
@@ -118,6 +127,7 @@ async function RCLevels() {
             rcLevel={rcLevel}
             userId={userId}
             isUserSelectedLevel={false}
+            defaultScore={rcLevel.defaultScore}
           />
         ))}
       </div>

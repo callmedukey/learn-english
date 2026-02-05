@@ -53,9 +53,10 @@ interface RCLevelCardProps {
   };
   userId?: string;
   isUserSelectedLevel?: boolean;
+  defaultScore?: number;
 }
 
-export function RCLevelCard({ rcLevel, userId, isUserSelectedLevel }: RCLevelCardProps) {
+export function RCLevelCard({ rcLevel, userId, isUserSelectedLevel, defaultScore }: RCLevelCardProps) {
   // Calculate completion progress
   const totalKeywords = rcLevel.RCKeyword.length;
   const completedKeywords = userId
@@ -156,6 +157,14 @@ export function RCLevelCard({ rcLevel, userId, isUserSelectedLevel }: RCLevelCar
             >
               {rcLevel.numberOfQuestions} Questions
             </Badge>
+            {defaultScore != null && defaultScore > 0 && (
+              <Badge
+                variant="outline"
+                className="border-amber-500/30 bg-amber-500/10 text-amber-700"
+              >
+                {defaultScore} pts / quiz
+              </Badge>
+            )}
             {isUserSelectedLevel && (
               <Badge
                 variant="secondary"

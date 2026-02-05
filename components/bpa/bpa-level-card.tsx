@@ -1,6 +1,7 @@
 import { Star } from "lucide-react";
 import Link from "next/link";
 
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -14,6 +15,7 @@ interface BPALevelCardProps {
     name: string;
     stars: number;
     novelsAvailable?: number;
+    defaultScore?: number;
   };
 }
 
@@ -51,6 +53,14 @@ export function BPALevelCard({ level }: BPALevelCardProps) {
               ))}
             </div>
           </div>
+          {level.defaultScore != null && level.defaultScore > 0 && (
+            <Badge
+              variant="outline"
+              className="mt-2 w-fit border-amber-500/30 bg-amber-500/10 text-amber-700"
+            >
+              {level.defaultScore} pts / quiz
+            </Badge>
+          )}
         </CardHeader>
 
         <CardContent className="pt-0">

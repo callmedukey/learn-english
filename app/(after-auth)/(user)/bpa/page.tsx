@@ -92,6 +92,11 @@ const BPAPage = async () => {
       assignment.bpaLevelId;
   });
 
+  // Fetch global BPA settings as fallback for defaultScore
+  const globalBPASettings = await prisma.bPASettings.findFirst({
+    select: { defaultScore: true },
+  });
+
   // Fetch BPA levels from database
   const bpaLevels = await prisma.bPALevel.findMany({
     orderBy: {
@@ -103,6 +108,9 @@ const BPAPage = async () => {
       description: true,
       stars: true,
       orderNumber: true,
+      bpaLevelSettings: {
+        select: { defaultScore: true },
+      },
       _count: {
         select: {
           novels: {
@@ -115,13 +123,14 @@ const BPAPage = async () => {
     },
   });
 
-  // Transform levels to include novel count
+  // Transform levels to include novel count and resolved defaultScore
   const levelsWithCount = bpaLevels.map((level) => ({
     id: level.id,
     name: level.name,
     description: level.description,
     stars: level.stars,
     novelsAvailable: level._count.novels,
+    defaultScore: level.bpaLevelSettings?.defaultScore ?? globalBPASettings?.defaultScore ?? 0,
   }));
 
   // Fetch campus events for the student (only if they have a campus)
