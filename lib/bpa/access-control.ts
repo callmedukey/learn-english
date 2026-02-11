@@ -98,6 +98,10 @@ export async function isNovelAssignedToSemester(
 
 /**
  * Check if a user can access a novel (both user assigned to level AND novel assigned to semester)
+ *
+ * This function handles overlapping semester date ranges correctly by checking if the user
+ * is assigned to ANY currently active semester (by date range) where the novel is also assigned,
+ * rather than relying on a system-wide "current" semester.
  */
 export async function canUserAccessNovel(
   userId: string,
@@ -109,9 +113,6 @@ export async function canUserAccessNovel(
       return true;
     }
 
-    const currentSemester = await getCurrentBPAContext();
-    if (!currentSemester.timeframeId || !currentSemester.season) return false;
-
     // Get novel's level
     const novel = await prisma.bPANovel.findUnique({
       where: { id: novelId },
@@ -120,22 +121,41 @@ export async function canUserAccessNovel(
 
     if (!novel) return false;
 
-    // Check both conditions
-    const [userAssigned, novelAssigned] = await Promise.all([
-      isUserAssignedToLevel(
-        userId,
-        novel.bpaLevelId,
-        currentSemester.timeframeId!,
-        currentSemester.season!
-      ),
-      isNovelAssignedToSemester(
-        novelId,
-        currentSemester.timeframeId!,
-        currentSemester.season!
-      ),
-    ]);
+    const now = new Date();
+    const koreaTime = toZonedTime(now, APP_TIMEZONE);
 
-    return userAssigned && novelAssigned;
+    // Find ALL user's assignments for this level where the semester is currently active
+    // This handles overlapping semesters correctly - if user is assigned to ANY active semester,
+    // we check if the novel is assigned to that semester
+    const userAssignments = await prisma.bPAUserLevelAssignment.findMany({
+      where: {
+        userId,
+        bpaLevelId: novel.bpaLevelId,
+        semester: {
+          startDate: { lte: koreaTime },
+          endDate: { gte: koreaTime },
+        },
+      },
+      select: {
+        timeframeId: true,
+        season: true,
+      },
+    });
+
+    if (userAssignments.length === 0) return false;
+
+    // Check if novel is assigned to ANY of the user's active semesters
+    const novelAssignment = await prisma.bPANovelSemesterAssignment.findFirst({
+      where: {
+        novelId,
+        OR: userAssignments.map((a) => ({
+          timeframeId: a.timeframeId,
+          season: a.season,
+        })),
+      },
+    });
+
+    return !!novelAssignment;
   } catch (error) {
     console.error("Error checking novel access:", error);
     return false;
