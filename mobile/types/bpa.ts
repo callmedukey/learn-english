@@ -216,3 +216,39 @@ export interface BPAQuizCompletionResult {
   tryNumber?: 1 | 2;
   error?: string;
 }
+
+// Campus Event Types
+export type CampusEventColor =
+  | "sky"
+  | "amber"
+  | "violet"
+  | "rose"
+  | "emerald"
+  | "orange"
+  | "red"
+  | "blue"
+  | "green"
+  | "yellow"
+  | "pink"
+  | "indigo"
+  | "cyan"
+  | "teal"
+  | "lime"
+  | "fuchsia"
+  | "slate";
+
+export interface CampusEvent {
+  id: string;
+  title: string;
+  description: string | null;
+  location: string | null;
+  startDate: string; // ISO string
+  endDate: string;
+  allDay: boolean;
+  color: CampusEventColor;
+}
+
+export interface CampusEventsResponse {
+  events: CampusEvent[];
+  hasCampusAccess: boolean;
+}

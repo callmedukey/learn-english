@@ -75,13 +75,8 @@ function RankingRow({
           }`}
           numberOfLines={1}
         >
-          {user.nickname}
+{user.nickname}
         </Text>
-        {user.campusName && (
-          <Text className="text-xs text-muted-foreground" numberOfLines={1}>
-            {user.campusName}
-          </Text>
-        )}
       </View>
 
       {/* Grade Badge */}

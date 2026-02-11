@@ -11,6 +11,7 @@ import type {
   BPAQuizCompletionResult,
   BPARankingsResponse,
   BPATimeframesResponse,
+  CampusEventsResponse,
 } from "@/types/bpa";
 
 import { apiClient } from "./client";
@@ -133,6 +134,14 @@ export async function fetchBPARankings(
 
   const response = await apiClient.get<BPARankingsResponse>(
     `/api/mobile/bpa/rankings?${queryParams.toString()}`
+  );
+  return response.data;
+}
+
+// Fetch campus events for the user's campus
+export async function fetchCampusEvents(): Promise<CampusEventsResponse> {
+  const response = await apiClient.get<CampusEventsResponse>(
+    "/api/mobile/bpa/campus-events"
   );
   return response.data;
 }

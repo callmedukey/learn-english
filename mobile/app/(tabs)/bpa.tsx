@@ -5,6 +5,7 @@ import { RefreshControl, ScrollView, Text, View } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 
 import {
+  BPACampusCalendar,
   BPALevelCard,
   BPALevelsSkeleton,
   BPASemesterLeaderboard,
@@ -15,6 +16,7 @@ import {
 import {
   useBPALevels,
   useBPATimeframes,
+  useCampusEvents,
   useCurrentSemester,
 } from "@/hooks/useBPA";
 
@@ -27,6 +29,7 @@ export default function BPAScreen() {
 
   const { data: levelsData, isLoading: levelsLoading, error: levelsError, refetch: refetchLevels } = useBPALevels();
   const { data: timeframesData, isLoading: timeframesLoading, refetch: refetchTimeframes } = useBPATimeframes();
+  const { data: campusEventsData, isLoading: campusEventsLoading, refetch: refetchCampusEvents } = useCampusEvents();
 
   const timeframes = timeframesData?.timeframes || [];
   const currentSemester = useCurrentSemester(timeframes, selectedTimeframeId);
@@ -46,9 +49,9 @@ export default function BPAScreen() {
 
   const onRefresh = useCallback(async () => {
     setRefreshing(true);
-    await Promise.all([refetchLevels(), refetchTimeframes()]);
+    await Promise.all([refetchLevels(), refetchTimeframes(), refetchCampusEvents()]);
     setRefreshing(false);
-  }, [refetchLevels, refetchTimeframes]);
+  }, [refetchLevels, refetchTimeframes, refetchCampusEvents]);
 
   // Format season from UPPERCASE to Title case
   const formatSeasonName = (
@@ -214,6 +217,14 @@ export default function BPAScreen() {
             </Text>
           </View>
         )}
+
+        {/* Campus Calendar Section */}
+        <View className="mb-8 mt-4">
+          <BPACampusCalendar
+            events={campusEventsData?.events || []}
+            isLoading={campusEventsLoading && !campusEventsData}
+          />
+        </View>
       </ScrollView>
     </SafeAreaView>
   );

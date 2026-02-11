@@ -223,7 +223,7 @@ function RankingDisplay({
         <View className="flex-1">
           <Text className="text-xs font-semibold text-gray-500">NICKNAME</Text>
         </View>
-        <View className="w-12">
+        <View className="w-14">
           <Text className="text-center text-xs font-semibold text-gray-500">
             GRADE
           </Text>
@@ -256,8 +256,8 @@ function RankingDisplay({
               <View className="flex-1">
                 <Text className="text-gray-400">-</Text>
               </View>
-              <View className="w-12">
-                <Text className="text-center text-gray-400">-</Text>
+              <View className="mx-2 rounded bg-muted px-1.5 py-0.5">
+                <Text className="text-xs text-gray-400">-</Text>
               </View>
               <View className="w-16">
                 <Text className="text-right text-gray-400">-</Text>
@@ -321,10 +321,10 @@ function RankingRow({ ranking, onPress }: RankingRowProps) {
         )}
       </View>
 
-      {/* Grade */}
-      <View className="w-12">
-        <Text className="text-center font-semibold text-gray-700">
-          {ranking.grade}
+      {/* Grade Badge */}
+      <View className="mx-2 rounded bg-muted px-1.5 py-0.5">
+        <Text className="text-xs text-muted-foreground">
+          {ranking.grade?.replace(/^Grade\s*/i, "") || "-"}
         </Text>
       </View>
 

@@ -1,3 +1,4 @@
+export { BPACampusCalendar } from "./BPACampusCalendar";
 export { BPAChapterCard } from "./BPAChapterCard";
 export { BPALevelCard } from "./BPALevelCard";
 export { BPANovelCard } from "./BPANovelCard";

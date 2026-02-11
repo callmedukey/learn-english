@@ -9,6 +9,7 @@ import {
   fetchBPANovels,
   fetchBPARankings,
   fetchBPATimeframes,
+  fetchCampusEvents,
   markBPAQuestionStarted,
 } from "@/services/api/bpa";
 import type {
@@ -25,6 +26,7 @@ import type {
   BPARankingsResponse,
   BPATimeframe,
   BPATimeframesResponse,
+  CampusEventsResponse,
 } from "@/types/bpa";
 
 // Fetch all BPA levels with user progress
@@ -153,6 +155,16 @@ export function useBPARankings(
   });
 }
 
+// Fetch campus events for calendar
+export function useCampusEvents() {
+  return useQuery<CampusEventsResponse>({
+    queryKey: ["campusEvents"],
+    queryFn: fetchCampusEvents,
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    refetchOnWindowFocus: true,
+  });
+}
+
 // Helper hook to get current semester from timeframes
 export function useCurrentSemester(
   timeframes: BPATimeframe[],
@@ -199,4 +211,7 @@ export type {
   BPATimeframe,
   BPATimeframesResponse,
   BPAUnit,
+  CampusEvent,
+  CampusEventColor,
+  CampusEventsResponse,
 } from "@/types/bpa";
