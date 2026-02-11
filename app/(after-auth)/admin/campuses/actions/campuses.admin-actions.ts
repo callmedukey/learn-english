@@ -2,7 +2,10 @@
 
 import { revalidatePath } from "next/cache";
 
-import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
+import {
+  requireAdminAccess,
+  requireAdminOrSubAdminAccess,
+} from "@/lib/utils/admin-route-protection";
 import { prisma } from "@/prisma/prisma-client";
 
 export const createCampusAction = async (formData: FormData) => {
@@ -128,7 +131,7 @@ export const deleteCampusAction = async (campusId: string) => {
 };
 
 export const removeUserFromCampusAction = async (userId: string) => {
-  await requireAdminAccess();
+  await requireAdminOrSubAdminAccess();
   if (!userId) {
     return { error: "User ID is required" };
   }
@@ -161,6 +164,62 @@ export const removeUserFromCampusAction = async (userId: string) => {
     console.error("Failed to remove user from campus:", error);
     return {
       error: "Failed to remove user from campus. Please try again.",
+    };
+  }
+};
+
+export const assignUserToCampusAction = async (
+  userId: string,
+  campusId: string
+) => {
+  await requireAdminOrSubAdminAccess();
+
+  if (!userId || !campusId) {
+    return { error: "User ID and Campus ID are required" };
+  }
+
+  try {
+    // Check if user exists
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { id: true, campusId: true },
+    });
+
+    if (!user) {
+      return { error: "User not found" };
+    }
+
+    // Check if campus exists
+    const campus = await prisma.campus.findUnique({
+      where: { id: campusId },
+    });
+
+    if (!campus) {
+      return { error: "Campus not found" };
+    }
+
+    // Update user's campus assignment
+    await prisma.user.update({
+      where: { id: userId },
+      data: { campusId },
+    });
+
+    // Remove any pending campus requests for this user (they're now directly assigned)
+    await prisma.campusRequest.deleteMany({
+      where: {
+        userId,
+        status: "PENDING",
+      },
+    });
+
+    revalidatePath("/admin/campuses");
+    revalidatePath(`/admin/campuses/${campusId}`);
+    revalidatePath("/admin/users");
+    return { success: true };
+  } catch (error) {
+    console.error("Failed to assign user to campus:", error);
+    return {
+      error: "Failed to assign user to campus. Please try again.",
     };
   }
 };

@@ -99,7 +99,7 @@ export const canAccessCampusManagement = (role: Role | undefined): boolean => {
 };
 
 export const canManageCampusStudents = (role: Role | undefined): boolean => {
-  return role === Role.ADMIN;
+  return role === Role.ADMIN || role === Role.SUB_ADMIN;
 };
 
 // BPA Permissions (mirrors Novel/AR permissions)

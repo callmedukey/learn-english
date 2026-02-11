@@ -7,6 +7,7 @@ import { auth } from "@/auth";
 import { Button } from "@/components/ui/button";
 import { Role } from "@/prisma/generated/prisma";
 
+import AddStudentToCampusDialog from "./components/add-student-to-campus-dialog";
 import CampusEventCalendar from "./components/campus-event-calendar";
 import CampusStudentsTable from "./components/campus-students-table";
 import {
@@ -76,6 +77,10 @@ const CampusDetailsPage = async ({
             </p>
           </div>
         </div>
+        <AddStudentToCampusDialog
+          campusId={campusId}
+          campusName={campusData.campus.name}
+        />
       </div>
 
       {/* Campus Calendar */}
