@@ -67,7 +67,7 @@ export function BPALevelCard({ level }: BPALevelCardProps) {
           {level.novelsAvailable !== undefined && (
             <div className="flex items-center justify-between text-sm text-muted-foreground">
               <span>
-                {level.novelsAvailable} novel{level.novelsAvailable !== 1 ? "s" : ""} available
+                {level.novelsAvailable} unit{level.novelsAvailable !== 1 ? "s" : ""} available
               </span>
               <span className="text-primary transition-colors group-hover:text-primary/80">
                 Explore →

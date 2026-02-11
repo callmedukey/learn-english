@@ -119,7 +119,7 @@ async function BPALevelNovels({ levelId }: { levelId: string }) {
             variant="outline"
             className="border-muted-foreground/30 text-muted-foreground"
           >
-            {totalNovelsCount} novel{totalNovelsCount !== 1 ? "s" : ""}
+            {totalNovelsCount} unit{totalNovelsCount !== 1 ? "s" : ""}
           </Badge>
         </div>
 
@@ -133,10 +133,10 @@ async function BPALevelNovels({ levelId }: { levelId: string }) {
         <div className="py-12 text-center">
           <BookOpen className="mx-auto mb-4 h-16 w-16 text-muted-foreground" />
           <h3 className="mb-2 text-xl font-semibold text-foreground">
-            No novels available
+            No units available
           </h3>
           <p className="text-muted-foreground">
-            Novels for this BPA level are coming soon.
+            Units for this BPA level are coming soon.
           </p>
         </div>
       ) : (

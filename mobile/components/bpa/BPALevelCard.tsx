@@ -46,7 +46,7 @@ export function BPALevelCard({ level }: BPALevelCardProps) {
           <View className="flex-row items-center gap-3">
             <View className="rounded-full bg-primary/10 px-2 py-0.5">
               <Text className="text-xs font-medium text-primary">
-                {level.novelsAvailable} novels
+                {level.novelsAvailable} units
               </Text>
             </View>
 

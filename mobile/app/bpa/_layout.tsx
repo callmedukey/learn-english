@@ -38,7 +38,7 @@ export default function BPALayout() {
       <Stack.Screen
         name="[levelId]/index"
         options={{
-          title: "Novels",
+          title: "Units",
         }}
       />
       <Stack.Screen

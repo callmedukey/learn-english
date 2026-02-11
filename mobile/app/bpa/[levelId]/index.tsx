@@ -63,7 +63,7 @@ export default function BPANovelsScreen() {
     return (
       <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
         <ErrorState
-          title="Failed to load novels"
+          title="Failed to load units"
           message={error.message || "Please check your connection and try again"}
           onRetry={refetch}
           isRetrying={refreshing}
@@ -83,7 +83,7 @@ export default function BPANovelsScreen() {
     <>
       <Stack.Screen
         options={{
-          title: bpaLevel?.name || "Novels",
+          title: bpaLevel?.name || "Units",
         }}
       />
       <SafeAreaView className="flex-1 bg-background" edges={["bottom"]}>
@@ -120,7 +120,7 @@ export default function BPANovelsScreen() {
               {pagination && (
                 <View className="mb-4">
                   <Text className="text-sm text-muted-foreground">
-                    {pagination.totalCount} novel
+                    {pagination.totalCount} unit
                     {pagination.totalCount !== 1 ? "s" : ""} available
                   </Text>
                 </View>
@@ -155,7 +155,7 @@ export default function BPANovelsScreen() {
           ListEmptyComponent={
             <View className="items-center py-8">
               <Text className="text-lg font-medium text-foreground">
-                No novels found
+                No units found
               </Text>
               <Text className="mt-1 text-center text-muted-foreground">
                 Try adjusting your filters

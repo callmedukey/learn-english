@@ -236,7 +236,7 @@ function RankingDisplay({
       </View>
 
       {/* Rankings List */}
-      <ScrollView className="flex-1" showsVerticalScrollIndicator={false}>
+      <ScrollView className="flex-1" showsVerticalScrollIndicator={false} nestedScrollEnabled={true}>
         {rankings.map((item) => (
           <RankingRow key={item.id} ranking={item} onPress={() => onUserPress(item.id)} />
         ))}

@@ -22,18 +22,6 @@ interface RankingListProps {
   currentUserId?: string;
 }
 
-// Helper function to get text color class based on campus name
-function getCampusColorClass(campusName?: string): string {
-  if (!campusName) return 'text-gray-900';
-
-  const campusUpper = campusName.toUpperCase();
-  if (campusUpper.includes('BUNDANG')) return 'text-blue-600';
-  if (campusUpper.includes('DONGTAN')) return 'text-emerald-600';
-  if (campusUpper.includes('GWANGGYO')) return 'text-violet-600';
-
-  return 'text-gray-900'; // fallback for other campuses
-}
-
 export function RankingList({ rankings, currentUserId }: RankingListProps) {
   return (
     <div className="flex flex-col p-2">
@@ -85,7 +73,7 @@ export function RankingList({ rankings, currentUserId }: RankingListProps) {
 
                     {/* Nickname with Medal */}
                     <div className="flex items-center gap-1">
-                      <span className={`truncate ${item.campusId ? 'font-bold' : 'font-medium'} ${getCampusColorClass(item.campusName)}`}>
+                      <span className="truncate font-medium text-gray-900">
                         {item.nickname}
                       </span>
                       {item.rank === 1 && (

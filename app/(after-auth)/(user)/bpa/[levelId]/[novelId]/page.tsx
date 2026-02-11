@@ -75,7 +75,7 @@ async function BPANovelContent({
       <div className="mb-6">
         <Button variant="outline" asChild>
           <Link href={`/bpa/${levelId}`}>
-            ← Back to {novel.bpaLevel?.name || "BPA"} Novels
+            ← Back to {novel.bpaLevel?.name || "BPA"} Units
           </Link>
         </Button>
       </div>
