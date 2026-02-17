@@ -15,6 +15,7 @@ export interface ARLevel {
   firstTryTotal: number;
   firstTryCorrect: number;
   medalImages: MedalImage[];
+  defaultScore: number;
 }
 
 export interface ARLevelsResponse {

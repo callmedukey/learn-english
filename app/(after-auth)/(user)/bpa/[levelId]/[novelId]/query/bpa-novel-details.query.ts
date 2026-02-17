@@ -107,6 +107,7 @@ export const getBPANovelDetails = async (
                             },
                             select: {
                               id: true,
+                              selectedAnswer: true,
                             },
                           }
                         : false,
@@ -167,6 +168,7 @@ export const getBPANovelDetails = async (
                         },
                         select: {
                           id: true,
+                          selectedAnswer: true,
                         },
                       }
                     : false,
@@ -216,8 +218,10 @@ export const getBPANovelDetails = async (
   const transformChapter = (chapter: any) => {
     const totalQuestionsCount = chapter.questionSet?.questions.length || 0;
     const completedQuestionsCount = userId
-      ? chapter.questionSet?.questions.filter(
-          (question: any) => question.completed.length > 0,
+      ? chapter.questionSet?.questions.filter((question: any) =>
+          question.completed.some(
+            (c: { selectedAnswer: string | null }) => c.selectedAnswer !== null,
+          ),
         ).length || 0
       : 0;
 

@@ -6,6 +6,7 @@ export interface BPALevel {
   stars: number;
   novelsAvailable: number;
   isAssigned: boolean; // User is assigned to this level for current semester
+  defaultScore: number;
 }
 
 export interface BPALevelsResponse {

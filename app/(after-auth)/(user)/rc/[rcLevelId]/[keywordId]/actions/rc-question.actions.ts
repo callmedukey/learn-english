@@ -382,31 +382,43 @@ export async function submitRCAnswer(
       }
     }
 
-    // Always create score transaction for admin tracking (including incorrect/retry attempts)
+    // Create score transaction for admin tracking (only on first submission)
     try {
       const keyword = question.RCQuestionSet?.RCKeyword;
       const level = keyword?.RCLevel;
 
-      await prisma.scoreTransaction.create({
-        data: {
-          userId: session.user.id,
-          source: "RC",
-          sourceId: existingCompletion?.id || "",
-          score: pointsAwarded,
-          levelInfo: level?.level || null,
-          novelInfo: null,
-          unitInfo: null,
-          chapterInfo: null,
-          keywordInfo: keyword?.name || null,
-          questionText: question.question,
-          selectedAnswer: answer || null,
-          correctAnswer: question.answer,
-          isCorrect: isCorrect,
-          isRetry: isRetry,
-          isTimedOut: isTimedOut,
-          explanation: question.explanation,
-        },
-      });
+      // Only create transaction if one doesn't already exist for this completion
+      if (existingCompletion?.id) {
+        const existingTransaction = await prisma.scoreTransaction.findFirst({
+          where: {
+            source: "RC",
+            sourceId: existingCompletion.id,
+          },
+        });
+
+        if (!existingTransaction) {
+          await prisma.scoreTransaction.create({
+            data: {
+              userId: session.user.id,
+              source: "RC",
+              sourceId: existingCompletion.id,
+              score: pointsAwarded,
+              levelInfo: level?.level || null,
+              novelInfo: null,
+              unitInfo: null,
+              chapterInfo: null,
+              keywordInfo: keyword?.name || null,
+              questionText: question.question,
+              selectedAnswer: answer || null,
+              correctAnswer: question.answer,
+              isCorrect: isCorrect,
+              isRetry: isRetry,
+              isTimedOut: isTimedOut,
+              explanation: question.explanation,
+            },
+          });
+        }
+      }
     } catch (error) {
       // Log error but don't fail the request - score is already saved
       console.error("Failed to create score transaction:", error);

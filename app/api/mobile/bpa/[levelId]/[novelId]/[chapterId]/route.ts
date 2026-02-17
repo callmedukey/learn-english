@@ -91,7 +91,7 @@ export async function GET(request: Request, { params }: RouteParams) {
                 timeLimit: true,
                 completed: {
                   where: { userId: userId },
-                  select: { id: true },
+                  select: { id: true, selectedAnswer: true },
                 },
               },
               orderBy: { orderNumber: "asc" },
@@ -145,7 +145,7 @@ export async function GET(request: Request, { params }: RouteParams) {
         explanation: question.explanation,
         score: question.score,
         timeLimit: question.timeLimit,
-        isCompleted: question.completed.length > 0,
+        isCompleted: question.completed.some((c) => c.selectedAnswer !== null),
       })) || [];
 
     // Determine chapter status

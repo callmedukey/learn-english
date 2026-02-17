@@ -46,6 +46,13 @@ export function RCLevelCard({ rcLevel }: RCLevelCardProps) {
             {rcLevel.keywordCount} keyword{rcLevel.keywordCount !== 1 ? "s" : ""}
           </Text>
         </View>
+        {rcLevel.defaultScore > 0 && (
+          <View className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-1">
+            <Text className="text-xs font-medium text-amber-700">
+              {rcLevel.defaultScore} pts / quiz
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Medal Images */}

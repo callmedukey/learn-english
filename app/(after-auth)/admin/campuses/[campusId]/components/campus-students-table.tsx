@@ -4,7 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
 import { History, Search, UserPlus, Users } from "lucide-react";
 import { useRouter } from "next/navigation";
-import React, { useMemo, useState, useTransition } from "react";
+import React, { useState, useTransition } from "react";
 import { toast } from "sonner";
 
 import ScoreLogDialog from "@/app/(after-auth)/admin/components/score-log-dialog";
@@ -28,6 +28,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { isAssignmentActive } from "@/lib/utils/bpa-semester";
 import { BPASeason } from "@/prisma/generated/prisma";
 
 import AssignLevelDialog from "./assign-level-dialog";
@@ -92,12 +93,6 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
   // Edit assignment state
   const [editingStudent, setEditingStudent] = useState<CampusStudent | null>(null);
   const [editingAssignment, setEditingAssignment] = useState<CampusStudent["allAssignments"][0] | null>(null);
-
-  // Calculate current year from timeframes
-  const currentYear = useMemo(() => {
-    if (timeframes.length === 0) return new Date().getFullYear();
-    return Math.max(...timeframes.map((t) => t.year));
-  }, [timeframes]);
 
   // Filter students by search query
   const filteredStudents = students.filter((student) => {
@@ -449,36 +444,25 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
                   <TableCell>{student.nickname || "-"}</TableCell>
                   <TableCell>
                     {(() => {
-                      const currentYearAssignments = student.allAssignments.filter(
-                        (a) => a.timeframe.year === currentYear
+                      const activeAssignments = student.allAssignments.filter(
+                        (a) => isAssignmentActive(a)
                       );
-                      const pastYearCount =
-                        student.allAssignments.length - currentYearAssignments.length;
 
-                      return (
-                        <>
-                          {currentYearAssignments.length === 0 ? (
-                            <Badge variant="outline" className="text-gray-500">
-                              No Assignments This Year
-                            </Badge>
-                          ) : (
-                            <div className="flex flex-wrap gap-2 max-w-md">
-                              {currentYearAssignments.map((assignment) => (
-                                <AssignmentBadge
-                                  key={assignment.id}
-                                  assignment={assignment}
-                                  student={student}
-                                  onEdit={handleEditAssignment}
-                                />
-                              ))}
-                            </div>
-                          )}
-                          {pastYearCount > 0 && (
-                            <div className="text-sm text-gray-500 mt-1">
-                              +{pastYearCount} from previous years
-                            </div>
-                          )}
-                        </>
+                      return activeAssignments.length === 0 ? (
+                        <Badge variant="outline" className="text-gray-500">
+                          No Active Assignments
+                        </Badge>
+                      ) : (
+                        <div className="flex flex-wrap gap-2 max-w-md">
+                          {activeAssignments.map((assignment) => (
+                            <AssignmentBadge
+                              key={assignment.id}
+                              assignment={assignment}
+                              student={student}
+                              onEdit={handleEditAssignment}
+                            />
+                          ))}
+                        </div>
                       );
                     })()}
                   </TableCell>

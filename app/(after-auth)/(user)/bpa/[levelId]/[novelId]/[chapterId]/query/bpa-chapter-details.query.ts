@@ -90,6 +90,7 @@ export const getBPAChapterDetails = async (
                     },
                     select: {
                       id: true,
+                      selectedAnswer: true,
                     },
                   }
                 : false,
@@ -136,7 +137,9 @@ export const getBPAChapterDetails = async (
       explanation: question.explanation,
       score: question.score,
       timeLimit: question.timeLimit,
-      isCompleted: userId ? question.completed.length > 0 : false,
+      isCompleted: userId
+        ? question.completed.some((c) => c.selectedAnswer !== null)
+        : false,
     })) || [];
 
   return {

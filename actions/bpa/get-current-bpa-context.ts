@@ -12,11 +12,19 @@ interface BPAContext {
 }
 
 /**
- * Determine the current active BPA timeframe and season based on the current date.
+ * Determine the current active BPA timeframe and season for UI display purposes.
  *
- * Season calculation is now based on admin-configured semester date ranges in the database,
+ * Season calculation is based on admin-configured semester date ranges in the database,
  * not hardcoded month ranges. Admins can configure custom start/end dates for each season
  * via the BPA timeframe admin UI.
+ *
+ * NOTE: This function returns a SINGLE semester for UI context (dashboard display,
+ * semester selectors, etc.). When semesters overlap, it returns the most recently
+ * started semester (orderBy: startDate desc).
+ *
+ * For ACCESS CONTROL decisions (can user access a novel?), use the functions in
+ * lib/bpa/access-control.ts which handle overlapping semesters by granting access
+ * to content from ALL active semesters.
  */
 export async function getCurrentBPAContext(): Promise<BPAContext> {
   try {

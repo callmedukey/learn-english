@@ -39,6 +39,10 @@ export async function GET(
                   where: {
                     userId: userId,
                   },
+                  select: {
+                    id: true,
+                    selectedAnswer: true,
+                  },
                 },
               },
             },
@@ -91,8 +95,8 @@ export async function GET(
         status = "retry";
       } else if (hasFirstTry) {
         // Check if user started but didn't finish second try
-        const completedQuestions = questionSet.RCQuestion.filter(
-          (q) => q.RCQuestionCompleted.length > 0
+        const completedQuestions = questionSet.RCQuestion.filter((q) =>
+          q.RCQuestionCompleted.some((c) => c.selectedAnswer !== null)
         ).length;
         const totalQuestions = questionSet.RCQuestion.length;
 
@@ -104,11 +108,11 @@ export async function GET(
         }
       } else {
         // No first try yet
-        const completedQuestions = questionSet.RCQuestion.filter(
-          (q) => q.RCQuestionCompleted.length > 0
+        const completedQuestionsCount = questionSet.RCQuestion.filter((q) =>
+          q.RCQuestionCompleted.some((c) => c.selectedAnswer !== null)
         ).length;
 
-        if (completedQuestions > 0) {
+        if (completedQuestionsCount > 0) {
           status = "continue";
         } else {
           status = "start";
@@ -126,7 +130,7 @@ export async function GET(
       explanation: q.explanation,
       score: q.score,
       timeLimit: q.timeLimit,
-      isCompleted: q.RCQuestionCompleted.length > 0,
+      isCompleted: q.RCQuestionCompleted.some((c) => c.selectedAnswer !== null),
     })) || [];
 
     return NextResponse.json({

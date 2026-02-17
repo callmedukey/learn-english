@@ -90,6 +90,7 @@ export const getChapterDetails = async (
                     },
                     select: {
                       id: true,
+                      selectedAnswer: true,
                     },
                   }
                 : false,
@@ -136,7 +137,9 @@ export const getChapterDetails = async (
       explanation: question.explanation,
       score: question.score,
       timeLimit: question.timeLimit,
-      isCompleted: userId ? question.novelQuestionCompleted.length > 0 : false,
+      isCompleted: userId
+        ? question.novelQuestionCompleted.some((c) => c.selectedAnswer !== null)
+        : false,
     })) || [];
 
   return {

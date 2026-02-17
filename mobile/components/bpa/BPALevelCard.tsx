@@ -49,7 +49,13 @@ export function BPALevelCard({ level }: BPALevelCardProps) {
                 {level.novelsAvailable} units
               </Text>
             </View>
-
+            {level.defaultScore > 0 && (
+              <View className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-0.5">
+                <Text className="text-xs font-medium text-amber-700">
+                  {level.defaultScore} pts / quiz
+                </Text>
+              </View>
+            )}
             {level.isAssigned ? (
               <View className="rounded-full bg-green-100 px-2 py-0.5">
                 <Text className="text-xs font-medium text-green-700">

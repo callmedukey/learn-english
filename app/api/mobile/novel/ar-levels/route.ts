@@ -13,8 +13,12 @@ export async function GET(request: Request) {
   const userId = payload.sub;
 
   try {
+    // Fetch global NovelSettings as fallback
+    const globalNovelSettings = await prisma.novelSettings.findFirst();
+
     const arChoices = await prisma.aR.findMany({
       include: {
+        ARSettings: true,
         novels: {
           where: {
             hidden: false,
@@ -128,6 +132,8 @@ export async function GET(request: Request) {
         firstTryTotal,
         firstTryCorrect,
         medalImages: medalImageMap.get(ar.id) || [],
+        defaultScore:
+          ar.ARSettings?.defaultScore ?? globalNovelSettings?.defaultScore ?? 0,
       };
     });
 

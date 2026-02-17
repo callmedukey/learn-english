@@ -42,6 +42,13 @@ export function ARCard({ ar }: ARCardProps) {
             {ar.novelCount} novel{ar.novelCount !== 1 ? "s" : ""}
           </Text>
         </View>
+        {ar.defaultScore > 0 && (
+          <View className="rounded-full border border-amber-500/30 bg-amber-500/10 px-2 py-1">
+            <Text className="text-xs font-medium text-amber-700">
+              {ar.defaultScore} pts / quiz
+            </Text>
+          </View>
+        )}
       </View>
 
       {/* Medal Images */}

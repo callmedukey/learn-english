@@ -47,6 +47,9 @@ export async function GET(request: Request) {
       userAssignedLevelIds = assignments.map((a) => a.bpaLevelId);
     }
 
+    // Fetch global BPASettings as fallback
+    const globalBPASettings = await prisma.bPASettings.findFirst();
+
     // Fetch all BPA levels
     const bpaLevels = await prisma.bPALevel.findMany({
       orderBy: {
@@ -58,6 +61,7 @@ export async function GET(request: Request) {
         description: true,
         stars: true,
         orderNumber: true,
+        bpaLevelSettings: true,
         _count: {
           select: {
             novels: {
@@ -78,6 +82,10 @@ export async function GET(request: Request) {
       stars: level.stars,
       novelsAvailable: level._count.novels,
       isAssigned: userAssignedLevelIds.includes(level.id),
+      defaultScore:
+        level.bpaLevelSettings?.defaultScore ??
+        globalBPASettings?.defaultScore ??
+        0,
     }));
 
     return NextResponse.json({

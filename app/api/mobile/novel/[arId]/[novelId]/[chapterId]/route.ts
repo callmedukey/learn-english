@@ -49,6 +49,7 @@ export async function GET(
                     id: true,
                     isCorrect: true,
                     score: true,
+                    selectedAnswer: true,
                   },
                 },
               },
@@ -111,15 +112,15 @@ export async function GET(
       status = "retry";
     } else if (hasFirstTry) {
       // Check if all questions completed for second try eligibility
-      const allCompleted = questions.every(
-        (q) => q.novelQuestionCompleted.length > 0
+      const allCompleted = questions.every((q) =>
+        q.novelQuestionCompleted.some((c) => c.selectedAnswer !== null)
       );
       if (allCompleted) {
         status = "retry";
       } else {
         // Some questions started but not completed
-        const someStarted = questions.some(
-          (q) => q.novelQuestionCompleted.length > 0
+        const someStarted = questions.some((q) =>
+          q.novelQuestionCompleted.some((c) => c.selectedAnswer !== null)
         );
         status = someStarted ? "continue" : "start";
       }
@@ -141,7 +142,9 @@ export async function GET(
       explanation: q.explanation,
       score: q.score,
       timeLimit: q.timeLimit,
-      isCompleted: q.novelQuestionCompleted.length > 0,
+      isCompleted: q.novelQuestionCompleted.some(
+        (c) => c.selectedAnswer !== null
+      ),
     }));
 
     return NextResponse.json({

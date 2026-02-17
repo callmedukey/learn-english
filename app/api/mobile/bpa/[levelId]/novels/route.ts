@@ -87,7 +87,7 @@ export async function GET(request: Request, { params }: RouteParams) {
                   include: {
                     completed: {
                       where: { userId: userId },
-                      select: { userId: true },
+                      select: { userId: true, selectedAnswer: true },
                     },
                   },
                 },
@@ -112,7 +112,8 @@ export async function GET(request: Request, { params }: RouteParams) {
         if (!chapter.questionSet) return false;
         const totalQuestions = chapter.questionSet.questions.length;
         const completedQuestions = chapter.questionSet.questions.filter(
-          (question) => question.completed.length > 0
+          (question) =>
+            question.completed.some((c) => c.selectedAnswer !== null)
         ).length;
         return totalQuestions > 0 && completedQuestions === totalQuestions;
       }).length;

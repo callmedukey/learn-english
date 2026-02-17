@@ -15,6 +15,7 @@ export interface RCLevel {
   firstTryTotal: number;
   firstTryCorrect: number;
   medalImages: MedalImage[];
+  defaultScore: number;
 }
 
 export interface RCLevelsResponse {

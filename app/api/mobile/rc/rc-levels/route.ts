@@ -13,8 +13,12 @@ export async function GET(request: Request) {
   const userId = payload.sub;
 
   try {
+    // Fetch global RCSettings as fallback
+    const globalRCSettings = await prisma.rCSettings.findFirst();
+
     const rcLevels = await prisma.rCLevel.findMany({
       include: {
+        RCLevelSettings: true,
         RCKeyword: {
           where: {
             hidden: false,
@@ -119,6 +123,8 @@ export async function GET(request: Request) {
         firstTryTotal,
         firstTryCorrect,
         medalImages: medalImageMap.get(rc.id) || [],
+        defaultScore:
+          rc.RCLevelSettings?.defaultScore ?? globalRCSettings?.defaultScore ?? 0,
       };
     });
 

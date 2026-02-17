@@ -68,7 +68,7 @@ export async function GET(request: Request, { params }: RouteParams) {
                         id: true,
                         completed: {
                           where: { userId: userId },
-                          select: { id: true },
+                          select: { id: true, selectedAnswer: true },
                         },
                       },
                     },
@@ -159,7 +159,10 @@ export async function GET(request: Request, { params }: RouteParams) {
     const transformChapter = (chapter: any) => {
       const totalQuestions = chapter.questionSet?.questions.length || 0;
       const completedQuestions = chapter.questionSet?.questions.filter(
-        (question: any) => question.completed.length > 0
+        (question: any) =>
+          question.completed.some(
+            (c: { selectedAnswer: string | null }) => c.selectedAnswer !== null
+          )
       ).length || 0;
 
       const isCompleted =
