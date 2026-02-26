@@ -55,6 +55,11 @@ export async function GET(request: NextRequest) {
         );
     }
 
+    // Get today's date range for today's scores
+    const now = new Date();
+    const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+    const startOfTomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+
     // Fetch BPA scores ordered by score (highest first)
     const bpaScores = await prisma.bPAScore.findMany({
       where: {
@@ -66,6 +71,31 @@ export async function GET(request: NextRequest) {
         score: "desc",
       },
     });
+
+    // Get all user IDs for batch query
+    const userIds = bpaScores.map((s) => s.userId);
+
+    // Fetch today's BPA completions for all users in one query
+    const todayCompletions = await prisma.bPAQuestionCompleted.findMany({
+      where: {
+        userId: { in: userIds },
+        createdAt: {
+          gte: startOfToday,
+          lt: startOfTomorrow,
+        },
+      },
+      select: {
+        userId: true,
+        score: true,
+      },
+    });
+
+    // Aggregate today's scores by user
+    const todayScoresByUser = new Map<string, number>();
+    for (const completion of todayCompletions) {
+      const existing = todayScoresByUser.get(completion.userId) || 0;
+      todayScoresByUser.set(completion.userId, existing + completion.score);
+    }
 
     // Fetch user details separately for each score
     const rankings = await Promise.all(
@@ -91,6 +121,7 @@ export async function GET(request: NextRequest) {
           nickname: user?.nickname || "Anonymous",
           grade: calculateGrade(user?.birthday || null),
           score: scoreRecord.score,
+          todayScore: todayScoresByUser.get(scoreRecord.userId) || 0,
           campusId: user?.campusId || null,
           campusName: user?.campus?.name || null,
         };

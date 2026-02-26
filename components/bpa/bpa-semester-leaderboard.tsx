@@ -162,6 +162,7 @@ function RankingDisplay({ timeframeId, season, levelId }: RankingDisplayProps) {
         <div className="flex min-w-0 flex-1">NICKNAME</div>
         <div className="w-12 text-center">GRADE</div>
         <div className="w-16 text-right">POINT</div>
+        <div className="w-14 text-right text-green-700">TODAY</div>
       </div>
 
       {/* Rankings with scrollable container */}
@@ -255,6 +256,11 @@ function RankingDisplay({ timeframeId, season, levelId }: RankingDisplayProps) {
                           <div className="w-16 text-right font-bold text-amber-700">
                             {item.score.toLocaleString()}
                           </div>
+
+                          {/* Today Score */}
+                          <div className="w-14 text-right font-semibold text-green-700">
+                            {item.todayScore > 0 ? `+${item.todayScore.toLocaleString()}` : "-"}
+                          </div>
                         </div>
                       </UserStatsPopover>
                     ))}
@@ -276,6 +282,7 @@ function RankingDisplay({ timeframeId, season, levelId }: RankingDisplayProps) {
                             -
                           </div>
                           <div className="w-16 text-right text-gray-400">-</div>
+                          <div className="w-14 text-right text-gray-400">-</div>
                         </div>
                       ))}
                   </>

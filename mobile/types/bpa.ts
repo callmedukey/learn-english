@@ -46,6 +46,7 @@ export interface BPARanking {
   nickname: string;
   grade: string;
   score: number;
+  todayScore: number;
   campusId: string | null;
   campusName: string | null;
 }

@@ -28,6 +28,10 @@ export interface LeaderboardUser {
   totalScore: number;
   novelScores: number;
   rcScores: number;
+  // Today's scores
+  todayTotalScore: number;
+  todayNovelScores: number;
+  todayRcScores: number;
 }
 
 export interface CountryOption {
@@ -266,12 +270,101 @@ async function getTodayScoresByCampus(): Promise<Array<[string, number]>> {
   return todayScoresByCampus;
 }
 
+// Helper type for today's scores per user
+interface TodayUserScores {
+  novelScores: number;
+  rcScores: number;
+  totalScore: number;
+}
+
+// Helper function to get today's scores per user
+async function getTodayScoresPerUser(): Promise<Map<string, TodayUserScores>> {
+  // Get today's date range (start and end of day in server timezone)
+  const now = new Date();
+  const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 0, 0, 0, 0);
+  const startOfTomorrow = new Date(now.getFullYear(), now.getMonth(), now.getDate() + 1, 0, 0, 0, 0);
+
+  // Fetch all Novel (AR) completions from today
+  const novelCompletions = await prisma.novelQuestionCompleted.findMany({
+    where: {
+      createdAt: {
+        gte: startOfToday,
+        lt: startOfTomorrow,
+      },
+    },
+    select: {
+      userId: true,
+      score: true,
+    },
+  });
+
+  // Fetch all BPA completions from today
+  const bpaCompletions = await prisma.bPAQuestionCompleted.findMany({
+    where: {
+      createdAt: {
+        gte: startOfToday,
+        lt: startOfTomorrow,
+      },
+    },
+    select: {
+      userId: true,
+      score: true,
+    },
+  });
+
+  // Fetch all RC completions from today
+  const rcCompletions = await prisma.rCQuestionCompleted.findMany({
+    where: {
+      createdAt: {
+        gte: startOfToday,
+        lt: startOfTomorrow,
+      },
+    },
+    select: {
+      userId: true,
+      score: true,
+    },
+  });
+
+  // Aggregate scores by user
+  const userScoresMap = new Map<string, TodayUserScores>();
+
+  // Process Novel completions
+  for (const completion of novelCompletions) {
+    const existing = userScoresMap.get(completion.userId) || { novelScores: 0, rcScores: 0, totalScore: 0 };
+    existing.novelScores += completion.score;
+    existing.totalScore += completion.score;
+    userScoresMap.set(completion.userId, existing);
+  }
+
+  // Process BPA completions (also counts as novel scores)
+  for (const completion of bpaCompletions) {
+    const existing = userScoresMap.get(completion.userId) || { novelScores: 0, rcScores: 0, totalScore: 0 };
+    existing.novelScores += completion.score;
+    existing.totalScore += completion.score;
+    userScoresMap.set(completion.userId, existing);
+  }
+
+  // Process RC completions
+  for (const completion of rcCompletions) {
+    const existing = userScoresMap.get(completion.userId) || { novelScores: 0, rcScores: 0, totalScore: 0 };
+    existing.rcScores += completion.score;
+    existing.totalScore += completion.score;
+    userScoresMap.set(completion.userId, existing);
+  }
+
+  return userScoresMap;
+}
+
 export async function getLeaderboardData(
   filters: LeaderboardFilters = {},
   pagination: PaginationParams = { page: 1, pageSize: 50 }
 ): Promise<LeaderboardResult> {
-  // Get current semester
-  const currentSemester = await getCurrentSemester();
+  // Get current semester and today's scores in parallel
+  const [currentSemester, todayScoresMap] = await Promise.all([
+    getCurrentSemester(),
+    getTodayScoresPerUser(),
+  ]);
 
   // Get ALL users to calculate proper ranks
   const users = await prisma.user.findMany({
@@ -330,6 +423,7 @@ export async function getLeaderboardData(
     const novelScores = arScores + bpaScores;
     const rcScores = user.RCScore.reduce((sum, score) => sum + score.score, 0);
     const grade = calculateGrade(user.birthday);
+    const todayScores = todayScoresMap.get(user.id) || { novelScores: 0, rcScores: 0, totalScore: 0 };
 
     return {
       id: user.id,
@@ -346,6 +440,9 @@ export async function getLeaderboardData(
       totalScore,
       novelScores,
       rcScores,
+      todayTotalScore: todayScores.totalScore,
+      todayNovelScores: todayScores.novelScores,
+      todayRcScores: todayScores.rcScores,
     };
   });
 
@@ -540,8 +637,11 @@ export async function getGradeLeaderboardData(
   filters: LeaderboardFilters = {},
   pagination: PaginationParams = { page: 1, pageSize: 100 }
 ): Promise<LeaderboardResult> {
-  // Get current semester
-  const currentSemester = await getCurrentSemester();
+  // Get current semester and today's scores in parallel
+  const [currentSemester, todayScoresMap] = await Promise.all([
+    getCurrentSemester(),
+    getTodayScoresPerUser(),
+  ]);
 
   // Get ALL users to calculate proper ranks
   const users = await prisma.user.findMany({
@@ -600,6 +700,7 @@ export async function getGradeLeaderboardData(
     const novelScores = arScores + bpaScores;
     const rcScores = user.RCScore.reduce((sum, score) => sum + score.score, 0);
     const userGrade = calculateGrade(user.birthday);
+    const todayScores = todayScoresMap.get(user.id) || { novelScores: 0, rcScores: 0, totalScore: 0 };
 
     return {
       id: user.id,
@@ -616,6 +717,9 @@ export async function getGradeLeaderboardData(
       totalScore,
       novelScores,
       rcScores,
+      todayTotalScore: todayScores.totalScore,
+      todayNovelScores: todayScores.novelScores,
+      todayRcScores: todayScores.rcScores,
     };
   });
 
@@ -800,8 +904,11 @@ export async function getMonthlyLeaderboardData(
   const targetYear = year || now.getFullYear();
   const targetMonth = month || now.getMonth() + 1; // getMonth() returns 0-11
 
-  // Get current semester
-  const currentSemester = await getCurrentSemester();
+  // Get current semester and today's scores in parallel
+  const [currentSemester, todayScoresMap] = await Promise.all([
+    getCurrentSemester(),
+    getTodayScoresPerUser(),
+  ]);
 
   // Get ALL users with their monthly scores to calculate proper ranks
   const users = await prisma.user.findMany({
@@ -870,6 +977,7 @@ export async function getMonthlyLeaderboardData(
       const rcScores = user.monthlyRCScores.reduce((sum, score) => sum + score.score, 0);
       const totalScore = novelScores + rcScores;
       const grade = calculateGrade(user.birthday);
+      const todayScores = todayScoresMap.get(user.id) || { novelScores: 0, rcScores: 0, totalScore: 0 };
 
       return {
         id: user.id,
@@ -886,6 +994,9 @@ export async function getMonthlyLeaderboardData(
         totalScore,
         novelScores,
         rcScores,
+        todayTotalScore: todayScores.totalScore,
+        todayNovelScores: todayScores.novelScores,
+        todayRcScores: todayScores.rcScores,
       };
     })
     .filter(user => user.totalScore > 0); // Only include users with scores this month

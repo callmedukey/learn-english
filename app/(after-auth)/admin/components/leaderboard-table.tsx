@@ -105,8 +105,11 @@ export default function LeaderboardTable({
               <TableHead>Country</TableHead>
               <TableHead>Campus</TableHead>
               <TableHead>Total Score</TableHead>
+              <TableHead className="text-green-700">Today Total</TableHead>
               <TableHead>Novel Score</TableHead>
+              <TableHead className="text-green-700">Today Novel</TableHead>
               <TableHead>RC Score</TableHead>
+              <TableHead className="text-green-700">Today RC</TableHead>
               <TableHead className="text-center">Actions</TableHead>
             </TableRow>
           </TableHeader>
@@ -156,8 +159,17 @@ export default function LeaderboardTable({
                   <TableCell className="font-semibold">
                     {user.totalScore.toLocaleString()}
                   </TableCell>
+                  <TableCell className="font-semibold text-green-700">
+                    {user.todayTotalScore > 0 ? `+${user.todayTotalScore.toLocaleString()}` : "-"}
+                  </TableCell>
                   <TableCell>{user.novelScores.toLocaleString()}</TableCell>
+                  <TableCell className="text-green-700">
+                    {user.todayNovelScores > 0 ? `+${user.todayNovelScores.toLocaleString()}` : "-"}
+                  </TableCell>
                   <TableCell>{user.rcScores.toLocaleString()}</TableCell>
+                  <TableCell className="text-green-700">
+                    {user.todayRcScores > 0 ? `+${user.todayRcScores.toLocaleString()}` : "-"}
+                  </TableCell>
                   <TableCell className="text-center">
                     <ScoreLogDialog
                       userId={user.id}

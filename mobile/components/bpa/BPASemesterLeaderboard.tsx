@@ -228,9 +228,14 @@ function RankingDisplay({
             GRADE
           </Text>
         </View>
-        <View className="w-16">
+        <View className="w-14">
           <Text className="text-right text-xs font-semibold text-gray-500">
             POINT
+          </Text>
+        </View>
+        <View className="w-12">
+          <Text className="text-right text-xs font-semibold text-green-700">
+            TODAY
           </Text>
         </View>
       </View>
@@ -259,7 +264,10 @@ function RankingDisplay({
               <View className="mx-2 rounded bg-muted px-1.5 py-0.5">
                 <Text className="text-xs text-gray-400">-</Text>
               </View>
-              <View className="w-16">
+              <View className="w-14">
+                <Text className="text-right text-gray-400">-</Text>
+              </View>
+              <View className="w-12">
                 <Text className="text-right text-gray-400">-</Text>
               </View>
             </View>
@@ -329,9 +337,16 @@ function RankingRow({ ranking, onPress }: RankingRowProps) {
       </View>
 
       {/* Score */}
-      <View className="w-16">
+      <View className="w-14">
         <Text className="text-right font-bold text-amber-700">
           {ranking.score.toLocaleString()}
+        </Text>
+      </View>
+
+      {/* Today Score */}
+      <View className="w-12">
+        <Text className="text-right font-semibold text-green-700">
+          {ranking.todayScore > 0 ? `+${ranking.todayScore.toLocaleString()}` : "-"}
         </Text>
       </View>
     </TouchableOpacity>
