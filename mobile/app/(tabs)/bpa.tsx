@@ -133,11 +133,19 @@ export default function BPAScreen() {
         showsVerticalScrollIndicator={false}
       >
         {/* Header */}
-        <View className="mb-6 flex-row items-center gap-2">
+        <View className="mb-4 flex-row items-center gap-2">
           <Text className="text-2xl font-bold text-amber-900">
             BPA CHALLENGE
           </Text>
           <Ionicons name="trophy" size={24} color="#5D3A29" />
+        </View>
+
+        {/* Campus Calendar Section */}
+        <View className="mb-6">
+          <BPACampusCalendar
+            events={campusEventsData?.events || []}
+            isLoading={campusEventsLoading && !campusEventsData}
+          />
         </View>
 
         {/* View Mode Toggle & Timeframe Selector */}
@@ -217,14 +225,6 @@ export default function BPAScreen() {
             </Text>
           </View>
         )}
-
-        {/* Campus Calendar Section */}
-        <View className="mb-8 mt-4">
-          <BPACampusCalendar
-            events={campusEventsData?.events || []}
-            isLoading={campusEventsLoading && !campusEventsData}
-          />
-        </View>
       </ScrollView>
     </SafeAreaView>
   );

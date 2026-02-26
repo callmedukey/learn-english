@@ -85,18 +85,35 @@ function getGradeOrder(grade: string): number {
 }
 
 // Helper function to find the current active semester based on today's date
+// Uses two-step approach: first find active timeframe, then find semester within it
 async function getCurrentSemester() {
   const now = new Date();
   const koreaTime = toZonedTime(now, APP_TIMEZONE);
 
+  // Step 1: Find the active timeframe (current date falls within startDate and endDate)
+  const activeTimeframe = await prisma.bPATimeframe.findFirst({
+    where: {
+      startDate: { lte: now },
+      endDate: { gte: now },
+    },
+    orderBy: {
+      startDate: "desc",
+    },
+  });
+
+  if (!activeTimeframe) {
+    return null;
+  }
+
+  // Step 2: Find the current semester within that timeframe
   const currentSemester = await prisma.bPASemester.findFirst({
     where: {
-      startDate: {
-        lte: koreaTime,
-      },
-      endDate: {
-        gte: koreaTime,
-      },
+      timeframeId: activeTimeframe.id,
+      startDate: { lte: koreaTime },
+      endDate: { gte: koreaTime },
+    },
+    orderBy: {
+      startDate: "desc",
     },
     select: {
       id: true,

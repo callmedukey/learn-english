@@ -79,9 +79,18 @@ export function BPAPageContent({
   return (
     <div className="py-16">
       {/* Page Title */}
-      <div className="mb-12 flex items-center gap-3">
+      <div className="mb-8 flex items-center gap-3">
         <h1 className="text-4xl font-bold text-amber-900">BPA CHALLENGE</h1>
         <Trophy className="h-8 w-8 text-primary" />
+      </div>
+
+      {/* Campus Calendar Section */}
+      <div className="mb-12">
+        <div className="mb-6 flex items-center gap-3">
+          <h2 className="text-3xl font-bold text-amber-900">Campus Calendar</h2>
+          <CalendarDays className="h-7 w-7 text-primary" />
+        </div>
+        <BPACampusCalendar events={campusEvents} />
       </div>
 
       {/* Semester Leaderboards - Single or 2x2 Grid with Timeframe Selector */}
@@ -203,15 +212,6 @@ export function BPAPageContent({
         {bpaLevels.map((level) => (
           <BPALevelCard key={level.id} level={level} />
         ))}
-      </div>
-
-      {/* Campus Calendar Section */}
-      <div className="mt-16">
-        <div className="mb-6 flex items-center gap-3">
-          <h2 className="text-3xl font-bold text-amber-900">Campus Calendar</h2>
-          <CalendarDays className="h-7 w-7 text-primary" />
-        </div>
-        <BPACampusCalendar events={campusEvents} />
       </div>
     </div>
   );
