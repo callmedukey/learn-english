@@ -29,7 +29,7 @@
     },
     "android": {
       "package": "com.readingchamp_android",
-      "versionCode": 6,
+      "versionCode": 7,
       "googleServicesFile": "./google-services.json",
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",

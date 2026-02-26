@@ -1,5 +1,8 @@
 "server only";
 
+import { toZonedTime } from "date-fns-tz";
+
+import { APP_TIMEZONE } from "@/lib/constants/timezone";
 import calculateGrade from "@/lib/utils/calculate-grade";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -83,15 +86,16 @@ function getGradeOrder(grade: string): number {
 
 // Helper function to find the current active semester based on today's date
 async function getCurrentSemester() {
-  const today = new Date();
+  const now = new Date();
+  const koreaTime = toZonedTime(now, APP_TIMEZONE);
 
   const currentSemester = await prisma.bPASemester.findFirst({
     where: {
       startDate: {
-        lte: today,
+        lte: koreaTime,
       },
       endDate: {
-        gte: today,
+        gte: koreaTime,
       },
     },
     select: {
