@@ -51,6 +51,12 @@ export interface MedalCounts {
   bronze: number;
 }
 
+export interface TodayStats {
+  novelScore: number;
+  rcScore: number;
+  totalScore: number;
+}
+
 export interface AllTimeStats {
   novelScore: number;
   rcScore: number;
@@ -58,6 +64,7 @@ export interface AllTimeStats {
   overallRank: UserRankingData;
   gradeRank: GradeRankingData;
   medals: MedalCounts;
+  todayStats: TodayStats;
 }
 
 export interface MonthlyStats {
@@ -66,6 +73,7 @@ export interface MonthlyStats {
   totalScore: number;
   overallRank: UserRankingData;
   gradeRank: GradeRankingData;
+  todayStats: TodayStats;
 }
 
 export interface RankingsByType {

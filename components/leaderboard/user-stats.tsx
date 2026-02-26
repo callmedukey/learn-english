@@ -5,6 +5,8 @@ import { getUserMedalCounts, getUserMedalsForDisplay } from "@/server-queries/us
 
 import { getUserRanking } from "./queries/user-ranking.query";
 import { getUserStats } from "./queries/user-stats.query";
+import { getUserTodayStats } from "./queries/user-today-stats.query";
+import { ScoreLogDialog } from "./score-log-dialog";
 import { UserStatsPopover } from "./user-stats-popover";
 
 interface UserStatsProps {
@@ -12,20 +14,24 @@ interface UserStatsProps {
 }
 
 export async function UserStats({ userId }: UserStatsProps) {
-  const [userStats, userRanking, medalCounts, userMedals] = await Promise.all([
+  const [userStats, userRanking, medalCounts, userMedals, todayStats] = await Promise.all([
     getUserStats(userId),
     getUserRanking(userId),
     getUserMedalCounts(userId),
     getUserMedalsForDisplay(userId),
+    getUserTodayStats(userId),
   ]);
 
   if (!userStats) {
     return (
       <Card className="h-full gap-0 bg-white py-0 shadow-lg">
-        <CardHeader className="rounded-t-lg bg-primary text-white">
+        <CardHeader className="relative rounded-t-lg bg-primary text-white">
           <CardTitle className="py-1 text-center text-lg font-semibold">
             My Points & My Rank
           </CardTitle>
+          <div className="absolute inset-y-0 right-2 flex items-center">
+            <ScoreLogDialog />
+          </div>
         </CardHeader>
         <CardContent className="p-6">
           <div className="space-y-4 text-center">
@@ -42,19 +48,31 @@ export async function UserStats({ userId }: UserStatsProps) {
   return (
     <UserStatsPopover userId={userId}>
       <Card className="h-full cursor-pointer gap-0 bg-white py-0 shadow-lg transition-colors hover:bg-gray-50">
-        <CardHeader className="rounded-t-lg bg-primary text-white">
+        <CardHeader className="relative rounded-t-lg bg-primary text-white">
           <CardTitle className="py-1 text-center text-lg font-semibold">
             My Points & My Rank
           </CardTitle>
+          <div className="absolute inset-y-0 right-2 flex items-center">
+            <ScoreLogDialog />
+          </div>
         </CardHeader>
         <CardContent className="px-6 py-8">
           <div className="space-y-4 text-center">
             {/* Novel Stats */}
             <div className="space-y-1">
               <div className="text-lg font-bold text-primary">NOVEL</div>
-              <div className="rounded-lg bg-gray-100 p-2">
-                <div className="text-base font-bold text-gray-800">
-                  {novelScore.toLocaleString()}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-lg bg-gray-100 p-2">
+                  <div className="text-xs text-gray-500">Total</div>
+                  <div className="text-base font-bold text-gray-800">
+                    {novelScore.toLocaleString()}
+                  </div>
+                </div>
+                <div className="rounded-lg bg-green-50 p-2">
+                  <div className="text-xs text-green-600">Today</div>
+                  <div className="text-base font-bold text-green-600">
+                    +{todayStats.novelScore.toLocaleString()}
+                  </div>
                 </div>
               </div>
             </div>
@@ -62,9 +80,18 @@ export async function UserStats({ userId }: UserStatsProps) {
             {/* RC Stats */}
             <div className="space-y-1">
               <div className="text-lg font-bold text-primary">R.C</div>
-              <div className="rounded-lg bg-gray-100 p-2">
-                <div className="text-base font-bold text-gray-800">
-                  {userStats.totalRcScore.toLocaleString()}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-lg bg-gray-100 p-2">
+                  <div className="text-xs text-gray-500">Total</div>
+                  <div className="text-base font-bold text-gray-800">
+                    {userStats.totalRcScore.toLocaleString()}
+                  </div>
+                </div>
+                <div className="rounded-lg bg-green-50 p-2">
+                  <div className="text-xs text-green-600">Today</div>
+                  <div className="text-base font-bold text-green-600">
+                    +{todayStats.rcScore.toLocaleString()}
+                  </div>
                 </div>
               </div>
             </div>
@@ -72,9 +99,18 @@ export async function UserStats({ userId }: UserStatsProps) {
             {/* Total Stats */}
             <div className="space-y-2">
               <div className="text-lg font-bold text-primary">TOTAL</div>
-              <div className="rounded-lg bg-gray-100 p-2">
-                <div className="text-base font-bold text-gray-800">
-                  {totalScore.toLocaleString()}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="rounded-lg bg-gray-100 p-2">
+                  <div className="text-xs text-gray-500">Total</div>
+                  <div className="text-base font-bold text-gray-800">
+                    {totalScore.toLocaleString()}
+                  </div>
+                </div>
+                <div className="rounded-lg bg-green-50 p-2">
+                  <div className="text-xs text-green-600">Today</div>
+                  <div className="text-base font-bold text-green-600">
+                    +{todayStats.totalScore.toLocaleString()}
+                  </div>
                 </div>
               </div>
 

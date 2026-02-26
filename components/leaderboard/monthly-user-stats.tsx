@@ -7,6 +7,7 @@ import calculateGrade from "@/lib/utils/calculate-grade";
 import { prisma } from "@/prisma/prisma-client";
 
 import { getMonthlyUserRanking } from "./queries/get-monthly-user-ranking.query";
+import { getUserTodayStats } from "./queries/user-today-stats.query";
 
 interface MonthlyUserStatsProps {
   userId: string;
@@ -25,8 +26,8 @@ export async function MonthlyUserStats({ userId }: MonthlyUserStatsProps) {
   });
   const userGrade = calculateGrade(user?.birthday || null);
 
-  // Get monthly AR, RC, and BPA scores
-  const [monthlyARScores, monthlyRCScores, monthlyBPAScores] = await Promise.all([
+  // Get monthly AR, RC, and BPA scores + today's stats
+  const [monthlyARScores, monthlyRCScores, monthlyBPAScores, todayStats] = await Promise.all([
     prisma.monthlyARScore.aggregate({
       where: {
         userId,
@@ -57,6 +58,7 @@ export async function MonthlyUserStats({ userId }: MonthlyUserStatsProps) {
         score: true,
       },
     }),
+    getUserTodayStats(userId),
   ]);
 
   const arScore = monthlyARScores._sum.score || 0;
@@ -87,9 +89,18 @@ export async function MonthlyUserStats({ userId }: MonthlyUserStatsProps) {
           {/* Novel Stats */}
           <div className="space-y-1">
             <div className="text-lg font-bold text-primary">NOVEL</div>
-            <div className="rounded-lg bg-gray-100 p-2">
-              <div className="text-base font-bold text-gray-800">
-                {novelScore.toLocaleString()}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-lg bg-gray-100 p-2">
+                <div className="text-xs text-gray-500">Total</div>
+                <div className="text-base font-bold text-gray-800">
+                  {novelScore.toLocaleString()}
+                </div>
+              </div>
+              <div className="rounded-lg bg-green-50 p-2">
+                <div className="text-xs text-green-600">Today</div>
+                <div className="text-base font-bold text-green-600">
+                  +{todayStats.novelScore.toLocaleString()}
+                </div>
               </div>
             </div>
           </div>
@@ -97,9 +108,18 @@ export async function MonthlyUserStats({ userId }: MonthlyUserStatsProps) {
           {/* RC Stats */}
           <div className="space-y-1">
             <div className="text-lg font-bold text-primary">R.C</div>
-            <div className="rounded-lg bg-gray-100 p-2">
-              <div className="text-base font-bold text-gray-800">
-                {rcScore.toLocaleString()}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-lg bg-gray-100 p-2">
+                <div className="text-xs text-gray-500">Total</div>
+                <div className="text-base font-bold text-gray-800">
+                  {rcScore.toLocaleString()}
+                </div>
+              </div>
+              <div className="rounded-lg bg-green-50 p-2">
+                <div className="text-xs text-green-600">Today</div>
+                <div className="text-base font-bold text-green-600">
+                  +{todayStats.rcScore.toLocaleString()}
+                </div>
               </div>
             </div>
           </div>
@@ -107,9 +127,18 @@ export async function MonthlyUserStats({ userId }: MonthlyUserStatsProps) {
           {/* Total Stats */}
           <div className="space-y-2">
             <div className="text-lg font-bold text-primary">TOTAL</div>
-            <div className="rounded-lg bg-gray-100 p-2">
-              <div className="text-base font-bold text-gray-800">
-                {totalScore.toLocaleString()}
+            <div className="grid grid-cols-2 gap-2">
+              <div className="rounded-lg bg-gray-100 p-2">
+                <div className="text-xs text-gray-500">Total</div>
+                <div className="text-base font-bold text-gray-800">
+                  {totalScore.toLocaleString()}
+                </div>
+              </div>
+              <div className="rounded-lg bg-green-50 p-2">
+                <div className="text-xs text-green-600">Today</div>
+                <div className="text-base font-bold text-green-600">
+                  +{todayStats.totalScore.toLocaleString()}
+                </div>
               </div>
             </div>
 

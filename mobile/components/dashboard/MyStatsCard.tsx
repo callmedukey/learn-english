@@ -5,6 +5,7 @@ import type {
   AllTimeStats,
   MonthlyStats,
   MedalCounts,
+  TodayStats,
 } from "@/services/api/dashboard";
 
 interface MyStatsCardProps {
@@ -12,29 +13,35 @@ interface MyStatsCardProps {
   stats: AllTimeStats | MonthlyStats;
   showMedals?: boolean;
   onPress?: () => void;
+  onHistoryPress?: () => void;
 }
 
-function StatRow({
+function StatSection({
   label,
-  score,
-  color,
+  totalScore,
+  todayScore,
 }: {
   label: string;
-  score: number;
-  color: string;
+  totalScore: number;
+  todayScore: number;
 }) {
   return (
-    <View className="flex-row items-center justify-between py-1">
-      <View className="flex-row items-center gap-2">
-        <View
-          className="h-2 w-2 rounded-full"
-          style={{ backgroundColor: color }}
-        />
-        <Text className="text-sm text-muted-foreground">{label}</Text>
+    <View className="gap-1">
+      <Text className="text-center text-base font-bold text-primary">{label}</Text>
+      <View className="flex-row gap-2">
+        <View className="flex-1 rounded-lg bg-gray-100 p-2">
+          <Text className="text-center text-xs text-gray-500">Total</Text>
+          <Text className="text-center text-sm font-bold text-gray-800">
+            {totalScore.toLocaleString()}
+          </Text>
+        </View>
+        <View className="flex-1 rounded-lg bg-green-50 p-2">
+          <Text className="text-center text-xs text-green-600">Today</Text>
+          <Text className="text-center text-sm font-bold text-green-600">
+            +{todayScore.toLocaleString()}
+          </Text>
+        </View>
       </View>
-      <Text className="font-medium text-foreground">
-        {score.toLocaleString()} pts
-      </Text>
     </View>
   );
 }
@@ -64,7 +71,7 @@ function MedalsDisplay({ medals }: { medals: MedalCounts }) {
   );
 }
 
-export function MyStatsCard({ title, stats, showMedals = false, onPress }: MyStatsCardProps) {
+export function MyStatsCard({ title, stats, showMedals = false, onPress, onHistoryPress }: MyStatsCardProps) {
   const isAllTimeStats = "medals" in stats;
 
   const Container = onPress ? TouchableOpacity : View;
@@ -73,25 +80,44 @@ export function MyStatsCard({ title, stats, showMedals = false, onPress }: MySta
   return (
     <Container className="rounded-2xl bg-white p-4 shadow-sm" {...containerProps}>
       {/* Header */}
-      <View className="mb-3 flex-row items-center gap-2">
-        <View className="h-8 w-8 items-center justify-center rounded-full bg-green-100">
-          <FontAwesome name="bar-chart" size={14} color="#16A34A" />
+      <View className="mb-3 flex-row items-center justify-between">
+        <View className="flex-row items-center gap-2">
+          <View className="h-8 w-8 items-center justify-center rounded-full bg-green-100">
+            <FontAwesome name="bar-chart" size={14} color="#16A34A" />
+          </View>
+          <Text className="text-base font-semibold text-foreground">{title}</Text>
         </View>
-        <Text className="text-base font-semibold text-foreground">{title}</Text>
+        {onHistoryPress && (
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation?.();
+              onHistoryPress();
+            }}
+            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+            className="p-1"
+          >
+            <FontAwesome name="history" size={18} color="#6B7280" />
+          </TouchableOpacity>
+        )}
       </View>
 
       {/* Score Stats */}
-      <View className="mb-3">
-        <StatRow label="NOVEL" score={stats.novelScore} color="#5D3A29" />
-        <StatRow label="R.C" score={stats.rcScore} color="#2563EB" />
-        <View className="mt-2 border-t border-border pt-2">
-          <View className="flex-row items-center justify-between">
-            <Text className="font-medium text-foreground">TOTAL</Text>
-            <Text className="text-lg font-bold text-primary">
-              {stats.totalScore.toLocaleString()} pts
-            </Text>
-          </View>
-        </View>
+      <View className="mb-3 gap-3">
+        <StatSection
+          label="NOVEL"
+          totalScore={stats.novelScore}
+          todayScore={stats.todayStats.novelScore}
+        />
+        <StatSection
+          label="R.C"
+          totalScore={stats.rcScore}
+          todayScore={stats.todayStats.rcScore}
+        />
+        <StatSection
+          label="TOTAL"
+          totalScore={stats.totalScore}
+          todayScore={stats.todayStats.totalScore}
+        />
       </View>
 
       {/* Rankings */}

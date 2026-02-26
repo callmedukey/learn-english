@@ -17,6 +17,7 @@ import {
   MyStatsCard,
   DashboardSkeleton,
   UserStatsModal,
+  ScoreLogModal,
 } from "@/components/dashboard";
 import { useAuth } from "@/hooks/useAuth";
 import { useDashboard } from "@/hooks/useDashboard";
@@ -26,6 +27,7 @@ export default function DashboardScreen() {
   const router = useRouter();
   const { data, isLoading, error, refetch, isRefetching } = useDashboard();
   const [myStatsModalOpen, setMyStatsModalOpen] = useState(false);
+  const [scoreLogModalOpen, setScoreLogModalOpen] = useState(false);
 
   const handleNovelPress = () => {
     if (data?.continueLearning.novel) {
@@ -133,6 +135,7 @@ export default function DashboardScreen() {
               stats={data.allTimeStats}
               showMedals
               onPress={() => setMyStatsModalOpen(true)}
+              onHistoryPress={() => setScoreLogModalOpen(true)}
             />
           )}
 
@@ -178,6 +181,12 @@ export default function DashboardScreen() {
         userId={user?.id ?? null}
         open={myStatsModalOpen}
         onOpenChange={setMyStatsModalOpen}
+      />
+
+      {/* Score Log Modal */}
+      <ScoreLogModal
+        open={scoreLogModalOpen}
+        onOpenChange={setScoreLogModalOpen}
       />
     </SafeAreaView>
   );

@@ -2,6 +2,7 @@
 
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
+import { toZonedTime } from "date-fns-tz";
 import DOMPurify from "isomorphic-dompurify";
 import {
   ChevronDown,
@@ -23,6 +24,25 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { APP_TIMEZONE } from "@/lib/shared/constants/timezone";
+
+interface UserStatsResponse {
+  allTime: {
+    novelScore: number;
+    rcScore: number;
+    totalScore: number;
+  };
+  monthly: {
+    novelScore: number;
+    rcScore: number;
+    totalScore: number;
+  };
+  today: {
+    novelScore: number;
+    rcScore: number;
+    totalScore: number;
+  };
+}
 
 interface ScoreLogDialogProps {
   userId: string;
@@ -56,6 +76,51 @@ async function fetchScoreLog(
   return response.json();
 }
 
+async function fetchUserStats(userId: string): Promise<UserStatsResponse> {
+  const response = await fetch(`/api/admin/users/${userId}/stats`);
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch user stats");
+  }
+
+  return response.json();
+}
+
+function StatRow({
+  label,
+  total,
+  today,
+}: {
+  label: string;
+  total: number;
+  today: number;
+}) {
+  return (
+    <div className="flex items-center justify-between text-sm">
+      <span className="font-medium text-muted-foreground">{label}</span>
+      <div className="flex items-center gap-2">
+        <span className="font-semibold text-gray-800">
+          {total.toLocaleString()}
+        </span>
+        <span className="text-xs text-muted-foreground">|</span>
+        <span className="font-semibold text-green-600">
+          +{today.toLocaleString()}
+        </span>
+      </div>
+    </div>
+  );
+}
+
+function getCurrentMonthName(): string {
+  const now = new Date();
+  const koreaTime = toZonedTime(now, APP_TIMEZONE);
+  const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+  ];
+  return monthNames[koreaTime.getMonth()];
+}
+
 export default function ScoreLogDialog({
   userId,
   userNickname,
@@ -71,6 +136,12 @@ export default function ScoreLogDialog({
     queryKey: ["user-score-log", userId, page, sourceFilter],
     queryFn: () => fetchScoreLog(userId, page, pageSize, sourceFilter),
     enabled: open, // Only fetch when dialog is open
+  });
+
+  const { data: stats, isLoading: statsLoading } = useQuery({
+    queryKey: ["user-stats", userId],
+    queryFn: () => fetchUserStats(userId),
+    enabled: open,
   });
 
   const handleSourceFilterChange = (source: "RC" | "Novel" | "BPA" | undefined) => {
@@ -99,6 +170,65 @@ export default function ScoreLogDialog({
             Detailed history of scores earned from RC, Novel, and BPA activities
           </DialogDescription>
         </DialogHeader>
+
+        {/* Stats Summary */}
+        <div className="border-b pb-4">
+          {statsLoading ? (
+            <div className="flex items-center justify-center py-4">
+              <div className="h-5 w-5 animate-spin rounded-full border-2 border-primary border-t-transparent"></div>
+            </div>
+          ) : stats ? (
+            <div className="grid grid-cols-2 gap-6">
+              {/* All-Time Stats */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-semibold text-muted-foreground">
+                  All-Time
+                </h4>
+                <div className="space-y-1.5">
+                  <StatRow
+                    label="NOVEL"
+                    total={stats.allTime.novelScore}
+                    today={stats.today.novelScore}
+                  />
+                  <StatRow
+                    label="R.C"
+                    total={stats.allTime.rcScore}
+                    today={stats.today.rcScore}
+                  />
+                  <StatRow
+                    label="TOTAL"
+                    total={stats.allTime.totalScore}
+                    today={stats.today.totalScore}
+                  />
+                </div>
+              </div>
+
+              {/* Monthly Stats */}
+              <div className="space-y-2">
+                <h4 className="text-sm font-semibold text-muted-foreground">
+                  {getCurrentMonthName()}
+                </h4>
+                <div className="space-y-1.5">
+                  <StatRow
+                    label="NOVEL"
+                    total={stats.monthly.novelScore}
+                    today={stats.today.novelScore}
+                  />
+                  <StatRow
+                    label="R.C"
+                    total={stats.monthly.rcScore}
+                    today={stats.today.rcScore}
+                  />
+                  <StatRow
+                    label="TOTAL"
+                    total={stats.monthly.totalScore}
+                    today={stats.today.totalScore}
+                  />
+                </div>
+              </div>
+            </div>
+          ) : null}
+        </div>
 
         <div className="space-y-4">
           {/* Filter tabs */}
