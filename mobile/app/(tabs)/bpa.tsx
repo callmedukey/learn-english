@@ -145,6 +145,7 @@ export default function BPAScreen() {
           <BPACampusCalendar
             events={campusEventsData?.events || []}
             isLoading={campusEventsLoading && !campusEventsData}
+            campusName={campusEventsData?.campusName}
           />
         </View>
 

@@ -253,4 +253,5 @@ export interface CampusEvent {
 export interface CampusEventsResponse {
   events: CampusEvent[];
   hasCampusAccess: boolean;
+  campusName?: string;
 }

@@ -19,7 +19,7 @@ const BPAPage = async () => {
   // Check if user has an assigned campus
   const user = await prisma.user.findUnique({
     where: { id: session.user.id },
-    select: { campusId: true },
+    select: { campusId: true, campus: { select: { name: true } } },
   });
 
   // If no campus is assigned, show access denied message (super users bypass this)
@@ -143,6 +143,7 @@ const BPAPage = async () => {
       userLevelAssignments={userLevelAssignments}
       bpaLevels={levelsWithCount}
       campusEvents={campusEvents}
+      campusName={user?.campus?.name}
     />
   );
 };

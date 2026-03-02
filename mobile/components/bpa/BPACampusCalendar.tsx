@@ -41,9 +41,10 @@ interface CalendarEvent {
 interface BPACampusCalendarProps {
   events: CampusEvent[];
   isLoading?: boolean;
+  campusName?: string;
 }
 
-export function BPACampusCalendar({ events, isLoading }: BPACampusCalendarProps) {
+export function BPACampusCalendar({ events, isLoading, campusName }: BPACampusCalendarProps) {
   const [selectedEvent, setSelectedEvent] = useState<CalendarEvent | null>(null);
   const [currentDate, setCurrentDate] = useState(new Date());
 
@@ -141,7 +142,9 @@ export function BPACampusCalendar({ events, isLoading }: BPACampusCalendarProps)
       {/* Calendar Header */}
       <View className="flex-row items-center gap-2">
         <Ionicons name="calendar" size={20} color="#5D3A29" />
-        <Text className="text-xl font-bold text-amber-900">Campus Calendar</Text>
+        <Text className="text-xl font-bold text-amber-900">
+          {campusName ? `${campusName} Calendar` : "Campus Calendar"}
+        </Text>
       </View>
 
       {/* Calendar Container */}

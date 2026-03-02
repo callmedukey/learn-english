@@ -27,13 +27,14 @@ export async function GET(request: Request) {
     // Get user's campus
     const user = await prisma.user.findUnique({
       where: { id: userId },
-      select: { campusId: true },
+      select: { campusId: true, campus: { select: { name: true } } },
     });
 
     if (!user?.campusId) {
       return NextResponse.json({
         events: [],
         hasCampusAccess: false,
+        campusName: undefined,
       });
     }
 
@@ -68,6 +69,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       events: transformedEvents,
       hasCampusAccess: true,
+      campusName: user.campus?.name,
     });
   } catch (error) {
     console.error("Campus Events API error:", error);

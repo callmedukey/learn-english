@@ -38,12 +38,14 @@ interface BPAPageContentProps {
     defaultScore?: number;
   }>;
   campusEvents: CampusEventData[];
+  campusName?: string;
 }
 
 export function BPAPageContent({
   userLevelAssignments,
   bpaLevels,
   campusEvents,
+  campusName,
 }: BPAPageContentProps) {
   const [selectedTimeframe, setSelectedTimeframe] = useState<string | null>(null);
   const { data: timeframes } = useBPASemesters();
@@ -87,7 +89,9 @@ export function BPAPageContent({
       {/* Campus Calendar Section */}
       <div className="mb-12">
         <div className="mb-6 flex items-center gap-3">
-          <h2 className="text-3xl font-bold text-amber-900">Campus Calendar</h2>
+          <h2 className="text-3xl font-bold text-amber-900">
+            {campusName ? `${campusName} Calendar` : "Campus Calendar"}
+          </h2>
           <CalendarDays className="h-7 w-7 text-primary" />
         </div>
         <BPACampusCalendar events={campusEvents} />
