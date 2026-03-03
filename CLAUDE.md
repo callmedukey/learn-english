@@ -221,3 +221,11 @@ Mobile App → API calls → Next.js /app/api/* → Prisma → PostgreSQL
 - **Auth**: Uses `expo-secure-store` instead of NextAuth (NextAuth is web-only)
 - **Payments**: Uses Toss Payments React Native SDK (different from web SDK)
 - **Navigation**: Expo Router instead of Next.js App Router
+
+### ⚠️ CRITICAL: Android Build Rules
+- **NEVER run `expo prebuild --clean`** - This deletes the entire `android/` folder including the upload keystore
+- **NEVER delete the `mobile/android/` folder** - It contains the signing keystore required for Google Play uploads
+- **The upload keystore is NOT stored in EAS** - It's only in `mobile/android/app/`
+- **For Android builds, only run Gradle directly**: `cd mobile/android && ./gradlew bundleRelease`
+- **If versionCode needs updating**, edit `mobile/app.json` AND `mobile/android/app/build.gradle` manually
+- **Before any Android folder changes**, always backup `mobile/android/app/*.keystore`

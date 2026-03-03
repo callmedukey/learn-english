@@ -56,15 +56,25 @@ export async function createNotificationForAllUsersAction(
       };
     }
 
-    // Create notifications for all users
-    await prisma.notification.createMany({
-      data: users.map((user) => ({
-        userId: user.id,
-        type,
-        title,
-        message,
-      })),
-    });
+    // Create notifications for all users in batches to avoid PostgreSQL parameter limits
+    // (65,535 limit / 4 fields per notification ≈ 16,000 max, using 5,000 for safety)
+    const BATCH_SIZE = 5000;
+    let totalCreated = 0;
+
+    for (let i = 0; i < users.length; i += BATCH_SIZE) {
+      const batch = users.slice(i, i + BATCH_SIZE);
+      const result = await prisma.notification.createMany({
+        data: batch.map((user) => ({
+          userId: user.id,
+          type,
+          title,
+          message,
+        })),
+      });
+      totalCreated += result.count;
+    }
+
+    console.log(`Created ${totalCreated} notifications for ${users.length} users`);
 
     revalidatePath("/admin/notifications");
 

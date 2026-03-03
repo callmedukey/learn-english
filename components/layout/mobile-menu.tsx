@@ -2,7 +2,7 @@
 
 import { Bell, Check, Crown, Menu, User } from "lucide-react";
 import Link from "next/link";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -35,6 +35,11 @@ const MobileMenu = ({ userId, notifications = [] }: MobileMenuProps) => {
     useState(notifications);
   const [showNotifications, setShowNotifications] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+
+  // Sync notifications prop with state when parent updates after async loading
+  useEffect(() => {
+    setCurrentNotifications(notifications);
+  }, [notifications]);
 
   const unreadCount = currentNotifications.filter((n) => !n.isRead).length;
 
