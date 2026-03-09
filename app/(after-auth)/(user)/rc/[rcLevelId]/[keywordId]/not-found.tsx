@@ -9,7 +9,7 @@ export default function NotFound() {
         Topic Not Found
       </h2>
       <p className="mb-8 text-muted-foreground">
-        The reading comprehension topic you&apos;re looking for doesn&apos;t
+        The reading comprehension topic you're looking for doesn't
         exist.
       </p>
       <Link href="/rc">

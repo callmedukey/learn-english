@@ -264,7 +264,7 @@ export function RCKeywordCard({
                 <TooltipContent>
                   {userLevelLock ? (
                     <p>
-                      You&apos;ve joined this month&apos;s challenge! Points
+                      You've joined this month's challenge! Points
                       count toward medals{userLevelLock.levelId === rcLevelId ? '' : ' (only for your locked level)'}.
                     </p>
                   ) : (
@@ -334,7 +334,7 @@ export function RCKeywordCard({
         {keyword.comingSoon && (
           <div className="mt-3 rounded-lg bg-amber-50 p-3">
             <p className="text-center text-xs font-medium text-amber-800">
-              🎯 New reading passage incoming! We&apos;re crafting engaging
+              🎯 New reading passage incoming! We're crafting engaging
               passages to boost your skills.
             </p>
           </div>

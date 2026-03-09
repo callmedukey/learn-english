@@ -243,7 +243,7 @@ export default function InternationalPaymentFlow({
         <Alert>
           <Info className="h-4 w-4" />
           <AlertDescription>
-            International cards require manual renewal. We&apos;ll send you a
+            International cards require manual renewal. We'll send you a
             reminder email before your subscription expires.
           </AlertDescription>
         </Alert>

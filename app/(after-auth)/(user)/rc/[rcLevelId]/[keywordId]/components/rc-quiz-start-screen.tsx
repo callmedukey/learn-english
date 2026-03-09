@@ -24,14 +24,14 @@ export function RCQuizStartScreen({
           <div>
             <h3 className="mb-2 text-xl font-semibold">Ready to Start?</h3>
             <p className="text-gray-600">
-              You&apos;ll have {timeLimit || 60} seconds to read the passage
+              You'll have {timeLimit || 60} seconds to read the passage
               before the questions begin.
             </p>
           </div>
           <div className="mx-auto max-w-md space-y-2 text-left text-sm text-gray-600">
             <p>• Read the passage carefully during the reading time</p>
             <p>
-              • After reading time, you&apos;ll answer {totalQuestions}{" "}
+              • After reading time, you'll answer {totalQuestions}{" "}
               questions
             </p>
             <p>• Each question has its own time limit</p>

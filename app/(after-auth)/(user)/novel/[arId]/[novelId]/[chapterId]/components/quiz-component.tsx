@@ -384,7 +384,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
           <div className="text-gray-500">
             <div className="mb-4 text-4xl">📝</div>
             <h3 className="mb-2 text-lg font-medium">No Questions Available</h3>
-            <p>This chapter doesn&apos;t have any questions yet.</p>
+            <p>This chapter doesn't have any questions yet.</p>
             <Button className="mt-4" onClick={() => router.back()}>
               Go Back
             </Button>
@@ -415,7 +415,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
           <div className="mb-4 text-4xl">🎉</div>
           <div className="space-y-4">
             <p className="text-lg">
-              You&apos;ve completed Chapter {chapter.orderNumber}:{" "}
+              You've completed Chapter {chapter.orderNumber}:{" "}
               {chapter.title}
             </p>
 
@@ -493,7 +493,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
               <div className="mx-auto max-w-md space-y-2 text-left text-sm text-gray-600">
                 <p>• {questions.length} questions total</p>
                 <p>• Each question has a time limit</p>
-                <p>• You&apos;ll see explanations after each answer</p>
+                <p>• You'll see explanations after each answer</p>
                 {initialStatus === "retry" && (
                   <p className="font-medium text-amber-600">
                     • No points will be awarded for retry attempts

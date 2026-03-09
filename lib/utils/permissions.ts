@@ -75,6 +75,11 @@ export const canAccessUserManagement = (role: Role | undefined): boolean => {
   return role === Role.ADMIN;
 };
 
+// View-only permission for Users page (both ADMIN and SUB_ADMIN can view)
+export const canViewUsers = (role: Role | undefined): boolean => {
+  return role === Role.ADMIN || role === Role.SUB_ADMIN;
+};
+
 export const canAccessPaymentManagement = (role: Role | undefined): boolean => {
   return role === Role.ADMIN;
 };

@@ -226,7 +226,7 @@ export default function SubscriptionStatus({
             <AlertCircle className="h-4 w-4" />
             <AlertTitle>Subscription Cancelled</AlertTitle>
             <AlertDescription>
-              You&apos;ve cancelled your subscription. You can continue using
+              You've cancelled your subscription. You can continue using
               the service until{" "}
               {format(subscription.endDate, "MMMM dd, yyyy", { locale: enUS })}.
             </AlertDescription>

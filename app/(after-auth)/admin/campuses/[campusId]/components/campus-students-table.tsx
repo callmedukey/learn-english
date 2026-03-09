@@ -29,7 +29,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { isAssignmentActive } from "@/lib/utils/bpa-semester";
-import { BPASeason } from "@/prisma/generated/prisma";
+import { BPASeason, SubscriptionStatus } from "@/prisma/generated/prisma";
 
 import AssignLevelDialog from "./assign-level-dialog";
 import RemoveUserFromCampusDialog from "./remove-user-from-campus-dialog";
@@ -365,13 +365,14 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
               <TableHead>Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Nickname</TableHead>
+              <TableHead>Subscription</TableHead>
               <TableHead>All Assignments</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {filteredStudents.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8">
+                <TableCell colSpan={7} className="text-center py-8">
                   <p className="text-gray-500">
                     {searchQuery
                       ? "No students match your search"
@@ -442,6 +443,12 @@ const CampusStudentsTable: React.FC<CampusStudentsTableProps> = ({
                   </TableCell>
                   <TableCell>{student.email}</TableCell>
                   <TableCell>{student.nickname || "-"}</TableCell>
+                  <TableCell>
+                    <SubscriptionStatusBadge
+                      hasActiveSubscription={student.hasActiveSubscription}
+                      activeSubscription={student.activeSubscription}
+                    />
+                  </TableCell>
                   <TableCell>
                     {(() => {
                       const activeAssignments = student.allAssignments.filter(
@@ -652,6 +659,41 @@ const EditAssignmentDialog: React.FC<EditAssignmentDialogProps> = ({
         if (!open) onClose();
       }}
     />
+  );
+};
+
+// Subscription Status Badge Component
+interface SubscriptionStatusBadgeProps {
+  hasActiveSubscription: boolean;
+  activeSubscription: {
+    id: string;
+    status: SubscriptionStatus;
+    endDate: Date;
+    planName: string;
+  } | null;
+}
+
+const SubscriptionStatusBadge: React.FC<SubscriptionStatusBadgeProps> = ({
+  hasActiveSubscription,
+  activeSubscription,
+}) => {
+  if (!hasActiveSubscription || !activeSubscription) {
+    return (
+      <Badge variant="outline" className="text-gray-500">
+        No Subscription
+      </Badge>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-1">
+      <Badge className="bg-green-100 text-green-800 border-green-200">
+        Active
+      </Badge>
+      <span className="text-xs text-muted-foreground">
+        {activeSubscription.planName}
+      </span>
+    </div>
   );
 };
 

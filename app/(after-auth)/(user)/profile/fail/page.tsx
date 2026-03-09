@@ -35,7 +35,7 @@ export default async function FailPage({ searchParams }: FailPageProps) {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-gray-600">
-              We&apos;re sorry, but your payment could not be processed. Please
+              We're sorry, but your payment could not be processed. Please
               try again or contact support if the problem persists.
             </p>
 

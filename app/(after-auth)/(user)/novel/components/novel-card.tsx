@@ -135,7 +135,7 @@ export function NovelCard({
                 <TooltipContent>
                   {userJoinedChallenge ? (
                     <p>
-                      You&apos;ve joined this month&apos;s challenge! Points
+                      You've joined this month's challenge! Points
                       count toward medals.
                     </p>
                   ) : (

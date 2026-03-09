@@ -349,7 +349,7 @@ export function RCQuizComponent({
             <div className="mb-4 text-4xl">📝</div>
             <h3 className="mb-2 text-lg font-medium">No Questions Available</h3>
             <p>
-              This reading comprehension doesn&apos;t have any questions yet.
+              This reading comprehension doesn't have any questions yet.
             </p>
             <Button className="mt-4" onClick={() => router.back()}>
               Go Back

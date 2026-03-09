@@ -229,7 +229,7 @@ export default function RefundPolicyPage() {
                     <li className="flex items-start">
                       <span className="mr-2 text-amber-500">•</span>
                       <span>
-                        콘텐츠 &apos;사용&apos; 여부는 로그인을 통한 퀴즈를
+                        콘텐츠 '사용' 여부는 로그인을 통한 퀴즈를
                         진행한 기록이 있는 경우로 간주됩니다.
                       </span>
                     </li>

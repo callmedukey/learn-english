@@ -1,6 +1,6 @@
 "server only";
 
-import { BPASeason } from "@/prisma/generated/prisma";
+import { BPASeason, SubscriptionStatus } from "@/prisma/generated/prisma";
 import { prisma } from "@/prisma/prisma-client";
 
 export interface CampusStudent {
@@ -11,6 +11,13 @@ export interface CampusStudent {
   nickname: string | null;
   role: string;
   createdAt: Date;
+  hasActiveSubscription: boolean;
+  activeSubscription: {
+    id: string;
+    status: SubscriptionStatus;
+    endDate: Date;
+    planName: string;
+  } | null;
   allAssignments: Array<{
     id: string;
     bpaLevelId: string;
@@ -114,6 +121,18 @@ export async function getCampusWithStudents(
             { season: "asc" },
           ],
         },
+        subscriptions: {
+          include: {
+            plan: {
+              select: {
+                name: true,
+              },
+            },
+          },
+          orderBy: {
+            endDate: "desc",
+          },
+        },
       },
       orderBy: [
         { name: "asc" },
@@ -122,27 +141,43 @@ export async function getCampusWithStudents(
     });
 
     // Transform students data
-    const transformedStudents: CampusStudent[] = students.map((student) => ({
-      id: student.id,
-      name: student.name,
-      studentName: student.studentName,
-      email: student.email,
-      nickname: student.nickname,
-      role: student.role,
-      createdAt: student.createdAt,
-      allAssignments: student.bpaLevelAssignments.map((assignment) => ({
-        id: assignment.id,
-        bpaLevelId: assignment.bpaLevelId,
-        semesterId: assignment.semesterId,
-        timeframeId: assignment.timeframeId,
-        season: assignment.season,
-        semester: assignment.semester,
-        bpaLevel: assignment.bpaLevel,
-        timeframe: assignment.timeframe,
-        assignedAt: assignment.assignedAt,
-        assignedBy: assignment.assignedBy,
-      })),
-    }));
+    const transformedStudents: CampusStudent[] = students.map((student) => {
+      // Find active subscription
+      const activeSubscription = student.subscriptions.find(
+        (sub) => sub.status === "ACTIVE" && new Date(sub.endDate) > new Date()
+      );
+
+      return {
+        id: student.id,
+        name: student.name,
+        studentName: student.studentName,
+        email: student.email,
+        nickname: student.nickname,
+        role: student.role,
+        createdAt: student.createdAt,
+        hasActiveSubscription: !!activeSubscription,
+        activeSubscription: activeSubscription
+          ? {
+              id: activeSubscription.id,
+              status: activeSubscription.status,
+              endDate: activeSubscription.endDate,
+              planName: activeSubscription.plan.name,
+            }
+          : null,
+        allAssignments: student.bpaLevelAssignments.map((assignment) => ({
+          id: assignment.id,
+          bpaLevelId: assignment.bpaLevelId,
+          semesterId: assignment.semesterId,
+          timeframeId: assignment.timeframeId,
+          season: assignment.season,
+          semester: assignment.semester,
+          bpaLevel: assignment.bpaLevel,
+          timeframe: assignment.timeframe,
+          assignedAt: assignment.assignedAt,
+          assignedBy: assignment.assignedBy,
+        })),
+      };
+    });
 
     return {
       campus: {

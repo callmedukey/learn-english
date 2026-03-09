@@ -107,7 +107,7 @@ export default function FreeSuccessContent({
             Your Free Subscription is Active!
           </h3>
           <p className="text-sm text-gray-600">
-            Thanks to your coupon <strong>{paymentData.couponCode}</strong>, you&apos;ve received a 100% discount!
+            Thanks to your coupon <strong>{paymentData.couponCode}</strong>, you've received a 100% discount!
           </p>
         </div>
 

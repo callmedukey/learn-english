@@ -174,7 +174,7 @@ async function ChapterContent({
             <div className="text-gray-500">
               <div className="mb-4 text-4xl">📝</div>
               <h3 className="mb-2 text-lg font-medium">No Quiz Available</h3>
-              <p className="mb-4">This chapter doesn&apos;t have a quiz yet.</p>
+              <p className="mb-4">This chapter doesn't have a quiz yet.</p>
               <div className="mb-6 space-y-2 text-sm text-gray-600">
                 <p>
                   <strong>Chapter:</strong> {chapter.title}
@@ -260,7 +260,7 @@ async function ChapterContent({
                 No Questions Available
               </h3>
               <p className="mb-4">
-                This chapter&apos;s quiz doesn&apos;t have any questions yet.
+                This chapter's quiz doesn't have any questions yet.
               </p>
               <div className="mb-6 space-y-2 text-sm text-gray-600">
                 <p>

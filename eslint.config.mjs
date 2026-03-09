@@ -58,6 +58,8 @@ const eslintConfig = [
           "unused-imports/no-unused-imports": "error",
           "unused-imports/no-unused-vars": "error",
           "@typescript-eslint/no-explicit-any": "off",
+          // Allow regular apostrophes in JSX - &apos; entities are displayed literally
+          "react/no-unescaped-entities": "off",
         },
       },
     ],

@@ -36,6 +36,7 @@ import {
   canAccessChallenges,
   canAccessNotifications,
   canAccessCampusManagement,
+  canViewUsers,
 } from "@/lib/utils/permissions";
 import { Role } from "@/prisma/generated/prisma";
 
@@ -52,7 +53,7 @@ const allItems = [
     title: "Users",
     url: "/admin/users",
     icon: Users,
-    permission: canAccessUserManagement,
+    permission: canViewUsers,
   },
   {
     title: "Countries",

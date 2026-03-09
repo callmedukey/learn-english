@@ -213,7 +213,7 @@ async function RCKeywordContent({
             <div className="text-gray-500">
               <div className="mb-4 text-4xl">📝</div>
               <h3 className="mb-2 text-lg font-medium">No Quiz Available</h3>
-              <p className="mb-4">This topic doesn&apos;t have a quiz yet.</p>
+              <p className="mb-4">This topic doesn't have a quiz yet.</p>
               <div className="mb-6 space-y-2 text-sm text-gray-600">
                 <p>
                   <strong>Topic:</strong> {keyword.name}
@@ -299,7 +299,7 @@ async function RCKeywordContent({
                 No Questions Available
               </h3>
               <p className="mb-4">
-                This topic&apos;s quiz doesn&apos;t have any questions yet.
+                This topic's quiz doesn't have any questions yet.
               </p>
               <div className="mb-6 space-y-2 text-sm text-gray-600">
                 <p>

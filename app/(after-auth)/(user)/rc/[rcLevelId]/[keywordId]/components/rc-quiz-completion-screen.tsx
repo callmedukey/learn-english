@@ -31,7 +31,7 @@ export function RCQuizCompletionScreen({
         <div className="mb-4 text-4xl">🎉</div>
         <div className="space-y-4">
           <p className="text-lg">
-            You&apos;ve completed the reading comprehension quiz for:
+            You've completed the reading comprehension quiz for:
           </p>
           <p
             className="text-lg"

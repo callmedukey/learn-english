@@ -93,7 +93,7 @@ export function RCQuizQuestion({
                 variant="secondary"
                 className="border-red-200 bg-red-100 text-red-800"
               >
-                Time&apos;s Up
+                Time's Up
               </Badge>
             )}
           </div>
@@ -223,7 +223,7 @@ export function RCQuizQuestion({
                     ? "Correct! (No points awarded for retry)"
                     : "Correct! (Previously completed, no new points)"
                 : timeLeft === 0
-                  ? "Time&apos;s up! No points awarded."
+                  ? "Time's up! No points awarded."
                   : "Incorrect. No points awarded."}
             </p>
           </div>

@@ -47,7 +47,7 @@ async function PaymentsContent({
         <div className="mt-6 rounded-lg border border-amber-200 bg-amber-50 p-4">
           <h3 className="font-medium text-amber-900">Note for International Users</h3>
           <p className="mt-1 text-sm text-amber-700">
-            International cards require manual renewal. We&apos;ll send you a reminder email before your subscription expires.
+            International cards require manual renewal. We'll send you a reminder email before your subscription expires.
             Korean users can enjoy automatic renewal with domestic cards.
           </p>
         </div>

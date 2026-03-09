@@ -15,7 +15,7 @@
     },
     "ios": {
       "bundleIdentifier": "com.reading-champ",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "supportsTablet": true,
       "googleServicesFile": "./GoogleService-Info.plist",
       "infoPlist": {

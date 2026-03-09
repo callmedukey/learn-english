@@ -168,7 +168,7 @@ async function NovelContent({
                 <h3 className="mb-2 text-lg font-medium">
                   No Chapters Available
                 </h3>
-                <p>This novel doesn&apos;t have any chapters yet.</p>
+                <p>This novel doesn't have any chapters yet.</p>
               </div>
             </CardContent>
           </Card>
