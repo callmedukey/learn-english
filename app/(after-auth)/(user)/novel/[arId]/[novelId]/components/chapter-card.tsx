@@ -44,6 +44,7 @@ interface ChapterCardProps {
   arId: string;
   novelId: string;
   userHasPaidSubscription?: boolean;
+  hasCampusAccess?: boolean;
 }
 
 const ChapterCard: React.FC<ChapterCardProps> = ({
@@ -51,9 +52,10 @@ const ChapterCard: React.FC<ChapterCardProps> = ({
   arId,
   novelId,
   userHasPaidSubscription = false,
+  hasCampusAccess = false,
 }) => {
-  // Check premium access first
-  const hasPremiumAccess = chapter.isFree || userHasPaidSubscription;
+  // Check premium access first - campus users get full access
+  const hasPremiumAccess = chapter.isFree || userHasPaidSubscription || hasCampusAccess;
 
   // Challenge blocking removed - users can access all content without locks
   const challengeBlocked = false;

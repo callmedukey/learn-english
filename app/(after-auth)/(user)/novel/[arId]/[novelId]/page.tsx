@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { prisma } from "@/prisma/prisma-client";
 
 import ChapterCard from "./components/chapter-card";
 import { getNovelDetails } from "./query/novel-details.query";
@@ -30,6 +31,14 @@ async function NovelContent({
   if (!session) {
     redirect("/login");
   }
+
+  // Fetch user's campusId for campus-based access
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { campusId: true },
+  });
+
+  const hasCampusAccess = !!user?.campusId;
 
   const novel = await getNovelDetails(novelId, session.user.id);
 
@@ -157,6 +166,7 @@ async function NovelContent({
                 arId={arId}
                 novelId={novelId}
                 userHasPaidSubscription={session.user.hasPaidSubscription}
+                hasCampusAccess={hasCampusAccess}
               />
             ))}
           </div>

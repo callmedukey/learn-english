@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { prisma } from "@/prisma/prisma-client";
 
 import QuizComponent from "./components/quiz-component";
 import {
@@ -57,6 +58,12 @@ async function ChapterContent({
     redirect("/login");
   }
 
+  // Fetch user's campusId for campus-based access
+  const user = await prisma.user.findUnique({
+    where: { id: session.user.id },
+    select: { campusId: true },
+  });
+
   const chapter = await getChapterDetails(chapterId, session.user.id);
 
   if (!chapter) {
@@ -67,8 +74,9 @@ async function ChapterContent({
     chapter.novel.AR?.ARSettings?.fontSize,
   );
 
-  // Check premium access
-  const hasPremiumAccess = chapter.isFree || session.user.hasPaidSubscription;
+  // Check premium access - campus users get full access
+  const hasCampusAccess = !!user?.campusId;
+  const hasPremiumAccess = chapter.isFree || session.user.hasPaidSubscription || hasCampusAccess;
 
   // Level locks removed - users can access all levels
   // Challenge blocking removed - users can access all content without locks

@@ -69,6 +69,12 @@ async function RCKeywordContent({
 
   const userId = session.user.id;
 
+  // Fetch user's campusId for campus-based access
+  const user = await prisma.user.findUnique({
+    where: { id: userId },
+    select: { campusId: true },
+  });
+
   const keyword = await prisma.rCKeyword.findUnique({
     where: { id: keywordId },
     include: {
@@ -109,8 +115,9 @@ async function RCKeywordContent({
     keyword.RCLevel.RCLevelSettings?.fontSize,
   );
 
-  // Check premium access
-  const hasPremiumAccess = keyword.isFree || session.user.hasPaidSubscription;
+  // Check premium access - campus users get full access
+  const hasCampusAccess = !!user?.campusId;
+  const hasPremiumAccess = keyword.isFree || session.user.hasPaidSubscription || hasCampusAccess;
 
   // Level locks removed - users can access all levels
   // Challenge blocking removed - users can access all content without locks

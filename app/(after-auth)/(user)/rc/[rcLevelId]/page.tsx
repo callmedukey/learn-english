@@ -43,6 +43,14 @@ async function RCKeywords({
   const userId = session?.user?.id;
   const hasPaidSubscription = session?.user?.hasPaidSubscription;
 
+  // Fetch user's campusId for campus-based access
+  const user = userId ? await prisma.user.findUnique({
+    where: { id: userId },
+    select: { campusId: true },
+  }) : null;
+
+  const hasCampusAccess = !!user?.campusId;
+
   // Build the where clause for search
   const searchWhere = searchParams.search
     ? {
@@ -303,6 +311,7 @@ async function RCKeywords({
               rcLevelId={rcLevelId}
               userId={userId}
               hasPaidSubscription={hasPaidSubscription}
+              hasCampusAccess={hasCampusAccess}
               isMonthlyChallenge={
                 challengeKeywordIds?.includes(keyword.id) || false
               }

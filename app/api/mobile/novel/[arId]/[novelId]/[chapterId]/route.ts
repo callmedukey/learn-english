@@ -21,6 +21,14 @@ export async function GET(
   const { arId, novelId, chapterId } = await params;
 
   try {
+    // Fetch user's campusId for campus-based access
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { campusId: true },
+    });
+
+    const hasCampusAccess = !!user?.campusId;
+
     const chapter = await prisma.novelChapter.findUnique({
       where: { id: chapterId },
       include: {
@@ -153,6 +161,7 @@ export async function GET(
       description: chapter.description,
       orderNumber: chapter.orderNumber,
       isFree: chapter.isFree,
+      hasCampusAccess,
       novel: {
         id: chapter.novel.id,
         title: chapter.novel.title,

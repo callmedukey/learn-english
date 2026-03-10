@@ -23,6 +23,14 @@ export async function GET(
   const statusOverride = url.searchParams.get("status") as QuizStatus | null;
 
   try {
+    // Fetch user's campusId for campus-based access
+    const user = await prisma.user.findUnique({
+      where: { id: userId },
+      select: { campusId: true },
+    });
+
+    const hasCampusAccess = !!user?.campusId;
+
     // Fetch keyword with question set and questions
     const keyword = await prisma.rCKeyword.findUnique({
       where: { id: keywordId },
@@ -144,6 +152,7 @@ export async function GET(
         level: keyword.RCLevel.level,
       },
       isFree: keyword.isFree,
+      hasCampusAccess,
       questionSet: questionSet
         ? {
             id: questionSet.id,

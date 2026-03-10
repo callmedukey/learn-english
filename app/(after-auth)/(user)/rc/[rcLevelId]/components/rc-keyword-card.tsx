@@ -55,6 +55,7 @@ interface RCKeywordCardProps {
   rcLevelId: string;
   userId?: string;
   hasPaidSubscription?: boolean;
+  hasCampusAccess?: boolean;
   isMonthlyChallenge?: boolean;
   userLevelLock?: {
     levelId: string;
@@ -67,6 +68,7 @@ export function RCKeywordCard({
   rcLevelId,
   userId,
   hasPaidSubscription,
+  hasCampusAccess = false,
   isMonthlyChallenge = false,
   userLevelLock,
 }: RCKeywordCardProps) {
@@ -100,11 +102,14 @@ export function RCKeywordCard({
     | "no-content"
     | "coming-soon" = "no-content";
 
+  // Premium access check - campus users get full access
+  const hasPremiumAccess = keyword.isFree || hasPaidSubscription || hasCampusAccess;
+
   if (keyword.comingSoon) {
     status = "coming-soon";
   } else if (!hasQuestionSet || !isQuestionSetActive || !hasQuestions) {
     status = "no-content";
-  } else if (!keyword.isFree && !hasPaidSubscription) {
+  } else if (!hasPremiumAccess) {
     status = "locked";
   } else if (challengeBlocked) {
     status = "challenge-locked";
@@ -214,7 +219,7 @@ export function RCKeywordCard({
     hasQuestionSet &&
     isQuestionSetActive &&
     hasQuestions &&
-    (keyword.isFree || hasPaidSubscription) &&
+    hasPremiumAccess &&
     !challengeBlocked;
 
   const cardContent = (
