@@ -16,6 +16,7 @@
     "billing-job": "tsx jobs/subscription-billing.job.ts",
     "billing-wrapper-test": "tsx scripts/billing-cron-wrapper.ts",
     "fix": "tsx prisma/scripts/fix-referrals.ts",
+    "set-paid": "tsx prisma/scripts/set-all-to-paid.ts",
     "lint": "next lint",
     "db:generate": "npx prisma generate",
     "db:migrate": "npx prisma migrate dev",
