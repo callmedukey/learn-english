@@ -62,7 +62,7 @@ export default function BPANovelDetailsScreen() {
     return null;
   }
 
-  const { bpaLevel, units, chapters } = data;
+  const { bpaLevel, units, chapters, userCampusId, isAssignedToLevel } = data;
   const hasUnits = units && units.length > 0;
 
   // Generate star display
@@ -127,6 +127,8 @@ export default function BPANovelDetailsScreen() {
                   levelId={levelId}
                   novelId={novelId}
                   userHasPaidSubscription={userHasPaidSubscription}
+                  userCampusId={userCampusId}
+                  isAssignedToLevel={isAssignedToLevel}
                 />
               ))
             ) : (
@@ -140,6 +142,8 @@ export default function BPANovelDetailsScreen() {
                       levelId={levelId}
                       novelId={novelId}
                       userHasPaidSubscription={userHasPaidSubscription}
+                      userCampusId={userCampusId}
+                      isAssignedToLevel={isAssignedToLevel}
                     />
                   ))
                 ) : (

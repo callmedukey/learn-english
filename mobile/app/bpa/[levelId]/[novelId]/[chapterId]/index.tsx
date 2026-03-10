@@ -75,6 +75,8 @@ export default function BPAChapterQuizScreen() {
           levelId={levelId}
           novelId={novelId}
           userHasPaidSubscription={userHasPaidSubscription}
+          userCampusId={data.userCampusId}
+          isAssignedToLevel={data.isAssignedToLevel}
         />
       </SafeAreaView>
     </>

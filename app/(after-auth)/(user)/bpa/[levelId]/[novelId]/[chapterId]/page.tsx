@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { canUserAccessNovel } from "@/lib/bpa/access-control";
+import { canUserAccessNovel, isUserAssignedToLevel } from "@/lib/bpa/access-control";
 import { prisma } from "@/prisma/prisma-client";
 
 import BPAQuizComponent from "./components/bpa-quiz-component";
@@ -88,8 +88,15 @@ async function BPAChapterContent({
     redirect(`/bpa/${levelId}`);
   }
 
+  // Check if user is assigned to this level for campus-based premium access
+  const isAssignedToLevel = chapter.novel.bpaLevel
+    ? await isUserAssignedToLevel(session.user.id, chapter.novel.bpaLevel.id)
+    : false;
+
   // Check premium access (super users bypass this)
-  const hasPremiumAccess = chapter.isFree || session.user.hasPaidSubscription || session.user.isSuperUser;
+  // Campus users assigned to this level get free access to premium content
+  const hasCampusAccess = !!user?.campusId && isAssignedToLevel;
+  const hasPremiumAccess = chapter.isFree || session.user.hasPaidSubscription || session.user.isSuperUser || hasCampusAccess;
 
   if (!hasPremiumAccess) {
     return (

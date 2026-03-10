@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { canUserAccessNovel } from "@/lib/bpa/access-control";
+import { canUserAccessNovel, isUserAssignedToLevel } from "@/lib/bpa/access-control";
 import { prisma } from "@/prisma/prisma-client";
 
 import BPAChapterCard from "./components/bpa-chapter-card";
@@ -57,6 +57,11 @@ async function BPANovelContent({
   if (!hasAccess) {
     redirect(`/bpa/${levelId}`);
   }
+
+  // Check if user is assigned to this level for campus-based premium access
+  const isAssignedToLevel = novel.bpaLevel
+    ? await isUserAssignedToLevel(session.user.id, novel.bpaLevel.id)
+    : false;
 
   const totalChapters = novel.chapters.length;
   const completedChapters = novel.chapters.filter(
@@ -184,6 +189,8 @@ async function BPANovelContent({
                         novelId={novelId}
                         userHasPaidSubscription={session.user.hasPaidSubscription}
                         isSuperUser={session.user.isSuperUser}
+                        userCampusId={user?.campusId}
+                        isAssignedToLevel={isAssignedToLevel}
                       />
                     ))}
                   </div>
@@ -207,6 +214,8 @@ async function BPANovelContent({
                     novelId={novelId}
                     userHasPaidSubscription={session.user.hasPaidSubscription}
                     isSuperUser={session.user.isSuperUser}
+                    userCampusId={user?.campusId}
+                    isAssignedToLevel={isAssignedToLevel}
                   />
                 ))}
               </div>

@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
 import { nicknameRegex } from "@/lib/regex/auth.regex";
-import { requireAdminAccess } from "@/lib/utils/admin-route-protection";
+import { requireAdminOrSubAdminAccess } from "@/lib/utils/admin-route-protection";
 import { prisma } from "@/prisma/prisma-client";
 import { ActionResponse } from "@/types/actions";
 
@@ -61,7 +61,7 @@ export async function updateUserDetailsAction(
   data: UpdateUserDetailsType,
 ): Promise<ActionResponse<UpdateUserDetailsType>> {
   try {
-    await requireAdminAccess();
+    await requireAdminOrSubAdminAccess();
 
     const validatedData = updateUserDetailsSchema.parse(data);
     const { userId, nickname, birthday, countryId, campusId, parentName, parentPhone, studentName, studentPhone } = validatedData;

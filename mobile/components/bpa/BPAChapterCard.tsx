@@ -8,6 +8,8 @@ interface BPAChapterCardProps {
   levelId: string;
   novelId: string;
   userHasPaidSubscription: boolean;
+  userCampusId?: string | null;
+  isAssignedToLevel?: boolean;
 }
 
 export function BPAChapterCard({
@@ -15,10 +17,14 @@ export function BPAChapterCard({
   levelId,
   novelId,
   userHasPaidSubscription,
+  userCampusId = null,
+  isAssignedToLevel = false,
 }: BPAChapterCardProps) {
   const router = useRouter();
 
-  const canAccess = chapter.isFree || userHasPaidSubscription;
+  // Campus users assigned to this level get free access to premium content
+  const hasCampusAccess = !!userCampusId && isAssignedToLevel;
+  const canAccess = chapter.isFree || userHasPaidSubscription || hasCampusAccess;
 
   const handlePress = () => {
     if (canAccess && chapter.hasQuiz) {

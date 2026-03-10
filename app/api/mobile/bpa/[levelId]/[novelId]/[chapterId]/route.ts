@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { canUserAccessNovel } from "@/lib/bpa/access-control";
+import { canUserAccessNovel, isUserAssignedToLevel } from "@/lib/bpa/access-control";
 import { verifyMobileToken } from "@/lib/mobile-auth";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -62,6 +62,9 @@ export async function GET(request: Request, { params }: RouteParams) {
         { status: 403 }
       );
     }
+
+    // Check if user is assigned to this level for campus-based premium access
+    const assignedToLevel = await isUserAssignedToLevel(userId, levelId);
 
     // Get the chapter with questions
     const chapter = await prisma.bPAChapter.findUnique({
@@ -181,6 +184,9 @@ export async function GET(request: Request, { params }: RouteParams) {
           }
         : null,
       status,
+      // Campus access flags for premium content override
+      userCampusId: user.campusId,
+      isAssignedToLevel: assignedToLevel,
     });
   } catch (error) {
     console.error("BPA Chapter Quiz API error:", error);

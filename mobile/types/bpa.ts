@@ -136,6 +136,9 @@ export interface BPANovelDetails {
   completedChapters: number;
   freeChapters: number;
   progress: number;
+  // Campus access flags for premium content override
+  userCampusId: string | null;
+  isAssignedToLevel: boolean;
 }
 
 // BPA Chapter Quiz Types
@@ -180,6 +183,9 @@ export interface BPAChapterQuizData {
   nextChapter: BPANextChapter | null;
   questionSet: BPAQuestionSet | null;
   status: BPAChapterStatus;
+  // Campus access flags for premium content override
+  userCampusId: string | null;
+  isAssignedToLevel: boolean;
 }
 
 // BPA Question Action Types

@@ -27,6 +27,8 @@ interface BPAQuizComponentProps {
   levelId: string;
   novelId: string;
   userHasPaidSubscription: boolean;
+  userCampusId?: string | null;
+  isAssignedToLevel?: boolean;
 }
 
 export function BPAQuizComponent({
@@ -34,6 +36,8 @@ export function BPAQuizComponent({
   levelId,
   novelId,
   userHasPaidSubscription,
+  userCampusId = null,
+  isAssignedToLevel = false,
 }: BPAQuizComponentProps) {
   const router = useRouter();
   const navigation = useNavigation();
@@ -63,7 +67,9 @@ export function BPAQuizComponent({
     [chapter.questionSet?.questions]
   );
 
-  const canAccess = chapter.isFree || userHasPaidSubscription;
+  // Campus users assigned to this level get free access to premium content
+  const hasCampusAccess = !!userCampusId && isAssignedToLevel;
+  const canAccess = chapter.isFree || userHasPaidSubscription || hasCampusAccess;
   const currentQuestion = questions[currentQuestionIndex];
 
   // Handle app state changes (background/foreground) - auto-submit when app goes to background

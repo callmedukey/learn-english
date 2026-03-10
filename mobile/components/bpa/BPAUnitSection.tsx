@@ -9,6 +9,8 @@ interface BPAUnitSectionProps {
   levelId: string;
   novelId: string;
   userHasPaidSubscription: boolean;
+  userCampusId?: string | null;
+  isAssignedToLevel?: boolean;
 }
 
 export function BPAUnitSection({
@@ -16,6 +18,8 @@ export function BPAUnitSection({
   levelId,
   novelId,
   userHasPaidSubscription,
+  userCampusId = null,
+  isAssignedToLevel = false,
 }: BPAUnitSectionProps) {
   return (
     <View className="mb-6">
@@ -39,6 +43,8 @@ export function BPAUnitSection({
               levelId={levelId}
               novelId={novelId}
               userHasPaidSubscription={userHasPaidSubscription}
+              userCampusId={userCampusId}
+              isAssignedToLevel={isAssignedToLevel}
             />
           ))}
         </View>

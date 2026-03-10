@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 
-import { canUserAccessNovel } from "@/lib/bpa/access-control";
+import { canUserAccessNovel, isUserAssignedToLevel } from "@/lib/bpa/access-control";
 import { verifyMobileToken } from "@/lib/mobile-auth";
 import { prisma } from "@/prisma/prisma-client";
 
@@ -41,6 +41,9 @@ export async function GET(request: Request, { params }: RouteParams) {
         { status: 403 }
       );
     }
+
+    // Check if user is assigned to this level for campus-based premium access
+    const isAssignedToLevel = await isUserAssignedToLevel(userId, levelId);
 
     // Get the novel with units and chapters
     const novel = await prisma.bPANovel.findUnique({
@@ -227,6 +230,9 @@ export async function GET(request: Request, { params }: RouteParams) {
       completedChapters,
       freeChapters,
       progress,
+      // Campus access flags for premium content override
+      userCampusId: user.campusId,
+      isAssignedToLevel,
     });
   } catch (error) {
     console.error("BPA Novel Details API error:", error);
