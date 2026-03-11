@@ -64,6 +64,14 @@ async function ChapterContent({
     select: { campusId: true },
   });
 
+  // DEBUG: Log user data for campus access debugging
+  console.log('[Novel Chapter Debug]', {
+    userId: session.user.id,
+    user,
+    campusId: user?.campusId,
+    hasCampusAccess: !!user?.campusId
+  });
+
   const chapter = await getChapterDetails(chapterId, session.user.id);
 
   if (!chapter) {
@@ -77,6 +85,14 @@ async function ChapterContent({
   // Check premium access - campus users get full access
   const hasCampusAccess = !!user?.campusId;
   const hasPremiumAccess = chapter.isFree || session.user.hasPaidSubscription || hasCampusAccess;
+
+  // DEBUG: Log premium check values
+  console.log('[Premium Check]', {
+    chapterIsFree: chapter.isFree,
+    hasPaidSubscription: session.user.hasPaidSubscription,
+    hasCampusAccess,
+    hasPremiumAccess
+  });
 
   // Level locks removed - users can access all levels
   // Challenge blocking removed - users can access all content without locks
