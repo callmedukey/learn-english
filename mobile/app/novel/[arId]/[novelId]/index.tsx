@@ -52,6 +52,7 @@ export default function NovelDetailsScreen() {
   }
 
   const userHasPaidSubscription = user?.hasPaidSubscription || false;
+  const userCampusId = user?.campusId || null;
 
   return (
     <>
@@ -70,6 +71,7 @@ export default function NovelDetailsScreen() {
               arId={arId}
               novelId={novelId}
               userHasPaidSubscription={userHasPaidSubscription}
+              userCampusId={userCampusId}
             />
           )}
           contentContainerStyle={{ padding: 16, gap: 16 }}

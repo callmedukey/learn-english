@@ -24,6 +24,7 @@ interface QuizComponentProps {
   arId: string;
   novelId: string;
   userHasPaidSubscription: boolean;
+  userCampusId?: string | null;
 }
 
 export function QuizComponent({
@@ -31,6 +32,7 @@ export function QuizComponent({
   arId,
   novelId,
   userHasPaidSubscription,
+  userCampusId = null,
 }: QuizComponentProps) {
   const router = useRouter();
   const navigation = useNavigation();
@@ -60,7 +62,9 @@ export function QuizComponent({
     [chapter.questionSet?.questions]
   );
 
-  const canAccess = chapter.isFree || userHasPaidSubscription;
+  // Campus users get full access to premium content
+  const hasCampusAccess = !!userCampusId;
+  const canAccess = chapter.isFree || userHasPaidSubscription || hasCampusAccess;
   const currentQuestion = questions[currentQuestionIndex];
 
   // Handle app state changes (background/foreground)

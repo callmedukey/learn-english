@@ -334,7 +334,7 @@ async function BPAChapterContent({
         status={status}
         levelId={levelId}
         novelId={novelId}
-        userHasPaidSubscription={session.user.hasPaidSubscription}
+        hasPremiumAccess={hasPremiumAccess}
       />
     </div>
   );

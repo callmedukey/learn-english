@@ -31,7 +31,7 @@ interface QuizComponentProps {
   status: ChapterStatus;
   arId: string;
   novelId: string;
-  userHasPaidSubscription: boolean;
+  hasPremiumAccess: boolean;
 }
 
 // interface QuestionData {
@@ -52,7 +52,7 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
   status,
   arId,
   novelId,
-  userHasPaidSubscription,
+  hasPremiumAccess,
 }) => {
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -78,7 +78,8 @@ const QuizComponent: React.FC<QuizComponentProps> = ({
     () => chapter.novelQuestionSet?.novelQuestions || [],
     [chapter.novelQuestionSet?.novelQuestions],
   );
-  const canAccess = chapter.isFree || userHasPaidSubscription;
+  // Use the hasPremiumAccess prop which includes campus access check
+  const canAccess = hasPremiumAccess;
 
   // Filter questions based on status
   // const getQuestionsToShow = useCallback(() => {

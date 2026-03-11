@@ -88,6 +88,7 @@ export default function RCQuizScreen() {
   }
 
   const userHasPaidSubscription = user?.hasPaidSubscription || false;
+  const userCampusId = user?.campusId || null;
 
   return (
     <>
@@ -100,6 +101,7 @@ export default function RCQuizScreen() {
         <RCQuizComponent
           quizData={data}
           userHasPaidSubscription={userHasPaidSubscription}
+          userCampusId={userCampusId}
         />
       </SafeAreaView>
     </>

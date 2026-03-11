@@ -31,7 +31,7 @@ interface BPAQuizComponentProps {
   status: BPAChapterStatus;
   levelId: string;
   novelId: string;
-  userHasPaidSubscription: boolean;
+  hasPremiumAccess: boolean;
 }
 
 const BPAQuizComponent: React.FC<BPAQuizComponentProps> = ({
@@ -40,7 +40,7 @@ const BPAQuizComponent: React.FC<BPAQuizComponentProps> = ({
   status,
   levelId,
   novelId,
-  userHasPaidSubscription,
+  hasPremiumAccess,
 }) => {
   const router = useRouter();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -66,7 +66,8 @@ const BPAQuizComponent: React.FC<BPAQuizComponentProps> = ({
     () => chapter.questionSet?.questions || [],
     [chapter.questionSet?.questions],
   );
-  const canAccess = chapter.isFree || userHasPaidSubscription;
+  // Use the hasPremiumAccess prop which includes campus access check
+  const canAccess = hasPremiumAccess;
 
   const currentQuestion = questions[currentQuestionIndex];
 

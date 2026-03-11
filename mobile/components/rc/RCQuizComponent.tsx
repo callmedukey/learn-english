@@ -25,11 +25,13 @@ type QuizPhase = "not-started" | "reading" | "questions" | "completed";
 interface RCQuizComponentProps {
   quizData: RCQuizData;
   userHasPaidSubscription: boolean;
+  userCampusId?: string | null;
 }
 
 export function RCQuizComponent({
   quizData,
   userHasPaidSubscription,
+  userCampusId = null,
 }: RCQuizComponentProps) {
   const router = useRouter();
   const navigation = useNavigation();
@@ -59,7 +61,9 @@ export function RCQuizComponent({
     [quizData.questionSet?.questions]
   );
 
-  const canAccess = quizData.isFree || userHasPaidSubscription;
+  // Campus users get full access to premium content
+  const hasCampusAccess = !!userCampusId;
+  const canAccess = quizData.isFree || userHasPaidSubscription || hasCampusAccess;
   const currentQuestion = questions[currentQuestionIndex];
 
   // Handle app state changes (background/foreground)

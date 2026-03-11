@@ -97,6 +97,7 @@ export default function ChapterQuizScreen() {
   }
 
   const userHasPaidSubscription = user?.hasPaidSubscription || false;
+  const userCampusId = user?.campusId || null;
 
   return (
     <>
@@ -111,6 +112,7 @@ export default function ChapterQuizScreen() {
           arId={arId}
           novelId={novelId}
           userHasPaidSubscription={userHasPaidSubscription}
+          userCampusId={userCampusId}
         />
       </SafeAreaView>
     </>

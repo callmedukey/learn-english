@@ -8,6 +8,7 @@ interface ChapterCardProps {
   arId: string;
   novelId: string;
   userHasPaidSubscription: boolean;
+  userCampusId?: string | null;
 }
 
 export function ChapterCard({
@@ -15,10 +16,13 @@ export function ChapterCard({
   arId,
   novelId,
   userHasPaidSubscription,
+  userCampusId = null,
 }: ChapterCardProps) {
   const router = useRouter();
 
-  const canAccess = chapter.isFree || userHasPaidSubscription;
+  // Campus users get full access to premium content
+  const hasCampusAccess = !!userCampusId;
+  const canAccess = chapter.isFree || userHasPaidSubscription || hasCampusAccess;
   const hasQuiz = chapter.hasQuiz && chapter.isQuizActive;
 
   // Determine button state
