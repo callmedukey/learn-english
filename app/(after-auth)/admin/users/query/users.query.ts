@@ -85,6 +85,7 @@ export const getUsers = async ({
   gender: genderFilter,
   country,
   campus,
+  studentName,
   nickname,
   email,
   role: roleFilter,
@@ -95,6 +96,7 @@ export const getUsers = async ({
   gender: string;
   country: string;
   campus: string;
+  studentName: string;
   nickname: string;
   email: string;
   role: string;
@@ -117,6 +119,9 @@ export const getUsers = async ({
   }
   if (campus) {
     whereClause.campusId = campus;
+  }
+  if (studentName) {
+    whereClause.studentName = { contains: studentName, mode: "insensitive" };
   }
   if (nickname) {
     whereClause.nickname = { contains: nickname, mode: "insensitive" };

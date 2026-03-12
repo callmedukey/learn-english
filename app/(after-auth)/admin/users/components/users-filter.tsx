@@ -33,6 +33,9 @@ function FiltersComponent({ countries, campuses }: UsersFilterProps) {
   const pathname = usePathname();
   const searchParams = useSearchParams();
 
+  const [studentName, setStudentName] = React.useState(
+    searchParams.get("studentName") || "",
+  );
   const [nickname, setNickname] = React.useState(
     searchParams.get("nickname") || "",
   );
@@ -50,6 +53,8 @@ function FiltersComponent({ countries, campuses }: UsersFilterProps) {
   const handleSubmit = (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     const params = new URLSearchParams(searchParams.toString());
+    if (studentName) params.set("studentName", studentName);
+    else params.delete("studentName");
     if (nickname) params.set("nickname", nickname);
     else params.delete("nickname");
     if (email) params.set("email", email);
@@ -69,6 +74,7 @@ function FiltersComponent({ countries, campuses }: UsersFilterProps) {
   };
 
   const handleReset = () => {
+    setStudentName("");
     setNickname("");
     setEmail("");
     setCountry("");
@@ -85,6 +91,15 @@ function FiltersComponent({ countries, campuses }: UsersFilterProps) {
       className="mb-6 space-y-4 rounded-lg border bg-card p-4"
     >
       <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        <div>
+          <Label htmlFor="studentName">Student Name</Label>
+          <Input
+            id="studentName"
+            value={studentName}
+            onChange={(e) => setStudentName(e.target.value)}
+            placeholder="Search student name..."
+          />
+        </div>
         <div>
           <Label htmlFor="nickname">Nickname</Label>
           <Input

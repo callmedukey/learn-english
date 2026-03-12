@@ -14,6 +14,11 @@
             "date": 1773193308775,
             "name": "/Users/duke/Documents/GitHub/learn-english/logs/error-2026-03-11.log",
             "hash": "b62c96c4578d149c995da70335ae0141184a27c656ad226a7c9cd336d99748ee"
+        },
+        {
+            "date": 1773352283623,
+            "name": "/Users/duke/Documents/GitHub/learn-english/logs/error-2026-03-13.log",
+            "hash": "de0f0f68f0b4635c7ba90ef1f074adf8eb31f11b40f6d2a3c9569820c0a5ec92"
         }
     ],
     "hashType": "sha256"

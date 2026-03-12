@@ -319,7 +319,7 @@ export const completeBPAQuestionAction = async (
     }
 
     // Create score transaction for admin tracking (only on first submission)
-    if (pointsAwarded !== 0 && existingCompletion?.id) {
+    if (existingCompletion?.id) {
       try {
         const chapter = question.questionSet.chapter;
         const unit = chapter?.unit;

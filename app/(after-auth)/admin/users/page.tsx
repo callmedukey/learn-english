@@ -14,6 +14,7 @@ interface AdminUsersPageProps {
     gender?: string;
     country?: string;
     campus?: string;
+    studentName?: string;
     nickname?: string;
     email?: string;
     role?: string;
@@ -41,6 +42,7 @@ export default async function AdminUsersPage({
     gender: resolvedSearchParams.gender,
     country: resolvedSearchParams.country,
     campus: resolvedSearchParams.campus,
+    studentName: resolvedSearchParams.studentName,
     nickname: resolvedSearchParams.nickname,
     email: resolvedSearchParams.email,
     role: resolvedSearchParams.role,
