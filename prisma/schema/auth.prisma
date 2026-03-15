@@ -145,6 +145,11 @@ model User {
   // Push notification relations
   deviceTokens                 DeviceToken[]
   pushCampaigns                PushCampaign[]
+
+  // Soft delete fields
+  isDeleted      Boolean   @default(false)
+  deletedAt      DateTime?
+  deletionReason String?
 }
 
 model Account {

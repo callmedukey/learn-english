@@ -1,7 +1,8 @@
 "use client";
 
 import { format } from "date-fns";
-import { CalendarIcon, InfoIcon } from "lucide-react";
+import { AlertTriangle, CalendarIcon, InfoIcon } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 import { DropdownNavProps, DropdownProps } from "react-day-picker";
 import { toast } from "sonner";
@@ -438,6 +439,36 @@ export default function SettingsContentWrapper({
           <PasswordChangeForm userId={userId} />
         </div>
       )}
+
+      {/* Delete Account Section */}
+      <div className="border-t border-gray-200 pt-8">
+        <div className="rounded-lg border border-red-200 bg-red-50 p-6">
+          <div className="flex items-start gap-4">
+            <div className="flex-shrink-0">
+              <AlertTriangle className="h-6 w-6 text-red-600" />
+            </div>
+            <div className="flex-1">
+              <h3 className="text-lg font-medium text-red-800">
+                Delete Account / 계정 삭제
+              </h3>
+              <p className="mt-2 text-sm text-red-700">
+                Permanently delete your account and all associated data. This
+                action cannot be undone.
+              </p>
+              <p className="mt-1 text-sm text-red-700">
+                계정과 모든 관련 데이터를 영구적으로 삭제합니다. 이 작업은 되돌릴
+                수 없습니다.
+              </p>
+              <Link
+                href="/profile/settings/delete-account"
+                className="mt-4 inline-flex items-center rounded-md bg-red-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-red-700"
+              >
+                Delete Account / 계정 삭제
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Birthday Confirmation Dialog */}
       <AlertDialog

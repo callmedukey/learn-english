@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, Text, TouchableOpacity, ActivityIndicator, Linking } from "react-native";
 
 import { PlanCard } from "./PlanCard";
 import { useIAP, IAPProduct, SUBSCRIPTION_PRODUCT_IDS } from "@/services/iap";
@@ -86,6 +86,27 @@ export function SubscriptionPlans({
           renew unless canceled at least 24 hours before the end of the current
           period. Subscriptions can be managed in your account settings after
           purchase.
+        </Text>
+      </View>
+
+      {/* Legal Consent */}
+      <View className="mt-4">
+        <Text className="text-center text-xs text-muted-foreground">
+          구독 시{" "}
+          <Text
+            className="text-primary underline"
+            onPress={() => Linking.openURL("https://readingcamp.kr/terms")}
+          >
+            이용약관
+          </Text>
+          {" "}및{" "}
+          <Text
+            className="text-primary underline"
+            onPress={() => Linking.openURL("https://readingcamp.kr/privacy")}
+          >
+            개인정보처리방침
+          </Text>
+          에 동의하는 것으로 간주됩니다.
         </Text>
       </View>
     </View>

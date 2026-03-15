@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { View, Text, ScrollView, ActivityIndicator, RefreshControl } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator, RefreshControl, TouchableOpacity, Linking } from "react-native";
 import { useState, useCallback } from "react";
 
 import { SubscriptionCard, SubscriptionPlans } from "@/components/profile";
@@ -130,6 +130,29 @@ export default function SubscriptionScreen() {
             onSubscriptionChange={refreshSubscription}
             currentProductId={subscription?.storeProductId}
           />
+
+          {/* Legal Links */}
+          <View className="mt-6 items-center gap-3">
+            <View className="flex-row items-center gap-4">
+              <TouchableOpacity
+                onPress={() => Linking.openURL("https://readingcamp.kr/terms")}
+                activeOpacity={0.7}
+              >
+                <Text className="text-sm text-primary underline">
+                  이용약관
+                </Text>
+              </TouchableOpacity>
+              <Text className="text-muted-foreground">|</Text>
+              <TouchableOpacity
+                onPress={() => Linking.openURL("https://readingcamp.kr/privacy")}
+                activeOpacity={0.7}
+              >
+                <Text className="text-sm text-primary underline">
+                  개인정보처리방침
+                </Text>
+              </TouchableOpacity>
+            </View>
+          </View>
         </>
       )}
     </ScrollView>

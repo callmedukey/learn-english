@@ -76,6 +76,12 @@ const Footer = () => {
               [환불정책]
             </Link>
             <Link
+              href="/terms"
+              className="text-sm text-[#1c1b1b] underline hover:text-[#671420]"
+            >
+              [이용약관]
+            </Link>
+            <Link
               href="/privacy"
               className="text-sm text-[#1c1b1b] underline hover:text-[#671420]"
             >
@@ -149,6 +155,12 @@ const Footer = () => {
               className="text-base text-[#1c1b1b] underline hover:text-[#671420]"
             >
               [환불정책]
+            </Link>
+            <Link
+              href="/terms"
+              className="text-base text-[#1c1b1b] underline hover:text-[#671420]"
+            >
+              [이용약관]
             </Link>
             <Link
               href="/privacy"
@@ -235,6 +247,12 @@ const Footer = () => {
                   className="text-lg text-[#1c1b1b] underline hover:text-[#671420]"
                 >
                   [환불정책]
+                </Link>
+                <Link
+                  href="/terms"
+                  className="text-lg text-[#1c1b1b] underline hover:text-[#671420]"
+                >
+                  [이용약관]
                 </Link>
                 <Link
                   href="/privacy"

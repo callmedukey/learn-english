@@ -1,5 +1,5 @@
 import { Ionicons } from "@expo/vector-icons";
-import { View, Text, ScrollView, ActivityIndicator } from "react-native";
+import { View, Text, ScrollView, ActivityIndicator, TouchableOpacity, Linking, Alert } from "react-native";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 import { SettingsForm } from "@/components/profile";
@@ -75,9 +75,27 @@ export default function SettingsScreen() {
 
       {/* Delete Account */}
       <View className="mt-6 items-center">
-        <Text className="text-xs text-muted-foreground">
-          Account deletion is available on the website
-        </Text>
+        <TouchableOpacity
+          onPress={() => {
+            Alert.alert(
+              "Delete Account / 계정 삭제",
+              "You will be redirected to the website to delete your account. Continue?\n\n계정 삭제를 위해 웹사이트로 이동합니다. 계속하시겠습니까?",
+              [
+                { text: "Cancel / 취소", style: "cancel" },
+                {
+                  text: "Continue / 계속",
+                  style: "destructive",
+                  onPress: () => Linking.openURL("https://readingcamp.kr/profile/settings/delete-account"),
+                },
+              ]
+            );
+          }}
+          activeOpacity={0.7}
+        >
+          <Text className="text-sm text-red-500 underline">
+            Delete Account / 계정 삭제
+          </Text>
+        </TouchableOpacity>
       </View>
     </ScrollView>
   );
